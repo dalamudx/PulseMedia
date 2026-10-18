@@ -38,6 +38,11 @@ func observationRuntimeAppNative(t *testing.T) *nativeUpgradeFixture {
 }
 func startObservationRuntimeApp(t *testing.T, n *nativeUpgradeFixture, data string) func() {
 	t.Helper()
+	// Current App always requires the current recovery isolation schema. Historical
+	// repository fixtures remain pinned until this explicit runtime boundary.
+	if _, err := postgres.Migrate(t.Context(), n.dsn, migrationsDir); err != nil {
+		t.Fatal(err)
+	}
 	listener, e := net.Listen("tcp", "127.0.0.1:0")
 	if e != nil {
 		t.Fatal(e)

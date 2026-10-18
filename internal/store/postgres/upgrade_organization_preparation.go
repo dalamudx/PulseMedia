@@ -262,6 +262,14 @@ func (r *movieUpgradeOrganizationPreparationRepository) recover(ctx context.Cont
 		return nil, preparationConflict()
 	}
 	out := &ports.MovieUpgradeOrganizationPreparation{ID: p.ID, OperationID: op, AuthorizationID: p.AuthorizationID, TaskID: p.TaskID, PlanID: p.PlanID, StepID: p.StepID, PreparedAt: p.PreparedAt, Status: p.Status}
+	// The stored response preserves its original offset, while PostgreSQL JSON
+	// may render the same instant in the database session timezone. Check the
+	// instant exactly, then retain the original receipt representation for the
+	// complete response and immutable ledger comparisons below.
+	if !p.PreparedAt.Equal(stored.PreparedAt) {
+		return nil, preparationConflict()
+	}
+	out.PreparedAt = stored.PreparedAt
 	want, _ := json.Marshal(out)
 	actual, _ := json.Marshal(stored)
 	if !preparationSameJSON(want, actual) {

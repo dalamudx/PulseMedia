@@ -49,7 +49,7 @@ func (s *organizationExecution) admit(ctx context.Context, observedBasis *organi
 		return e
 	}
 	var expected json.RawMessage
-	e = tx.QueryRow(work, `SELECT $1::jsonb||jsonb_build_object('backend_pid',pg_backend_pid(),'backend_start',backend_start,'permitted_at',n,'lease_until',LEAST(n+interval '60 seconds',($2::jsonb->>'lease_until')::timestamptz)) FROM pg_stat_activity,(SELECT clock_timestamp() n)t WHERE pid=pg_backend_pid()`, fields, b.job).Scan(&expected)
+	e = tx.QueryRow(work, `SELECT to_jsonb(jsonb_populate_record(NULL::movie_upgrade_organization_execution_permit,$1::jsonb||jsonb_build_object('backend_pid',pg_backend_pid(),'backend_start',backend_start,'permitted_at',n,'lease_until',LEAST(n+interval '60 seconds',($2::jsonb->>'lease_until')::timestamptz)))) FROM pg_stat_activity,(SELECT clock_timestamp() n)t WHERE pid=pg_backend_pid()`, fields, b.job).Scan(&expected)
 	if e != nil {
 		return e
 	}
