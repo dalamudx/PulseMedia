@@ -1213,7 +1213,7 @@ paths:
 
   /api/v1/search/movies:
     get:
-      summary: Search movie releases from indexers
+      summary: Search movie and TV metadata
       operationId: searchMovieReleases
       parameters:
         - name: query
@@ -1221,18 +1221,22 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 1
+            maxLength: 256
         - name: type
           in: query
           required: false
           schema:
             type: string
-            enum: [all, movie, tv]
+            enum: [all, movie, tv, multi]
             default: all
         - name: year
           in: query
           required: false
           schema:
             type: integer
+            minimum: 1800
+            maximum: 9999
       responses:
         '200':
           description: Search results
@@ -1242,6 +1246,34 @@ paths:
                 $ref: '#/components/schemas/MovieSearchResponse'
         '401':
           description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+        '400':
+          description: Invalid metadata search input
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current account lacks catalog read access
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Metadata provider or catalog unavailable
           content:
             application/problem+json:
               schema:
@@ -3566,6 +3598,7 @@ paths:
           schema:
             type: integer
             format: int64
+            minimum: 1
       responses:
         '200':
           description: TV show details
@@ -3584,6 +3617,15 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Metadata provider unavailable
           content:
             application/problem+json:
               schema:
@@ -5886,7 +5928,7 @@ components:
 
     TMDBTVDetailsResponse:
       type: object
-      required: [tmdb_id, title, seasons]
+      required: [tmdb_id, title, seasons, seasons_count, episodes_count]
       properties:
         tmdb_id:
           type: integer
@@ -5909,6 +5951,12 @@ components:
           type: array
           items:
             type: string
+        seasons_count:
+          type: integer
+          minimum: 0
+        episodes_count:
+          type: integer
+          minimum: 0
         seasons:
           type: array
           items:

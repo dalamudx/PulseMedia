@@ -1568,6 +1568,7 @@ func (e SearchReleasesParamsMediaType) Valid() bool {
 const (
 	SearchMovieReleasesParamsTypeAll   SearchMovieReleasesParamsType = "all"
 	SearchMovieReleasesParamsTypeMovie SearchMovieReleasesParamsType = "movie"
+	SearchMovieReleasesParamsTypeMulti SearchMovieReleasesParamsType = "multi"
 	SearchMovieReleasesParamsTypeTv    SearchMovieReleasesParamsType = "tv"
 )
 
@@ -1577,6 +1578,8 @@ func (e SearchMovieReleasesParamsType) Valid() bool {
 	case SearchMovieReleasesParamsTypeAll:
 		return true
 	case SearchMovieReleasesParamsTypeMovie:
+		return true
+	case SearchMovieReleasesParamsTypeMulti:
 		return true
 	case SearchMovieReleasesParamsTypeTv:
 		return true
@@ -2959,12 +2962,14 @@ type TMDBMovieDetailsResponse struct {
 // TMDBTVDetailsResponse defines model for TMDBTVDetailsResponse.
 type TMDBTVDetailsResponse struct {
 	BackdropUrl   *string            `json:"backdrop_url,omitempty"`
+	EpisodesCount int                `json:"episodes_count"`
 	Genres        *[]string          `json:"genres,omitempty"`
 	OriginalTitle *string            `json:"original_title,omitempty"`
 	Overview      *string            `json:"overview,omitempty"`
 	PosterUrl     *string            `json:"poster_url,omitempty"`
 	Rating        *float32           `json:"rating,omitempty"`
 	Seasons       []TMDBTVSeasonItem `json:"seasons"`
+	SeasonsCount  int                `json:"seasons_count"`
 	Title         string             `json:"title"`
 	TmdbId        int64              `json:"tmdb_id"`
 	Year          *int               `json:"year,omitempty"`
@@ -4507,7 +4512,7 @@ type ServerInterface interface {
 	// SearchReleases Aggregate search releases across all online indexers
 	// (GET /api/v1/releases/search)
 	SearchReleases(w http.ResponseWriter, r *http.Request, params SearchReleasesParams)
-	// SearchMovieReleases Search movie releases from indexers
+	// SearchMovieReleases Search movie and TV metadata
 	// (GET /api/v1/search/movies)
 	SearchMovieReleases(w http.ResponseWriter, r *http.Request, params SearchMovieReleasesParams)
 	// GetSettings List system settings
@@ -12382,6 +12387,34 @@ func (response GetTMDBTVDetails404ApplicationProblemPlusJSONResponse) VisitGetTM
 	return err
 }
 
+type GetTMDBTVDetails503JSONResponse ErrorResponse
+
+func (response GetTMDBTVDetails503JSONResponse) VisitGetTMDBTVDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBTVDetails503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBTVDetails503ApplicationProblemPlusJSONResponse) VisitGetTMDBTVDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type AcquireMovieRequestObject struct {
 	Params AcquireMovieParams
 	Body   *AcquireMovieJSONRequestBody
@@ -14594,6 +14627,34 @@ func (response SearchMovieReleases200JSONResponse) VisitSearchMovieReleasesRespo
 	return err
 }
 
+type SearchMovieReleases400JSONResponse ErrorResponse
+
+func (response SearchMovieReleases400JSONResponse) VisitSearchMovieReleasesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SearchMovieReleases400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SearchMovieReleases400ApplicationProblemPlusJSONResponse) VisitSearchMovieReleasesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type SearchMovieReleases401JSONResponse ErrorResponse
 
 func (response SearchMovieReleases401JSONResponse) VisitSearchMovieReleasesResponse(w http.ResponseWriter) error {
@@ -14618,6 +14679,62 @@ func (response SearchMovieReleases401ApplicationProblemPlusJSONResponse) VisitSe
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SearchMovieReleases403JSONResponse ErrorResponse
+
+func (response SearchMovieReleases403JSONResponse) VisitSearchMovieReleasesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SearchMovieReleases403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SearchMovieReleases403ApplicationProblemPlusJSONResponse) VisitSearchMovieReleasesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SearchMovieReleases503JSONResponse ErrorResponse
+
+func (response SearchMovieReleases503JSONResponse) VisitSearchMovieReleasesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SearchMovieReleases503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SearchMovieReleases503ApplicationProblemPlusJSONResponse) VisitSearchMovieReleasesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -19884,7 +20001,7 @@ type StrictServerInterface interface {
 	// SearchReleases Aggregate search releases across all online indexers
 	// (GET /api/v1/releases/search)
 	SearchReleases(ctx context.Context, request SearchReleasesRequestObject) (SearchReleasesResponseObject, error)
-	// SearchMovieReleases Search movie releases from indexers
+	// SearchMovieReleases Search movie and TV metadata
 	// (GET /api/v1/search/movies)
 	SearchMovieReleases(ctx context.Context, request SearchMovieReleasesRequestObject) (SearchMovieReleasesResponseObject, error)
 	// GetSettings List system settings

@@ -126,6 +126,7 @@ linters:
             - "!**/internal/httpapi/episode_source_test.go"
             - "!**/internal/httpapi/operation_test.go"
             - "!**/internal/httpapi/tv_metadata_browser_test.go"
+            - "!**/internal/httpapi/metadata_discovery_m5_test.go"
             - "!**/internal/httpapi/tv_refresh_test.go"
             - "!**/internal/httpapi/complete_tv_submission_test.go"
             - "!**/internal/httpapi/complete_tv_sender_test.go"

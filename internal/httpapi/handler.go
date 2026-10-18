@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
 	"strconv"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -73,6 +75,7 @@ type ServerHandler struct {
 	revisionSvc            *transfer.RevisionService
 	reuseSvc               *transfer.LibraryReuseService
 	metaProvider           ports.MetadataProvider
+	localMediaReader       ports.LocalMediaSearchReader
 	subSvc                 *subscription.Service
 	subscriptionListSvc    *subscription.ListService
 	controlSvc             *subscription.ControlService
@@ -144,6 +147,12 @@ func NewServerHandler(
 	}); ok {
 		subscriptionListSvc = subscription.NewListService(provider.SubscriptionListReader(), metaProvider)
 	}
+	var localMediaReader ports.LocalMediaSearchReader
+	if provider, ok := a.(interface {
+		LocalMediaSearchReader() ports.LocalMediaSearchReader
+	}); ok {
+		localMediaReader = provider.LocalMediaSearchReader()
+	}
 	return &ServerHandler{
 		subscriptionListSvc: subscriptionListSvc,
 		libraryCatalogSvc:   libraryCatalogSvc,
@@ -155,6 +164,7 @@ func NewServerHandler(
 		acqSvc:              acqSvc,
 		transferSvc:         transferSvc,
 		metaProvider:        metaProvider,
+		localMediaReader:    localMediaReader,
 		subSvc:              subSvc,
 		polSvc:              polSvc,
 		searchSvc:           searchSvc,
@@ -596,88 +606,66 @@ func (s *ServerHandler) SearchMovieReleases(ctx context.Context, request SearchM
 	if actor == nil {
 		return SearchMovieReleases401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
 	}
-
+	query := strings.TrimSpace(request.Params.Query)
+	kind := "multi"
+	if request.Params.Type != nil && *request.Params.Type != "all" {
+		kind = string(*request.Params.Type)
+	}
 	year := 0
 	if request.Params.Year != nil {
 		year = *request.Params.Year
 	}
-
-	results := make([]MovieSearchResult, 0)
-
-	mediaType := "all"
-	if request.Params.Type != nil {
-		mediaType = string(*request.Params.Type)
+	if query == "" || utf8.RuneCountInString(query) > 256 || (kind != "movie" && kind != "tv" && kind != "multi") || (request.Params.Year != nil && (year < 1800 || year > 9999)) {
+		return SearchMovieReleases400JSONResponse{Code: "INVALID_SEARCH", Message: "provide a query, movie/tv/multi type, and optional valid year", RequestId: reqID}, nil
 	}
-
-	// 1. Try querying configured metadata provider (TMDB)
+	var movies []*ports.MovieMetadata
+	var err error
 	if s.metaProvider != nil {
-		movies, err := s.metaProvider.SearchMedia(ctx, request.Params.Query, mediaType, year)
-		if err == nil {
-			for _, m := range movies {
-				mType := m.MediaType
-				if mType == "" {
-					mType = "movie"
-				}
-				res := MovieSearchResult{
-					TmdbId:    m.TMDBID,
-					Title:     m.Title,
-					MediaType: (*MovieSearchResultMediaType)(&mType),
-				}
-				if m.Year > 0 {
-					res.Year = &m.Year
-				}
-				if m.Overview != "" {
-					res.Overview = &m.Overview
-				}
-				if m.PosterURL != "" {
-					res.PosterUrl = &m.PosterURL
-				}
-				results = append(results, res)
-			}
-			return SearchMovieReleases200JSONResponse{Results: results}, nil
-		}
-
-		if !errors.Is(err, ports.ErrAuthRequired) {
-			return SearchMovieReleases401JSONResponse{Code: "SEARCH_FAILED", Message: "request could not be completed", RequestId: reqID}, nil
+		movies, err = s.metaProvider.SearchMedia(ctx, query, kind, year)
+		if err != nil && !errors.Is(err, ports.ErrAuthRequired) {
+			return SearchMovieReleases503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "metadata search is temporarily unavailable", RequestId: reqID}, nil
 		}
 	}
-
-	// 2. If TMDB key unauthenticated or missing: search local media library in database
-	if s.app != nil && s.app.DBPool() != nil {
-		rows, err := s.app.DBPool().Query(ctx,
-			"SELECT id, title, year FROM media WHERE title ILIKE '%' || $1 || '%' LIMIT 20",
-			request.Params.Query)
-		if err == nil {
-			defer rows.Close()
-			for rows.Next() {
-				var mID uuid.UUID
-				var mTitle string
-				var mYear *int32
-				if err := rows.Scan(&mID, &mTitle, &mYear); err == nil {
-					res := MovieSearchResult{
-						TmdbId: 0,
-						Title:  mTitle,
-					}
-					if mYear != nil {
-						y := int(*mYear)
-						res.Year = &y
-					}
-					results = append(results, res)
-				}
-			}
+	if s.metaProvider == nil || errors.Is(err, ports.ErrAuthRequired) {
+		if s.localMediaReader == nil {
+			return SearchMovieReleases503JSONResponse{Code: "METADATA_NOT_CONFIGURED", Message: "metadata service is not configured or its credentials are invalid", RequestId: reqID}, nil
+		}
+		movies, err = s.localMediaReader.SearchLocalMedia(ctx, actor, query, kind, year)
+		if errors.Is(err, ports.ErrForbidden) || errors.Is(err, ports.ErrUnauthorized) {
+			return SearchMovieReleases403JSONResponse{Code: "FORBIDDEN", Message: "catalog read access is no longer available", RequestId: reqID}, nil
+		}
+		if err != nil {
+			return SearchMovieReleases503JSONResponse{Code: "CATALOG_UNAVAILABLE", Message: "local catalog search is temporarily unavailable", RequestId: reqID}, nil
+		}
+		if len(movies) == 0 {
+			return SearchMovieReleases503JSONResponse{Code: "METADATA_NOT_CONFIGURED", Message: "metadata service is not configured or its credentials are invalid", RequestId: reqID}, nil
 		}
 	}
-
-	if len(results) > 0 {
-		return SearchMovieReleases200JSONResponse{Results: results}, nil
+	results := make([]MovieSearchResult, 0, len(movies))
+	for _, m := range movies {
+		if m == nil {
+			return SearchMovieReleases503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "metadata search is temporarily unavailable", RequestId: reqID}, nil
+		}
+		mediaType := m.MediaType
+		if mediaType == "" {
+			mediaType = "movie"
+		}
+		if mediaType != "movie" && mediaType != "tv" {
+			return SearchMovieReleases503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "metadata search is temporarily unavailable", RequestId: reqID}, nil
+		}
+		result := MovieSearchResult{TmdbId: m.TMDBID, Title: m.Title, MediaType: (*MovieSearchResultMediaType)(&mediaType)}
+		if m.Year > 0 {
+			result.Year = &m.Year
+		}
+		if m.Overview != "" {
+			result.Overview = &m.Overview
+		}
+		if m.PosterURL != "" {
+			result.PosterUrl = &m.PosterURL
+		}
+		results = append(results, result)
 	}
-
-	// 3. If no local media and TMDB unauthenticated: return instructional error
-	return SearchMovieReleases401JSONResponse{
-		Code:      "AUTH_REQUIRED",
-		Message:   "TMDB API 密钥未配置或已失效。请在「系统配置」中配置 TMDB 密钥，或设置环境变量 TMDB_API_KEY",
-		RequestId: reqID,
-	}, nil
+	return SearchMovieReleases200JSONResponse{Results: results}, nil
 }
 
 // ListSubscriptions handles GET /api/v1/subscriptions
@@ -1810,12 +1798,14 @@ func (s *ServerHandler) GetTMDBTVDetails(ctx context.Context, request GetTMDBTVD
 	}
 
 	if s.metaProvider == nil {
-		return GetTMDBTVDetails404JSONResponse{Code: "NOT_FOUND", Message: "metadata provider unavailable", RequestId: reqID}, nil
+		return GetTMDBTVDetails503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "metadata provider unavailable", RequestId: reqID}, nil
 	}
-
 	tv, err := s.metaProvider.GetTVDetails(ctx, request.Id, "zh-CN")
-	if err != nil {
-		return GetTMDBTVDetails404JSONResponse{Code: "NOT_FOUND", Message: "request could not be completed", RequestId: reqID}, nil
+	if errors.Is(err, ports.ErrNotFound) {
+		return GetTMDBTVDetails404JSONResponse{Code: "NOT_FOUND", Message: "TV show not found", RequestId: reqID}, nil
+	}
+	if err != nil || tv == nil {
+		return GetTMDBTVDetails503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "TV metadata is temporarily unavailable", RequestId: reqID}, nil
 	}
 
 	var ratingPtr *float32
@@ -1853,6 +1843,8 @@ func (s *ServerHandler) GetTMDBTVDetails(ctx context.Context, request GetTMDBTVD
 		BackdropUrl:   &tv.BackdropURL,
 		Rating:        ratingPtr,
 		Genres:        &tv.Genres,
+		SeasonsCount:  tv.SeasonsCount,
+		EpisodesCount: tv.EpisodesCount,
 		Seasons:       seasons,
 	}, nil
 }

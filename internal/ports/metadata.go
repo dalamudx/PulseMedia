@@ -41,6 +41,8 @@ type TVDetails struct {
 	BackdropURL   string            `json:"backdrop_url,omitempty"`
 	Rating        float64           `json:"rating,omitempty"`
 	Genres        []string          `json:"genres,omitempty"`
+	SeasonsCount  int               `json:"seasons_count"`
+	EpisodesCount int               `json:"episodes_count"`
 	Seasons       []TVSeasonDetails `json:"seasons"`
 }
 

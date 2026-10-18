@@ -575,7 +575,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Search movie releases from indexers */
+        /** Search movie and TV metadata */
         get: operations["searchMovieReleases"];
         put?: never;
         post?: never;
@@ -3429,6 +3429,8 @@ export interface components {
             backdrop_url?: string;
             rating?: number;
             genres?: string[];
+            seasons_count: number;
+            episodes_count: number;
             seasons: components["schemas"]["TMDBTVSeasonItem"][];
         };
         DiscoverMediaItem: {
@@ -5045,7 +5047,7 @@ export interface operations {
         parameters: {
             query: {
                 query: string;
-                type?: "all" | "movie" | "tv";
+                type?: "all" | "movie" | "tv" | "multi";
                 year?: number;
             };
             header?: never;
@@ -5063,8 +5065,38 @@ export interface operations {
                     "application/json": components["schemas"]["MovieSearchResponse"];
                 };
             };
+            /** @description Invalid metadata search input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current account lacks catalog read access */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata provider or catalog unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7998,6 +8030,16 @@ export interface operations {
             };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata provider unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
