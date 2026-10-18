@@ -1,0 +1,59 @@
+{
+  "source_id": "mdaubie-parser-original",
+  "review_status": "partially_reviewed_literal_source",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "canonical_unit_authorization": false,
+  "coverage_authority": false,
+  "reviewed_entries": 5,
+  "candidate_count": 5,
+  "counts": {
+    "positive_title_assertions": 5,
+    "positive_exact_unique_inputs": 5,
+    "exact_unique_overlap_with_gold": 0,
+    "exact_unique_new_beyond_gold": 5,
+    "excluded_inputs": 1
+  },
+  "provenance": {
+    "repository": "https://github.com/mdaubie/torrent-name-parser",
+    "commit": "ec8304db676f3dfe1cfe87a5e569106ef6efbd65",
+    "license": "MIT",
+    "files": [
+      {
+        "path": "LICENSE",
+        "preserved": "review-inputs/mdaubie-parser-original.LICENSE",
+        "sha256": "2565ca8bb69ecfef1e9cee779396c359cd711616c15f9c2f198f5dcf385c60be",
+        "bytes": 1073,
+        "lines": 21
+      },
+      {
+        "path": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+        "preserved": "upstream-mit/mdaubie-parser-original.ParserTest.java.source",
+        "sha256": "3527ae8481fbaa741bba3ecb954198a2387bba6ec86c972935b9858f3792c1b3",
+        "bytes": 2436,
+        "lines": 48
+      }
+    ]
+  },
+  "inventory": "mdaubie-parser-original.inventory.json",
+  "verification": "Exact immutable commit fetched into unique owned temporary directory; originals and MIT licenses read completely with hashline pi.read; preserved bytes compared directly with git show blobs and SHA256 checked. Upstream parsers/tests/builds and fixture generators were not executed. No output-generated datasets preserved.",
+  "exclusions": "README.txt exception case excluded. ParserTest declares no superclass; no comparison superclass necessary. ParsedFilename comparison implementation outside authorized input scope was not fetched or inspected; full admission still pending.",
+  "gold_snapshot": {
+    "declared_reviewed_entries": 609,
+    "actual_entries": 609,
+    "exact_unique_inputs": 609,
+    "sha256": "16f12b79fcad6c2effbdec5804b216e7593b4197384fdb1be36c0216a24354c9"
+  },
+  "capacity": {
+    "requested_starting_gold": 605,
+    "observed_gold": 609,
+    "all_literal_union_with_observed_gold": 771,
+    "all_literal_gap_to_1000": 229,
+    "non_synthetic_literal_candidates": 29,
+    "non_synthetic_literal_union_upper_bound_with_observed_gold": 638,
+    "non_synthetic_gap_to_1000": 362,
+    "all_known_sources_census": false,
+    "note": "Only the two assigned fixed sources and exact overlap with existing gold are counted. Main must union other source censuses. Upper bounds are not acceptance or evidence that every candidate is independent or fully annotatable."
+  }
+}

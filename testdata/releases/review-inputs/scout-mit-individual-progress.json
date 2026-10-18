@@ -1,0 +1,13 @@
+{
+  "schema": "pulse.individual-source-review-progress.v1",
+  "formal_golden_acceptance": false,
+  "authority": false,
+  "original_collection_manifest": "scout-hellberg-singers-husar-esparza-20261013/manifest.json",
+  "reviewed_sources": {
+    "hellberg-release": 75,
+    "singers-scene-release": 7,
+    "husar-movie-title": 12,
+    "esparza-dlshow": 3
+  },
+  "note": "Only exact independently hand-frozen contracts passing source and full output comparison are counted. The pinned collection manifest is an immutable raw inventory; remaining records, original-label conflicts and defects stay pending."
+}

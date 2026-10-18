@@ -1,0 +1,1296 @@
+{
+  "schema": "pulse.release-review-input.v1",
+  "source_id": "rust-ptn",
+  "provenance": {
+    "repository": "IGI-111/torrent-name-parser",
+    "commit": "6f4f42c2c711c53ed787f535d5b8216e6f47c9c5",
+    "path": "src/test.rs",
+    "source_sha256": "2b600d6f0a051cd651b9ff74a3b9d2e528b62ff755b59e0f53c06294eab47d1d",
+    "license_sha256": "555de1884458c8c87eb69a5be47724d7b8ea50a5a2ef73864c8bcfe1e40eb36c",
+    "unique_entries": 92
+  },
+  "license": "MIT",
+  "review_status": "unreviewed",
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "label_scope": "Original scalar getters only; episode may be the first member, not full coverage. No confidence, reasons, canonical units or measurements are inferred.",
+  "entries": [
+    {
+      "release_name": "[ www.UsaBit.com ] - My Cousin Vinny (1992) BluRay 720p 750MB Ganool",
+      "observations": [
+        {
+          "source_line": 5,
+          "original_fields": {
+            "year": 1992,
+            "title": "My Cousin Vinny",
+            "extension": null
+          }
+        },
+        {
+          "source_line": 761,
+          "original_fields": {
+            "resolution": "720p"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "2012.2009.1080p.BluRay.x264.DTS-METiS",
+      "observations": [
+        {
+          "source_line": 11,
+          "original_fields": {
+            "year": 2009,
+            "title": "2012",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[TorrentCounter.to].Pacific.Rim.2.Uprising.2018.1080p.HC.HDRip.x264.[2GB]",
+      "observations": [
+        {
+          "source_line": 16,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2018,
+            "title": "Pacific Rim 2 Uprising",
+            "resolution": "1080p",
+            "quality": "HDRip",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Blade.Runner.2049.2017.HDRip",
+      "observations": [
+        {
+          "source_line": 26,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2017,
+            "title": "Blade Runner 2049",
+            "quality": "HDRip",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Euphoria.US.S01E03.Made.You.Look.1080p.AMZN.WEB-DL.DDP5.1.H.264-KiNGS",
+      "observations": [
+        {
+          "source_line": 34,
+          "original_fields": {
+            "season": 1,
+            "episode": 3,
+            "year": null,
+            "resolution": "1080p",
+            "title": "Euphoria",
+            "extension": null,
+            "country": "US"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "narcos.s01e10.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 44,
+          "original_fields": {
+            "season": 1,
+            "episode": 10,
+            "year": null,
+            "resolution": "1080p",
+            "title": "narcos",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Rome.S01E11.The.Spoils.BluRay.10Bit.1080p.Dts.H265-d3g",
+      "observations": [
+        {
+          "source_line": 52,
+          "original_fields": {
+            "season": 1,
+            "episode": 11,
+            "year": null,
+            "resolution": "1080p",
+            "title": "Rome",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.expanse.s01e09e10.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 60,
+          "original_fields": {
+            "season": 1,
+            "episode": 9,
+            "year": null,
+            "resolution": "1080p",
+            "title": "the expanse",
+            "extension": null
+          }
+        },
+        {
+          "source_line": 477,
+          "original_fields": {
+            "season": 1,
+            "episode": 9
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Attack on Titan (Shingeki no Kyojin) Season 2 [1080p x265 10bit BD Dual Audio AAC]/Episode 30 - Historia",
+      "observations": [
+        {
+          "source_line": 68,
+          "original_fields": {
+            "season": 2,
+            "episode": 30,
+            "year": null,
+            "resolution": "1080p",
+            "title": "Attack on Titan",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Walking Dead S05E03 720p HDTV x264-ASAP[ettv]",
+      "observations": [
+        {
+          "source_line": 76,
+          "original_fields": {
+            "season": 5,
+            "episode": 3,
+            "year": null,
+            "title": "The Walking Dead",
+            "resolution": "720p",
+            "codec": "x264",
+            "group": "ASAP[ettv]",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Hercules (2014) 1080p BrRip H264 - YIFY",
+      "observations": [
+        {
+          "source_line": 86,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Hercules",
+            "resolution": "1080p",
+            "quality": "BrRip",
+            "codec": "H264",
+            "group": "YIFY",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Dawn.of.the.Planet.of.the.Apes.2014.HDRip.XViD-EVO",
+      "observations": [
+        {
+          "source_line": 97,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Dawn of the Planet of the Apes",
+            "quality": "HDRip",
+            "codec": "XViD",
+            "group": "EVO",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Big Bang Theory S08E06 HDTV XviD-LOL [eztv]",
+      "observations": [
+        {
+          "source_line": 107,
+          "original_fields": {
+            "season": 8,
+            "episode": 6,
+            "year": null,
+            "title": "The Big Bang Theory",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "22 Jump Street (2014) 720p BrRip x264 - YIFY",
+      "observations": [
+        {
+          "source_line": 114,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "22 Jump Street",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Hercules.2014.EXTENDED.1080p.WEB-DL.DD5.1.H264-RARBG",
+      "observations": [
+        {
+          "source_line": 121,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Hercules",
+            "audio": "DD5.1",
+            "resolution": "1080p",
+            "codec": "H264",
+            "group": "RARBG",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Hercules.2014.EXTENDED.HDRip.XViD-juggs[ETRG]",
+      "observations": [
+        {
+          "source_line": 133,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Hercules",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Hercules (2014) WEBDL DVDRip XviD-MAX",
+      "observations": [
+        {
+          "source_line": 141,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Hercules",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "WWE Hell in a Cell 2014 PPV WEB-DL x264-WD -={SPARROW}=-",
+      "observations": [
+        {
+          "source_line": 148,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "WWE Hell in a Cell",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "UFC.179.PPV.HDTV.x264-Ebi[rartv]",
+      "observations": [
+        {
+          "source_line": 155,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": null,
+            "title": "UFC 179",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Marvels Agents of S H I E L D S02E05 HDTV x264-KILLERS [eztv]",
+      "observations": [
+        {
+          "source_line": 163,
+          "original_fields": {
+            "season": 2,
+            "episode": 5,
+            "year": null,
+            "title": "Marvels Agents of S H I E L D",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "X-Men.Days.of.Future.Past.2014.1080p.WEB-DL.DD5.1.H264-RARBG",
+      "observations": [
+        {
+          "source_line": 170,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "X-Men Days of Future Past",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Guardians Of The Galaxy 2014 R6 720p HDCAM x264-JYK",
+      "observations": [
+        {
+          "source_line": 177,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Guardians Of The Galaxy",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Marvel's.Agents.of.S.H.I.E.L.D.S02E01.Shadows.1080p.WEB-DL.DD5.1",
+      "observations": [
+        {
+          "source_line": 184,
+          "original_fields": {
+            "season": 2,
+            "episode": 1,
+            "year": null,
+            "title": "Marvel's Agents of S H I E L D",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Marvels Agents of S.H.I.E.L.D. S02E06 HDTV x264-KILLERS[ettv]",
+      "observations": [
+        {
+          "source_line": 193,
+          "original_fields": {
+            "season": 2,
+            "episode": 6,
+            "year": null,
+            "title": "Marvels Agents of S.H.I.E.L.D.",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Guardians of the Galaxy (CamRip / 2014)",
+      "observations": [
+        {
+          "source_line": 200,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Guardians of the Galaxy",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The.Walking.Dead.S05E03.1080p.WEB-DL.DD5.1.H.264-Cyphanix[rartv]",
+      "observations": [
+        {
+          "source_line": 208,
+          "original_fields": {
+            "season": 5,
+            "episode": 3,
+            "year": null,
+            "title": "The Walking Dead",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Brave.2012.R5.DVDRip.XViD.LiNE-UNiQUE",
+      "observations": [
+        {
+          "source_line": 215,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2012,
+            "title": "Brave",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Lets.Be.Cops.2014.BRRip.XViD-juggs[ETRG]",
+      "observations": [
+        {
+          "source_line": 222,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Lets Be Cops",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "These.Final.Hours.2013.WBBRip XViD",
+      "observations": [
+        {
+          "source_line": 229,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2013,
+            "title": "These Final Hours",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Downton Abbey 5x06 HDTV x264-FoV [eztv]",
+      "observations": [
+        {
+          "source_line": 236,
+          "original_fields": {
+            "season": 5,
+            "episode": 6,
+            "year": null,
+            "title": "Downton Abbey",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Annabelle.2014.HC.HDRip.XViD.AC3-juggs[ETRG]",
+      "observations": [
+        {
+          "source_line": 243,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Annabelle",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Lucy.2014.HC.HDRip.XViD-juggs[ETRG]",
+      "observations": [
+        {
+          "source_line": 251,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Lucy",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Flash 2014 S01E04 HDTV x264-FUM[ettv]",
+      "observations": [
+        {
+          "source_line": 259,
+          "original_fields": {
+            "season": 1,
+            "episode": 4,
+            "year": 2014,
+            "title": "The Flash",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "South Park S18E05 HDTV x264-KILLERS [eztv]",
+      "observations": [
+        {
+          "source_line": 266,
+          "original_fields": {
+            "season": 18,
+            "episode": 5,
+            "year": null,
+            "title": "South Park",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Flash 2014 S01E03 HDTV x264-LOL[ettv]",
+      "observations": [
+        {
+          "source_line": 273,
+          "original_fields": {
+            "season": 1,
+            "episode": 3,
+            "year": 2014,
+            "title": "The Flash",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Flash 2014 S01E01 HDTV x264-LOL[ettv]",
+      "observations": [
+        {
+          "source_line": 280,
+          "original_fields": {
+            "season": 1,
+            "episode": 1,
+            "year": 2014,
+            "title": "The Flash",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Lucy 2014 Dual-Audio WEBRip 1400Mb",
+      "observations": [
+        {
+          "source_line": 287,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Lucy",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Teenage Mutant Ninja Turtles (HdRip / 2014)",
+      "observations": [
+        {
+          "source_line": 294,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Teenage Mutant Ninja Turtles",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Teenage Mutant Ninja Turtles (unknown_release_type / 2014)",
+      "observations": [
+        {
+          "source_line": 301,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "year": 2014,
+            "title": "Teenage Mutant Ninja Turtles",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Simpsons S26E05 HDTV x264 PROPER-LOL [eztv]",
+      "observations": [
+        {
+          "source_line": 308,
+          "original_fields": {
+            "season": 26,
+            "episode": 5,
+            "year": null,
+            "title": "The Simpsons",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "To.All.The.Boys.Always.And.Forever.2021.1080p.NF.WEB-DL.x265.10bit.HDR.DDP5.1.Atmos-NWD",
+      "observations": [
+        {
+          "source_line": 316,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "resolution": "1080p",
+            "quality": "WEB-DL",
+            "title": "To All The Boys Always And Forever",
+            "year": 2021,
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The EXPANSE - S03 E01 - Fight or Flight (1080p - AMZN Web-DL)",
+      "observations": [
+        {
+          "source_line": 329,
+          "original_fields": {
+            "season": 3,
+            "episode": 1,
+            "title": "The EXPANSE",
+            "resolution": "1080p",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[Judas] Re Zero 2020 - S01E01",
+      "observations": [
+        {
+          "source_line": 336,
+          "original_fields": {
+            "season": 1,
+            "episode": 1,
+            "title": "Re Zero",
+            "year": 2020,
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Fargo.S04E03.WEB.x264-PHOENiX[TGx]",
+      "observations": [
+        {
+          "source_line": 343,
+          "original_fields": {
+            "season": 4,
+            "episode": 3,
+            "title": "Fargo",
+            "quality": "WEB",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[SubsPlease] Dr. Stone S2 - 07 (1080p) [33538C7C]",
+      "observations": [
+        {
+          "source_line": 350,
+          "original_fields": {
+            "season": 2,
+            "episode": 7,
+            "title": "Dr. Stone",
+            "resolution": "1080p",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[SubsPlease] Fumetsu no Anata e S2 - 01 (1080p) [1D65E30D]",
+      "observations": [
+        {
+          "source_line": 357,
+          "original_fields": {
+            "season": 2,
+            "episode": 1,
+            "title": "Fumetsu no Anata e",
+            "resolution": "1080p",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "A Shaun the Sheep Movie - Farmageddon (2019) [h265 Remux-1080p] [tt6193408]",
+      "observations": [
+        {
+          "source_line": 364,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "imdb_tag": "tt6193408",
+            "year": 2019,
+            "title": "A Shaun the Sheep Movie Farmageddon",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Yes Day (2021) [h265 WEBDL-1080p] [tt8521876]",
+      "observations": [
+        {
+          "source_line": 375,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "imdb_tag": "tt8521876",
+            "year": 2021,
+            "title": "Yes Day",
+            "extension": null
+          }
+        },
+        {
+          "source_line": 415,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "imdb_tag": "tt8521876",
+            "year": 2021,
+            "title": "Yes Day",
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[Rip Time] Mushoku Tensei_ Jobless Reincarnation - 12 [1080p]",
+      "observations": [
+        {
+          "source_line": 384,
+          "original_fields": {}
+        }
+      ]
+    },
+    {
+      "release_name": "Pokémon the Movie - Black - Victini and Reshiram (2011) [x265 Bluray-1080p] [tt1961324]",
+      "observations": [
+        {
+          "source_line": 386,
+          "original_fields": {
+            "season": null,
+            "episode": null,
+            "imdb_tag": "tt1961324",
+            "title": "Pokémon the Movie Black - Victini and Reshiram",
+            "year": 2011,
+            "extension": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "All.Creatures.Great.And.Small.2020.S01.AMZN.WEBRip.x264-ION10[eztv.re]",
+      "observations": [
+        {
+          "source_line": 399,
+          "original_fields": {
+            "season": 1,
+            "episode": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Midsomer Murders 1997 Season 2 Complete TVRips x264 [i_c]",
+      "observations": [
+        {
+          "source_line": 404,
+          "original_fields": {
+            "season": 2,
+            "episode": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S01E01.avi",
+      "observations": [
+        {
+          "source_line": 425,
+          "original_fields": {
+            "title": "Life on Mars",
+            "extension": "avi",
+            "country": "US"
+          }
+        },
+        {
+          "source_line": 446,
+          "original_fields": {
+            "title": "Life on Mars"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(UK).S01E01.m4v",
+      "observations": [
+        {
+          "source_line": 432,
+          "original_fields": {
+            "title": "Life on Mars",
+            "extension": "m4v",
+            "country": "UK"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.avi",
+      "observations": [
+        {
+          "source_line": 454,
+          "original_fields": {
+            "title": "Life on Mars"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Doctor.who.(2003).S01E01.avi",
+      "observations": [
+        {
+          "source_line": 467,
+          "original_fields": {
+            "title": "Doctor who",
+            "season": 1,
+            "episode": 1
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.expanse.s01e09-e10.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 496,
+          "original_fields": {
+            "season": 1,
+            "episode": 9
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.expanse.s01e09 - e10.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 515,
+          "original_fields": {
+            "season": 1,
+            "episode": 9
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.expanse.s01e09 e10.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 534,
+          "original_fields": {
+            "season": 1,
+            "episode": 9
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.expanse.s01e09e11.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 552,
+          "original_fields": {
+            "season": 1,
+            "episode": 9
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.expanse.s01e09e10e11.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 565,
+          "original_fields": {
+            "season": 1,
+            "episode": 9
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.expanse.s01e09e0.1080p.bluray.x264-rovers",
+      "observations": [
+        {
+          "source_line": 577,
+          "original_fields": {
+            "season": 1,
+            "episode": 9
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The.Last.of.Us.s01E01.avi",
+      "observations": [
+        {
+          "source_line": 594,
+          "original_fields": {
+            "title": "The Last of Us",
+            "season": 1,
+            "country": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.last.of.us.s01E01.avi",
+      "observations": [
+        {
+          "source_line": 601,
+          "original_fields": {
+            "title": "the last of us",
+            "season": 1,
+            "country": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "the.last.of.us.2023.s01E01.avi",
+      "observations": [
+        {
+          "source_line": 608,
+          "original_fields": {
+            "title": "the last of us",
+            "season": 1,
+            "country": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "criminal.uk.s01E01.avi",
+      "observations": [
+        {
+          "source_line": 620,
+          "original_fields": {
+            "title": "criminal uk",
+            "country": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "criminal.uk.2019.s01E01.avi",
+      "observations": [
+        {
+          "source_line": 627,
+          "original_fields": {
+            "title": "criminal uk",
+            "year": 2019,
+            "country": null
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.US.S01E01.avi",
+      "observations": [
+        {
+          "source_line": 639,
+          "original_fields": {
+            "title": "Life on Mars"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.us.S01E01.avi",
+      "observations": [
+        {
+          "source_line": 644,
+          "original_fields": {
+            "title": "Life on Mars"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.UK.S01E01.avi",
+      "observations": [
+        {
+          "source_line": 649,
+          "original_fields": {
+            "title": "Life on Mars"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.uk.S01E01.avi",
+      "observations": [
+        {
+          "source_line": 654,
+          "original_fields": {
+            "title": "Life on Mars"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.srt",
+      "observations": [
+        {
+          "source_line": 666,
+          "original_fields": {
+            "extension": "srt"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.ssa",
+      "observations": [
+        {
+          "source_line": 671,
+          "original_fields": {
+            "extension": "ssa"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.svb",
+      "observations": [
+        {
+          "source_line": 676,
+          "original_fields": {
+            "extension": "svb"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.vtt",
+      "observations": [
+        {
+          "source_line": 681,
+          "original_fields": {
+            "extension": "vtt"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.ttml",
+      "observations": [
+        {
+          "source_line": 686,
+          "original_fields": {
+            "extension": "ttml"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.dfxp",
+      "observations": [
+        {
+          "source_line": 691,
+          "original_fields": {
+            "extension": "dfxp"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Life.on.Mars.(US).S00E01.dFxP",
+      "observations": [
+        {
+          "source_line": 696,
+          "original_fields": {
+            "extension": "dFxP"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Iceberg Slim - Mama Black Widow_T3 - 2000 - FRENCH - EPUB",
+      "observations": [
+        {
+          "source_line": 708,
+          "original_fields": {
+            "language": "FRENCH"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Black Widow 2021 3D Top-Bottom TRUEFRENCH 1080p BluRay x264-FrIeNdS",
+      "observations": [
+        {
+          "source_line": 715,
+          "original_fields": {
+            "language": "TRUEFRENCH"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Black Widow (2021) Multi 1080p BDRip x265 AC3",
+      "observations": [
+        {
+          "source_line": 722,
+          "original_fields": {
+            "language": "Multi"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Black Widow 2021 MULTi 2160p UHD Bluray HDR x265-DUSTiN",
+      "observations": [
+        {
+          "source_line": 728,
+          "original_fields": {
+            "language": "MULTi"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "la veuve noire (black widow) 1986 french 720p TVrip x264-dRuIdE",
+      "observations": [
+        {
+          "source_line": 734,
+          "original_fields": {
+            "language": "french"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Avenged 2013 FRENCH COMPLETE BLURAY-USELESS",
+      "observations": [
+        {
+          "source_line": 741,
+          "original_fields": {
+            "language": "FRENCH"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Les 4 filles du docteur March S01 1987 VFF 720p HDTV AVC AAC VaCa7",
+      "observations": [
+        {
+          "source_line": 748,
+          "original_fields": {
+            "language": "VFF"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Black Widow 2021 MULTi VFF 2160p UHD Bluray HDR x265-DUSTiN",
+      "observations": [
+        {
+          "source_line": 769,
+          "original_fields": {
+            "resolution": "2160p"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Black Widow 2021 FRENCH BluRay 1080p",
+      "observations": [
+        {
+          "source_line": 775,
+          "original_fields": {
+            "resolution": "1080p"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "BLACK WIDOW 2021 VFF VO TRUEHD ATMOS 2160P UHD BLURAY REMUX HEVC HDR10-Obi",
+      "observations": [
+        {
+          "source_line": 781,
+          "original_fields": {
+            "resolution": "2160P"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Kaamelott Integrale FRENCH [1080p] BDRIP HEVC-H265 10bits - Themouche",
+      "observations": [
+        {
+          "source_line": 791,
+          "original_fields": {
+            "resolution": "1080p"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "éé",
+      "observations": [
+        {
+          "source_line": 799,
+          "original_fields": {}
+        }
+      ]
+    },
+    {
+      "release_name": "é2000",
+      "observations": [
+        {
+          "source_line": 800,
+          "original_fields": {}
+        }
+      ]
+    },
+    {
+      "release_name": "é2000é",
+      "observations": [
+        {
+          "source_line": 801,
+          "original_fields": {}
+        }
+      ]
+    }
+  ]
+}

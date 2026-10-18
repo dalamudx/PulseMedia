@@ -1,0 +1,149 @@
+version: "2"
+
+linters:
+  enable:
+    - depguard
+    - govet
+    - staticcheck
+    - unused
+    - ineffassign
+  settings:
+    depguard:
+      rules:
+        domain:
+          list-mode: lax
+          files:
+            - "**/internal/domain/**"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/ports"
+              desc: "domain must not import ports"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/usecase"
+              desc: "domain must not import usecase"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/store"
+              desc: "domain must not import store"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/adapter"
+              desc: "domain must not import adapter"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/httpapi"
+              desc: "domain must not import httpapi"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/platform"
+              desc: "domain must not import platform"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/app"
+              desc: "domain must not import app"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/command"
+              desc: "domain must not import command"
+            - pkg: "database/sql"
+              desc: "domain must not import database/sql"
+            - pkg: "net/http"
+              desc: "domain must not import net/http"
+
+        ports:
+          list-mode: lax
+          files:
+            - "**/internal/ports/**"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/usecase"
+              desc: "ports must not import usecase"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/store"
+              desc: "ports must not import store"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/adapter"
+              desc: "ports must not import adapter"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/httpapi"
+              desc: "ports must not import httpapi"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/app"
+              desc: "ports must not import app"
+
+        usecase:
+          list-mode: lax
+          files:
+            - "**/internal/usecase/**"
+            # External integration tests assemble ports with real adapters.
+            - "!**/*_test.go"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/adapter"
+              desc: "usecase must not import adapter directly"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/httpapi"
+              desc: "usecase must not import httpapi"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/app"
+              desc: "usecase must not import app"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/store"
+              desc: "usecases must access persistence through narrow ports"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/platform"
+              desc: "usecases must inject platform contracts"
+            - pkg: "github.com/jackc/pgx/v5"
+              desc: "usecases must not expose database driver types"
+            - pkg: "github.com/dalamudx/PulseMedia/internal/usecase"
+              desc: "usecases must compose business dependencies through ports"
+
+
+        library-usecase:
+          list-mode: lax
+          files:
+            - "**/internal/usecase/library/**"
+            - "!**/*_test.go"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/store"
+              desc: "library usecase must access persistence through ports"
+            - pkg: "github.com/jackc/pgx/v5"
+              desc: "library usecase must not depend on database driver types"
+
+        search-endpoint:
+          list-mode: lax
+          files:
+            - "**/internal/usecase/search/endpoint.go"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/store"
+              desc: "search endpoint must access persistence through ports"
+            - pkg: "github.com/jackc/pgx/v5"
+              desc: "search endpoint must not expose database driver types"
+
+        movie-matcher:
+          list-mode: lax
+          files:
+            - "**/internal/usecase/media/matcher.go"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/store"
+              desc: "movie matcher must access persistence through ports"
+            - pkg: "github.com/jackc/pgx/v5"
+              desc: "movie matcher must not expose database driver types"
+
+        mediaserver-usecase:
+          list-mode: lax
+          files:
+            - "**/internal/usecase/mediaserver/**"
+            - "!**/*_test.go"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/store"
+              desc: "media server usecase must access persistence through ports"
+            - pkg: "github.com/jackc/pgx/v5"
+              desc: "media server usecase must not expose database driver types"
+
+        httpapi:
+          list-mode: lax
+          files:
+            - "**/internal/httpapi/**"
+            # Only these external test fixtures compose adapters.
+            - "!**/internal/httpapi/episode_mapping_test.go"
+            - "!**/internal/httpapi/episode_source_test.go"
+            - "!**/internal/httpapi/operation_test.go"
+            - "!**/internal/httpapi/tv_metadata_browser_test.go"
+            - "!**/internal/httpapi/tv_refresh_test.go"
+            - "!**/internal/httpapi/complete_tv_submission_test.go"
+            - "!**/internal/httpapi/complete_tv_sender_test.go"
+            - "!**/internal/httpapi/m4_r3_real_variants_test.go"
+            - "!**/internal/httpapi/complete_tv_sender_concurrency_test.go"
+            - "!**/internal/httpapi/complete_tv_sender_fences_test.go"
+            - "!**/internal/httpapi/complete_tv_native_observer_test.go"
+            - "!**/internal/httpapi/complete_tv_tracking_test.go"
+            - "!**/internal/httpapi/complete_tv_tracking_boundaries_test.go"
+            - "!**/internal/httpapi/upgrade_preparation_test.go"
+            - "!**/internal/httpapi/complete_tv_tracking_metainfo_test.go"
+            - "!**/internal/httpapi/complete_tv_organization_review_test.go"
+            - "!**/internal/httpapi/complete_tv_organization_test.go"
+            - "!**/internal/httpapi/complete_tv_organization_public_test.go"
+            - "!**/internal/httpapi/complete_tv_organization_preview_test.go"
+            - "!**/internal/httpapi/complete_tv_organization_preview_browser_test.go"
+            - "!**/internal/httpapi/complete_tv_organization_recovery_test.go"
+            - "!**/internal/httpapi/complete_tv_organization_fence_test.go"
+          deny:
+            - pkg: "github.com/dalamudx/PulseMedia/internal/adapter"
+              desc: "httpapi must not import adapter directly"

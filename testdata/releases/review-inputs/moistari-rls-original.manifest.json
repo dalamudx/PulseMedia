@@ -1,0 +1,76 @@
+{
+  "source_id": "moistari-rls-original",
+  "repository": "https://github.com/moistari/rls",
+  "commit": "f84797726c6af8d64a228d9349832002c8f33888",
+  "license": "MIT",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "reviewed_entries": 104,
+  "review_status": "104_individually_reviewed_literal_contracts_others_pending",
+  "counts": {
+    "raw_records": 407,
+    "positive_title_assertions": 404,
+    "video_type_positive_title_assertions": 266,
+    "movie": 158,
+    "episode": 83,
+    "series": 25,
+    "non_video_or_unspecified_records": 141,
+    "synthetic_or_unestablished_metadata_stress_records": 9,
+    "non_video_payload_with_video_type_records": 4,
+    "qualified_raw_positive_title_capacity": 253,
+    "qualified_exact_gold_overlap": 61,
+    "qualified_not_in_gold": 192,
+    "video_exact_existing_source_overlap": 69,
+    "qualified_exact_existing_source_overlap": 69,
+    "qualified_novel_beyond_existing_sources": 184,
+    "individually_audited_entries": 40,
+    "reviewed_entries": 0
+  },
+  "files": [
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/LICENSE",
+      "sha256": "4fd0093da480945ec7ead12424001aab0e3678f5dddbc2af1a580a2bfe4668cf"
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/tests.yaml",
+      "sha256": "59a168ae628271f51f361ed1bbe6e91ba97ec03befdb7b400079861337f87620"
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/rls_test.go",
+      "sha256": "924c0367698b5a37a05401cd9d6944969fd2f568b3768d580d9cdb71a852b976"
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/scan_test.go",
+      "sha256": "09a6b2be3009521495dac0d65ff6e680fce5a34e7ded359c476fed5a91570a3b"
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/test.sh",
+      "sha256": "7b625ec52cda776aeadee5e4be99e3d4b9f2b7735de13981a653869f238800f1"
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.audit.json",
+      "sha256": "a28fe992f5aabab8b604b2e5949ebeed7b35d288a55a200cf0817ea0bb8e64ac"
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.literals.jsonl",
+      "sha256": "a881492e1ce8ce4a3027166eeeead36113aeb2b087624153684550592028fbc7"
+    }
+  ],
+  "authorship_evidence": {
+    "comparison_harness": "rls_test.go TestParseRelease lines 22-61 compares parsed actual against test.exp from rlsTests lines 822-881",
+    "export_helper": "rls_test.go TestExport_tests lines 403-466 sorts and reserializes existing test.exp; never invokes ParseRelease",
+    "separate_observation_harness": "scan_test.go and test.sh operate library.txt/releaselist.txt, not tests.yaml",
+    "history": "Pinned source commit dated 2025-06-29; local checkout shallow. No unseen history asserted.",
+    "qualification": "Independent literal expectations demonstrated by comparison/export dataflow at fixed commit; complete prehistory unavailable.",
+    "execution": "No upstream parser, test, scanner, export or generator executed"
+  },
+  "limitations": [
+    "Not an independent source family from ajarsnuggle/rls: 404 exact inputs overlap.",
+    "Raw upstream resolution 1080p on index 68 contradicts literal 1080i; audited resolution withheld as unknown.",
+    "The original forty-item preprobe audit remains immutable; 80 unique consensus contracts now pass the strengthened shared gold checker. Unreviewed, conflicting, synthetic and non-video inputs remain excluded."
+  ],
+  "entries": []
+}

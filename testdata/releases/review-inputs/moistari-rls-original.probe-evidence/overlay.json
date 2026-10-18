@@ -1,0 +1,6 @@
+{
+  "Replace": {
+    "/data/dev/PulseMedia/internal/domain/media/reviewed_full_corpus_test.go": "/data/temp/pulse-m3-complete.AixjUd/moistari-rls-original/reviewed_full_corpus_test.go",
+    "/data/dev/PulseMedia/testdata/releases/reviewed-full.json": "/data/temp/pulse-m3-complete.AixjUd/moistari-rls-original/reviewed-full.json"
+  }
+}

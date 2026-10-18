@@ -1,0 +1,72 @@
+{
+  "source_id": "beast-full-original",
+  "license": "MIT",
+  "review_status": "partially_reviewed_literal_source",
+  "accepted": false,
+  "formal_golden_acceptance": false,
+  "canonical_unit_authorization": false,
+  "coverage_authority": false,
+  "reviewed_entries": 27,
+  "candidate_count": 119,
+  "candidate_count_semantics": "Capacity only: 119 different exact input strings with positive literal title assertions across test/main.js and test/title.js. Not gold, not a count of fully annotated entries, and not necessarily new relative to other sources or reviewed-full.json.",
+  "counts": {
+    "main": {
+      "test_blocks": 32,
+      "literal_input_occurrences": 32,
+      "parse_assertions": 32,
+      "positive_title_assertions": 32,
+      "distinct_positive_title_inputs": 32,
+      "assertion_semantics": "32 deep.equal complete-object assertions, each with one literal releaseName input and a positive title. Preserve every original field, including contradictory or incomplete coverage declarations; no source-wide acceptance."
+    },
+    "title": {
+      "test_blocks": 85,
+      "release_name_declarations": 82,
+      "inline_literal_input_occurrences": 7,
+      "literal_input_occurrences": 89,
+      "parse_assertions": 90,
+      "positive_title_assertions": 87,
+      "distinct_positive_title_inputs": 87,
+      "negative_title_assertions": 2,
+      "other_assertions_reusing_input": 1,
+      "assertion_semantics": "82 releaseName declarations and 7 inline literal parse inputs. 87 positive title assertions (deep.include objects or direct title equality); 2 negative title inequalities do not establish an expected title and are excluded from candidate_count. One additional not.have.property languages assertion reuses the To Love-Ru input and adds no title candidate."
+    },
+    "raw": {
+      "test_blocks": 117,
+      "literal_input_occurrences": 121,
+      "parse_assertions": 122,
+      "positive_title_assertions": 119,
+      "distinct_positive_title_inputs": 119,
+      "semantics": "Raw totals sum the two original files, excluding test-description strings. Literal input occurrences count releaseName declarations and inline parse input literals once; parse assertions additionally count the repeated language-property assertion. Exact-string union of positive title inputs is 119, with no cross-file duplicate positive input."
+    }
+  },
+  "provenance": {
+    "repository": "https://github.com/TheBeastLT/parse-torrent-title",
+    "commit": "2fb0c592143b3a86ba06e06b18068077334526c8",
+    "verification_method": "Fetched the exact immutable Git commit; extracted test/main.js, test/title.js and LICENSE using git show. Verified all three SHA-256 values before preservation, read all source lines through hashline read, wrote verbatim original bytes, then checked destination SHA-256 and byte-for-byte equality against the extracted Git blobs. Upstream parser and tests were not executed.",
+    "files": [
+      {
+        "path": "test/main.js",
+        "source_file": "../upstream-mit/beast-full-main-original.test.js",
+        "sha256": "2ec8d9bdd8efbb2f6fd872a1cc5d0b095aafddc52cc92dbfbe7d9ff5389e1116",
+        "bytes": 13543,
+        "lines": 395
+      },
+      {
+        "path": "test/title.js",
+        "source_file": "../upstream-mit/beast-full-title-original.test.js",
+        "sha256": "8eb2936eba975f4fd8c003bbcc89c067b1682a69e7f84cac36bdc86bbb2da3c4",
+        "bytes": 24604,
+        "lines": 435
+      },
+      {
+        "path": "LICENSE",
+        "source_file": "beast-full-original.LICENSE",
+        "sha256": "4b204d94be3a7487c902684b4ef5d240d169d367b17de72d54360f8351fa27ac",
+        "bytes": 1074,
+        "lines": 21,
+        "copyright": "Copyright (c) 2018 Clément Escolano"
+      }
+    ]
+  },
+  "audit_note": "Six exact inputs have individually reviewed full contracts in reviewed-full.json; the other113 positive-title inputs remain pending, including duplicates across sources. All original input/expected bytes, assertion locations, license and hashes remain unchanged. No upstream parser or generator is executed. Whole-source accepted/formal_golden_acceptance/canonical_unit_authorization/coverage_authority remain false. Omitted fields remain unasserted; lexical quality labels are not measurements."
+}

@@ -1,0 +1,726 @@
+[
+  {
+    "index": 2,
+    "id": "next-A-002",
+    "input": "Movies/Interstellar (2014)/00136.m2ts",
+    "pending": "Directory identity does not establish complete disc-segment coverage; pending source/contract adjudication.",
+    "expected": {
+      "title": "Interstellar",
+      "year": 2014,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0,
+      "requires_review": true,
+      "reason": "partial_movie_content",
+      "quality": {
+        "resolution": "",
+        "source": "",
+        "codec": "",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 4,
+    "id": "next-A-004",
+    "input": "TV Shows/Star Trek - Prodigy/Season 2/Star Trek - Prodigy - S02E01-E02 - Into the Breach Bluray-1080p Remux.mkv",
+    "pending": "",
+    "expected": {
+      "title": "Star Trek Prodigy",
+      "year": 0,
+      "media_type": "tv",
+      "season": 2,
+      "episodes": [
+        1,
+        2
+      ],
+      "unit_keys": [
+        "S02E01",
+        "S02E02"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.95,
+      "requires_review": false,
+      "reason": "multi_episode_range",
+      "quality": {
+        "resolution": "1080p",
+        "source": "Remux",
+        "codec": "",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 5,
+    "id": "next-A-005",
+    "input": "TV Shows/Ghosts (US)/Season 5/Ghosts (US) - S05E12 - The List WEBRip-1080p.mkv",
+    "pending": "",
+    "expected": {
+      "title": "Ghosts",
+      "year": 0,
+      "media_type": "tv",
+      "season": 5,
+      "episodes": [
+        12
+      ],
+      "unit_keys": [
+        "S05E12"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.95,
+      "requires_review": false,
+      "reason": "standard_season_episode",
+      "quality": {
+        "resolution": "1080p",
+        "source": "WEBRip",
+        "codec": "",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 7,
+    "id": "next-A-007",
+    "input": "TV Shows/Wheel of Fortune/Season 43/Wheel of Fortune - 2026-03-23 - Hawaiian Vacation 1 HDTV-720p.mkv",
+    "pending": "",
+    "expected": {
+      "title": "Wheel of Fortune",
+      "year": 0,
+      "media_type": "tv",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0,
+      "requires_review": true,
+      "reason": "episode_coverage_unresolved",
+      "quality": {
+        "resolution": "720p",
+        "source": "HDTV",
+        "codec": "",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 8,
+    "id": "next-A-008",
+    "input": "Koln.50667.S2013E015.German.1080p.RTLP.WEB-DL.AAC2.0.H.264-GLOTZE.nzb",
+    "pending": "",
+    "expected": {
+      "title": "Koln 50667",
+      "year": 0,
+      "media_type": "tv",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0,
+      "requires_review": true,
+      "reason": "episode_coverage_unresolved",
+      "quality": {
+        "resolution": "1080p",
+        "source": "WEB-DL",
+        "codec": "H264",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "GLOTZE"
+      }
+    }
+  },
+  {
+    "index": 9,
+    "id": "next-A-009",
+    "input": "Star.Wars.Episode.VI.Return.of.the.Jedi.1983.2160p.UHD.BluRay.REMUX.DV.HDR.HEVC.TrueHD7.1.Atmos-3L.DUAL-LACTATO.nzb",
+    "pending": "",
+    "expected": {
+      "title": "Star Wars Episode VI Return of the Jedi",
+      "year": 1983,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "2160p",
+        "source": "Remux",
+        "codec": "HEVC",
+        "hdr": "DV",
+        "audio": "",
+        "edition": "",
+        "group": "3L"
+      }
+    }
+  },
+  {
+    "index": 13,
+    "id": "next-A-013",
+    "input": "[Onalrie] ReZero kara Hajimeru Isekai Seikatsu - S04E18 [1080p WEBRip AV1]",
+    "pending": "",
+    "expected": {
+      "title": "ReZero kara Hajimeru Isekai Seikatsu",
+      "year": 0,
+      "media_type": "tv",
+      "season": 4,
+      "episodes": [
+        18
+      ],
+      "unit_keys": [
+        "S04E18"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.95,
+      "requires_review": false,
+      "reason": "standard_season_episode",
+      "quality": {
+        "resolution": "1080p",
+        "source": "WEBRip",
+        "codec": "AV1",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "Onalrie"
+      }
+    }
+  },
+  {
+    "index": 15,
+    "id": "next-A-015",
+    "input": "[SubsPlease] Frieren - S01E12 [1080p].mkv",
+    "pending": "",
+    "expected": {
+      "title": "Frieren",
+      "year": 0,
+      "media_type": "tv",
+      "season": 1,
+      "episodes": [
+        12
+      ],
+      "unit_keys": [
+        "S01E12"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.95,
+      "requires_review": false,
+      "reason": "standard_season_episode",
+      "quality": {
+        "resolution": "1080p",
+        "source": "",
+        "codec": "",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "SubsPlease"
+      }
+    }
+  },
+  {
+    "index": 16,
+    "id": "next-A-016",
+    "input": "(Erai-raws) Bleach - S01E05 [1080p][HEVC].mkv",
+    "pending": "",
+    "expected": {
+      "title": "Bleach",
+      "year": 0,
+      "media_type": "tv",
+      "season": 1,
+      "episodes": [
+        5
+      ],
+      "unit_keys": [
+        "S01E05"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.95,
+      "requires_review": false,
+      "reason": "standard_season_episode",
+      "quality": {
+        "resolution": "1080p",
+        "source": "",
+        "codec": "HEVC",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "Erai-raws"
+      }
+    }
+  },
+  {
+    "index": 17,
+    "id": "next-A-017",
+    "input": "{Judas} Jujutsu Kaisen - S02E03 [1080p].mkv",
+    "pending": "",
+    "expected": {
+      "title": "Jujutsu Kaisen",
+      "year": 0,
+      "media_type": "tv",
+      "season": 2,
+      "episodes": [
+        3
+      ],
+      "unit_keys": [
+        "S02E03"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.95,
+      "requires_review": false,
+      "reason": "standard_season_episode",
+      "quality": {
+        "resolution": "1080p",
+        "source": "",
+        "codec": "",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "Judas"
+      }
+    }
+  },
+  {
+    "index": 20,
+    "id": "next-A-020",
+    "input": "The.Devil.at.4.OClock.1961.MULTi.VFi.1080p.WEBRip.AC3.2.0.H264-Wawacity.WIN",
+    "pending": "",
+    "expected": {
+      "title": "The Devil at 4 OClock",
+      "year": 1961,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "1080p",
+        "source": "WEBRip",
+        "codec": "H264",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "Wawacity.WIN"
+      }
+    }
+  },
+  {
+    "index": 24,
+    "id": "next-A-024",
+    "input": "Evangelion__3.33_You_Can_(Not)_Redo.2012.VF-VOSTFR.1080p.HDlight.EAC3-AC3.x265.Wawacity.win",
+    "pending": "",
+    "expected": {
+      "title": "Evangelion 3 33 You Can (Not) Redo",
+      "year": 2012,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "1080p",
+        "source": "",
+        "codec": "HEVC",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 27,
+    "id": "next-A-027",
+    "input": "1917.2019.MULTi.VFF.2160p.BLURAY.4KLight.DV.HDR.x265.TrueHD.7.1.Atmos.Bender_37.mkv",
+    "pending": "",
+    "expected": {
+      "title": "1917",
+      "year": 0,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0,
+      "requires_review": true,
+      "reason": "ambiguous_media_year",
+      "quality": {
+        "resolution": "2160p",
+        "source": "Bluray",
+        "codec": "HEVC",
+        "hdr": "DV",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 29,
+    "id": "next-A-029",
+    "input": "Big+Fish+%282003%29+MULTi+VFI+2160p+10bit+4KLight+HDR+BluRay+DTS-HD+MA+7.1+x265-QTZ",
+    "pending": "",
+    "expected": {
+      "title": "Big Fish",
+      "year": 2003,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "2160p",
+        "source": "Bluray",
+        "codec": "HEVC",
+        "hdr": "HDR10",
+        "audio": "",
+        "edition": "",
+        "group": "QTZ"
+      }
+    }
+  },
+  {
+    "index": 31,
+    "id": "next-A-031",
+    "input": "Scary Movie 5 (2013)   1080p FR EN x264 ac3 mHDgz-Zone-Telechargement.OrG",
+    "pending": "",
+    "expected": {
+      "title": "Scary Movie 5",
+      "year": 2013,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "1080p",
+        "source": "",
+        "codec": "H264",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "Zone"
+      }
+    }
+  },
+  {
+    "index": 32,
+    "id": "next-A-032",
+    "input": "Indiana Jones et la Dernière Croisade 1989 VFI VO DOLBY TRUEHD ATMOS 2160P UHD BLURAY REMUX HEVC HDR10 DOLBY VISION-Obi (Indiana Jones and the Last Crusade)",
+    "pending": "",
+    "expected": {
+      "title": "Indiana Jones et la Derniere Croisade",
+      "year": 1989,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "2160p",
+        "source": "Remux",
+        "codec": "HEVC",
+        "hdr": "DV",
+        "audio": "",
+        "edition": "",
+        "group": "Obi"
+      }
+    }
+  },
+  {
+    "index": 34,
+    "id": "next-A-034",
+    "input": "Vacancy (2007) 720p Bluray Dual Audio [Hindi + English] ⭐800 MB⭐ DD - 2.0 MSub x264 - Shadow (BonsaiHD)",
+    "pending": "",
+    "expected": {
+      "title": "Vacancy",
+      "year": 2007,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "720p",
+        "source": "Bluray",
+        "codec": "H264",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "Shadow"
+      }
+    }
+  },
+  {
+    "index": 36,
+    "id": "next-A-036",
+    "input": "Malcolm X (1992) - 1080p FR EN x264 aac mHDgz.mkv",
+    "pending": "",
+    "expected": {
+      "title": "Malcolm X",
+      "year": 1992,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "1080p",
+        "source": "",
+        "codec": "H264",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "mHDgz"
+      }
+    }
+  },
+  {
+    "index": 37,
+    "id": "next-A-037",
+    "input": "Kingsman.The.Golden.Circle.2017.MULTi.VFF.2160p.BLURAY.4KLight.DV.HDR.x265.TrueHD.Atmos.7.1.Bender_37.mkv",
+    "pending": "",
+    "expected": {
+      "title": "Kingsman The Golden Circle",
+      "year": 2017,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "2160p",
+        "source": "Bluray",
+        "codec": "HEVC",
+        "hdr": "DV",
+        "audio": "",
+        "edition": "",
+        "group": "Bender_37"
+      }
+    }
+  },
+  {
+    "index": 50,
+    "id": "next-A-050",
+    "input": "HamLeT.(1990).MULTI.VFF.[ST.FrF-Fr-En].mHD.1080P.x264.AC3.2ch⚡-KyX-LazerTeam⚡.mkv",
+    "pending": "",
+    "expected": {
+      "title": "HamLeT",
+      "year": 1990,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "1080p",
+        "source": "",
+        "codec": "H264",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 52,
+    "id": "next-A-052",
+    "input": "Les.Ringards.1978_.WEBRip.FR.x264.AAC.2.0_Fz.mkv",
+    "pending": "",
+    "expected": {
+      "title": "Les Ringards",
+      "year": 1978,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "",
+        "source": "WEBRip",
+        "codec": "H264",
+        "hdr": "",
+        "audio": "",
+        "edition": "",
+        "group": "Fz"
+      }
+    }
+  },
+  {
+    "index": 54,
+    "id": "next-A-054",
+    "input": "I ROBOT 2004.BluRay.2160.10bit.4KLight HDR.MULTi.VFF.Sub.AC3@640Kbps.H265⚡XRS-LazerTeam⚡.mkv",
+    "pending": "",
+    "expected": {
+      "title": "I ROBOT",
+      "year": 2004,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "",
+        "source": "Bluray",
+        "codec": "HEVC",
+        "hdr": "HDR10",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  },
+  {
+    "index": 55,
+    "id": "next-A-055",
+    "input": "1917 (m4K HDR10+ 10bit x265-QTZ) [Multi TrueHD 7.1 Atmos].mkv",
+    "pending": "Original year1917 contradicts title-only numeric-work identity; current strict withholding does not admit this reason. Pending independent year adjudication, never rewrite original.",
+    "expected": {
+      "title": "1917",
+      "year": 0,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.6,
+      "requires_review": true,
+      "reason": "title_only_without_year",
+      "quality": {
+        "resolution": "",
+        "source": "",
+        "codec": "HEVC",
+        "hdr": "HDR10+",
+        "audio": "",
+        "edition": "",
+        "group": "QTZ"
+      }
+    }
+  },
+  {
+    "index": 60,
+    "id": "next-A-060",
+    "input": "Footloose.(1984).Multi.VFF.HDLight.4K.10bIt.Dolby.Vision.AC3x265⚡XRS-LazerTeam⚡.mkv",
+    "pending": "",
+    "expected": {
+      "title": "Footloose",
+      "year": 1984,
+      "media_type": "movie",
+      "season": 0,
+      "episodes": [],
+      "unit_keys": [
+        "movie"
+      ],
+      "absolute_episode": 0,
+      "is_anime": false,
+      "confidence": 0.9,
+      "requires_review": false,
+      "reason": "clean_movie_with_year",
+      "quality": {
+        "resolution": "2160p",
+        "source": "",
+        "codec": "",
+        "hdr": "DV",
+        "audio": "",
+        "edition": "",
+        "group": ""
+      }
+    }
+  }
+]

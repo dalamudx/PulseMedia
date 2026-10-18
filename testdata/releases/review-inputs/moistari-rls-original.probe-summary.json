@@ -1,0 +1,126 @@
+{
+  "source_id": "moistari-rls-original",
+  "audit_sha256": "a28fe992f5aabab8b604b2e5949ebeed7b35d288a55a200cf0817ea0bb8e64ac",
+  "audited_entries": 40,
+  "executed_entries": 40,
+  "passed_entries": 28,
+  "failed_entries": 12,
+  "reviewed_entries": 0,
+  "formal_golden_acceptance": false,
+  "passed_ids": [
+    "moistari-rls-original-021",
+    "moistari-rls-original-029",
+    "moistari-rls-original-035",
+    "moistari-rls-original-036",
+    "moistari-rls-original-037",
+    "moistari-rls-original-038",
+    "moistari-rls-original-039",
+    "moistari-rls-original-042",
+    "moistari-rls-original-043",
+    "moistari-rls-original-048",
+    "moistari-rls-original-050",
+    "moistari-rls-original-056",
+    "moistari-rls-original-058",
+    "moistari-rls-original-059",
+    "moistari-rls-original-061",
+    "moistari-rls-original-068",
+    "moistari-rls-original-069",
+    "moistari-rls-original-073",
+    "moistari-rls-original-074",
+    "moistari-rls-original-078",
+    "moistari-rls-original-080",
+    "moistari-rls-original-082",
+    "moistari-rls-original-083",
+    "moistari-rls-original-087",
+    "moistari-rls-original-102",
+    "moistari-rls-original-116",
+    "moistari-rls-original-117",
+    "moistari-rls-original-118"
+  ],
+  "failures": [
+    {
+      "id": "moistari-rls-original-017",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:5.Headed.Shark.Attack.German.2017.MERRY.XMAS.AC3.BDRiP.x264-XF MediaType:movie Title:5 Headed Shark Attack German Year:2017 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion:source.tokens.v2 Codec:H264 CodecParserVersion:codec.tokens.v2 HDR: HDRParserVersion: Audio: Edition: Group:XF} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v68}; want {Title:5 Headed Shark Attack LiteralTitle: Year:2017 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:XF} Punctuation:<nil>}\n",
+        "    reviewed_full_corpus_test.go:381: reviewed quality contract mismatch: got {Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:XF}; want {Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:XF}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-019",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:31.A.3D.Rob.Zombie.Film.UNCUT.German.2016.DL.1080p.BluRay.x264-ETM MediaType:movie Title:31 A 3D Rob Zombie Film UNCUT German Year:2016 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec:H264 CodecParserVersion:codec.tokens.v2 HDR: HDRParserVersion: Audio: Edition: Group:ETM} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v68}; want {Title:31 A 3D Rob Zombie Film LiteralTitle: Year:2016 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:1080p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:ETM} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-020",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:[test]50.50.2011.BluRay.1080p.DTS-HD MediaType:movie Title:test]50 50 Year:2011 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v68}; want {Title:50 50 LiteralTitle: Year:2011 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:1080p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-024",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:2001: A Space Odyssey.mkv MediaType:movie Title:: A Space Odyssey Year:2001 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v68}; want {Title:2001: A Space Odyssey LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0.6 Review:true Reason:title_only_without_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-025",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:2001.A.Space.Odyssey.1968.2160p.UHD.BluRay.DD+5.1.DoVi.x265-c0kE MediaType:movie Title:2001 A Space Odyssey 1968 Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:2160p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec:HEVC CodecParserVersion:codec.tokens.v2 HDR:DV HDRParserVersion:hdr.tokens.v1 Audio: Edition: Group:c0kE} Confidence:0 Reason:ambiguous_media_year RequiresReview:true ParserVersion:episode.v68}; want {Title:2001 A Space Odyssey LiteralTitle: Year:1968 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:2160p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:HEVC CodecParserVersion: HDR:DV HDRParserVersion: Audio: Edition: Group:c0kE} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-031",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:2048.Nowhere.to.Run.2017.1080p.BluRay.DD2.0.x264-decibeL MediaType:movie Title:2048 Nowhere to Run 2017 Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec:H264 CodecParserVersion:codec.tokens.v2 HDR: HDRParserVersion: Audio: Edition: Group:decibeL} Confidence:0 Reason:ambiguous_media_year RequiresReview:true ParserVersion:episode.v68}; want {Title:2048 Nowhere to Run LiteralTitle: Year:2017 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:1080p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:decibeL} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-041",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:Akte.X.Jenseits.der.Wahrheit.R5.Line.Dubbed.German.READ.NFO.XviD-VCF MediaType:movie Title:Akte X Jenseits der Wahrheit R5 Line Dubbed German READ NFO XviD-VCF Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:VCF} Confidence:0.6 Reason:title_only_without_year RequiresReview:true ParserVersion:episode.v68}; want {Title:Akte X Jenseits der Wahrheit LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0.6 Review:true Reason:title_only_without_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:VCF} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-075",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:Dr..Strangelove.or:.How.I.Learned.to.Stop.Worrying.and.Love.the.Bomb.1964.BluRay.1080p.DTS.5.1.x264.dxva-RHPSmusic MediaType:movie Title:Dr  Strangelove or: How I Learned to Stop Worrying and Love the Bomb Year:1964 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec:H264 CodecParserVersion:codec.tokens.v2 HDR: HDRParserVersion: Audio: Edition: Group:RHPSmusic} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v68}; want {Title:Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb LiteralTitle: Year:1964 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:1080p ResolutionParserVersion: Source:Bluray SourceParserVersion: Cod",
+        "ec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:RHPSmusic} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-076",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:Dracula.Untold.TS.XViD.AC3.MrSeeN-SiMPLE MediaType:movie Title:Dracula Untold TS XViD Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:SiMPLE} Confidence:0.6 Reason:title_only_without_year RequiresReview:true ParserVersion:episode.v68}; want {Title:Dracula Untold LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0.6 Review:true Reason:title_only_without_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:MrSeeN-SiMPLE} Punctuation:<nil>}\n",
+        "    reviewed_full_corpus_test.go:381: reviewed quality contract mismatch: got {Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:SiMPLE}; want {Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:MrSeeN-SiMPLE}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-089",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:Guardians of the Galaxy (CamRip / 2014) MediaType:movie Title:2014) Year:2014 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.3 Reason:clean_movie_with_year RequiresReview:true ParserVersion:episode.v68}; want {Title:Guardians of the Galaxy LiteralTitle: Year:2014 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-101",
+      "messages": [
+        "    reviewed_full_corpus_test.go:371: reviewed identity/coverage contract mismatch: got {RawName:IMAX.-.Journey.to.the.South.Pacific.2013.2160p.UHD.BluRay.DTS-HD.MA.7.1.HDR10+.x265-DON MediaType:movie Title:IMAX - Journey to the South Pacific Year:2013 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:2160p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec:HEVC CodecParserVersion:codec.tokens.v2 HDR:HDR10+ HDRParserVersion:hdr.tokens.v1 Audio: Edition: Group:DON} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v68}; want {Title:Journey to the South Pacific LiteralTitle: Year:2013 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:2160p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:HEVC CodecParserVersion: HDR:HDR10+ HDRParserVersion: Audio: Edition: Group:DON} Pun",
+        "ctuation:<nil>}\n"
+      ]
+    },
+    {
+      "id": "moistari-rls-original-106",
+      "messages": [
+        "    reviewed_full_corpus_test.go:381: reviewed quality contract mismatch: got {Resolution:720p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:}; want {Resolution:720p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:iFT}\n"
+      ]
+    }
+  ],
+  "run": "probe-attempt3",
+  "test": "TestReviewedFullReleaseAnnotations",
+  "overlay_scope": "Only source admission/path, private source provenance precondition, private 40-entry census and original-source lookup are changed in scratch test copy. All existing per-row title/year/type/coverage/quality/confidence comparisons retained.",
+  "prior_attempts": [
+    "attempt1: private whitelist injection missed newly prepended sources; all 40 rejected before parser comparison",
+    "attempt2: unrelated PTT global-corpus precondition rejected concurrent gold changes; no parser comparisons"
+  ],
+  "expectations_modified_after_probe": false
+}

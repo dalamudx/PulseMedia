@@ -1,0 +1,158 @@
+{
+  "source_id": "flexget-parser-original",
+  "review_status": "pending_static_literal_source_census",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "canonical_unit_authorization": false,
+  "coverage_authority": false,
+  "reviewed_entries": 0,
+  "license": "MIT",
+  "candidate_count": 10,
+  "candidate_count_semantics": "Ten distinct original literal input/result.name equality pairs, not ten independent real releases or full annotations. Nine work-named FlexGet-branded fixtures have unverified real-release origin; one is an explicit placeholder. Verified independent real-release capacity and reviewed entries are both zero.",
+  "counts": {
+    "per_file": {
+      "tests/test_movieparser.py": {
+        "test_functions": 2,
+        "static_parse_call_sites": 10,
+        "direct_literal_input_occurrences": 10,
+        "direct_literal_unique_inputs": 10,
+        "direct_literal_duplicate_occurrences": 0,
+        "constructed_parse_call_sites_not_expanded": 0,
+        "indirect_parse_call_sites_not_expanded": 0,
+        "inline_literal_loop_pool_entries": 0,
+        "positive_literal_title_assertions": 9
+      },
+      "tests/test_seriesparser.py": {
+        "test_functions": 55,
+        "static_parse_call_sites": 155,
+        "direct_literal_input_occurrences": 148,
+        "direct_literal_unique_inputs": 130,
+        "direct_literal_duplicate_occurrences": 18,
+        "constructed_parse_call_sites_not_expanded": 4,
+        "indirect_parse_call_sites_not_expanded": 3,
+        "inline_literal_loop_pool_entries": 3,
+        "positive_literal_title_assertions": 1,
+        "literal_loop_pools_excluded_from_title_capacity": [
+          {
+            "test": "test_zeroes",
+            "line": 437,
+            "values": [
+              "Test.S00E00-FlexGet",
+              "Test.S00E01-FlexGet",
+              "Test.S01E00-FlexGet"
+            ]
+          }
+        ]
+      },
+      "tests/test_parsingapi.py": {
+        "test_functions": 3,
+        "static_parse_call_sites": 0,
+        "direct_literal_input_occurrences": 0,
+        "direct_literal_unique_inputs": 0,
+        "direct_literal_duplicate_occurrences": 0,
+        "constructed_parse_call_sites_not_expanded": 0,
+        "indirect_parse_call_sites_not_expanded": 0,
+        "inline_literal_loop_pool_entries": 0,
+        "positive_literal_title_assertions": 0
+      }
+    },
+    "static_parse_call_sites": 165,
+    "direct_literal_input_occurrences": 158,
+    "direct_literal_unique_inputs": 140,
+    "direct_literal_duplicate_occurrences": 18,
+    "direct_literal_occurrences_without_positive_title_assertion": 148,
+    "constructed_parse_call_sites_not_expanded": 4,
+    "indirect_parse_call_sites_not_expanded": 3,
+    "positive_title_assertions": 10,
+    "positive_exact_unique_inputs": 10,
+    "positive_duplicate_occurrences": 0,
+    "exact_unique_overlap_with_gold": 0,
+    "exact_unique_new_beyond_gold": 10,
+    "placeholder_positive_inputs": 1,
+    "work_named_test_fixtures_with_unverified_real_release_origin": 9,
+    "verified_independent_real_release_inputs": 0,
+    "reviewed_entries": 0
+  },
+  "provenance": {
+    "repository": "https://github.com/Flexget/Flexget",
+    "commit": "a73b208e90cbe8cbbc44a686d5eacb26324374bb",
+    "fetch_head_url": "https://github.com/Flexget/Flexget",
+    "head_state": "Unborn HEAD; immutable FETCH_HEAD and tree/blob IDs verified instead.",
+    "commit_subject": "Prepare v3.22.4.dev",
+    "commit_author": "github-actions[bot]",
+    "commit_time": "2026-10-12T22:24:44Z",
+    "files": [
+      {
+        "path": "LICENSE",
+        "preserved": "review-inputs/flexget-parser-original.LICENSE",
+        "blob": "2d05f00b53a7bdaad3ad9b0f33889e10a1c3e7ca",
+        "sha256": "35e41be01051fa5886876dfb1aad55e6b476e7e7c80010a7848e54e106f3669f",
+        "bytes": 1121,
+        "lines": 23
+      },
+      {
+        "path": "tests/test_movieparser.py",
+        "preserved": "upstream-mit/flexget-movieparser-original.py.source",
+        "blob": "ae6478c83121f471aa467f25d00a51146a043f29",
+        "sha256": "b0cceae08ddb90ab8d1f28e68011c2756c2c7f95c36fa492cdae748813b72197",
+        "bytes": 3329,
+        "lines": 73
+      },
+      {
+        "path": "tests/test_seriesparser.py",
+        "preserved": "upstream-mit/flexget-seriesparser-original.py.source",
+        "blob": "ba8dff082c15576c013cbb641dae75d6e356b998",
+        "sha256": "40182216f6a5b7f1d4292a31fa671a1ae422850be7d6087a243b9ae6971ec091",
+        "bytes": 34759,
+        "lines": 766
+      },
+      {
+        "path": "tests/test_parsingapi.py",
+        "preserved": "upstream-mit/flexget-parsingapi-original.py.source",
+        "blob": "0c728867d727e3f5a669795677dc16978b0f2253",
+        "sha256": "3fa730e829cea226c610e3d348709eceb967833785dc1ff246b0eb3ab4684cff",
+        "bytes": 1291,
+        "lines": 35
+      },
+      {
+        "path": "tests/conftest.py",
+        "preserved": "upstream-mit/flexget-conftest-original.py.source",
+        "blob": "61278f2568e19fb0af96da56d52c566c430ae9c0",
+        "sha256": "e2bb6ffc3fcf891b7066eb40c8b899e100d8a7167d256d5fe13feb44ab1538c8",
+        "bytes": 16449,
+        "lines": 479
+      }
+    ],
+    "fixture_copyright_and_origin": {
+      "root_license": "The MIT License",
+      "copyright": [
+        "Copyright (C) 2006, Riku 'Shrike' Lindblad",
+        "Copyright (C) 2007, Marko Koivusalo"
+      ],
+      "per_file_notices": "All four original Python files were read completely; none contains a separate fixture copyright notice, third-party source attribution or real-release provenance record.",
+      "fixture_origin": "All nine work-named positive input strings end with -FlexGet. The remaining positive input is A.Movie.Title. These are original upstream test literals with independent assertions, but their authenticity as real release records is not established.",
+      "history_limitation": "The provided clone is shallow. GitHub commits API queried for the exact commit/path returned HTTP 403 with x-ratelimit-remaining: 0; earlier fixture authorship/history could not be verified. The pinned release-preparation bot commit is not evidence of original test authorship."
+    }
+  },
+  "inventory": "flexget-parser-original.inventory.json",
+  "gold_snapshot": {
+    "declared_reviewed_entries": 620,
+    "actual_entries": 620,
+    "exact_unique_inputs": 620,
+    "sha256": "6f60e837f6a2149ea6a350d7c6cb8c4014ee0f494f36f10ac26beb486d4f291c"
+  },
+  "capacity": {
+    "positive_title_literal_upper_bound_union_with_gold": 630,
+    "non_placeholder_title_literal_upper_bound_union_with_gold": 629,
+    "verified_real_release_union_with_gold": 620,
+    "new_independent_real_releases": 0,
+    "new_reviewed_entries": 0,
+    "all_known_sources_census": false,
+    "formal_task_count_context": "30/42 supplied by Main; unchanged and not remeasured by this source-only census."
+  },
+  "verification": "Read all 73 movie-test, 766 series-test, 35 parsing-API-test, 479 conftest and 23 license lines through bounded hashline reads. Matched the provided checked-out file blobs to the exact FETCH_HEAD tree; extracted conftest from that same Git object. Reconstructed five new verbatim files from hashline-served source rows and checked their Git blob IDs and SHA-256 values. Static AST inspection only; original test modules, harness, parsers and generators were never imported or executed. Read current gold fully through hashline ranges and compared exact input strings only. Final artifact verification checks byte-for-byte equality against pinned Git blobs, all authority/acceptance boolean flags false and reviewed_entries zero. This task adds only the four source files, license, manifest and pretty inventory; existing files, Go, gold and docs are not edited.",
+  "upstream_parser_executed": false,
+  "pulsemedia_parser_used_for_labels": false,
+  "generated_expected_labels": false
+}

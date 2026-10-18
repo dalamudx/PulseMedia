@@ -1,0 +1,6 @@
+f84797726c6af8d64a228d9349832002c8f33888
+2025-06-29T05:19:29+07:00
+fix multi episodes
+true
+
+History is shallow; no claim about unseen commits. TestParseRelease compares buildRls(ParseRelease(input)) to test.exp read by rlsTests. TestExport_tests sorts and serializes test.exp, not ParseRelease output. scan_test.go and test.sh are separate observational scanners and do not produce tests.yaml. No upstream code executed.

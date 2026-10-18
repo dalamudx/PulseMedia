@@ -1,0 +1,67 @@
+.policy-panel .card-body { min-width: 0; }
+.policy-panel label { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .8rem; }
+.policy-panel label:has(input[type="checkbox"]) { flex-direction: row; align-items: center; }
+.policy-panel input[type="number"], .policy-panel input:not([type]), .policy-panel textarea, .policy-panel select { width: 100%; max-width: 36rem; padding: .6rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.policy-panel input[type="checkbox"] { width: 1.1rem; height: 1.1rem; flex: 0 0 auto; }
+.policy-fields, .policy-ranks { border: 1px solid var(--border); padding: 1rem; min-width: 0; margin: 1rem 0; border-radius: var(--radius-sm); }
+.policy-rank-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center; }
+.policy-preview { border-left: 2px solid var(--border); margin-top: 1rem; padding-left: 1rem; }
+@media (max-width: 520px) { .policy-rank-row { grid-template-columns: 1fr; gap: .25rem; } }
+
+.config-editor { padding: 1rem 0; border-top: 1px solid var(--border); min-width: 0; }
+.rss-config-panel .config-editor { padding: 1rem; }
+.config-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; }
+.config-heading h3 { margin: 0; font-size: 1rem; }
+.config-description { color: var(--text-secondary); font-size: .9rem; line-height: 1.6; max-width: 72ch; margin: .5rem 0 .75rem; overflow-wrap: anywhere; }
+.config-fieldset { border: 0; padding: 0; margin: .75rem 0; min-width: 0; }
+.config-fieldset legend { font-weight: 600; margin-bottom: .5rem; }
+.config-fieldset:disabled { opacity: .7; }
+.config-options { display: flex; flex-direction: column; gap: .25rem; max-height: 12rem; overflow-y: auto; margin: .5rem 0 1rem; }
+.config-check { display: flex; align-items: center; gap: .6rem; min-height: 2.5rem; cursor: pointer; overflow-wrap: anywhere; }
+.config-check input { flex: 0 0 auto; accent-color: var(--primary); width: 1rem; height: 1rem; }
+.config-actions { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: flex-end; }
+.config-error { color: #fca5a5; border: 1px solid var(--danger); border-radius: var(--radius-sm); padding: .75rem; line-height: 1.6; margin-bottom: 1rem; overflow-wrap: anywhere; }
+.config-error button { margin-top: .5rem; }
+.config-stats { display: grid; grid-template-columns: minmax(8rem, auto) minmax(0, 1fr); gap: .5rem 1rem; border-top: 1px solid var(--border); padding-top: 1rem; font-size: .9rem; }
+.subscription-open { background: none; border: 0; border-radius: var(--radius-sm); padding: .25rem 0; min-height: 2.75rem; text-align: left; font-weight: 600; color: var(--text); cursor: pointer; width: 100%; }
+.subscription-open:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.config-stats dt { color: var(--text-secondary); }
+.config-stats dd { margin: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.config-editor input:not([type=checkbox]):not([type=radio]), .config-editor select { width: 100%; min-width: 0; }
+.config-editor .form-grid { grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); }
+.config-editor :focus-visible, .endpoint-binding-fields :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.sub-modern-modal .tile-top-row { flex-wrap: wrap; gap: .5rem; }
+.sub-modern-modal .tile-status-pill { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.sub-modern-modal .config-description li { margin-bottom: .35rem; }
+.sub-modern-modal { display: flex; flex-direction: column; max-height: 92dvh; }
+.sub-modern-modal .sub-hero-banner { flex-shrink: 0; }
+.sub-modern-modal .sub-modern-body { min-height: 0; max-height: none; flex: 1 1 auto; }
+@media(max-width: 540px) {
+ .sub-modern-modal .sub-hero-content { padding: 1.5rem 1rem 1rem; gap: 1rem; }
+ .sub-modern-modal .sub-hero-poster-box { width: 72px; }
+ .sub-modern-modal .sub-hero-title { font-size: 1.2rem; }
+ .sub-modern-modal .sub-modern-body { padding: 1rem; }
+ .sub-modern-modal .sub-modal-footer { flex-wrap: wrap; gap: .5rem; padding: .75rem 1rem; flex-shrink: 0; }
+ .sub-modern-modal .footer-right { flex-wrap: wrap; }
+ .sub-modern-modal .sub-modal-footer button { min-height: 2.75rem; white-space: nowrap; }
+}
+@media(max-width: 540px) { .config-actions > button { flex: 1 1 100%; } .config-stats { grid-template-columns: 1fr; } .config-stats dd { margin-bottom: .5rem; } }
+
+.scope-options { border: 0; padding: 0; margin: 1rem 0; min-width: 0; }
+.scope-options label { display: flex; align-items: flex-start; gap: .5rem; margin: .65rem 0; line-height: 1.5; overflow-wrap: anywhere; }
+.scope-options input[type=checkbox], .scope-options input[type=radio] { flex: 0 0 auto; width: auto; margin-top: .2rem; }
+.scope-unit-actions { padding: .75rem 0; border-top: 1px solid var(--border); }
+.scope-unit-actions p { margin: .35rem 0 .65rem; overflow-wrap: anywhere; }
+.episode-mapping-panel label { display: flex; flex-direction: column; gap: .4rem; margin: .75rem 0; }
+.episode-mapping-panel button, .episode-mapping-panel input:not([type=checkbox]), .episode-mapping-panel select { min-height: 2.75rem; }
+.episode-mapping-panel input:not([type=checkbox]), .episode-mapping-panel select { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .5rem; }
+.episode-mapping-panel .config-check { flex-direction: row; min-height: 2.75rem; }
+.mapping-entry { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2fr) auto; gap: .75rem; align-items: end; }
+.mapping-entry label { min-width: 0; margin-bottom: 0; }
+.mapping-preview { margin: 1rem 0; }
+.mapping-table-scroll { overflow: auto; max-height: 18rem; border: 1px solid var(--border); }
+.mapping-table-scroll table { width: 100%; border-collapse: collapse; }
+.mapping-table-scroll th,.mapping-table-scroll td { padding: .6rem; text-align: left; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.mapping-table-scroll caption { padding: .6rem; text-align: left; font-weight: 600; }
+@media(max-width:540px) { .mapping-entry { grid-template-columns: minmax(0,1fr); border-bottom: 1px solid var(--border); padding-bottom: .75rem; } }
+

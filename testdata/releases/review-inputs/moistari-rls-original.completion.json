@@ -1,0 +1,33 @@
+{
+  "source_id": "moistari-rls-original",
+  "raw_records": 407,
+  "positive_title_assertions": 404,
+  "video_type_positive_title_assertions": 266,
+  "qualified_raw_positive_title_capacity": 253,
+  "gold_overlap_at_646_entry_snapshot": 61,
+  "existing_imported_source_input_overlap": 69,
+  "same_family_ajarsnuggle_raw_overlap": 404,
+  "individually_audited_entries": 40,
+  "executed_full_contracts": 40,
+  "passed_full_contracts": 28,
+  "failed_full_contracts": 12,
+  "reviewed_entries": 0,
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "upstream_execution": false,
+  "shared_gold_edits": false,
+  "shared_source_registry_edits": false,
+  "production_code_edits": false,
+  "new_private_test_helper": "internal/domain/media/moistari_literal_source_test.go",
+  "audit_sha256_unchanged": "a28fe992f5aabab8b604b2e5949ebeed7b35d288a55a200cf0817ea0bb8e64ac",
+  "retained_overlay": "/data/temp/pulse-m3-complete.AixjUd/moistari-rls-original/overlay.json",
+  "cache_cleanup_verified": true,
+  "unresolved": [
+    "12 unchanged full-contract mismatches; details and all attempts retained.",
+    "Shallow upstream checkout cannot establish unseen prehistory or prove ultimate manual authorship.",
+    "Same source family as ajarsnuggle/rls; fork overlap is not independent corroboration."
+  ]
+}

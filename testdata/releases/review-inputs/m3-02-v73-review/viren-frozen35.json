@@ -1,0 +1,1051 @@
+{
+  "schema": "pulse.release-review.v1",
+  "reviewed_entries": 35,
+  "required_entries": 1000,
+  "formal_golden_acceptance": false,
+  "review_method": "Complete per-record manual annotations frozen before any parser probe; independent MIT literal assertions, not parser snapshots.",
+  "entries": [
+    {
+      "id": "viren-next-01",
+      "source": "viren-full-main-original",
+      "input": "【4月/悠哈璃羽字幕社】[UHA-WINGS][不要输！恶之军团][Makeruna!! Aku no Gundan!][04][1080p AVC_AAC][简繁外挂][sc_tc]",
+      "review_note": "Independent romanized work label; explicit bracket 04 is unbound anime numbering, never S01E04. AVC and 1080p are literal; subtitle flags and AAC do not measure audio.",
+      "expected": {
+        "title": "Makeruna!! Aku no Gundan!",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 4,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "UHA-WINGS"
+        }
+      }
+    },
+    {
+      "id": "viren-next-02",
+      "source": "viren-full-main-original",
+      "input": "[BluRay Rip 720p ITA AC3 - ENG AC3 SUB] Hostel[2005]-LIFE[ultimafrontiera]",
+      "review_note": "Independent Hostel/2005 retained; technical prefix is outside the work title. BluRay Rip and 720p are explicit, LIFE is the release group, ultimafrontiera is a trailing site label. Languages/AC3 do not supply measured audio.",
+      "expected": {
+        "title": "Hostel",
+        "year": 2005,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "LIFE"
+        }
+      }
+    },
+    {
+      "id": "viren-next-03",
+      "source": "viren-full-main-original",
+      "input": "超能警探.Memorist.S01E01.2160p.WEB-DL.H265.AAC-FLTTH.mkv",
+      "review_note": "Independent English work alias and complete S01E01 retained alongside Chinese alias. Exact H265, 2160p, WEB-DL and FLTTH; no year or measured AAC audio inferred.",
+      "expected": {
+        "title": "Memorist",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FLTTH"
+        }
+      }
+    },
+    {
+      "id": "viren-next-05",
+      "source": "viren-full-main-original",
+      "input": "抓娃娃 Successor.2024.TC1080P.国语中字",
+      "review_note": "Independent English title and unique 2024; Chinese prefix is a work alias. TC is not an approved source fact; embedded 1080P is a resolution declaration. No group, codec or audio invented.",
+      "expected": {
+        "title": "Successor",
+        "year": 2024,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-06",
+      "source": "viren-full-main-original",
+      "input": "[a-s]_fairy_tail_-_003_-_infiltrate_the_everlue_mansion__rs2_[1080p_bd-rip][4CB16872].mkv",
+      "review_note": "Independent work title, release group and BDRip/1080p preserved. Padded 003 is absolute without mapping; subtitle and rs2 are not canonical season or extra coverage. CRC is not a year.",
+      "expected": {
+        "title": "fairy tail",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 3,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "a-s"
+        }
+      }
+    },
+    {
+      "id": "viren-next-07",
+      "source": "viren-full-main-original",
+      "input": "S01E01-The Storm Dragon, Veldora [47C8F23B].mkv",
+      "review_note": "Independent literal title retained as the only supplied display identity; no parent series inferred. Prefix S01E01 supplies one canonical syntactic unit, CRC supplies no release year or quality.",
+      "expected": {
+        "title": "The Storm Dragon, Veldora",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-08",
+      "source": "viren-full-main-original",
+      "input": "One Punch Man S2 OVA - 02.mkv",
+      "review_note": "OVA declaration requires zero coverage and confidence; original S2 and episode02 remain recorded but withheld together. OVA does not establish canonical season2 episode2, a movie, or a mapping.",
+      "withheld_source_fields": [
+        "season",
+        "episode"
+      ],
+      "expected": {
+        "title": "One Punch Man",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-09",
+      "source": "viren-full-main-original",
+      "input": "[Lazyleido-Mini] DIGIMON BEATBREAK - 08 (S01E08) - (WEB 1080p AV1 10-bit AAC 2.0) [9FE6F0C7]",
+      "review_note": "Unbound 08 and S01E08 coexist and require numbering review despite numeric agreement. Preserve original season/episode assertions separately with no partial unit. WEB and AV1 remain unsupported quality families; 10bit/AAC do not establish HDR/audio.",
+      "withheld_source_fields": [
+        "season",
+        "episode"
+      ],
+      "expected": {
+        "title": "DIGIMON BEATBREAK",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "conflicting_episode_coverage",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Lazyleido-Mini"
+        }
+      }
+    },
+    {
+      "id": "viren-next-10",
+      "source": "viren-full-main-original",
+      "input": "[Anipakku] Shingeki no Kyojin - Season 3 46.mkv",
+      "review_note": "Season3 plus trailing46 cannot silently map cumulative anime episode46 into canonical S03E46. Original complete scope retained as withheld evidence, requiring explicit mapping and no covered units.",
+      "withheld_source_fields": [
+        "season",
+        "episode"
+      ],
+      "expected": {
+        "title": "Shingeki no Kyojin",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Anipakku"
+        }
+      }
+    },
+    {
+      "id": "viren-next-11",
+      "source": "viren-full-main-original",
+      "input": "Что случилось, тигровая лилия[torrents.ru].avi",
+      "review_note": "Independent Cyrillic work title preserved; bracket torrents.ru is a site, avi only a container. Missing release year leaves title-only review and no movie unit or invented quality.",
+      "expected": {
+        "title": "Что случилось, тигровая лилия",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-12",
+      "source": "viren-full-main-original",
+      "input": "[Erai-raws] Fumetsu no Anata e Season 3 - 14 [1080p CR WEBRip HEVC AAC][MultiSub][94F6389A]",
+      "review_note": "Explicit Season3 and dash14 are not a canonical SxxExx mapping for anime. Preserve source season3/episode14 as withheld, zero coverage; WEBRip/HEVC/1080p/group literal, CR only network and AAC unmeasured.",
+      "withheld_source_fields": [
+        "season",
+        "episode"
+      ],
+      "expected": {
+        "title": "Fumetsu no Anata e",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEBRip",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Erai-raws"
+        }
+      }
+    },
+    {
+      "id": "viren-next-13",
+      "source": "viren-full-main-original",
+      "input": "Erai-raws-Fumetsu_no_Anata_e_Season_3-01-720p_CR_WEB-DL_AVC_AAC-MultiSub-C3769633.mkv",
+      "review_note": "Same independent work in underscore/dash layout; Season3 and01 remain unresolved mapping evidence with no fabricated S03E01. AVC/720p/WEB-DL are explicit; trailing CRC is not the group.",
+      "withheld_source_fields": [
+        "season",
+        "episode"
+      ],
+      "expected": {
+        "title": "Fumetsu no Anata e",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Erai-raws"
+        }
+      }
+    },
+    {
+      "id": "viren-next-14",
+      "source": "viren-full-main-original",
+      "input": "[inid4c] JoJo's Bizarre Adventure - Diamond is Unbreakable 01 (BD 1080p FLAC) [C84DED8C].mkv",
+      "review_note": "Independent complete subtitle-bearing work name preserved, unbound01 requires mapping. BD alone is not a canonical source assertion here; literal1080p/group retained, FLAC is unmeasured audio and CRC is not identity.",
+      "expected": {
+        "title": "JoJo's Bizarre Adventure - Diamond is Unbreakable",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 1,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "inid4c"
+        }
+      }
+    },
+    {
+      "id": "viren-next-15",
+      "source": "viren-full-main-original",
+      "input": "[inid4c] JoJo's Bizarre Adventure - Golden Wind 01 (BD 1080p FLAC) [E10F496B].mkv",
+      "review_note": "Distinct independent Golden Wind title, no alias collapse to Diamond. Unbound01 supplies no season; BD/FLAC do not invent source/audio facts, and explicit1080p and group are retained.",
+      "expected": {
+        "title": "JoJo's Bizarre Adventure - Golden Wind",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 1,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "inid4c"
+        }
+      }
+    },
+    {
+      "id": "viren-next-16",
+      "source": "viren-full-main-original",
+      "input": "[Anime Time] Fairy Tail - 220 - 413 Days.mkv",
+      "review_note": "Independent work label separates episode subtitle413 Days from absolute220. No season mapping or extra413 episode is authorized. Literal fansub group supplies no codec/source/resolution.",
+      "expected": {
+        "title": "Fairy Tail",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 220,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Anime Time"
+        }
+      }
+    },
+    {
+      "id": "viren-next-17",
+      "source": "viren-full-main-original",
+      "input": "[ParanDark]_D.Gray-man_093_v2_(R2DVD_576p_x264_AC3).mkv",
+      "review_note": "Independent original normalized D Gray-man retained without correcting its punctuation from output. 093 is unbound absolute, v2 is a revision not an edition; R2DVD is not approved source, 576p/x264/group literal, AC3 unmeasured.",
+      "expected": {
+        "title": "D Gray-man",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 93,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "576p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "ParanDark"
+        }
+      }
+    },
+    {
+      "id": "viren-next-18",
+      "source": "viren-title-original-assertions",
+      "input": "[GM-Team][国漫][太乙仙魔录 灵飞纪 第3季][Magical Legend of Rise to immortality Ⅲ][01-26][AVC][GB][1080P]",
+      "review_note": "Independent romanized work label includes Roman numeral; bracket01-26 denotes a set without canonical season mapping, Chinese season wording cannot invent units. Preserve zero coverage, literal1080P/AVC/group only.",
+      "expected": {
+        "title": "Magical Legend of Rise to immortality Ⅲ",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "GM-Team"
+        }
+      }
+    },
+    {
+      "id": "viren-next-19",
+      "source": "viren-title-original-assertions",
+      "input": "【喵萌奶茶屋】★01月新番★[Rebirth][01][720p][简体][招募翻译]",
+      "review_note": "Independent Rebirth label;01 is unbound anime episode, while January broadcast banner is not a release year/season. No canonical mapping, inferred fansub group, source, codec or audio.",
+      "expected": {
+        "title": "Rebirth",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 1,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-20",
+      "source": "viren-title-original-assertions",
+      "input": "【喵萌奶茶屋】★01月新番★[別對映像研出手！/映像研には手を出すな！/Eizouken ni wa Te wo Dasu na!][01][1080p][繁體]",
+      "review_note": "Independent romanized alias selected consistently among Chinese/Japanese alternatives.01 is unbound; January banner does not identify canonical season or year. Literal1080p only, subtitles do not establish audio.",
+      "expected": {
+        "title": "Eizouken ni wa Te wo Dasu na!",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 1,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-21",
+      "source": "viren-title-original-assertions",
+      "input": "【喵萌奶茶屋】★01月新番★[別對映像研出手！/Eizouken ni wa Te wo Dasu na!/映像研には手を出すな！][01][1080p][繁體]",
+      "review_note": "Separately authored alias-order variant retains the same independent romanized title and unbound01. Swapping Japanese alias position does not produce coverage, canonical season or measured quality.",
+      "expected": {
+        "title": "Eizouken ni wa Te wo Dasu na!",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 1,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-22",
+      "source": "viren-title-original-assertions",
+      "input": "[Seed-Raws] 劇場版 ペンギン・ハイウェイ Penguin Highway The Movie (BD 1280x720 AVC AACx4 [5.1+2.0+2.0+2.0]).mp4",
+      "review_note": "Independent English film label selected from Japanese/English work names; no release year, hence review/no units.1280x720 is explicit HD dimension evidence, AVC literal; BD alone and AACx4 do not establish source/audio facts.",
+      "expected": {
+        "title": "Penguin Highway The Movie",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Seed-Raws"
+        }
+      }
+    },
+    {
+      "id": "viren-next-23",
+      "source": "viren-title-original-assertions",
+      "input": "[SweetSub][Mutafukaz / MFKZ][Movie][BDRip][1080P][AVC 8bit][简体内嵌]",
+      "review_note": "Independent compound alias is retained verbatim without choosing one of its names. Explicit Movie is not a year or identity proof; missing year requires review/no unit. BDRip/1080P/AVC/group literal;8bit is not SDR proof.",
+      "expected": {
+        "title": "Mutafukaz / MFKZ",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SweetSub"
+        }
+      }
+    },
+    {
+      "id": "viren-next-24",
+      "source": "viren-title-original-assertions",
+      "input": "[Erai-raws] Kingdom 3rd Season - 02 [1080p].mkv",
+      "review_note": "Independent Kingdom identity; ordinal3rd Season plus dash02 needs explicit numbering interpretation, not inferred S03E02. Zero coverage and confidence;1080p and group literal, no quality/source inferred.",
+      "expected": {
+        "title": "Kingdom",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Erai-raws"
+        }
+      }
+    },
+    {
+      "id": "viren-next-25",
+      "source": "viren-title-original-assertions",
+      "input": "[NC-Raws] 间谍过家家 / SPY×FAMILY - 04 (B-Global 1920x1080 HEVC AAC MKV)",
+      "review_note": "Independent exact multiplication-sign title retained from bilingual alias. Dash04 is unbound absolute, never assumed S01E04.1920x1080 and HEVC are literal; B-Global network/MKV/AAC do not establish source or audio.",
+      "expected": {
+        "title": "SPY×FAMILY",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 4,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NC-Raws"
+        }
+      }
+    },
+    {
+      "id": "viren-next-26",
+      "source": "viren-title-original-assertions",
+      "input": "[www.arabp2p.net]_-_تركي مترجم ومدبلج Last.Call.for.Istanbul.2023.1080p.NF.WEB-DL.DDP5.1.H.264.MKV.torrent",
+      "review_note": "Independent movie title and2023 preserved; Arabic release banner and bracket site do not rename the work. NF is network, MKV.torrent containers not groups;1080p/WEB-DL/H.264 literal, DDP unmeasured.",
+      "expected": {
+        "title": "Last Call for Istanbul",
+        "year": 2023,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-27",
+      "source": "viren-title-original-assertions",
+      "input": "UFC.247.PPV.Jones.vs.Reyes.HDTV.x264-PUNCH[TGx]",
+      "review_note": "Independent complete sports-event title includes247, neither year nor season. PPV is release distribution marker; lack of year leaves review/no unit. HDTV/x264/PUNCH explicit, TGx a trailing site.",
+      "expected": {
+        "title": "UFC 247 Jones vs Reyes",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PUNCH"
+        }
+      }
+    },
+    {
+      "id": "viren-next-28",
+      "source": "viren-title-original-assertions",
+      "input": "Jurassic.World.Dominion.CUSTOM.EXTENDED.2022.2160p.MULTi.VF2.UHD.Blu-ray.REMUX.HDR.DoVi.HEVC.DTS-X.DTS-HDHRA.7.1-MOONLY.mkv",
+      "review_note": "Independent title and unique2022; CUSTOM/EXTENDED are release edition claims but no measured edition fact. Explicit REMUX/2160p/HEVC/DoVi/group retained, generic HDR does not imply HDR10, DTS labels do not measure audio.",
+      "expected": {
+        "title": "Jurassic World Dominion",
+        "year": 2022,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "MOONLY"
+        }
+      }
+    },
+    {
+      "id": "viren-next-29",
+      "source": "viren-title-original-assertions",
+      "input": "Too Many Cooks _ Adult Swim.mp4",
+      "review_note": "Independent work label excludes Adult Swim channel suffix. No release year, codec/source/resolution or measured qualities; file container alone gives no movie unit authority.",
+      "expected": {
+        "title": "Too Many Cooks",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-30",
+      "source": "viren-title-original-assertions",
+      "input": "О мышах и людях (Of Mice and Men) 1992 BDRip 1080p.mkv",
+      "review_note": "Independent English work alias corroborated by Cyrillic alternative, unique1992 release year. Explicit BDRip/1080p; absence of codec, group, HDR and measured audio/edition remains unknown.",
+      "expected": {
+        "title": "Of Mice and Men",
+        "year": 1992,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-31",
+      "source": "viren-title-original-assertions",
+      "input": "Wonder Woman 1984 (2020) [UHDRemux 2160p DoVi P8 Es-DTSHD AC3 En-AC3].mkv",
+      "review_note": "Independent title explicitly includes1984, parenthesized2020 is the release year and must not be relabeled1984. UHDRemux/2160p/DoVi P8 are literal; language-prefixed audio labels do not establish group or audio facts.",
+      "expected": {
+        "title": "Wonder Woman 1984",
+        "year": 2020,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-32",
+      "source": "viren-title-original-assertions",
+      "input": "Grimm.INTEGRAL.MULTI.COMPLETE.BLURAY-BMTH",
+      "review_note": "Independent real series label; INTEGRAL/COMPLETE are pack claims without canonical scope. Zero confidence and coverage, never movie/title-only authority. Literal BLURAY/group retained; MULTI does not measure audio.",
+      "expected": {
+        "title": "Grimm",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BMTH"
+        }
+      }
+    },
+    {
+      "id": "viren-next-33",
+      "source": "viren-title-original-assertions",
+      "input": "The.Office.US.S01E01.1080p.WEB-DL.mkv",
+      "review_note": "Independent The Office label keeps US as regional disambiguator outside title, exact single S01E01 retained. Explicit1080p/WEB-DL, no year/codec/group/HDR or measured qualities invented.",
+      "expected": {
+        "title": "The Office",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-34",
+      "source": "ptt-main-original-assertions",
+      "input": "BoJack Horseman [06x01-08 of 16] (2019-2020) WEB-DLRip 720p",
+      "review_note": "Independent complete source array1 through8 retained; of16 is a total not episode16 or coverage9-16.2019-2020 is a span and supplies no unique release year. WEB-DLRip is unsupported source family; literal720p only.",
+      "expected": {
+        "title": "BoJack Horseman",
+        "year": 0,
+        "media_type": "tv",
+        "season": 6,
+        "episodes": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "unit_keys": [
+          "S06E01",
+          "S06E02",
+          "S06E03",
+          "S06E04",
+          "S06E05",
+          "S06E06",
+          "S06E07",
+          "S06E08"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "multi_episode_range",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "viren-next-35",
+      "source": "ptt-main-original-assertions",
+      "input": "[Kaerizaki-Fansub] One Piece 1098 VOSTFR FHD (1920x1080).mp4",
+      "review_note": "Independent One Piece and episode1098 retained strictly as unbound absolute numbering, never a year or S01E1098. FHD plus explicit1920x1080 supports1080p; VOSTFR/container do not establish source/codec/audio.",
+      "expected": {
+        "title": "One Piece",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 1098,
+        "is_anime": true,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "absolute_mapping_required",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Kaerizaki-Fansub"
+        }
+      }
+    },
+    {
+      "id": "viren-next-36",
+      "source": "ptt-main-original-assertions",
+      "input": "[LostYears] takt op.Destiny (WEB 1080p x264 AAC) [Dual-Audio]",
+      "review_note": "Independent original punctuation-bearing title and explicit empty episode array retained; anime work without numbered coverage requires zero-authority TV review. WEB is ambiguous source, literal1080p/x264/group retained, Dual-Audio/AAC do not measure audio.",
+      "expected": {
+        "title": "takt op.Destiny",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "LostYears"
+        }
+      }
+    }
+  ]
+}

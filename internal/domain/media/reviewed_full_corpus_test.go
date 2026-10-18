@@ -1,0 +1,444 @@
+package media_test
+
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"os"
+	"path/filepath"
+	"reflect"
+	"slices"
+	"strings"
+	"testing"
+
+	"github.com/dalamudx/PulseMedia/internal/domain/media"
+	"github.com/dalamudx/PulseMedia/internal/domain/quality"
+)
+
+// This reviewed seed is complete for the output contract, but deliberately not
+// the 1000-entry acceptance suite. Input names and original labels remain
+// linked to hash-checked MIT sources; expected values are not parser snapshots.
+func TestReviewedFullReleaseAnnotations(t *testing.T) {
+	readMITCorpora(t)                                                  // Verify immutable source bytes, licenses and unique count.
+	TestPinnedPTTLiteralInputsRemainUnreviewedAndReproducible(t)       // Verify new original source hashes before individual full reviews.
+	TestVideoLiteralFixturesPinnedOriginalsWithoutCoverageAuthority(t) // Verify immutable MIT blobs before individual title-table reviews.
+	TestPinnedRustScalarLabelsRemainOriginalAndPartial(t)              // Verify inert Rust source and scalar positions, not coverage.
+	TestRakunFixedSourceStaysPinnedAndUnexecuted(t)                    // Verify exact original fixture, harness and license.
+	type expected struct {
+		Title        string                    `json:"title"`
+		LiteralTitle string                    `json:"literal_title,omitempty"`
+		Year         int                       `json:"year"`
+		MediaType    media.Type                `json:"media_type"`
+		Season       int                       `json:"season"`
+		Episodes     []int                     `json:"episodes"`
+		Keys         []string                  `json:"unit_keys"`
+		Absolute     int                       `json:"absolute_episode"`
+		Anime        bool                      `json:"is_anime"`
+		Confidence   float64                   `json:"confidence"`
+		Review       bool                      `json:"requires_review"`
+		Reason       string                    `json:"reason"`
+		Quality      quality.Profile           `json:"quality"`
+		Punctuation  *titlePunctuationEvidence `json:"title_punctuation_evidence,omitempty"`
+	}
+	var corpus struct {
+		Schema   string `json:"schema"`
+		Reviewed int    `json:"reviewed_entries"`
+		Required int    `json:"required_entries"`
+		Accepted bool   `json:"formal_golden_acceptance"`
+		Method   string `json:"review_method"`
+		Entries  []struct {
+			ID       string          `json:"id"`
+			Source   string          `json:"source"`
+			Input    string          `json:"input"`
+			Note     string          `json:"review_note"`
+			Withheld []string        `json:"withheld_source_fields,omitempty"`
+			Expected json.RawMessage `json:"expected"`
+		} `json:"entries"`
+	}
+	raw, err := os.ReadFile("../../../testdata/releases/reviewed-full.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	d := json.NewDecoder(bytes.NewReader(raw))
+	d.DisallowUnknownFields()
+	if err = d.Decode(&corpus); err != nil {
+		t.Fatal(err)
+	}
+	if corpus.Schema != "pulse.release-review.v1" || corpus.Reviewed != len(corpus.Entries) || corpus.Reviewed != 1015 || corpus.Required != 1000 || corpus.Reviewed < corpus.Required || !corpus.Accepted || corpus.Method == "" {
+		t.Fatal("independent full-review count, sample threshold or acceptance metadata changed")
+	}
+	seenIDs, seenInputs := map[string]bool{}, map[string]bool{}
+	for _, row := range corpus.Entries {
+		t.Run(row.ID, func(t *testing.T) {
+			if row.ID == "" || row.Note == "" || row.Input == "" || seenIDs[row.ID] || seenInputs[row.Input] {
+				t.Fatal("invalid or duplicate reviewed input")
+			}
+			seenIDs[row.ID], seenInputs[row.Input] = true, true
+			if row.Source != "chill-parser-original" && !isNextScoutSource(row.Source) && row.Source != "hellberg-release" && row.Source != "singers-scene-release" && row.Source != "husar-movie-title" && row.Source != "esparza-dlshow" && row.Source != "moistari-rls-original" && row.Source != "cehbz-parse-original" && row.Source != "mdaubie-parser-original" && row.Source != "clement-full-original" && row.Source != "atama-metadata-original" && row.Source != "beast-full-original" && row.Source != "rakun-full-original" && row.Source != "viren-full-main-original" && row.Source != "viren-title-original-assertions" && row.Source != "ptt-main-original-assertions" && row.Source != "titleparser" && row.Source != "rust-ptn" && row.Source != "video-filename-parser-original-assertions" && row.Source != "ptt-original-assertions" && row.Source != "ptt" && row.Source != "ptn" && row.Source != "go-ptn" && row.Source != "thcolin" {
+				t.Fatal("unreviewed origin")
+			}
+			srcPath := filepath.Join("../../../testdata/releases/upstream-mit", row.Source+".json")
+
+			if isNextScoutSource(row.Source) {
+				srcPath = "../../../testdata/releases/review-inputs/new-independent-scout-20261014-mit-assertions/manifest.json"
+			}
+			if row.Source == "hellberg-release" || row.Source == "singers-scene-release" || row.Source == "husar-movie-title" || row.Source == "esparza-dlshow" {
+				srcPath = "../../../testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/manifest.json"
+			}
+			if row.Source == "clement-full-original" {
+				srcPath = "../../../testdata/releases/review-inputs/clement-full-original.manifest.json"
+			}
+
+			if row.Source == "chill-parser-original" || row.Source == "moistari-rls-original" || row.Source == "cehbz-parse-original" || row.Source == "mdaubie-parser-original" {
+				srcPath = "../../../testdata/releases/review-inputs/" + row.Source + ".manifest.json"
+			}
+			if row.Source == "viren-full-main-original" {
+				srcPath = "../../../testdata/releases/review-inputs/viren-full-main-original.manifest.json"
+			}
+
+			if row.Source == "beast-full-original" {
+				srcPath = "../../../testdata/releases/review-inputs/beast-full-original.manifest.json"
+			}
+
+			if row.Source == "atama-metadata-original" {
+				srcPath = "../../../testdata/releases/review-inputs/atama-metadata-original.manifest.json"
+			}
+
+			if row.Source == "rakun-full-original" {
+				srcPath = "../../../testdata/releases/review-inputs/rakun-full-original.manifest.json"
+			}
+
+			if row.Source == "viren-title-original-assertions" {
+				srcPath = "../../../testdata/releases/review-inputs/viren-title-original-assertions.json"
+			}
+			if row.Source == "ptt-original-assertions" {
+				srcPath = "../../../testdata/releases/review-inputs/ptt-original-assertions.json"
+			}
+			if row.Source == "video-filename-parser-original-assertions" {
+				srcPath = "../../../testdata/releases/review-inputs/video-filename-parser-original-assertions.json"
+			}
+			if row.Source == "rust-ptn" {
+				srcPath = "../../../testdata/releases/review-inputs/rust-ptn.json"
+			}
+			if row.Source == "titleparser" {
+				srcPath = "../../../testdata/releases/review-inputs/titleparser.json"
+			}
+			if row.Source == "ptt-main-original-assertions" {
+				srcPath = "../../../testdata/releases/review-inputs/ptt-main-original-assertions.json"
+			}
+			srcBytes, e := os.ReadFile(srcPath)
+			if e != nil {
+				t.Fatal(e)
+			}
+			var src upstreamCorpus
+			if e = json.Unmarshal(srcBytes, &src); e != nil {
+				t.Fatal(e)
+			}
+			var original *corpusEntry
+			for i := range src.Entries {
+				if src.Entries[i].Name == row.Input {
+					original = &src.Entries[i]
+					break
+				}
+			}
+			if row.Source == "ptt-original-assertions" {
+				pool, err := decodePTTLiteralPool(srcBytes)
+				if err != nil {
+					t.Fatal(err)
+				}
+				original, err = originalPTTReviewLabels(pool, row.Input)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			if row.Source == "video-filename-parser-original-assertions" {
+				pool, err := decodeVideoLiteralPool(srcBytes)
+				if err != nil {
+					t.Fatal(err)
+				}
+				original, err = originalVideoTitleReviewLabels(pool, row.Input)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+
+			if row.Source == "viren-full-main-original" {
+				original, e = originalVirenFullLabels(srcBytes, row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "viren-title-original-assertions" {
+				original, e = originalVirenTitleLabels(srcBytes, row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "rust-ptn" {
+				pool, err := decodeUnapprovedPool(srcBytes)
+				if err != nil {
+					t.Fatal(err)
+				}
+				original, err = originalRustReviewLabels(pool, row.Input)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			if row.Source == "atama-metadata-original" {
+				original, e = originalAtamaReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateAtamaCoverageRefusal(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+
+			if row.Source == "clement-full-original" {
+				original, e = originalClementReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateClementOriginalRebuttals(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+
+			if row.Source == "cehbz-parse-original" {
+				original, e = originalCehbzReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateCehbzOriginalRebuttals(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "mdaubie-parser-original" {
+				original, e = originalMdaubieReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "moistari-rls-original" {
+				original, e = originalMoistariReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateMoistariSourceRebuttals(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "hellberg-release" {
+				original, e = originalHellbergReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "singers-scene-release" || row.Source == "husar-movie-title" || row.Source == "esparza-dlshow" {
+				original, e = originalSmallScoutReviewLabels(row.Source, row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateSmallScoutOriginalRebuttals(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "chill-parser-original" {
+				original, e = originalChillReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateChillComplete(row.Input, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+			if isNextScoutSource(row.Source) {
+				original, e = originalNextScoutReviewLabels(row.Source, row.Input, row.Expected)
+				if e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "beast-full-original" {
+				original, e = originalBeastReviewLabels(srcBytes, row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateBeastNumberingRefusal(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+
+			if row.Source == "rakun-full-original" {
+				original, e = originalRakunReviewLabels(row.Input)
+				if e != nil {
+					t.Fatal(e)
+				}
+				if e = validateRakunPartRefusal(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+				if e = validateRakunCollectionRefusal(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+				if e = validateRakunLiteralRangeRefusal(original, row.Expected); e != nil {
+					t.Fatal(e)
+				}
+			}
+			if row.Source == "titleparser" {
+				pool, err := decodeUnapprovedPool(srcBytes)
+				if err != nil {
+					t.Fatal(err)
+				}
+				original, err = originalCSharpReviewLabels(pool, row.Input)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			if row.Source == "ptt-main-original-assertions" {
+				pool, err := decodePTTMainPool(srcBytes)
+				if err != nil {
+					t.Fatal(err)
+				}
+				original, err = originalPTTMainReviewLabels(pool, row.Input)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			if original == nil {
+				t.Fatal("input is not an original pinned upstream sample")
+			}
+			var fields map[string]json.RawMessage
+			if e = json.Unmarshal(row.Expected, &fields); e != nil {
+				t.Fatal(e)
+			}
+			for _, field := range []string{"title", "year", "media_type", "season", "episodes", "unit_keys", "absolute_episode", "is_anime", "confidence", "requires_review", "reason", "quality"} {
+				if _, ok := fields[field]; !ok {
+					t.Fatalf("incomplete annotation: %s", field)
+				}
+			}
+			var qFields map[string]json.RawMessage
+			if e = json.Unmarshal(fields["quality"], &qFields); e != nil {
+				t.Fatal(e)
+			}
+			for _, field := range []string{"resolution", "source", "codec", "hdr", "audio", "edition", "group"} {
+				if _, ok := qFields[field]; !ok {
+					t.Fatalf("incomplete quality annotation: %s", field)
+				}
+			}
+			if len(qFields) != 7 {
+				t.Fatal("unknown quality annotation field")
+			}
+			// Decode expected attributes through a plain alias: observation evidence
+			// decoding must not erase explicit review labels that are not observations.
+			type rawQuality quality.Profile
+			var q rawQuality
+			if e = json.Unmarshal(fields["quality"], &q); e != nil {
+				t.Fatal(e)
+			}
+			var want expected
+			d := json.NewDecoder(bytes.NewReader(row.Expected))
+			d.DisallowUnknownFields()
+			if e = d.Decode(&want); e != nil {
+				t.Fatal(e)
+			}
+			want.Quality = quality.Profile(q)
+			withheld, e := validatedWithheldSourceFields(row.Withheld, original.Expected, row.Expected)
+			if e != nil {
+				t.Fatal(e)
+			}
+			if label, ok := original.Expected["title"]; ok {
+				var title string
+				if e = json.Unmarshal(label, &title); e != nil || (!withheld["title"] && title != want.Title) {
+					t.Fatal("review rewrote independent title label", title, want.Title, e)
+				}
+			}
+			if label, ok := original.Expected["year"]; ok {
+				var year int
+				if e = json.Unmarshal(label, &year); e != nil || (!withheld["year"] && year != want.Year) {
+					t.Fatal("review rewrote independent year label", year, want.Year, e)
+				}
+			}
+			if label, ok := original.Expected["type"]; ok {
+				var kind string
+				if e = json.Unmarshal(label, &kind); e != nil || (kind == "episode" && want.MediaType != media.TypeTV) || (kind == "movie" && want.MediaType != media.TypeMovie) || (kind != "episode" && kind != "movie") {
+					t.Fatal("review rewrote independent media type", kind, want.MediaType, e)
+				}
+			}
+			if label, ok := original.Expected["season"]; ok {
+				seasons := corpusNumbers(label)
+				if !withheld["season"] && (len(seasons) != 1 || seasons[0] != want.Season) {
+					t.Fatal("review rewrote independent season", string(label), want.Season)
+				}
+			}
+			if label, ok := original.Expected["episode"]; ok {
+				episodes := corpusNumbers(label)
+				if withheld["episode"] {
+					// Validated zero-authority refusal retains the original full array.
+				} else if want.Anime && want.Absolute > 0 {
+					if len(episodes) != 1 || episodes[0] != want.Absolute || len(want.Episodes) != 0 || len(want.Keys) != 0 || !want.Review {
+						t.Fatal("review promoted/relabelled unbound absolute coverage", string(label), want)
+					}
+				} else if !slices.Equal(episodes, want.Episodes) {
+					t.Fatal("review rewrote independent full episode set", episodes, want.Episodes)
+				}
+			}
+			if err := validateReviewedQualityLabels(original.Expected, want.Quality); err != nil {
+				t.Fatal("review rewrote independent quality labels", err)
+			}
+			if err := validatePTTMainQualityRebuttals(original.Expected, want.Quality); err != nil {
+				t.Fatal("review contradicted independent main dictionary", err)
+			}
+			if err := validateRustQualityRebuttals(original.Expected, want.Quality); err != nil {
+				t.Fatal("review rewrote independent Rust scalar labels", err)
+			}
+			if err := validateCSharpRebuttals(original.Expected, want.Quality, string(want.MediaType), want.Season, want.Episodes, want.Keys); err != nil {
+				t.Fatal("review rewrote independent C# scalar labels", err)
+			}
+			if err := validateVideoCoverageRebuttals(original.Expected, string(want.MediaType), want.Season, want.Episodes, want.Keys, want.Review); err != nil {
+				t.Fatal("review contradicted independent literal video coverage", err)
+			}
+			if want.MediaType == media.TypeTV && len(want.Keys) > 0 {
+				if err := validateRustFirstEpisodeRebuttal(original.Expected, want.Season, want.Episodes); err != nil {
+					t.Fatal("review contradicted partial first getter", err)
+				}
+			}
+			wantTitle, err := validatedLiteralReviewTitle(row.Input, want.Title, want.LiteralTitle)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if want.Punctuation != nil {
+				if want.LiteralTitle != "" {
+					t.Fatal("conflicting title review evidence")
+				}
+				wantTitle, err = validatedInitialsReviewTitle(row.Input, want.Title, *want.Punctuation)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+			got := media.RecognizeRelease(row.Input)
+			if got.RawName != row.Input || got.Title != wantTitle || got.Year != want.Year || got.MediaType != want.MediaType || got.Season != want.Season || !slices.Equal(got.Episodes, want.Episodes) || !slices.Equal(got.UnitKeys, want.Keys) || got.AbsoluteEpisode != want.Absolute || got.IsAnime != want.Anime || got.Confidence != want.Confidence || got.RequiresReview != want.Review || got.Reason != want.Reason || got.ParserVersion != media.EpisodeParserVersion {
+				t.Errorf("reviewed identity/coverage contract mismatch: got %+v; want %+v", got, want)
+			}
+			if (got.Quality.Resolution != "" && got.Quality.ResolutionParserVersion != quality.ResolutionTokenParserVersion) || (got.Quality.Source != "" && got.Quality.SourceParserVersion != quality.SourceTokenParserVersion) || (got.Quality.Codec != "" && got.Quality.CodecParserVersion != quality.CodecTokenParserVersion) || (got.Quality.HDR != "" && got.Quality.HDRParserVersion != quality.HDRTokenParserVersion) {
+				t.Error("new recognition missing attribute provenance")
+			}
+			got.Quality.ResolutionParserVersion = ""
+			got.Quality.SourceParserVersion = ""
+			got.Quality.CodecParserVersion = ""
+			got.Quality.HDRParserVersion = ""
+			if !reflect.DeepEqual(got.Quality, want.Quality) {
+				t.Errorf("reviewed quality contract mismatch: got %+v; want %+v", got.Quality, want.Quality)
+			}
+		})
+	}
+}
+
+// Keep the original title assertion and independently corroborate literal casing.
+func validatedLiteralReviewTitle(input, label, literal string) (string, error) {
+	if literal == "" {
+		return label, nil
+	}
+	if literal == label || !strings.EqualFold(label, literal) || !strings.Contains(strings.NewReplacer(".", " ", "_", " ").Replace(input), literal) {
+		return "", errors.New("literal title must corroborate the unchanged original label and input")
+	}
+	return literal, nil
+}

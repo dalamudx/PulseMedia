@@ -1,0 +1,13 @@
+{"Time":"2026-10-15T19:54:00.000800621+08:00","Action":"start","Package":"github.com/dalamudx/PulseMedia/internal/domain/media"}
+{"Time":"2026-10-15T19:54:00.015151399+08:00","Action":"run","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestMoistariOriginalSourceRemainsUnreviewed"}
+{"Time":"2026-10-15T19:54:00.015294959+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestMoistariOriginalSourceRemainsUnreviewed","Output":"=== RUN   TestMoistariOriginalSourceRemainsUnreviewed\n"}
+{"Time":"2026-10-15T19:54:00.026118707+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestMoistariOriginalSourceRemainsUnreviewed","Output":"--- PASS: TestMoistariOriginalSourceRemainsUnreviewed (0.01s)\n"}
+{"Time":"2026-10-15T19:54:00.02628533+08:00","Action":"pass","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestMoistariOriginalSourceRemainsUnreviewed","Elapsed":0.01}
+{"Time":"2026-10-15T19:54:00.02635556+08:00","Action":"run","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestReviewedFullReleaseAnnotations"}
+{"Time":"2026-10-15T19:54:00.026362339+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestReviewedFullReleaseAnnotations","Output":"=== RUN   TestReviewedFullReleaseAnnotations\n"}
+{"Time":"2026-10-15T19:54:00.044806869+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestReviewedFullReleaseAnnotations","Output":"    ptt_literal_pool_test.go:75: unreviewed origin or count changed\n"}
+{"Time":"2026-10-15T19:54:00.04493973+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestReviewedFullReleaseAnnotations","Output":"--- FAIL: TestReviewedFullReleaseAnnotations (0.02s)\n"}
+{"Time":"2026-10-15T19:54:00.044950629+08:00","Action":"fail","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Test":"TestReviewedFullReleaseAnnotations","Elapsed":0.02}
+{"Time":"2026-10-15T19:54:00.044982879+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Output":"FAIL\n"}
+{"Time":"2026-10-15T19:54:00.047392563+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Output":"FAIL\tgithub.com/dalamudx/PulseMedia/internal/domain/media\t0.046s\n"}
+{"Time":"2026-10-15T19:54:00.047475309+08:00","Action":"fail","Package":"github.com/dalamudx/PulseMedia/internal/domain/media","Elapsed":0.047}

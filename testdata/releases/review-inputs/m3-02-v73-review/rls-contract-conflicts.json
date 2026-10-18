@@ -1,0 +1,592 @@
+{
+  "counts": {
+    "passing_claims": 149,
+    "passing_union": 86,
+    "synthetic_in_union": 4,
+    "nonvideo_in_union": 0,
+    "eligible_union": 82,
+    "clean_consensus": 80,
+    "all_frozen_disagreement_inputs": 14,
+    "passing_union_disagreement_inputs": 2
+  },
+  "passing_pair_overlaps": {
+    "rls-audit/repo-pass": 28,
+    "rls-audit/next80": 35
+  },
+  "excluded": [
+    {
+      "index": 34,
+      "input": "a file.mkv",
+      "original": {
+        "input": "a file.mkv",
+        "line": 202,
+        "labels": {
+          "type": "movie",
+          "title": "a file",
+          "ext": "mkv"
+        },
+        "label_lines": {
+          "type": 203,
+          "title": 204,
+          "ext": 205
+        }
+      },
+      "excluded": "synthetic_placeholder_or_unestablished_metadata_stress_input",
+      "contracts": [
+        {
+          "id": "rls-original-34",
+          "origin": "rls-audit",
+          "expected": {
+            "title": "a file",
+            "year": 0,
+            "media_type": "movie",
+            "season": 0,
+            "episodes": [],
+            "unit_keys": [],
+            "absolute_episode": 0,
+            "is_anime": false,
+            "confidence": 0.6,
+            "requires_review": true,
+            "reason": "title_only_without_year",
+            "quality": {
+              "resolution": "",
+              "source": "",
+              "codec": "",
+              "hdr": "",
+              "audio": "",
+              "edition": "",
+              "group": ""
+            }
+          },
+          "note": "Bare a file has no independent release year. Original audio/edition labels remain preserved but unsupported profile fields stay unknown. Coverage, confidence and reason were fixed before any PulseMedia parser probe."
+        }
+      ]
+    },
+    {
+      "index": 109,
+      "input": "Movie.Title.2015.DVD-R-Pate",
+      "original": {
+        "input": "Movie.Title.2015.DVD-R-Pate",
+        "line": 923,
+        "labels": {
+          "type": "movie",
+          "title": "Movie Title",
+          "year": 2015,
+          "size": "DVDR",
+          "group": "Pate"
+        },
+        "label_lines": {
+          "type": 924,
+          "title": 925,
+          "year": 926,
+          "size": 927,
+          "group": 928
+        }
+      },
+      "excluded": "synthetic_placeholder_or_unestablished_metadata_stress_input",
+      "contracts": [
+        {
+          "id": "rls-original-109",
+          "origin": "rls-audit",
+          "expected": {
+            "title": "Movie Title",
+            "year": 2015,
+            "media_type": "movie",
+            "season": 0,
+            "episodes": [],
+            "unit_keys": [
+              "movie"
+            ],
+            "absolute_episode": 0,
+            "is_anime": false,
+            "confidence": 0.9,
+            "requires_review": false,
+            "reason": "clean_movie_with_year",
+            "quality": {
+              "resolution": "",
+              "source": "",
+              "codec": "",
+              "hdr": "",
+              "audio": "",
+              "edition": "",
+              "group": "Pate"
+            }
+          },
+          "note": "DVD-R source unsupported; Pate retained as group. Original audio/edition labels remain preserved but unsupported profile fields stay unknown. Coverage, confidence and reason were fixed before any PulseMedia parser probe."
+        }
+      ]
+    },
+    {
+      "index": 115,
+      "input": "Quality for Movie.Title.2004.PAL.DVD9-IL.Anonymous-DownRev",
+      "original": {
+        "input": "Quality for Movie.Title.2004.PAL.DVD9-IL.Anonymous-DownRev",
+        "line": 978,
+        "labels": {
+          "type": "movie",
+          "title": "Quality for Movie Title",
+          "resolution": "576p",
+          "year": 2004,
+          "size": "DVD9",
+          "group": "DownRev",
+          "unused": "IL Anonymous"
+        },
+        "label_lines": {
+          "type": 979,
+          "title": 980,
+          "resolution": 981,
+          "year": 982,
+          "size": 983,
+          "group": 984,
+          "unused": 985
+        }
+      },
+      "excluded": "synthetic_placeholder_or_unestablished_metadata_stress_input",
+      "contracts": [
+        {
+          "id": "rls-original-115",
+          "origin": "rls-audit",
+          "expected": {
+            "title": "Quality for Movie Title",
+            "year": 2004,
+            "media_type": "movie",
+            "season": 0,
+            "episodes": [],
+            "unit_keys": [
+              "movie"
+            ],
+            "absolute_episode": 0,
+            "is_anime": false,
+            "confidence": 0.9,
+            "requires_review": false,
+            "reason": "clean_movie_with_year",
+            "quality": {
+              "resolution": "",
+              "source": "",
+              "codec": "",
+              "hdr": "",
+              "audio": "",
+              "edition": "",
+              "group": "DownRev"
+            }
+          },
+          "note": "PAL DVD9 unsupported; literal Quality for remains original title. Original audio/edition labels remain preserved but unsupported profile fields stay unknown. Coverage, confidence and reason were fixed before any PulseMedia parser probe."
+        }
+      ]
+    },
+    {
+      "index": 162,
+      "input": "under.the.sea:.20,000.leagues.1080p",
+      "original": {
+        "input": "under.the.sea:.20,000.leagues.1080p",
+        "line": 1454,
+        "labels": {
+          "type": "movie",
+          "title": "under the sea: 20,000 leagues",
+          "resolution": "1080p"
+        },
+        "label_lines": {
+          "type": 1455,
+          "title": 1456,
+          "resolution": 1457
+        }
+      },
+      "excluded": "synthetic_placeholder_or_unestablished_metadata_stress_input",
+      "contracts": [
+        {
+          "id": "rls-original-162",
+          "origin": "rls-audit",
+          "expected": {
+            "title": "under the sea: 20,000 leagues",
+            "year": 0,
+            "media_type": "movie",
+            "season": 0,
+            "episodes": [],
+            "unit_keys": [],
+            "absolute_episode": 0,
+            "is_anime": false,
+            "confidence": 0.6,
+            "requires_review": true,
+            "reason": "title_only_without_year",
+            "quality": {
+              "resolution": "1080p",
+              "source": "",
+              "codec": "",
+              "hdr": "",
+              "audio": "",
+              "edition": "",
+              "group": ""
+            }
+          },
+          "note": "20,000 is title text and no year is independently asserted. Original audio/edition labels remain preserved but unsupported profile fields stay unknown. Coverage, confidence and reason were fixed before any PulseMedia parser probe."
+        }
+      ]
+    }
+  ],
+  "disagreements": [
+    {
+      "index": 17,
+      "input": "5.Headed.Shark.Attack.German.2017.MERRY.XMAS.AC3.BDRiP.x264-XF",
+      "left": "rls-original-17",
+      "right": "moistari-rls-original-017",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "repo-frozen40",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "quality.source",
+          "left": "Bluray",
+          "right": ""
+        }
+      ]
+    },
+    {
+      "index": 60,
+      "input": "Coco.Avant.Chanel.2009.FRENCH.NORDiCSUBS.COMPLETE.BDR-CULTBDR",
+      "left": "rls-original-60",
+      "right": "moistari-next80-060",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": true,
+      "fields": [
+        {
+          "field": "unit_keys",
+          "left": [],
+          "right": [
+            "movie"
+          ]
+        },
+        {
+          "field": "confidence",
+          "left": 0,
+          "right": 0.9
+        },
+        {
+          "field": "requires_review",
+          "left": true,
+          "right": false
+        },
+        {
+          "field": "reason",
+          "left": "multi_unit_collection",
+          "right": "clean_movie_with_year"
+        }
+      ]
+    },
+    {
+      "index": 63,
+      "input": "Crank.2006.EXTENDED.DIRFIX.MULTI.COMPLETE.UHD.BLURAY-MONUMENT",
+      "left": "rls-original-63",
+      "right": "moistari-next80-063",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "unit_keys",
+          "left": [],
+          "right": [
+            "movie"
+          ]
+        },
+        {
+          "field": "confidence",
+          "left": 0,
+          "right": 0.9
+        },
+        {
+          "field": "requires_review",
+          "left": true,
+          "right": false
+        },
+        {
+          "field": "reason",
+          "left": "multi_unit_collection",
+          "right": "clean_movie_with_year"
+        }
+      ]
+    },
+    {
+      "index": 177,
+      "input": "1923.s01e01.1080p.web.h264-ggez.mkv",
+      "left": "rls-original-177",
+      "right": "moistari-next80-177",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": true,
+      "fields": [
+        {
+          "field": "year",
+          "left": 0,
+          "right": 1923
+        }
+      ]
+    },
+    {
+      "index": 205,
+      "input": "Fairy.Tail.E009.Natsu.verschlingt.ein.Dorf.German.2009.ANiME.DL.BDRiP.x264-STARS",
+      "left": "rls-original-205",
+      "right": "moistari-next80-205",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "reason",
+          "left": "absolute_mapping_required",
+          "right": "episode_coverage_unresolved"
+        },
+        {
+          "field": "quality.source",
+          "left": "Bluray",
+          "right": ""
+        }
+      ]
+    },
+    {
+      "index": 209,
+      "input": "Ghost Force S01E24E20 1080p HULU WEB-DL DDP 5.1 H.264-LAZY",
+      "left": "rls-original-209",
+      "right": "moistari-next80-209",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "season",
+          "left": 1,
+          "right": 0
+        },
+        {
+          "field": "episodes",
+          "left": [
+            20,
+            24
+          ],
+          "right": []
+        },
+        {
+          "field": "unit_keys",
+          "left": [
+            "S01E20",
+            "S01E24"
+          ],
+          "right": []
+        },
+        {
+          "field": "confidence",
+          "left": 0.95,
+          "right": 0
+        },
+        {
+          "field": "requires_review",
+          "left": false,
+          "right": true
+        },
+        {
+          "field": "reason",
+          "left": "explicit_episode_list",
+          "right": "invalid_episode_coverage"
+        }
+      ]
+    },
+    {
+      "index": 221,
+      "input": "[P9] Kaiji - Ultimate Survivor - S01E01 - Departure (VRV WEB-DL 1080p AAC).mkv",
+      "left": "rls-original-221",
+      "right": "moistari-next80-221",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "quality.group",
+          "left": "",
+          "right": "P9"
+        }
+      ]
+    },
+    {
+      "index": 227,
+      "input": "[Conclave-Mendoi]_Mobile_Suit_Gundam_00_S2_-_01v2_[1280x720_H.264_AAC][4863FBE8].mkv",
+      "left": "rls-original-227",
+      "right": "moistari-next80-227",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "reason",
+          "left": "conflicting_episode_coverage",
+          "right": "episode_coverage_unresolved"
+        },
+        {
+          "field": "quality.resolution",
+          "left": "720p",
+          "right": ""
+        },
+        {
+          "field": "quality.group",
+          "left": "",
+          "right": "Conclave-Mendoi"
+        }
+      ]
+    },
+    {
+      "index": 228,
+      "input": "Mobile_Suit_Gundam_00_Season_2_Ep07_A_Reunion_and_a_Parting_[1080p,BluRay,x264]_-_THORA.mkv",
+      "left": "rls-original-228",
+      "right": "moistari-next80-228",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "season",
+          "left": 2,
+          "right": 0
+        },
+        {
+          "field": "episodes",
+          "left": [
+            7
+          ],
+          "right": []
+        },
+        {
+          "field": "unit_keys",
+          "left": [
+            "S02E07"
+          ],
+          "right": []
+        },
+        {
+          "field": "confidence",
+          "left": 0.95,
+          "right": 0
+        },
+        {
+          "field": "requires_review",
+          "left": false,
+          "right": true
+        },
+        {
+          "field": "reason",
+          "left": "standard_season_episode",
+          "right": "episode_coverage_unresolved"
+        }
+      ]
+    },
+    {
+      "index": 247,
+      "input": "Soul.Eater.Ep.01-51.Complete.German.AC3.DL.720p.BluRay.x264-AST4u",
+      "left": "rls-original-247",
+      "right": "moistari-next80-247",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "reason",
+          "left": "multi_unit_collection",
+          "right": "episode_coverage_unresolved"
+        }
+      ]
+    },
+    {
+      "index": 248,
+      "input": "Soul.Eater.Ep.02.German.AC3.DL.720p.BluRay.x264-AST4u",
+      "left": "rls-original-248",
+      "right": "moistari-next80-248",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "reason",
+          "left": "absolute_mapping_required",
+          "right": "episode_coverage_unresolved"
+        }
+      ]
+    },
+    {
+      "index": 252,
+      "input": "SpankedSchoolGirl.E57.Nervous.Wait.XXX.HR.WMV-KTR",
+      "left": "rls-original-252",
+      "right": "moistari-next80-252",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "reason",
+          "left": "absolute_mapping_required",
+          "right": "episode_coverage_unresolved"
+        }
+      ]
+    },
+    {
+      "index": 271,
+      "input": "Tokyo Ghoul: RE S2 - Episode 4 VOSTFR (1080p)",
+      "left": "rls-original-271",
+      "right": "moistari-next80-271",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "season",
+          "left": 2,
+          "right": 0
+        },
+        {
+          "field": "episodes",
+          "left": [
+            4
+          ],
+          "right": []
+        },
+        {
+          "field": "unit_keys",
+          "left": [
+            "S02E04"
+          ],
+          "right": []
+        },
+        {
+          "field": "confidence",
+          "left": 0.95,
+          "right": 0
+        },
+        {
+          "field": "requires_review",
+          "left": false,
+          "right": true
+        },
+        {
+          "field": "reason",
+          "left": "standard_season_episode",
+          "right": "episode_coverage_unresolved"
+        }
+      ]
+    },
+    {
+      "index": 276,
+      "input": "World's End Harem (Shuumatsu no Harem) S01E08 (2022 Airing) AT-X 2021 1080i HDTV AAC 2.0 English Subbed -ZR-.mkv",
+      "left": "rls-original-276",
+      "right": "moistari-next80-276",
+      "leftOrigin": "rls-audit-frozen266",
+      "rightOrigin": "next80-frozen80",
+      "in_passing_union": false,
+      "fields": [
+        {
+          "field": "year",
+          "left": 0,
+          "right": 2021
+        }
+      ]
+    }
+  ],
+  "formal_golden_acceptance": false,
+  "production_probed": false
+}

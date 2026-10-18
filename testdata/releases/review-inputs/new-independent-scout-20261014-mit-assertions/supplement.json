@@ -1,0 +1,406 @@
+{
+  "schema": "pulse.source-supplement.v1",
+  "accepted": false,
+  "authority": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "formal_golden_acceptance": false,
+  "reviewed_entries": 0,
+  "review_status": "unreviewed",
+  "sources": [
+    {
+      "id": "walker-media-name-parser-extra",
+      "repo": "chad3814/media-name-parser",
+      "commit": "9879051d9bc794da5fd8c07a5f786503c131899c",
+      "kind": "walker-extra",
+      "tests": [
+        "test/parse/video.test.ts"
+      ],
+      "other": [],
+      "flow": "Three more directly asserted realistic movie titles from the already preserved handwritten unit file: Treasure Island, Romeo Must Die, The Informer. Placeholder result cases and generated golden fixtures stay excluded. Original competing-year/re-release labels remain unchanged and give no automatic identity or coverage authority.",
+      "files": [
+        {
+          "original_path": "LICENSE",
+          "preserved": "sources/walker-media-name-parser/LICENSE",
+          "sha256": "b75bb24a9e75093a8b39187aee08abf7cce8057e1cbb8243eeb2a430e008578f",
+          "bytes": 1068,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/LICENSE"
+        },
+        {
+          "original_path": "test/parse/video.test.ts",
+          "preserved": "sources/walker-media-name-parser/test/parse/video.test.ts.source",
+          "sha256": "bda9aa8082237ff89dfd7e22079f8b99316f2296be7bf2aa7dc05c179662bb21",
+          "bytes": 14429,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/test/parse/video.test.ts"
+        },
+        {
+          "original_path": "git log --format=%H %s -- test/parse/video.test.ts",
+          "preserved": "sources/walker-media-name-parser-extra/test-history.source",
+          "sha256": "6e94a5b7381db7477f6f491483d186769f67aea9229f08eae7d3e9eeb81aa33f",
+          "bytes": 760,
+          "generated_by_scout": true
+        }
+      ],
+      "metadata": {
+        "source_id": "walker-media-name-parser",
+        "repo": "chad3814/media-name-parser",
+        "fork": false,
+        "license": "MIT",
+        "preserved": "metadata/walker-media-name-parser.github-search.json.source",
+        "bytes": 392342,
+        "sha256": "a77ad1a2cd3c3f7374a9f4d196696dc74fa207b66ec39b635870b1f37e42e7cb",
+        "query": "https://api.github.com/search/repositories?q=filename+parser+license:mit",
+        "limit": "Repository metadata is search-time evidence, not a substitute for commit-pinned source/license bytes or proof against every possible shared influence."
+      },
+      "license": "MIT",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "id": "spann-tvshowfile-date",
+      "repo": "Bas-Man/TVShowFile",
+      "commit": "2f341c97dcbe52eee0c0e71752173c9e9442450c",
+      "kind": "python-date",
+      "tests": [
+        "tests/Parser/600byDateJimmyFallon_test.py",
+        "tests/Parser/610byDateStephenColbert_test.py",
+        "tests/Parser/620byDateTMZonTV_test.py",
+        "tests/Parser/630byDateJeopardy_test.py"
+      ],
+      "other": [
+        "LICENSE",
+        "README.md",
+        "References.md",
+        "setup.py",
+        "tests/Parser/context.py"
+      ],
+      "flow": "Each setUp constructs Parser from one literal filename; a separate unittest assertion directly compares getCleanShowName() with a literal expected series title. context.py only imports local parser modules. No external fixture, constructor default name or actual output supplies the expected string. References.md lists regex/code references to tvregex, tvnamer and tvrenamr; none is a fixture import or expectation source in these four selected 2019 date tests. Only this fixed project's MIT tests and dependency notices are preserved; no referenced code or external data is imported. Date/title claims do not infer canonical seasons or episodes.",
+      "files": [
+        {
+          "original_path": "LICENSE",
+          "preserved": "sources/spann-tvshowfile-date/LICENSE",
+          "sha256": "b537b1a017c14328ac139294b5ba6a5cd2692c96d9d33042f876c8974f880c40",
+          "bytes": 1067,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/LICENSE"
+        },
+        {
+          "original_path": "README.md",
+          "preserved": "sources/spann-tvshowfile-date/README.md.source",
+          "sha256": "e13421437b4cf5647139750d2b0079b16d78ace9b0d6181326ddc1519fb4dc2c",
+          "bytes": 754,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/README.md"
+        },
+        {
+          "original_path": "References.md",
+          "preserved": "sources/spann-tvshowfile-date/References.md.source",
+          "sha256": "5c495ee0dea92ae735d01df595efbc6d4f0da62523be31fb10b45e73a98df46d",
+          "bytes": 709,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/References.md"
+        },
+        {
+          "original_path": "setup.py",
+          "preserved": "sources/spann-tvshowfile-date/setup.py.source",
+          "sha256": "b487c281a0db94b29f32b2a87c8f63008ec688fc8078ddf4826d338286e966c3",
+          "bytes": 755,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/setup.py"
+        },
+        {
+          "original_path": "tests/Parser/context.py",
+          "preserved": "sources/spann-tvshowfile-date/tests/Parser/context.py.source",
+          "sha256": "5035333d9a28df87cbe6e4baca4b0f3b16a206636bb998a676b44e87022e6143",
+          "bytes": 283,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/tests/Parser/context.py"
+        },
+        {
+          "original_path": "tests/Parser/600byDateJimmyFallon_test.py",
+          "preserved": "sources/spann-tvshowfile-date/tests/Parser/600byDateJimmyFallon_test.py.source",
+          "sha256": "dc3c91d5d541741bbf3a377a62d3c86558f0a4fe88a800b75866d2c57988bf7c",
+          "bytes": 1222,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/tests/Parser/600byDateJimmyFallon_test.py"
+        },
+        {
+          "original_path": "tests/Parser/610byDateStephenColbert_test.py",
+          "preserved": "sources/spann-tvshowfile-date/tests/Parser/610byDateStephenColbert_test.py.source",
+          "sha256": "57a41ea8e09899f4385f5722bec97a1e7b7d451afb2641095cc7ddcc59025ba6",
+          "bytes": 1224,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/tests/Parser/610byDateStephenColbert_test.py"
+        },
+        {
+          "original_path": "tests/Parser/620byDateTMZonTV_test.py",
+          "preserved": "sources/spann-tvshowfile-date/tests/Parser/620byDateTMZonTV_test.py.source",
+          "sha256": "9fb63b7d52c77392688cf76f5a8164204b93497ecf52207191f001aba28b5fc8",
+          "bytes": 1185,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/tests/Parser/620byDateTMZonTV_test.py"
+        },
+        {
+          "original_path": "tests/Parser/630byDateJeopardy_test.py",
+          "preserved": "sources/spann-tvshowfile-date/tests/Parser/630byDateJeopardy_test.py.source",
+          "sha256": "abd214e5095e366c3e86a6f3572689c646d29750d644439eab8f8cc89ef43b99",
+          "bytes": 1182,
+          "url": "https://github.com/Bas-Man/TVShowFile/blob/2f341c97dcbe52eee0c0e71752173c9e9442450c/tests/Parser/630byDateJeopardy_test.py"
+        },
+        {
+          "original_path": "git log --format=%H %s -- tests/Parser/600byDateJimmyFallon_test.py tests/Parser/610byDateStephenColbert_test.py tests/Parser/620byDateTMZonTV_test.py tests/Parser/630byDateJeopardy_test.py",
+          "preserved": "sources/spann-tvshowfile-date/test-history.source",
+          "sha256": "1725d24978ad6adf44455e1fe646bd52996d3fa118d1c39dc589456499213dcf",
+          "bytes": 574,
+          "generated_by_scout": true
+        }
+      ],
+      "metadata": {
+        "source_id": "walker-media-name-parser",
+        "repo": "chad3814/media-name-parser",
+        "fork": false,
+        "license": "MIT",
+        "preserved": "metadata/walker-media-name-parser.github-search.json.source",
+        "bytes": 392342,
+        "sha256": "a77ad1a2cd3c3f7374a9f4d196696dc74fa207b66ec39b635870b1f37e42e7cb",
+        "query": "https://api.github.com/search/repositories?q=filename+parser+license:mit",
+        "limit": "Repository metadata is search-time evidence, not a substitute for commit-pinned source/license bytes or proof against every possible shared influence."
+      },
+      "license": "MIT",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "id": "matsimitsu-release-parser",
+      "repo": "matsimitsu/release_parser",
+      "commit": "c75bf77dc8176a6e7ccd5f7d2169202c122408b1",
+      "kind": "ruby",
+      "tests": [
+        "spec/lib/release_parser_spec.rb"
+      ],
+      "other": [
+        "LICENSE",
+        "README.md",
+        "release_parser.gemspec",
+        "Gemfile",
+        "spec/spec_helper.rb",
+        "spec/lib/release_parser/tokenizer_spec.rb"
+      ],
+      "flow": "RSpec let(:input) contains one fixed realistic Looped filename and result.title is compared directly with literal Looped. The helper only configures RSpec and imports the local library. Tokenizer tests, Gemfile and gemspec do not create expected title values. The suffix E14A is original partial/segment evidence and must not authorize a full S01E14 unit.",
+      "files": [
+        {
+          "original_path": "LICENSE",
+          "preserved": "sources/matsimitsu-release-parser/LICENSE",
+          "sha256": "585626d483d1d57730e5fb98188d160ba04a20fc3d276f4c4c69dad116e285cd",
+          "bytes": 1054,
+          "url": "https://github.com/matsimitsu/release_parser/blob/c75bf77dc8176a6e7ccd5f7d2169202c122408b1/LICENSE"
+        },
+        {
+          "original_path": "README.md",
+          "preserved": "sources/matsimitsu-release-parser/README.md.source",
+          "sha256": "24e62098780e3a250ddf8d4fe2bb0990ea71993c995ec52a28a312db70179903",
+          "bytes": 1252,
+          "url": "https://github.com/matsimitsu/release_parser/blob/c75bf77dc8176a6e7ccd5f7d2169202c122408b1/README.md"
+        },
+        {
+          "original_path": "release_parser.gemspec",
+          "preserved": "sources/matsimitsu-release-parser/release_parser.gemspec.source",
+          "sha256": "5d8ed955a52ae87c49ef124c5adab9d3cb0ed7ef4db460488d5990f81f8555ab",
+          "bytes": 967,
+          "url": "https://github.com/matsimitsu/release_parser/blob/c75bf77dc8176a6e7ccd5f7d2169202c122408b1/release_parser.gemspec"
+        },
+        {
+          "original_path": "Gemfile",
+          "preserved": "sources/matsimitsu-release-parser/Gemfile.source",
+          "sha256": "c754e36f9b0fd0003a7b979b4a45a51150c6069191c2c6e341b3cea5dbe83513",
+          "bytes": 39,
+          "url": "https://github.com/matsimitsu/release_parser/blob/c75bf77dc8176a6e7ccd5f7d2169202c122408b1/Gemfile"
+        },
+        {
+          "original_path": "spec/spec_helper.rb",
+          "preserved": "sources/matsimitsu-release-parser/spec/spec_helper.rb.source",
+          "sha256": "8621bee0e63331db5c77857ba8b1470f55722ece489dc33aafb4bc6c4bae154a",
+          "bytes": 100,
+          "url": "https://github.com/matsimitsu/release_parser/blob/c75bf77dc8176a6e7ccd5f7d2169202c122408b1/spec/spec_helper.rb"
+        },
+        {
+          "original_path": "spec/lib/release_parser/tokenizer_spec.rb",
+          "preserved": "sources/matsimitsu-release-parser/spec/lib/release_parser/tokenizer_spec.rb.source",
+          "sha256": "bf1d4fd28f791e514a3bef6eb3dfde2b38c41383e17cb4e66a4bb06136a743f8",
+          "bytes": 4684,
+          "url": "https://github.com/matsimitsu/release_parser/blob/c75bf77dc8176a6e7ccd5f7d2169202c122408b1/spec/lib/release_parser/tokenizer_spec.rb"
+        },
+        {
+          "original_path": "spec/lib/release_parser_spec.rb",
+          "preserved": "sources/matsimitsu-release-parser/spec/lib/release_parser_spec.rb.source",
+          "sha256": "9e85d6514378f716084079fe77b5a2f53d607f676709f60a3043825fe092c97a",
+          "bytes": 787,
+          "url": "https://github.com/matsimitsu/release_parser/blob/c75bf77dc8176a6e7ccd5f7d2169202c122408b1/spec/lib/release_parser_spec.rb"
+        },
+        {
+          "original_path": "git log --format=%H %s -- spec/lib/release_parser_spec.rb",
+          "preserved": "sources/matsimitsu-release-parser/test-history.source",
+          "sha256": "f31cb2058c8448939b74f43457ea81dcf8bb8c695601de249e243995ad23c5ef",
+          "bytes": 138,
+          "generated_by_scout": true
+        }
+      ],
+      "metadata": {
+        "preserved": "metadata/matsimitsu-release-parser.github-search.json.source",
+        "sha256": "a6471e4b49f0667a8dd7805fcfe624105333e8023ad9c8d3c342eca6a5e8bb4f",
+        "bytes": 31492,
+        "query": "https://api.github.com/search/repositories?q=release+parser+language:Ruby+license:mit"
+      },
+      "license": "MIT",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    }
+  ],
+  "rows": [
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 0,
+      "input": "Treasure.Island.1999.FULLSCREEN.2003.RERELEASE.NTSC.USA.DVD9-AndreMor",
+      "title": "Treasure Island",
+      "input_line": 228,
+      "title_line": 230,
+      "original_assertion_block": "const result = parseVideo('movies', 'Treasure.Island.1999.FULLSCREEN.2003.RERELEASE.NTSC.USA.DVD9-AndreMor');\n  if (!result.ok) throw new Error(`refused: ${result.refusal}`);\n  assert.equal(result.parsed.title, 'Treasure Island');\n  assert.equal(result.parsed.year, 1999, 'the first year, not the re-release year');\n  assert.deepEqual(result.parsed.edition, ['FULLSCREEN', 'RERELEASE']);\n  assert.equal(result.parsed.group, 'AndreMor');",
+      "oracle_kind": "direct-node-real-movie-title-equality",
+      "source_id": "walker-media-name-parser-extra",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 1,
+      "input": "Romeo.Must.Die.2000.Open.Matte.1080p.WEB-DL.HEVC.x265.5.1-BONE",
+      "title": "Romeo Must Die",
+      "input_line": 237,
+      "title_line": 239,
+      "original_assertion_block": "const result = parseVideo('movies', 'Romeo.Must.Die.2000.Open.Matte.1080p.WEB-DL.HEVC.x265.5.1-BONE');\n  if (!result.ok) throw new Error(`refused: ${result.refusal}`);\n  assert.equal(result.parsed.title, 'Romeo Must Die');\n  assert.equal(result.parsed.year, 2000);\n  assert.deepEqual(result.parsed.edition, ['OpenMatte']);\n  assert.equal(result.parsed.group, 'BONE');",
+      "oracle_kind": "direct-node-real-movie-title-equality",
+      "source_id": "walker-media-name-parser-extra",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 2,
+      "input": "The.Informer.2019.1080p.BluRay.REMUX.MULTi-Ben.The.Men",
+      "title": "The Informer",
+      "input_line": 246,
+      "title_line": 248,
+      "original_assertion_block": "const result = parseVideo('movies', 'The.Informer.2019.1080p.BluRay.REMUX.MULTi-Ben.The.Men');\n  if (!result.ok) throw new Error(`refused: ${result.refusal}`);\n  assert.equal(result.parsed.title, 'The Informer');\n  assert.equal(result.parsed.year, 2019);\n  assert.equal(result.parsed.group, 'Ben.The.Men');",
+      "oracle_kind": "direct-node-real-movie-title-equality",
+      "source_id": "walker-media-name-parser-extra",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/Parser/600byDateJimmyFallon_test.py",
+      "source_index": 0,
+      "input": "Jimmy.Fallon.2019.01.29.Matthew.Broderick.720p.HDTV.x264-SORNY[eztv].mkv",
+      "title": "Jimmy Fallon",
+      "input_line": 8,
+      "title_line": 32,
+      "oracle_kind": "direct-unittest-clean-series-title-equality",
+      "source_id": "spann-tvshowfile-date",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/Parser/610byDateStephenColbert_test.py",
+      "source_index": 0,
+      "input": "Stephen.Colbert.2019.01.29.Chris.Christie.480p.x264-mSD[eztv].mkv",
+      "title": "Stephen Colbert",
+      "input_line": 8,
+      "title_line": 32,
+      "oracle_kind": "direct-unittest-clean-series-title-equality",
+      "source_id": "spann-tvshowfile-date",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/Parser/620byDateTMZonTV_test.py",
+      "source_index": 0,
+      "input": "TMZ.on.TV.2019.01.28.480p.x264-mSD[eztv].mkv",
+      "title": "TMZ on TV",
+      "input_line": 8,
+      "title_line": 32,
+      "oracle_kind": "direct-unittest-clean-series-title-equality",
+      "source_id": "spann-tvshowfile-date",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/Parser/630byDateJeopardy_test.py",
+      "source_index": 0,
+      "input": "Jeopardy.2019.01.30.720p.HDTV.x264[eztv].mkv",
+      "title": "Jeopardy",
+      "input_line": 8,
+      "title_line": 32,
+      "oracle_kind": "direct-unittest-clean-series-title-equality",
+      "source_id": "spann-tvshowfile-date",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "spec/lib/release_parser_spec.rb",
+      "source_index": 0,
+      "input": "Looped (2016) S01E14A Space Burrito 720p HDTV x264-DEADPOOL",
+      "title": "Looped",
+      "input_line": 4,
+      "title_line": 9,
+      "oracle_kind": "direct-rspec-title-equality",
+      "source_id": "matsimitsu-release-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    }
+  ],
+  "excluded": [],
+  "raw_positive_assertions": 8
+}

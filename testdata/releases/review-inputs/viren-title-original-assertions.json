@@ -1,0 +1,679 @@
+{
+  "schema": "pulse.release-review-input.v1",
+  "source_id": "viren-title-original-assertions",
+  "provenance": {
+    "repository": "Viren070/parse-torrent-title",
+    "commit": "46bc6fef150649410d8d307a08e97ba3a3559eb6",
+    "path": "src/__tests__/title.test.ts",
+    "source_sha256": "c21deed849fd334ed72bd4244aca3e0637a019b74e7237b8902708e035ea70ec",
+    "license_sha256": "5c44be7aac21777dcc84933675ee7f0b08c736aeaed6c78aedd0e3d7a6856d3a",
+    "unique_entries": 66
+  },
+  "license": "MIT",
+  "review_status": "unreviewed",
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "label_scope": "Only original title literals; no Pulse expected values, inferred type, year, quality, coverage or confidence.",
+  "entries": [
+    {
+      "release_name": "La famille bélier",
+      "original_fields": {
+        "expected_title": "La famille bélier"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 5,
+      "input_literal": "'La famille bélier'",
+      "title_literal": "'La famille bélier'"
+    },
+    {
+      "release_name": "La.famille.bélier",
+      "original_fields": {
+        "expected_title": "La famille bélier"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 10,
+      "input_literal": "'La.famille.bélier'",
+      "title_literal": "'La famille bélier'"
+    },
+    {
+      "release_name": "Mr. Nobody",
+      "original_fields": {
+        "expected_title": "Mr. Nobody"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 15,
+      "input_literal": "'Mr. Nobody'",
+      "title_literal": "'Mr. Nobody'"
+    },
+    {
+      "release_name": "doctor_who_2005.8x12.death_in_heaven.720p_hdtv_x264-fov",
+      "original_fields": {
+        "expected_title": "doctor who"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 20,
+      "input_literal": "'doctor_who_2005.8x12.death_in_heaven.720p_hdtv_x264-fov'",
+      "title_literal": "'doctor who'"
+    },
+    {
+      "release_name": "[GM-Team][国漫][太乙仙魔录 灵飞纪 第3季][Magical Legend of Rise to immortality Ⅲ][01-26][AVC][GB][1080P]",
+      "original_fields": {
+        "expected_title": "Magical Legend of Rise to immortality Ⅲ"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 27,
+      "input_literal": "'[GM-Team][国漫][太乙仙魔录 灵飞纪 第3季][Magical Legend of Rise to immortality Ⅲ][01-26][AVC][GB][1080P]'",
+      "title_literal": "'Magical Legend of Rise to immortality Ⅲ'"
+    },
+    {
+      "release_name": "【喵萌奶茶屋】★01月新番★[Rebirth][01][720p][简体][招募翻译]",
+      "original_fields": {
+        "expected_title": "Rebirth"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 34,
+      "input_literal": "'【喵萌奶茶屋】★01月新番★[Rebirth][01][720p][简体][招募翻译]'",
+      "title_literal": "'Rebirth'"
+    },
+    {
+      "release_name": "【喵萌奶茶屋】★01月新番★[別對映像研出手！/映像研には手を出すな！/Eizouken ni wa Te wo Dasu na!][01][1080p][繁體]",
+      "original_fields": {
+        "expected_title": "Eizouken ni wa Te wo Dasu na!"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 41,
+      "input_literal": "'【喵萌奶茶屋】★01月新番★[別對映像研出手！/映像研には手を出すな！/Eizouken ni wa Te wo Dasu na!][01][1080p][繁體]'",
+      "title_literal": "'Eizouken ni wa Te wo Dasu na!'"
+    },
+    {
+      "release_name": "【喵萌奶茶屋】★01月新番★[別對映像研出手！/Eizouken ni wa Te wo Dasu na!/映像研には手を出すな！][01][1080p][繁體]",
+      "original_fields": {
+        "expected_title": "Eizouken ni wa Te wo Dasu na!"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 48,
+      "input_literal": "'【喵萌奶茶屋】★01月新番★[別對映像研出手！/Eizouken ni wa Te wo Dasu na!/映像研には手を出すな！][01][1080p][繁體]'",
+      "title_literal": "'Eizouken ni wa Te wo Dasu na!'"
+    },
+    {
+      "release_name": "[Seed-Raws] 劇場版 ペンギン・ハイウェイ Penguin Highway The Movie (BD 1280x720 AVC AACx4 [5.1+2.0+2.0+2.0]).mp4",
+      "original_fields": {
+        "expected_title": "Penguin Highway The Movie"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 55,
+      "input_literal": "'[Seed-Raws] 劇場版 ペンギン・ハイウェイ Penguin Highway The Movie (BD 1280x720 AVC AACx4 [5.1+2.0+2.0+2.0]).mp4'",
+      "title_literal": "'Penguin Highway The Movie'"
+    },
+    {
+      "release_name": "[SweetSub][Mutafukaz / MFKZ][Movie][BDRip][1080P][AVC 8bit][简体内嵌]",
+      "original_fields": {
+        "expected_title": "Mutafukaz / MFKZ"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 62,
+      "input_literal": "'[SweetSub][Mutafukaz / MFKZ][Movie][BDRip][1080P][AVC 8bit][简体内嵌]'",
+      "title_literal": "'Mutafukaz / MFKZ'"
+    },
+    {
+      "release_name": "[Erai-raws] Kingdom 3rd Season - 02 [1080p].mkv",
+      "original_fields": {
+        "expected_title": "Kingdom"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 69,
+      "input_literal": "'[Erai-raws] Kingdom 3rd Season - 02 [1080p].mkv'",
+      "title_literal": "'Kingdom'"
+    },
+    {
+      "release_name": "Голубая волна / Blue Crush (2002) DVDRip",
+      "original_fields": {
+        "expected_title": "Blue Crush"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 76,
+      "input_literal": "'Голубая волна / Blue Crush (2002) DVDRip'",
+      "title_literal": "'Blue Crush'"
+    },
+    {
+      "release_name": "Жихарка (2007) DVDRip",
+      "original_fields": {
+        "expected_title": "Жихарка"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 83,
+      "input_literal": "'Жихарка (2007) DVDRip'",
+      "title_literal": "'Жихарка'"
+    },
+    {
+      "release_name": "3 Миссия невыполнима 3 2006г. BDRip 1080p.mkv",
+      "original_fields": {
+        "expected_title": "3 Миссия невыполнима 3"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 88,
+      "input_literal": "'3 Миссия невыполнима 3 2006г. BDRip 1080p.mkv'",
+      "title_literal": "'3 Миссия невыполнима 3'"
+    },
+    {
+      "release_name": "1. Детские игры. 1988. 1080p. HEVC. 10bit..mkv",
+      "original_fields": {
+        "expected_title": "1. Детские игры"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 95,
+      "input_literal": "'1. Детские игры. 1988. 1080p. HEVC. 10bit..mkv'",
+      "title_literal": "'1. Детские игры'"
+    },
+    {
+      "release_name": "01. 100 девчонок и одна в лифте 2000 WEBRip 1080p.mkv",
+      "original_fields": {
+        "expected_title": "01. 100 девчонок и одна в лифте"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 102,
+      "input_literal": "'01. 100 девчонок и одна в лифте 2000 WEBRip 1080p.mkv'",
+      "title_literal": "'01. 100 девчонок и одна в лифте'"
+    },
+    {
+      "release_name": "08.Планета.обезьян.Революция.2014.BDRip-HEVC.1080p.mkv",
+      "original_fields": {
+        "expected_title": "08 Планета обезьян Революция"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 109,
+      "input_literal": "'08.Планета.обезьян.Революция.2014.BDRip-HEVC.1080p.mkv'",
+      "title_literal": "'08 Планета обезьян Революция'"
+    },
+    {
+      "release_name": "Американские животные / American Animals (Барт Лэйтон / Bart Layton) [2018, Великобритания, США, драма, криминал, BDRip] MVO (СВ Студия)",
+      "original_fields": {
+        "expected_title": "American Animals"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 116,
+      "input_literal": "'Американские животные / American Animals (Барт Лэйтон / Bart Layton) [2018, Великобритания, США, драма, криминал, BDRip] MVO (СВ Студия)'",
+      "title_literal": "'American Animals'"
+    },
+    {
+      "release_name": "Греческая смоковница / Griechische Feigen / The Fruit Is Ripe (Зиги Ротемунд / Sigi Rothemund (as Siggi Götz)) [1976, Германия (ФРГ), эротика, комедия, приключения, DVDRip] 2 VO",
+      "original_fields": {
+        "expected_title": "Griechische Feigen / The Fruit Is Ripe"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 123,
+      "input_literal": "'Греческая смоковница / Griechische Feigen / The Fruit Is Ripe (Зиги Ротемунд / Sigi Rothemund (as Siggi Götz)) [1976, Германия (ФРГ), эротика, комедия, приключения, DVDRip] 2 VO'",
+      "title_literal": "'Griechische Feigen / The Fruit Is Ripe'"
+    },
+    {
+      "release_name": "Греческая смоковница / The fruit is ripe / Griechische Feigen (Siggi Götz) [1976, Германия, Эротическая комедия, DVDRip]",
+      "original_fields": {
+        "expected_title": "The fruit is ripe / Griechische Feigen"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 130,
+      "input_literal": "'Греческая смоковница / The fruit is ripe / Griechische Feigen (Siggi Götz) [1976, Германия, Эротическая комедия, DVDRip]'",
+      "title_literal": "'The fruit is ripe / Griechische Feigen'"
+    },
+    {
+      "release_name": "Бастер / Buster (Дэвид Грин / David Green) [1988, Великобритания, Комедия, мелодрама, драма, приключения, криминал, биография, DVDRip]",
+      "original_fields": {
+        "expected_title": "Buster"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 137,
+      "input_literal": "'Бастер / Buster (Дэвид Грин / David Green) [1988, Великобритания, Комедия, мелодрама, драма, приключения, криминал, биография, DVDRip]'",
+      "title_literal": "'Buster'"
+    },
+    {
+      "release_name": "(2000) Le follie dell'imperatore - The Emperor's New Groove (DvdRip Ita Eng AC3 5.1).avi",
+      "original_fields": {
+        "expected_title": "Le follie dell'imperatore - The Emperor's New Groove"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 144,
+      "input_literal": "\"(2000) Le follie dell'imperatore - The Emperor's New Groove (DvdRip Ita Eng AC3 5.1).avi\"",
+      "title_literal": "\"Le follie dell'imperatore - The Emperor's New Groove\""
+    },
+    {
+      "release_name": "[NC-Raws] 间谍过家家 / SPY×FAMILY - 04 (B-Global 1920x1080 HEVC AAC MKV)",
+      "original_fields": {
+        "expected_title": "SPY×FAMILY"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 153,
+      "input_literal": "'[NC-Raws] 间谍过家家 / SPY×FAMILY - 04 (B-Global 1920x1080 HEVC AAC MKV)'",
+      "title_literal": "'SPY×FAMILY'"
+    },
+    {
+      "release_name": "GTO (Great Teacher Onizuka) (Ep. 1-43) Sub 480p lakshay",
+      "original_fields": {
+        "expected_title": "GTO (Great Teacher Onizuka)"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 160,
+      "input_literal": "'GTO (Great Teacher Onizuka) (Ep. 1-43) Sub 480p lakshay'",
+      "title_literal": "'GTO (Great Teacher Onizuka)'"
+    },
+    {
+      "release_name": "Книгоноши / Кнiганошы (1987) TVRip от AND03AND | BLR",
+      "original_fields": {
+        "expected_title": "Кнiганошы"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 167,
+      "input_literal": "'Книгоноши / Кнiганошы (1987) TVRip от AND03AND | BLR'",
+      "title_literal": "'Кнiганошы'"
+    },
+    {
+      "release_name": "Yurusarezaru_mono2.srt",
+      "original_fields": {
+        "expected_title": "Yurusarezaru mono2"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 174,
+      "input_literal": "'Yurusarezaru_mono2.srt'",
+      "title_literal": "'Yurusarezaru mono2'"
+    },
+    {
+      "release_name": "COMPASS2.0.ANIMATION.PROJECT.S01E02.Will.You.Be.My.Partner.1080p.CR.WEB-DL.JPN.AAC2.0.H.264.MSubs-ToonsHub.mkv",
+      "original_fields": {
+        "expected_title": "COMPASS2.0 ANIMATION PROJECT"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 179,
+      "input_literal": "'COMPASS2.0.ANIMATION.PROJECT.S01E02.Will.You.Be.My.Partner.1080p.CR.WEB-DL.JPN.AAC2.0.H.264.MSubs-ToonsHub.mkv'",
+      "title_literal": "'COMPASS2.0 ANIMATION PROJECT'"
+    },
+    {
+      "release_name": "www.1TamilMV.world - Ayalaan (2024) Tamil PreDVD - 1080p - x264 - HQ Clean Aud - 2.5GB.mkv",
+      "original_fields": {
+        "expected_title": "Ayalaan"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 186,
+      "input_literal": "'www.1TamilMV.world - Ayalaan (2024) Tamil PreDVD - 1080p - x264 - HQ Clean Aud - 2.5GB.mkv'",
+      "title_literal": "'Ayalaan'"
+    },
+    {
+      "release_name": "www.Torrenting.com   -    Anatomy Of A Fall (2023)",
+      "original_fields": {
+        "expected_title": "Anatomy Of A Fall"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 193,
+      "input_literal": "'www.Torrenting.com   -    Anatomy Of A Fall (2023)'",
+      "title_literal": "'Anatomy Of A Fall'"
+    },
+    {
+      "release_name": "[www.arabp2p.net]_-_تركي مترجم ومدبلج Last.Call.for.Istanbul.2023.1080p.NF.WEB-DL.DDP5.1.H.264.MKV.torrent",
+      "original_fields": {
+        "expected_title": "Last Call for Istanbul"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 200,
+      "input_literal": "'[www.arabp2p.net]_-_تركي مترجم ومدبلج Last.Call.for.Istanbul.2023.1080p.NF.WEB-DL.DDP5.1.H.264.MKV.torrent'",
+      "title_literal": "'Last Call for Istanbul'"
+    },
+    {
+      "release_name": "www,1TamilMV.phd - The Great Indian Suicide (2023) Tamil TRUE WEB-DL - 4K SDR - HEVC - (DD+5.1 - 384Kbps & AAC) - 3.2GB - ESub.mkv",
+      "original_fields": {
+        "expected_title": "The Great Indian Suicide"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 207,
+      "input_literal": "'www,1TamilMV.phd - The Great Indian Suicide (2023) Tamil TRUE WEB-DL - 4K SDR - HEVC - (DD+5.1 - 384Kbps & AAC) - 3.2GB - ESub.mkv'",
+      "title_literal": "'The Great Indian Suicide'"
+    },
+    {
+      "release_name": "ww.Tamilblasters.sbs - 8 Bit Christmas (2021) HQ HDRip - x264 - Telugu (Fan Dub) - 400MB].mkv",
+      "original_fields": {
+        "expected_title": "8 Bit Christmas"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 214,
+      "input_literal": "'ww.Tamilblasters.sbs - 8 Bit Christmas (2021) HQ HDRip - x264 - Telugu (Fan Dub) - 400MB].mkv'",
+      "title_literal": "'8 Bit Christmas'"
+    },
+    {
+      "release_name": "www.1TamilMV.pics - 777 Charlie (2022) Tamil HDRip - 720p - x264 - HQ Clean Aud - 1.4GB.mkv",
+      "original_fields": {
+        "expected_title": "777 Charlie"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 221,
+      "input_literal": "'www.1TamilMV.pics - 777 Charlie (2022) Tamil HDRip - 720p - x264 - HQ Clean Aud - 1.4GB.mkv'",
+      "title_literal": "'777 Charlie'"
+    },
+    {
+      "release_name": "Despicable.Me.4.2024.D.TELESYNC_14OOMB.avi",
+      "original_fields": {
+        "expected_title": "Despicable Me 4"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 228,
+      "input_literal": "'Despicable.Me.4.2024.D.TELESYNC_14OOMB.avi'",
+      "title_literal": "'Despicable Me 4'"
+    },
+    {
+      "release_name": "UFC.247.PPV.Jones.vs.Reyes.HDTV.x264-PUNCH[TGx]",
+      "original_fields": {
+        "expected_title": "UFC 247 Jones vs Reyes"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 235,
+      "input_literal": "'UFC.247.PPV.Jones.vs.Reyes.HDTV.x264-PUNCH[TGx]'",
+      "title_literal": "'UFC 247 Jones vs Reyes'"
+    },
+    {
+      "release_name": "[www.1TamilMV.pics]_The.Great.Indian.Suicide.2023.Tamil.TRUE.WEB-DL.4K.SDR.HEVC.(DD+5.1.384Kbps.&.AAC).3.2GB.ESub.mkv",
+      "original_fields": {
+        "expected_title": "The Great Indian Suicide"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 242,
+      "input_literal": "'[www.1TamilMV.pics]_The.Great.Indian.Suicide.2023.Tamil.TRUE.WEB-DL.4K.SDR.HEVC.(DD+5.1.384Kbps.&.AAC).3.2GB.ESub.mkv'",
+      "title_literal": "'The Great Indian Suicide'"
+    },
+    {
+      "release_name": "Game of Thrones - S02E07 - A Man Without Honor [2160p] [HDR] [5.1, 7.1, 5.1] [ger, eng, eng] [Vio].mkv",
+      "original_fields": {
+        "expected_title": "Game of Thrones"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 249,
+      "input_literal": "'Game of Thrones - S02E07 - A Man Without Honor [2160p] [HDR] [5.1, 7.1, 5.1] [ger, eng, eng] [Vio].mkv'",
+      "title_literal": "'Game of Thrones'"
+    },
+    {
+      "release_name": "Pawn.Stars.S09E13.1080p.HEVC.x265-MeGusta",
+      "original_fields": {
+        "expected_title": "Pawn Stars"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 256,
+      "input_literal": "'Pawn.Stars.S09E13.1080p.HEVC.x265-MeGusta'",
+      "title_literal": "'Pawn Stars'"
+    },
+    {
+      "release_name": "Pawn Stars -- 4x13 -- Broadsiding Lincoln.mkv",
+      "original_fields": {
+        "expected_title": "Pawn Stars"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 263,
+      "input_literal": "'Pawn Stars -- 4x13 -- Broadsiding Lincoln.mkv'",
+      "title_literal": "'Pawn Stars'"
+    },
+    {
+      "release_name": "Pawn Stars S04E19 720p WEB H264-BeechyBoy mp4",
+      "original_fields": {
+        "expected_title": "Pawn Stars"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 270,
+      "input_literal": "'Pawn Stars S04E19 720p WEB H264-BeechyBoy mp4'",
+      "title_literal": "'Pawn Stars'"
+    },
+    {
+      "release_name": "Jurassic.World.Dominion.CUSTOM.EXTENDED.2022.2160p.MULTi.VF2.UHD.Blu-ray.REMUX.HDR.DoVi.HEVC.DTS-X.DTS-HDHRA.7.1-MOONLY.mkv",
+      "original_fields": {
+        "expected_title": "Jurassic World Dominion"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 277,
+      "input_literal": "'Jurassic.World.Dominion.CUSTOM.EXTENDED.2022.2160p.MULTi.VF2.UHD.Blu-ray.REMUX.HDR.DoVi.HEVC.DTS-X.DTS-HDHRA.7.1-MOONLY.mkv'",
+      "title_literal": "'Jurassic World Dominion'"
+    },
+    {
+      "release_name": "www.Torrenting.com   -    14.Peaks.Nothing.Is.Impossible.2021.1080p.WEB.h264-RUMOUR",
+      "original_fields": {
+        "expected_title": "14 Peaks Nothing Is Impossible"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 284,
+      "input_literal": "'www.Torrenting.com   -    14.Peaks.Nothing.Is.Impossible.2021.1080p.WEB.h264-RUMOUR'",
+      "title_literal": "'14 Peaks Nothing Is Impossible'"
+    },
+    {
+      "release_name": "Too Many Cooks _ Adult Swim.mp4",
+      "original_fields": {
+        "expected_title": "Too Many Cooks"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 291,
+      "input_literal": "'Too Many Cooks _ Adult Swim.mp4'",
+      "title_literal": "'Too Many Cooks'"
+    },
+    {
+      "release_name": "О мышах и людях (Of Mice and Men) 1992 BDRip 1080p.mkv",
+      "original_fields": {
+        "expected_title": "Of Mice and Men"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 296,
+      "input_literal": "'О мышах и людях (Of Mice and Men) 1992 BDRip 1080p.mkv'",
+      "title_literal": "'Of Mice and Men'"
+    },
+    {
+      "release_name": "Wonder Woman 1984 (2020) [UHDRemux 2160p DoVi P8 Es-DTSHD AC3 En-AC3].mkv",
+      "original_fields": {
+        "expected_title": "Wonder Woman 1984"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 303,
+      "input_literal": "'Wonder Woman 1984 (2020) [UHDRemux 2160p DoVi P8 Es-DTSHD AC3 En-AC3].mkv'",
+      "title_literal": "'Wonder Woman 1984'"
+    },
+    {
+      "release_name": "www.TamilBlasters.cam - Titanic (1997)[1080p BDRip - Org Auds - [Tamil + Telugu + Hindi + Eng] - x264 - DD5.1 (448 Kbps) - 4.7GB - ESubs].mkv",
+      "original_fields": {
+        "expected_title": "Titanic"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 310,
+      "input_literal": "'www.TamilBlasters.cam - Titanic (1997)[1080p BDRip - Org Auds - [Tamil + Telugu + Hindi + Eng] - x264 - DD5.1 (448 Kbps) - 4.7GB - ESubs].mkv'",
+      "title_literal": "'Titanic'"
+    },
+    {
+      "release_name": "S.W.A.T.2017.S08E01.720p.HDTV.x264-SYNCOPY[TGx]",
+      "original_fields": {
+        "expected_title": "S W A T"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 317,
+      "input_literal": "'S.W.A.T.2017.S08E01.720p.HDTV.x264-SYNCOPY[TGx]'",
+      "title_literal": "'S W A T'"
+    },
+    {
+      "release_name": "Grimm.INTEGRAL.MULTI.COMPLETE.BLURAY-BMTH",
+      "original_fields": {
+        "expected_title": "Grimm"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 324,
+      "input_literal": "'Grimm.INTEGRAL.MULTI.COMPLETE.BLURAY-BMTH'",
+      "title_literal": "'Grimm'"
+    },
+    {
+      "release_name": "Friends.1994.INTEGRALE.MULTI.1080p.WEB-DL.H265-FTMVHD",
+      "original_fields": {
+        "expected_title": "Friends"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 331,
+      "input_literal": "'Friends.1994.INTEGRALE.MULTI.1080p.WEB-DL.H265-FTMVHD'",
+      "title_literal": "'Friends'"
+    },
+    {
+      "release_name": "STEVE.martin.a.documentary.in.2.pieces.S01.COMPLETE.1080p.WEB.H264-SuccessfulCrab[TGx]",
+      "original_fields": {
+        "expected_title": "STEVE martin a documentary in 2 pieces"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 338,
+      "input_literal": "'STEVE.martin.a.documentary.in.2.pieces.S01.COMPLETE.1080p.WEB.H264-SuccessfulCrab[TGx]'",
+      "title_literal": "'STEVE martin a documentary in 2 pieces'"
+    },
+    {
+      "release_name": "The Lockerbie Bombing (2013) Documentary HDTVRIP",
+      "original_fields": {
+        "expected_title": "The Lockerbie Bombing"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 345,
+      "input_literal": "'The Lockerbie Bombing (2013) Documentary HDTVRIP'",
+      "title_literal": "'The Lockerbie Bombing'"
+    },
+    {
+      "release_name": "The French Connection 1971 Remastered BluRay 1080p REMUX AVC DTS-HD MA 5 1-LEGi0N",
+      "original_fields": {
+        "expected_title": "The French Connection"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 352,
+      "input_literal": "'The French Connection 1971 Remastered BluRay 1080p REMUX AVC DTS-HD MA 5 1-LEGi0N'",
+      "title_literal": "'The French Connection'"
+    },
+    {
+      "release_name": "The.Scream.Murder.A.True.Teen.Horror.Story.S01E02.Just.Like.Scream.1080p.DSNP.WEB-DL.DDP5.1.H.264-RAWR",
+      "original_fields": {
+        "expected_title": "The Scream Murder A True Teen Horror Story"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 359,
+      "input_literal": "'The.Scream.Murder.A.True.Teen.Horror.Story.S01E02.Just.Like.Scream.1080p.DSNP.WEB-DL.DDP5.1.H.264-RAWR'",
+      "title_literal": "'The Scream Murder A True Teen Horror Story'"
+    },
+    {
+      "release_name": "COMPASS.2.0.ANIMATION.PROJECT.S01E02.Will.You.Be.My.Partner.1080p.CR.WEB-DL.JPN.AAC2.0.H.264.MSubs-ToonsHub.mkv",
+      "original_fields": {
+        "expected_title": "COMPASS 2.0 ANIMATION PROJECT"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 366,
+      "input_literal": "'COMPASS.2.0.ANIMATION.PROJECT.S01E02.Will.You.Be.My.Partner.1080p.CR.WEB-DL.JPN.AAC2.0.H.264.MSubs-ToonsHub.mkv'",
+      "title_literal": "'COMPASS 2.0 ANIMATION PROJECT'"
+    },
+    {
+      "release_name": "COMPASS 2.0 ANIMATION PROJECT S01E02 Will You Be My Partner 1080p CR WEB-DL JPN AAC2.0 H.264 MSubs-ToonsHub.mkv",
+      "original_fields": {
+        "expected_title": "COMPASS 2.0 ANIMATION PROJECT"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 374,
+      "input_literal": "'COMPASS 2.0 ANIMATION PROJECT S01E02 Will You Be My Partner 1080p CR WEB-DL JPN AAC2.0 H.264 MSubs-ToonsHub.mkv'",
+      "title_literal": "'COMPASS 2.0 ANIMATION PROJECT'"
+    },
+    {
+      "release_name": "M3GAN.2.0.2025.4K.HDR.DV.2160p BDRemux Ita Eng x265-NAHOM.mkv",
+      "original_fields": {
+        "expected_title": "M3GAN 2.0"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 382,
+      "input_literal": "'M3GAN.2.0.2025.4K.HDR.DV.2160p BDRemux Ita Eng x265-NAHOM.mkv'",
+      "title_literal": "'M3GAN 2.0'"
+    },
+    {
+      "release_name": "9-1-1.S01E01.Pilot.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb.mkv",
+      "original_fields": {
+        "expected_title": "9-1-1"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 390,
+      "input_literal": "'9-1-1.S01E01.Pilot.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb.mkv'",
+      "title_literal": "'9-1-1'"
+    },
+    {
+      "release_name": "Madame Web (2024).mkv",
+      "original_fields": {
+        "expected_title": "Madame Web"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 400,
+      "input_literal": "'Madame Web (2024).mkv'",
+      "title_literal": "'Madame Web'"
+    },
+    {
+      "release_name": "Madame Web 2024 1080p WEB H264-WeApologizeInAdvance",
+      "original_fields": {
+        "expected_title": "Madame Web"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 406,
+      "input_literal": "'Madame Web 2024 1080p WEB H264-WeApologizeInAdvance'",
+      "title_literal": "'Madame Web'"
+    },
+    {
+      "release_name": "Madame.Web.2024.UHD.BluRay.2160p.TrueHD.Atmos.7.1.DV.HEVC.REMUX-FraMeSToR",
+      "original_fields": {
+        "expected_title": "Madame Web"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 414,
+      "input_literal": "'Madame.Web.2024.UHD.BluRay.2160p.TrueHD.Atmos.7.1.DV.HEVC.REMUX-FraMeSToR'",
+      "title_literal": "'Madame Web'"
+    },
+    {
+      "release_name": "Interrogation.Cam.S01E02.XviD-AFG",
+      "original_fields": {
+        "expected_title": "Interrogation Cam"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 422,
+      "input_literal": "'Interrogation.Cam.S01E02.XviD-AFG'",
+      "title_literal": "'Interrogation Cam'"
+    },
+    {
+      "release_name": "Court.Cam.S01E01.WEB.h264-TBS[TGx]",
+      "original_fields": {
+        "expected_title": "Court Cam"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 428,
+      "input_literal": "'Court.Cam.S01E01.WEB.h264-TBS[TGx]'",
+      "title_literal": "'Court Cam'"
+    },
+    {
+      "release_name": "Live.PD.Presents.PD.Cam.S01E01.HDTV.x264-W4F",
+      "original_fields": {
+        "expected_title": "Live PD Presents PD Cam"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 434,
+      "input_literal": "'Live.PD.Presents.PD.Cam.S01E01.HDTV.x264-W4F'",
+      "title_literal": "'Live PD Presents PD Cam'"
+    },
+    {
+      "release_name": "ALL.OF.US.ARE.DEAD.S01E01.1080p.NF.WEB-DL.mkv",
+      "original_fields": {
+        "expected_title": "ALL OF US ARE DEAD"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 443,
+      "input_literal": "'ALL.OF.US.ARE.DEAD.S01E01.1080p.NF.WEB-DL.mkv'",
+      "title_literal": "'ALL OF US ARE DEAD'"
+    },
+    {
+      "release_name": "The.Office.US.S01E01.1080p.WEB-DL.mkv",
+      "original_fields": {
+        "expected_title": "The Office"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 451,
+      "input_literal": "'The.Office.US.S01E01.1080p.WEB-DL.mkv'",
+      "title_literal": "'The Office'"
+    },
+    {
+      "release_name": "Grand Theft Auto VI An Extended Look 2026 2160p NF WEB-DL DDP5 1 H 265-Kitsune",
+      "original_fields": {
+        "expected_title": "Grand Theft Auto VI An Extended Look"
+      },
+      "source_path": "src/__tests__/title.test.ts",
+      "source_line": 457,
+      "input_literal": "'Grand Theft Auto VI An Extended Look 2026 2160p NF WEB-DL DDP5 1 H 265-Kitsune'",
+      "title_literal": "'Grand Theft Auto VI An Extended Look'"
+    }
+  ]
+}

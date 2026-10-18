@@ -1,0 +1,280 @@
+version: '3'
+
+vars:
+  BIN_DIR: bin
+  BINARY_NAME: pulsemedia
+
+tasks:
+  default:
+    desc: Run tests and verify build
+    cmds:
+      - task: test-web
+      - task: test
+      - task: build
+
+  build:
+    desc: Build PulseMedia binary with embedded web frontend
+    cmds:
+      - task: build-web
+      - task: build-go
+      - task: build-backup
+      - task: build-migrate
+
+  build-go:
+    desc: Build Go binary using the existing embedded frontend artifacts
+    cmds:
+      - mkdir -p -- "{{.BIN_DIR}}"
+      - go build -v -o "{{.BIN_DIR}}/{{.BINARY_NAME}}" ./cmd/pulsemedia
+
+  build-backup:
+    desc: Build the offline encrypted backup and restore CLI (PG18 clients required at runtime)
+    cmds:
+      - mkdir -p -- "{{.BIN_DIR}}"
+      - go build -v -o "{{.BIN_DIR}}/pulsebackup" ./cmd/pulsebackup
+
+  build-migrate:
+    desc: Build the offline schema installer and recovery-point-checked upgrade CLI
+    cmds:
+      - mkdir -p -- "{{.BIN_DIR}}"
+      - go build -v -o "{{.BIN_DIR}}/pulsemigrate" ./cmd/pulsemigrate
+
+  test-migrate:
+    desc: Verify offline install and protected upgrades on private PostgreSQL 18
+    cmds:
+      - bash scripts/with_podman_test_postgres.sh go test -race ./internal/app/migration ./cmd/pulsemigrate -count=1 -timeout=6m -v
+
+  test-backup:
+    desc: Verify encrypted backup, TLS, new-database restore and isolation with private PostgreSQL 18
+    cmds:
+      - bash scripts/with_podman_test_postgres.sh go test -race ./internal/app/backup ./cmd/pulsebackup -count=1 -timeout=4m -v
+  m4-performance:
+    desc: Measure the optimized app with 1000 subscriptions, 100000 real files and 10 synthetic endpoints on private PG18
+    cmds:
+      - bash scripts/m4_performance.sh {{.CLI_ARGS}}
+
+  m4-endpoint-performance:
+    desc: Measure actual search calls across ten synthetic loopback endpoints with normal persistent budgets
+    cmds:
+      - bash scripts/m4_endpoint_performance.sh
+
+  m4-scan-recovery-scale:
+    desc: Verify 100000 catalog records with transactional faults and resumable missing reconciliation on private PG18
+    cmds:
+      - bash scripts/with_podman_test_postgres.sh env PULSE_M4_SCAN_SCALE=1 go test -race ./internal/store/postgres -run '^TestM4ScanFinalization100kDBOnly$' -count=1 -timeout=6m -v
+
+  m4-nfs-faults:
+    desc: Verify real private kernel NFS scan faults, physical exclusion and mount replacement with private PostgreSQL 18
+    cmds:
+      - bash scripts/m4_nfs_faults.sh
+
+  m4-queue-fairness:
+    desc: Verify aged jobs under backlog and repeated high-priority arrivals with private PostgreSQL 18
+    cmds:
+      - bash scripts/with_podman_test_postgres.sh go test -race ./internal/platform/jobs -run '^TestJobFairnessWithBacklogAndSustainedArrivals$' -count=1 -timeout=3m -v
+
+  test-container:
+    desc: Verify image install/upgrade, PG18 persistent layout and non-root runtime with embedded frontend
+    cmds:
+      - bash scripts/with_podman_test_postgres.sh go test -race ./internal/app -run '^TestContainer(RuntimeSmoke|InstallUpgrade|PG18VolumeLayout)$' -count=1 -timeout=6m -v
+
+
+  build-container:
+    desc: Build the non-root app, backup and migration image with mise-managed tools and PG18 clients (direct Podman)
+    cmds:
+      - bash scripts/build_container.sh {{.CLI_ARGS}}
+
+  build-provenance-check:
+    desc: Verify release builds require clean committed source using isolated real Git fixtures
+    cmds:
+      - bash scripts/check_build_revision.sh
+
+  dev:
+    desc: 一键启动本地开发环境（自动起库/执行迁移/集成qb与tr测试容器/前后端双热重载/退出时优雅销毁容器）
+    cmds:
+      - ./scripts/dev.sh
+
+  m4-services-up:
+    desc: Start isolated real M4 services with Podman (optional state directory after --)
+    env:
+      PULSE_M4_STATE_DIR: "{{.CLI_ARGS}}"
+    cmds:
+      - bash scripts/m4_services.sh up
+
+  m4-services-status:
+    desc: Show isolated M4 service state (state directory required after --)
+    env:
+      PULSE_M4_STATE_DIR: "{{.CLI_ARGS}}"
+    cmds:
+      - bash scripts/m4_services.sh status
+
+  m4-services-check:
+    desc: Check real downloaders, Jellyfin and Prowlarr (NAS and configured indexer acceptance remain separate)
+    env:
+      PULSE_M4_STATE_DIR: "{{.CLI_ARGS}}"
+    cmds:
+      - bash scripts/m4_services.sh check
+  m4-restore-drill:
+    desc: Verify real post-backup orphan tasks, file preservation and isolated restore (state directory after --)
+    env:
+      PULSE_M4_STATE_DIR: "{{.CLI_ARGS}}"
+    cmds:
+      - bash scripts/m4_services.sh orphans
+
+  m4-r3-faults:
+    desc: Check real downloader R3 boundaries with an isolated Podman PG18 (state directory after --)
+    env:
+      PULSE_M4_STATE_DIR: "{{.CLI_ARGS}}"
+    cmds:
+      - bash scripts/m4_services.sh faults
+
+  m4-nfs-preflight:
+    desc: Check isolated NFS mount prerequisites (exit 77 means blocked, not accepted)
+    cmds:
+      - bash scripts/m4_nfs_preflight.sh
+
+  m4-services-stop:
+    desc: Stop isolated M4 services, retaining their data (state directory required after --)
+    env:
+      PULSE_M4_STATE_DIR: "{{.CLI_ARGS}}"
+    cmds:
+      - bash scripts/m4_services.sh down
+  build-web:
+    desc: Build React 19 frontend application
+    cmds:
+      - cd web && pnpm build
+
+  test-auth-ui:
+    desc: Verify embedded authentication UI against an owned PostgreSQL cluster
+    cmds:
+      - bash scripts/verify_account_tokens_browser.sh auth
+
+  test-dashboard-ui:
+    desc: Verify dashboard counts and refresh recovery with private PostgreSQL and Chrome
+    cmds:
+      - |
+        set -eu
+        mkdir -p /data/temp
+        pulse_dashboard_tmp=$(mktemp -d /data/temp/pulse-dashboard-ui.XXXXXX)
+        trap 'pulse_dashboard_status=$?; case "$pulse_dashboard_tmp" in /data/temp/pulse-dashboard-ui.*) rm -rf -- "$pulse_dashboard_tmp" ;; *) exit 98 ;; esac; test ! -e "$pulse_dashboard_tmp" || exit 1; printf "OWNED_DASHBOARD_TEMP_CLEANUP_VERIFIED\n"; exit "$pulse_dashboard_status"' EXIT
+        export TMPDIR="$pulse_dashboard_tmp" TMP="$pulse_dashboard_tmp" TEMP="$pulse_dashboard_tmp"
+        export PULSE_DASHBOARD_REPO="$PWD" PULSE_DASHBOARD_TASK_ROOT="$pulse_dashboard_tmp"
+        export PULSE_DASHBOARD_BROWSER=1 PULSE_DASHBOARD_ASSET_DIR="$pulse_dashboard_tmp/assets" PULSE_DASHBOARD_ARTIFACT_DIR="${PULSE_DASHBOARD_ARTIFACT_DIR:-$pulse_dashboard_tmp}"
+        cat > "$pulse_dashboard_tmp/vite.config.mjs" <<'CONFIG'
+        import {createRequire} from 'node:module';
+        const load=createRequire(process.env.PULSE_DASHBOARD_REPO+'/web/package.json');
+        const {default:react}=await import(load.resolve('@vitejs/plugin-react'));
+        export default {
+          root:process.env.PULSE_DASHBOARD_REPO+'/web',
+          envDir:process.env.PULSE_DASHBOARD_TASK_ROOT,
+          plugins:[react()],
+          resolve:{alias:{'@':process.env.PULSE_DASHBOARD_REPO+'/web/src'}},
+          build:{outDir:process.env.PULSE_DASHBOARD_ASSET_DIR,emptyOutDir:true}
+        };
+        CONFIG
+        pnpm --dir web exec vite build --config "$pulse_dashboard_tmp/vite.config.mjs"
+        bash scripts/with_test_postgres.sh go test ./internal/app -run "${PULSE_DASHBOARD_TEST_PATTERN:-^TestDashboardClassificationAndRefreshBrowser$}" -count=1 -v -timeout=2m
+
+  test-subscription-list-ui:
+    desc: Verify movie/TV subscription rendering and workflows with isolated assets, PostgreSQL and Chrome
+    cmds:
+      - bash scripts/verify_subscription_list_browser.sh
+
+  test-endpoint-ui:
+    desc: Verify safe endpoint URL edits with private PostgreSQL and Chrome
+    cmds:
+      - PULSE_DASHBOARD_TEST_PATTERN='^TestEndpointURLSafeEditBrowser$' task test-dashboard-ui
+
+  test-reuse-ui:
+    desc: Verify cross-root reuse with private assets, PostgreSQL and Chrome
+    cmds:
+      - bash scripts/verify_library_reuse_browser.sh
+
+  test-web:
+    desc: Typecheck React frontend application
+    cmds:
+      - cd web && pnpm typecheck
+
+  dev-web:
+    desc: Run Vite frontend development server with hot-reload
+    cmds:
+      - cd web && pnpm dev
+
+  run:
+    desc: Run PulseMedia binary
+    cmds:
+      - go run ./cmd/pulsemedia {{.CLI_ARGS}}
+
+  migrate:
+    desc: Run database migrations against PULSE_DATABASE_URL
+    cmds:
+      - goose -dir migrations postgres "${PULSE_DATABASE_URL:?PULSE_DATABASE_URL is required for migrations}" up
+
+  sqlc:
+    desc: Generate sqlc code
+    cmds:
+      - sqlc generate
+
+  api-probe:
+    desc: Probe pinned OpenAPI generators using real nullable and UUID artifacts
+    cmds:
+      - node scripts/probe_openapi_generators.cjs
+  generate-api-go:
+    desc: Generate Go strict server from OpenAPI spec
+    cmds:
+      - oapi-codegen -config api/oapi-codegen.yaml api/openapi.yaml
+
+  generate-api-ts:
+    desc: Generate TypeScript schema from OpenAPI spec
+    cmds:
+      - pnpm --dir web exec openapi-typescript ../api/openapi.yaml -o src/api/schema.d.ts
+
+  generate:
+    desc: Run all code generators
+    cmds:
+      - task: sqlc
+      - task: generate-api-go
+      - task: generate-api-ts
+
+  gen-check:
+    desc: Verify that generated code matches specs with zero drift
+    cmds:
+      - |
+        before="$(mktemp)"
+        after="$(mktemp)"
+        trap 'rm -f "$before" "$after"' EXIT
+        find internal/store/postgres/db -name '*.go' -type f -print0 | sort -z | xargs -0 sha256sum > "$before"
+        sha256sum internal/httpapi/api.gen.go web/src/api/schema.d.ts >> "$before"
+        task generate
+        find internal/store/postgres/db -name '*.go' -type f -print0 | sort -z | xargs -0 sha256sum > "$after"
+        sha256sum internal/httpapi/api.gen.go web/src/api/schema.d.ts >> "$after"
+        diff -u "$before" "$after"
+
+  test:
+    desc: Run Go tests
+    cmds:
+      - bash scripts/with_test_postgres.sh go test -v -p 2 ./...
+
+  test-race:
+    desc: Run Go tests with race detector
+    cmds:
+      - bash scripts/with_test_postgres.sh go test -race -v -p 2 ./...
+
+  depguard-probe:
+    desc: Prove compiling forbidden production imports fail the dependency gate
+    cmds:
+      - bash scripts/check_dependency_guards.sh
+
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - golangci-lint run ./...
+
+  vuln:
+    desc: Require a successful govulncheck scan
+    cmds:
+      - govulncheck ./...
+
+  clean:
+    desc: Clean local build artifacts
+    cmds:
+      - rm -rf -- "{{.BIN_DIR}}" coverage.out

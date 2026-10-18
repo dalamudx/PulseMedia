@@ -1,0 +1,1028 @@
+{
+  "schema": "pulse.source-capacity-receipt.v1",
+  "accepted": false,
+  "authority": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "formal_golden_acceptance": false,
+  "reviewed_entries": 0,
+  "review_status": "unreviewed",
+  "original_gold_entries": 864,
+  "current_baseline": [
+    {
+      "path": "testdata/releases/README.md",
+      "sha256": "cfbeb91c6204679644c73305eb2b5b31e21362bf5aeff5db2faca80c3df13a40",
+      "bytes": 67230
+    },
+    {
+      "path": "testdata/releases/review-inputs/README.md",
+      "sha256": "e7205335c54abfe9ec97846a54d38f54e4eb8c1242586b77ede652b7bb8b0f76",
+      "bytes": 3572
+    },
+    {
+      "path": "testdata/releases/review-inputs/atama-metadata-original.LICENSE",
+      "sha256": "da1ab0a4449807fd161b8d028f79c42cc00e2e67ee8f9f583cb37a2c2cbaa0fd",
+      "bytes": 1067
+    },
+    {
+      "path": "testdata/releases/review-inputs/atama-metadata-original.manifest.json",
+      "sha256": "b078d7c990b73dba5847f1dd1106f316ebeaaa0629fe9ba87b24f14a7b7fb8ba",
+      "bytes": 4893
+    },
+    {
+      "path": "testdata/releases/review-inputs/beast-full-original.LICENSE",
+      "sha256": "4b204d94be3a7487c902684b4ef5d240d169d367b17de72d54360f8351fa27ac",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/review-inputs/beast-full-original.manifest.json",
+      "sha256": "a0f21d780907f0e0cebaf30ccba91b335fd6145b14c9dcfe52400c88609c332d",
+      "bytes": 4263
+    },
+    {
+      "path": "testdata/releases/review-inputs/cehbz-parse-original.LICENSE",
+      "sha256": "31aa89620a821a00659bfb779f63b1df54a82e01036569882cd6bbedbf1d0af6",
+      "bytes": 1062
+    },
+    {
+      "path": "testdata/releases/review-inputs/cehbz-parse-original.manifest.json",
+      "sha256": "5b61adad684c663d4ec4c95e76370135e7391b12930c9266445831532b4d27ee",
+      "bytes": 2173
+    },
+    {
+      "path": "testdata/releases/review-inputs/chill-parser-original.LICENSE",
+      "sha256": "5c01505f1974f6562d9f972acbcba24504ce20e68a58241b5f8d0dfc85512b84",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/review-inputs/chill-parser-original.inventory.json",
+      "sha256": "6b0bde6922a6b9ae3c491b67acc8d4838d5a2d0a409390dc3a3e3b562b7205a3",
+      "bytes": 114358
+    },
+    {
+      "path": "testdata/releases/review-inputs/chill-parser-original.manifest.json",
+      "sha256": "46f0c4aea08c5c242629d0cd45c680c62bfb4b2fbc44f39e5daac24dee5f524c",
+      "bytes": 2961
+    },
+    {
+      "path": "testdata/releases/review-inputs/clement-full-original.LICENSE",
+      "sha256": "4b204d94be3a7487c902684b4ef5d240d169d367b17de72d54360f8351fa27ac",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/review-inputs/clement-full-original.manifest.json",
+      "sha256": "662ef1d015ca0d7a86524fd889a38d8a04fff185dfaed3efe593fd3a30e1a8df",
+      "bytes": 2328
+    },
+    {
+      "path": "testdata/releases/review-inputs/flexget-parser-original.LICENSE",
+      "sha256": "35e41be01051fa5886876dfb1aad55e6b476e7e7c80010a7848e54e106f3669f",
+      "bytes": 1121
+    },
+    {
+      "path": "testdata/releases/review-inputs/flexget-parser-original.inventory.json",
+      "sha256": "07d4f1e4797814229eb6953c927bead6517330415bd8f8ba8e8fe8d10ed5ac4c",
+      "bytes": 19260
+    },
+    {
+      "path": "testdata/releases/review-inputs/flexget-parser-original.manifest.json",
+      "sha256": "18e98f8a7793ee1a282dbba49e93800aab526e7106b3d344c543022c060a0cd4",
+      "bytes": 7861
+    },
+    {
+      "path": "testdata/releases/review-inputs/independent-title-capacity.json",
+      "sha256": "c2d7475180375e99dc3b6cc415baaf6ea634ffef1a4fe7683d02493a3538405f",
+      "bytes": 1631
+    },
+    {
+      "path": "testdata/releases/review-inputs/mdaubie-parser-original.LICENSE",
+      "sha256": "2565ca8bb69ecfef1e9cee779396c359cd711616c15f9c2f198f5dcf385c60be",
+      "bytes": 1073
+    },
+    {
+      "path": "testdata/releases/review-inputs/mdaubie-parser-original.inventory.json",
+      "sha256": "82309aa76e39bc870c4f220ea56c6792af1b0a1fd016bd1bb4c9bebfa2494ae9",
+      "bytes": 9172
+    },
+    {
+      "path": "testdata/releases/review-inputs/mdaubie-parser-original.manifest.json",
+      "sha256": "0fdff958870a8606e83f254f338df6081831747d4133b3b82af5c62d16d52fc4",
+      "bytes": 2713
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.README.md",
+      "sha256": "e245989313e704d6ab2f8dd17344374c7f615df5494bb77ceb8a1ca44cf3d55b",
+      "bytes": 3716
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.audit.json",
+      "sha256": "a28fe992f5aabab8b604b2e5949ebeed7b35d288a55a200cf0817ea0bb8e64ac",
+      "bytes": 61725
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.completion.json",
+      "sha256": "59d0bb4f3ee2dd2b57981ac2f225f1a874c9f7cf292be7fb64480f59c2deb3bf",
+      "bytes": 1393
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.inventory.json",
+      "sha256": "337b0f733c313f51c6b09ef5d6be5cc3bcf911d22af17f44fb24459a939502f1",
+      "bytes": 323743
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.literals.jsonl",
+      "sha256": "a881492e1ce8ce4a3027166eeeead36113aeb2b087624153684550592028fbc7",
+      "bytes": 113459
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.manifest.json",
+      "sha256": "4e26a27c554fcce62785fa6806dfde2af5f52f80fb21adb55e6be98d97b07cdc",
+      "bytes": 3638
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.overlap.json",
+      "sha256": "a36d8602a5981168923c0bb98fb6d788b7ae017f22388a0fb4bfdbe776269fcd",
+      "bytes": 12562
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/gold-overlap.json",
+      "sha256": "e3885fdb4901b554f1a732eddf4ec6bdde85193388bf79d260a9834150828c48",
+      "bytes": 9980
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/overlay.json",
+      "sha256": "52d05ea32af01bd2c93c587e3bb0fccea9128c7a222b6782cff3217ab9435705",
+      "bytes": 336
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt1-source-gate.jsonl",
+      "sha256": "08f2f6c2064e88a09b217199f0c19083797d65519de8a68ccf80f0bc6b435f39",
+      "bytes": 52366
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt1.stderr",
+      "sha256": "22669e5f9577021503b64a0b2dcc34c5196de0695044d1de2af860f118f9009a",
+      "bytes": 46
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt2.jsonl",
+      "sha256": "0369a2f39975fbf597ec8ab46016eacb37e0146a0d8e3fb42075e30165d23f07",
+      "bytes": 2597
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt3.jsonl",
+      "sha256": "42846a4b8eea7c43e49d286ea31b628a559692a642d60a3553bb7bc1969003b0",
+      "bytes": 56835
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt3.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/reviewed_full_corpus_test.go.source",
+      "sha256": "ec69727e03076c6f9be2b3e8327509c1dbc270a18b7de1daa3d58c55c4372db0",
+      "bytes": 16147
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-summary.json",
+      "sha256": "d8da7167f089fb5a59de89c82585d33aeb4848e63cd8cf62d589ff48f2ae019b",
+      "bytes": 14630
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/LICENSE",
+      "sha256": "4fd0093da480945ec7ead12424001aab0e3678f5dddbc2af1a580a2bfe4668cf",
+      "bytes": 1084
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/git-tree.txt",
+      "sha256": "e0033a88e0c783feaea49ba847a64247e9bd94856d58e8831058a8038d13fd5e",
+      "bytes": 317
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/history.txt",
+      "sha256": "7e6374d36c1452aad6a1df66f6bfaca23503ae612be6af38f8acdec3de579f26",
+      "bytes": 421
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/rls_test.go",
+      "sha256": "924c0367698b5a37a05401cd9d6944969fd2f568b3768d580d9cdb71a852b976",
+      "bytes": 23727
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/scan_test.go",
+      "sha256": "09a6b2be3009521495dac0d65ff6e680fce5a34e7ded359c476fed5a91570a3b",
+      "bytes": 2993
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/test.sh",
+      "sha256": "7b625ec52cda776aeadee5e4be99e3d4b9f2b7735de13981a653869f238800f1",
+      "bytes": 85
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/tests.yaml",
+      "sha256": "59a168ae628271f51f361ed1bbe6e91ba97ec03befdb7b400079861337f87620",
+      "bytes": 89575
+    },
+    {
+      "path": "testdata/releases/review-inputs/pending-frozen-contracts.json",
+      "sha256": "d2d5f41a9b1e9e03a7fc6a96565a5d44dcd1aac7114432bb3cfbf861f6dde6e6",
+      "bytes": 154382
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-main-original-assertions.json",
+      "sha256": "9474f5c969fe01961873b794e7c266c81f2a3d54000bcd2db41888c9f6294ad9",
+      "bytes": 104428
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.json",
+      "sha256": "a317bd47b4622bc678c566d8e284977d69ca40ace814689f3b70fa90e568dbba",
+      "bytes": 273392
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/LICENSE",
+      "sha256": "285e18dd1c15cbfa29380cd73ec9804bfebae088c54be6cd3b3d1ca765c25370",
+      "bytes": 1063
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/source-manifest.json",
+      "sha256": "2385d476fe552a7d2be2a6a3eb59b6856f4de0bedfbe05c650a37b0a6cb5db50",
+      "bytes": 7265
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_adult.py.source",
+      "sha256": "37480172f99b7f244baeee8e801858c6da86983208eafdde5ef2613905c8a0ac",
+      "bytes": 719
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_anime.py.source",
+      "sha256": "340137e2bf2cde8f56e9116b70d291adf35d83cda6ddbceb3a8e5efa0d017318",
+      "bytes": 1370
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_audio.py.source",
+      "sha256": "5114ee1944c30f4d28757f4459dc41c104d8729b78e7cd762a091a0b8689f878",
+      "bytes": 8395
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_codec.py.source",
+      "sha256": "74bb82e23714de4db9513984fe1d5025620a19d2913ecafb64ad27daa063af94",
+      "bytes": 1826
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_collection.py.source",
+      "sha256": "a232c4e158727030d8bb75d26b07b0d538773981747578dc50e3c44a3e3d9837",
+      "bytes": 3090
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_container.py.source",
+      "sha256": "db538d2ac1db4e2f5d883fa761fbf95dd4ca0b86e238e1d3bd638347dbe40984",
+      "bytes": 821
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_convert.py.source",
+      "sha256": "9d32b417c74832a1e460f97a9f86d02bfb084461fe73264f45dac5b55cf7e885",
+      "bytes": 835
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_date.py.source",
+      "sha256": "baf61921c6953ce33dbf66c101f7f90cdd3113ad5d73f7b1ab6796994e20c72e",
+      "bytes": 1917
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_dubbed.py.source",
+      "sha256": "de0eedb8cca9f216222c36db92f48642589886c0d7239700886d772bb7e0dc17",
+      "bytes": 1590
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_edition.py.source",
+      "sha256": "c49f016c0f924d6537866a3a30e256c9e66a11765c5a4678e8c53a544d6001cf",
+      "bytes": 1556
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_episode_code.py.source",
+      "sha256": "867ae91598c2c11d4bc1a275bdd49c562fc974937fb141b52095f05097a8e8be",
+      "bytes": 2026
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_episodes.py.source",
+      "sha256": "f4bef5f3d092549a9a1942ca8302e8184e2a51d022abe2a2f87a624431819bda",
+      "bytes": 13485
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_extras.py.source",
+      "sha256": "725e7aa87a98d39bf578efda62a61838bd95e276ed8476d00e0197b41e2175c9",
+      "bytes": 952
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_group.py.source",
+      "sha256": "a6e274e4a37926ada2836498a8d3a09a4d937af1267b9548c9e8115f3a9666e2",
+      "bytes": 2073
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_hardcoded.py.source",
+      "sha256": "b7ed201e7c2b29334780b900adafc92d1895c339cae1bb88f953ca39d62d7ce7",
+      "bytes": 757
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_hdr.py.source",
+      "sha256": "773eabd31198944fce6ca68b03dc8d7acfd118143b4c2cb786ff88dcb1356880",
+      "bytes": 1525
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_language.py.source",
+      "sha256": "1053f13cf58bb904596bcc6adef08cc4f8f1277d47bbf771a8965a4a38824ac9",
+      "bytes": 16290
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_main.py.source",
+      "sha256": "941ef023f528bc5a4881770bbc5b06ad460d26960d491ef18e179c8973b68081",
+      "bytes": 53349
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_network.py.source",
+      "sha256": "43b4587158042429b44664658cc1ba9176d4d0b5067e1f85aa6a7b4fb1578cca",
+      "bytes": 2306
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_parser.py.source",
+      "sha256": "d1b584f25cbdc855cad62851f12bcd73584e8df8883a2053a78c6f3d7891735b",
+      "bytes": 2846
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_proper.py.source",
+      "sha256": "11b0ba3f9872b0f38ae9dac78c63cf64705b0952fff822133d56b93f6b7b27c1",
+      "bytes": 665
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_quality.py.source",
+      "sha256": "fe3d6707423ded5a4799bea0ccc5b7a9d3b9ffd4ed31994439ba0f251177dc6b",
+      "bytes": 5173
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_region.py.source",
+      "sha256": "e2cc95ea7a290ab0aca2b0079b1b2c8434d7f78932ee72404853512217a868b6",
+      "bytes": 872
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_repack.py.source",
+      "sha256": "d50170496b42412191a58ff7de20a8b5e245b0899e6b6478f880e8ce320c2c02",
+      "bytes": 684
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_resolution.py.source",
+      "sha256": "7bc0634785c7634b59b1e42ac59705756b125c8c4da493d85f192e103b283479",
+      "bytes": 1578
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_retail.py.source",
+      "sha256": "90c640b79d333e330cc304639f2586ea37b17993902e1010bdea709b5eb90d2b",
+      "bytes": 609
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_season.py.source",
+      "sha256": "5f51bb9e255a6c5802807b5fce3790f48b5607f672aed36a33bc5d8f5f588047",
+      "bytes": 8073
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_site.py.source",
+      "sha256": "55783dc40f9e9a1f1584d843cf8a5b1a03b57fc5ba9bde30def97038aa9c97bb",
+      "bytes": 1701
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_size.py.source",
+      "sha256": "1f678e4d5b58712b8c53d9ae97408594216db3a64ef22a729942e7a2696b3caf",
+      "bytes": 885
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_sports.py.source",
+      "sha256": "8b5f7fdc1bd09bd6a5d46d6241aa701be778f176edf36c7e49970dbdeba44213",
+      "bytes": 1176
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_title.py.source",
+      "sha256": "ffd8c015e7d8577d9117ad43f67a9f747e7738fdae900a32349cc68ea09a57e9",
+      "bytes": 6719
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_trash.py.source",
+      "sha256": "22684446993f243b971d90f5b01f96f68b53cbf5e448f396c9739ca1805d0e4a",
+      "bytes": 1549
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_unrated.py.source",
+      "sha256": "859914b77e318363889d6061459027e01095b7b2fc502ddfaf1095db31f00cba",
+      "bytes": 1289
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_volume.py.source",
+      "sha256": "9a81b2a3b94e4abeacd8248858564cfe9d04b3250b9cee04626ad0c52dd728a7",
+      "bytes": 1529
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_year.py.source",
+      "sha256": "382c51b6e38e0376969a235a6c69139a7319b73c1f58ba8e1aabd89015b15baa",
+      "bytes": 1700
+    },
+    {
+      "path": "testdata/releases/review-inputs/rakun-full-original.LICENSE",
+      "sha256": "d14c13422112e483e91faf496cc0bfd75ec072766053a340b2ff9afc483fb468",
+      "bytes": 1067
+    },
+    {
+      "path": "testdata/releases/review-inputs/rakun-full-original.manifest.json",
+      "sha256": "9245099966784c6a6fb550d8f9860d6841f88b8ad52f1b01c4b9459c96336750",
+      "bytes": 1748
+    },
+    {
+      "path": "testdata/releases/review-inputs/rank-torrent-name.LICENSE",
+      "sha256": "48f46d8b1ea2773ad67bad973cd99c413bb90473591f7d1e9ab65910275e270c",
+      "bytes": 1084
+    },
+    {
+      "path": "testdata/releases/review-inputs/rank-torrent-name.json",
+      "sha256": "918a1cd2a7d85659ac6cc71250c5b06bf4d82177fdb00d25ea45beb724b6ae42",
+      "bytes": 6950
+    },
+    {
+      "path": "testdata/releases/review-inputs/rust-ptn.LICENSE",
+      "sha256": "555de1884458c8c87eb69a5be47724d7b8ea50a5a2ef73864c8bcfe1e40eb36c",
+      "bytes": 1069
+    },
+    {
+      "path": "testdata/releases/review-inputs/rust-ptn.json",
+      "sha256": "54d2bf95a42c771d4aa2445df2cc5bacfce04490ad1b3e3f510c0220dcc1ff4a",
+      "bytes": 30700
+    },
+    {
+      "path": "testdata/releases/review-inputs/rust-ptn.source",
+      "sha256": "2b600d6f0a051cd651b9ff74a3b9d2e528b62ff755b59e0f53c06294eab47d1d",
+      "bytes": 28191
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/README.md",
+      "sha256": "4ec7904c1ee3291089f580bfb8a0d3eff26b9ad944c43af1143095cf835b3674",
+      "bytes": 4714
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/esparza-dlshow.LICENSE",
+      "sha256": "f456110687fd203c2f076933c4187b2de9f0af1b75593cc40860bfa2f926ebe8",
+      "bytes": 1068
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/esparza-dlshow.README.source",
+      "sha256": "a9d231487e54e3fc21807bda406a6aee16c95849e2abfa1e1320bef61a881ebd",
+      "bytes": 428
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/esparza-dlshow.test.source",
+      "sha256": "a7f13635679a58b431628ab544c90b65905144b6413efc07ff514fe0f0835ebf",
+      "bytes": 2716
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/hellberg-release.LICENSE",
+      "sha256": "8a9c15bd36fc2962d98036b33e1455d293cd504691530014f35c5a5629fce3ca",
+      "bytes": 1076
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/hellberg-release.README.source",
+      "sha256": "541c7f5e13cba43dfdba1ff2ec925ab9a2b0df7f5851875a71fef709ecf94ba5",
+      "bytes": 2364
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/hellberg-release.test.source",
+      "sha256": "722ad3e6286dc47f2473f0ea2a1c938e75df9044751233eaa42bd8c908629941",
+      "bytes": 12418
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/husar-movie-title.LICENSE",
+      "sha256": "97f6c80a9d90040ec13e5fc71cccae1854e1568416479a5eb2ed17f7fc94e2c6",
+      "bytes": 1097
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/husar-movie-title.README.source",
+      "sha256": "41c1c79d420b0ec37399deae06a0019fddf526168b5fc7dfd5cde88fbdc6ba0d",
+      "bytes": 811
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/husar-movie-title.test.source",
+      "sha256": "63ea882c452954eb1dc41323079ace4c965005b0cfe21d4bb16228d3bf4423ac",
+      "bytes": 2456
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/inventory.json",
+      "sha256": "58da160e17a6832a1e3024d52b82d123b7ff6635e5b4b765cfef19f7068baa12",
+      "bytes": 116684
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/manifest.json",
+      "sha256": "a70b20a00b1a6d7491cc5b9ec4f7421345ac3d72a789f3802e6d651b27d6c421",
+      "bytes": 10162
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/singers-scene-release.LICENSE",
+      "sha256": "3d6c5f0286590b529c2647657e121d5f2d294c8867a9b6acd94476e1895c253a",
+      "bytes": 1117
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/singers-scene-release.README.source",
+      "sha256": "1252428333c01e91efce18f01d752cdb497cd7ab892042f94bd15993c3c5f296",
+      "bytes": 1526
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/singers-scene-release.test.source",
+      "sha256": "6c1ea498d143d480945549b94fbfc6280f071ae536fcd7699350ba240105a1b6",
+      "bytes": 10588
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/verify.cjs",
+      "sha256": "3985587d267f92423a1da88ebe7d665d314211760a399c1d716cd351b18cd8a0",
+      "bytes": 4179
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-mit-individual-progress.json",
+      "sha256": "5e428a63827ab5b4f1fff59e3f299a4c7ee00abd8f1efe98dea0bf53c15058d6",
+      "bytes": 606
+    },
+    {
+      "path": "testdata/releases/review-inputs/titleparser.LICENSE",
+      "sha256": "3009a1211aea38b4e08a403c44cea0002fd531cc1906ed448e387c33c00a1475",
+      "bytes": 1079
+    },
+    {
+      "path": "testdata/releases/review-inputs/titleparser.json",
+      "sha256": "fe05d03f3ed4031e6b78b382f03aa864b140fc9d09451dbbdb0b6824066e98bb",
+      "bytes": 12211
+    },
+    {
+      "path": "testdata/releases/review-inputs/titleparser.source",
+      "sha256": "ba1eb5502901f0f369995fc9db6df5827e830042fbab9ce616cad348789b65f3",
+      "bytes": 17321
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.json",
+      "sha256": "9e9c0dbef35ae22c6b2012c8ade6bdcc56afe2a3ab438971572d6a32f6344d82",
+      "bytes": 241173
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/LICENSE",
+      "sha256": "da337cfa918334bb9d4c84dd8610485b9a4fecd85b6b373028951028deb2b252",
+      "bytes": 1085
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/audioChannels.spec.ts.source",
+      "sha256": "2fd1ed5b2b9f44e25de89ad936b6a9e6ea43304a1a36b9f1fe3ab581b6c4482d",
+      "bytes": 1807
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/audioCodec.spec.ts.source",
+      "sha256": "bfb164da17fa69263844cbc99fbb6b1690dd50bba92eee6e6aa3ec81a6b384d4",
+      "bytes": 3373
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/codec.spec.ts.source",
+      "sha256": "ae1a2bd20ed15bebabf31378efa65bed673e438032bb308b105ff67b5965bcff",
+      "bytes": 2235
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/complete.spec.ts.source",
+      "sha256": "e7a72b2421be46054b89f281003c12712fef996516e584a61a2850af8edfa1bf",
+      "bytes": 412
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/edition.spec.ts.source",
+      "sha256": "79446f8d7940d40eb48e96839793b8180b41699829f83f5f0fe1c33245324ccc",
+      "bytes": 4631
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/extensions.spec.ts.source",
+      "sha256": "57593b504bc9474ce434913cb2f557810b2b9c1be05c800c334e1b5f1be442bb",
+      "bytes": 1038
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/filenameParse.spec.ts.source",
+      "sha256": "3c7ebc611f504bce41146d5fb9539f6faa54bb420587dabc87f65d35e6c175d8",
+      "bytes": 11257
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/group.spec.ts.source",
+      "sha256": "c5b33e71bbf5dba5578eaf3ace32137948ec0f3cae5cc15c2790d733031ca872",
+      "bytes": 4945
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/language.spec.ts.source",
+      "sha256": "111b13795a13cb61d17a8642daf2c93bdd367ef63696aa47c82a83f7f2650f5d",
+      "bytes": 8163
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/quality.spec.ts.source",
+      "sha256": "efa5d68c4545aaf4c34800c66ffbebfb25157350d9b5fca018f0e36eabfeb5b4",
+      "bytes": 20550
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/resolution.spec.ts.source",
+      "sha256": "6a44768d6d0b4f4deb4b9853b3f41793e50e0ae8ff05beb8e30f8029ecd06d29",
+      "bytes": 3031
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/revisionUpgrade.spec.ts.source",
+      "sha256": "f17e23f74b7b6269fa4c625505eae2f794348f16ebb36a46a4e9e0612b6f8150",
+      "bytes": 3834
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/season.spec.ts.source",
+      "sha256": "0e8e22c6b800ad005ee95fc71c0ee1fbbf14e6a727d8a32cf61ee78eae4d9c38",
+      "bytes": 22163
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/simplifyTitle.spec.ts.source",
+      "sha256": "cc1ae2b246b8c3860f411364a622a863ecdbc1f10220b8f1258fb59df99b5538",
+      "bytes": 2546
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/source-manifest.json",
+      "sha256": "23f289ed8fff3b1e2f2d8f944cade27b8073c9702f09e14205857ed46b448485",
+      "bytes": 3688
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/source.spec.ts.source",
+      "sha256": "54652fb53eb82f1ca9abb2024517b0050b6bb29cdd7b6cae1214cefa68a7b43f",
+      "bytes": 4177
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/title.spec.ts.source",
+      "sha256": "386011eb6add5e463162d4a7f56d853e8feb43e77413adf94da15039f83eca48",
+      "bytes": 6282
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/utils.spec.ts.source",
+      "sha256": "f025e77f4b8d9f316e46dcd858f37cfffd262e4610e3d904933adec47ef3145e",
+      "bytes": 415
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-full-main-original.manifest.json",
+      "sha256": "e0f35d5538d88f6b52807a512f9ff1785b7e7deb99eda473dcb1f8a9ea53030f",
+      "bytes": 1054
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-title-original-assertions.LICENSE",
+      "sha256": "5c44be7aac21777dcc84933675ee7f0b08c736aeaed6c78aedd0e3d7a6856d3a",
+      "bytes": 1065
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-title-original-assertions.json",
+      "sha256": "01ab7a2b44771fffea4212d4776716e96915919c02b3a1dbb8570cc952815533",
+      "bytes": 29500
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-title-original-assertions.title.test.ts.source",
+      "sha256": "c21deed849fd334ed72bd4244aca3e0637a019b74e7237b8902708e035ea70ec",
+      "bytes": 18442
+    },
+    {
+      "path": "testdata/releases/reviewed-full.json",
+      "sha256": "ade539cf7e74c534ac6497e379118253ddf5f15cf75d61ca4e8242e9f93125c8",
+      "bytes": 698668
+    },
+    {
+      "path": "testdata/releases/safety.jsonl",
+      "sha256": "4b210e1d859338db1c2b114e5b6f47a17d2947dbab3bccc30aa1060491c74168",
+      "bytes": 2543
+    },
+    {
+      "path": "testdata/releases/upstream-mit/atama-metadata-original.test.php",
+      "sha256": "963d02bd058f469b23b12c1e0596f57af7fb0033ff9312910ea755bed280ca87",
+      "bytes": 2685
+    },
+    {
+      "path": "testdata/releases/upstream-mit/atama-metadata-title-original.json",
+      "sha256": "577e0e718d496781ae94183bd9b60a21505b0d5e67c560e98c431ac33ff4a83c",
+      "bytes": 10816
+    },
+    {
+      "path": "testdata/releases/upstream-mit/beast-full-main-original.test.js",
+      "sha256": "2ec8d9bdd8efbb2f6fd872a1cc5d0b095aafddc52cc92dbfbe7d9ff5389e1116",
+      "bytes": 13543
+    },
+    {
+      "path": "testdata/releases/upstream-mit/beast-full-title-original.test.js",
+      "sha256": "8eb2936eba975f4fd8c003bbcc89c067b1682a69e7f84cac36bdc86bbb2da3c4",
+      "bytes": 24604
+    },
+    {
+      "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+      "sha256": "3848e40b8117f4c447a9f6a350052b5d255c80604d72b73bac04f483878c51df",
+      "bytes": 29804
+    },
+    {
+      "path": "testdata/releases/upstream-mit/chill-parser-original.fixture_accuracy_test.go.source",
+      "sha256": "0f6a30e98072e4706baa8678faa6aa47b57116620133d770057e7c543e5b57bf",
+      "bytes": 12654
+    },
+    {
+      "path": "testdata/releases/upstream-mit/chill-parser-original.parser_test.go.source",
+      "sha256": "736c8736b4ac98e911a2d4add59673a9c555fb99fe0e2a0bb802d2df70dbadea",
+      "bytes": 47838
+    },
+    {
+      "path": "testdata/releases/upstream-mit/clement-full-original.main.js",
+      "sha256": "b8922941a9f9bd0effb7c61cc440e1a1181e5f824993558650820657662f666c",
+      "bytes": 13857
+    },
+    {
+      "path": "testdata/releases/upstream-mit/clement-full-original.title.js",
+      "sha256": "56a23101d5a19cac27a353b9cfd8bb821d2ad51fd1dc2058bd02dbdf2e89f160",
+      "bytes": 904
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-conftest-original.py.source",
+      "sha256": "e2bb6ffc3fcf891b7066eb40c8b899e100d8a7167d256d5fe13feb44ab1538c8",
+      "bytes": 16449
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-movieparser-original.py.source",
+      "sha256": "b0cceae08ddb90ab8d1f28e68011c2756c2c7f95c36fa492cdae748813b72197",
+      "bytes": 3329
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-parsingapi-original.py.source",
+      "sha256": "3fa730e829cea226c610e3d348709eceb967833785dc1ff246b0eb3ab4684cff",
+      "bytes": 1291
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-seriesparser-original.py.source",
+      "sha256": "40182216f6a5b7f1d4292a31fa671a1ae422850be7d6087a243b9ae6971ec091",
+      "bytes": 34759
+    },
+    {
+      "path": "testdata/releases/upstream-mit/go-ptn.LICENSE",
+      "sha256": "5c01505f1974f6562d9f972acbcba24504ce20e68a58241b5f8d0dfc85512b84",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/upstream-mit/go-ptn.json",
+      "sha256": "e5e90057cd128ec8bf8ffd41bdc2d631f0f0d1b5f372e1c77c4decd8e9437a12",
+      "bytes": 23848
+    },
+    {
+      "path": "testdata/releases/upstream-mit/manifest.json",
+      "sha256": "d928a935968c00469297a37ab768c685b1ae2a53eb06d28b71fb2333c4ef52f8",
+      "bytes": 2225
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-model-original.ParsedFilename.java.source",
+      "sha256": "edc62e88a09e4c3d3759321480b3d0eed2be654f1d2142e3be898fc56ce25ea3",
+      "bytes": 2131
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-model-original.ParsedMovieFilename.java.source",
+      "sha256": "1dd9100057abf0d70c6b71e8ed069c8d98f13047af6c8f4dee6870cd2b7de213",
+      "bytes": 948
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-model-original.ParsedSeriesEpisodeFilename.java.source",
+      "sha256": "30209f1c38e0c2920def7f79ec172939397814b286529171712f4a35c6315a06",
+      "bytes": 1277
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-parser-original.ParserTest.java.source",
+      "sha256": "3527ae8481fbaa741bba3ecb954198a2387bba6ec86c972935b9858f3792c1b3",
+      "bytes": 2436
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptn.LICENSE",
+      "sha256": "6f9ae4dd0d1973fb448bd26642cffcf1dc202446bab0ac23f2b185d5f6599775",
+      "bytes": 1120
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptn.json",
+      "sha256": "02352ecee5d4c2d04dce19861119c55720348bedfba4fa0bd5ab5e150c4a2fb7",
+      "bytes": 19874
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptt.LICENSE",
+      "sha256": "285e18dd1c15cbfa29380cd73ec9804bfebae088c54be6cd3b3d1ca765c25370",
+      "bytes": 1063
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptt.json",
+      "sha256": "bc263db970d661a0cf093888d23a7c2134b768d9b631ec6550afbf17b7b21fb8",
+      "bytes": 94485
+    },
+    {
+      "path": "testdata/releases/upstream-mit/rakun-full-original.test.js",
+      "sha256": "888c44b6f29deeb52fcf2ced59873326973881aae4976c725c38d258ba33f91c",
+      "bytes": 25200
+    },
+    {
+      "path": "testdata/releases/upstream-mit/rakun-full-original.tester.js",
+      "sha256": "56a8bcd6273986354ffc61d0d933d8567ac785737fceaa4268c20113682ed569",
+      "bytes": 642
+    },
+    {
+      "path": "testdata/releases/upstream-mit/thcolin.LICENSE",
+      "sha256": "cd43e5ac0f31f0437331794c96242864b0b344e6edf3cd196a50b9118296a91d",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/upstream-mit/thcolin.json",
+      "sha256": "81fadd429d237f9b9714e3c910265bd7eae438eaad6cc221f6bd67479d536293",
+      "bytes": 39888
+    },
+    {
+      "path": "testdata/releases/upstream-mit/viren-full-main-original.test.ts",
+      "sha256": "4b25201f0f2e4a04929ad154b91252f8bc4c9a24a36aac322987e12e3d79f5cd",
+      "bytes": 61824
+    }
+  ],
+  "baseline_drift": [
+    {
+      "path": "testdata/releases/reviewed-full.json",
+      "original_sha256": "daf2f48d4eb493ae7fc8b9c906dc6be4e2cf5d7678ec5c1738b39808cbfaa720",
+      "current_sha256": "ade539cf7e74c534ac6497e379118253ddf5f15cf75d61ca4e8242e9f93125c8"
+    }
+  ],
+  "available_existing_reserve": 10,
+  "gold_entries": 878,
+  "required_entries": 1000,
+  "new_unique_pending": 117,
+  "existing_reserve": [
+    {
+      "input": "Robocop.1987.4K.Remastered.DC.CEE.720p.BluRay.x264-WiNNy",
+      "title": "Robocop",
+      "year": 1987,
+      "season": 0,
+      "episode": 0,
+      "input_line": 60,
+      "title_line": 60,
+      "source_id": "hellberg-release",
+      "source_index": 42,
+      "origin": "existing-pinned-pool-not-new-acquisition",
+      "review_status": "unreviewed",
+      "canonical_title_authority": false,
+      "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+      "exact_overlap_with_gold": false,
+      "existing_literal_evidence": [],
+      "exact_overlap_with_existing_sources": false,
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "input": "The.Lego.Movie.2014.3D.COMPLETE.BLURAY-BAKED",
+      "title": "The Lego Movie",
+      "year": "2014",
+      "input_line": 68,
+      "title_line": 70,
+      "source_id": "singers-scene-release",
+      "source_index": 3,
+      "origin": "existing-pinned-pool-not-new-acquisition",
+      "review_status": "unreviewed",
+      "canonical_title_authority": false,
+      "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+      "exact_overlap_with_gold": false,
+      "existing_literal_evidence": [],
+      "exact_overlap_with_existing_sources": false,
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "input": "Thor.The.Dark.World.3D.2013.MULTi.COMPLETE.BLURAY-iND",
+      "title": "Thor The Dark World",
+      "year": "2013",
+      "input_line": 88,
+      "title_line": 90,
+      "source_id": "singers-scene-release",
+      "source_index": 4,
+      "origin": "existing-pinned-pool-not-new-acquisition",
+      "review_status": "unreviewed",
+      "canonical_title_authority": false,
+      "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+      "exact_overlap_with_gold": false,
+      "existing_literal_evidence": [],
+      "exact_overlap_with_existing_sources": false,
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "input": "2001.A.Space.Odyssey.1968.iNTERNAL.1080p.BluRay.x264-MANNEKEPiS",
+      "title": "2001 A Space Odyssey",
+      "year": "1968",
+      "input_line": 148,
+      "title_line": 150,
+      "source_id": "singers-scene-release",
+      "source_index": 7,
+      "origin": "existing-pinned-pool-not-new-acquisition",
+      "review_status": "unreviewed",
+      "canonical_title_authority": false,
+      "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+      "exact_overlap_with_gold": false,
+      "existing_literal_evidence": [],
+      "exact_overlap_with_existing_sources": false,
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "input": "The.Hobbit.The.Desolation.of.Smaug.2013.EXTENDED.MULTi.COMPLETE.BLURAY-XORBiTANT",
+      "title": "The Hobbit The Desolation of Smaug",
+      "year": "2013",
+      "input_line": 248,
+      "title_line": 250,
+      "source_id": "singers-scene-release",
+      "source_index": 12,
+      "origin": "existing-pinned-pool-not-new-acquisition",
+      "review_status": "unreviewed",
+      "canonical_title_authority": false,
+      "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+      "exact_overlap_with_gold": false,
+      "existing_literal_evidence": [],
+      "exact_overlap_with_existing_sources": false,
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    }
+  ],
+  "combined_pending_capacity": 122,
+  "capacity_if_every_pending_contract_is_completed": 1000,
+  "inventory_sha256": "fd7e979bd16edaf9cff04f72e85c5c3f70836f8e378a50aee90d59cd8291808a",
+  "helper_sha256": "5c7425c070504ed925241eb24b667aecc7b252d20256d37f9c824d74ca0064c7",
+  "full_new_contracts_frozen": 0,
+  "pulse_probe_count": 0,
+  "upstream_executed": false,
+  "parser_pass_count": null,
+  "parser_defect_count": null,
+  "metadata": [
+    {
+      "source_id": "walker-media-name-parser",
+      "repo": "chad3814/media-name-parser",
+      "fork": false,
+      "license": "MIT",
+      "preserved": "metadata/walker-media-name-parser.github-search.json.source",
+      "bytes": 392342,
+      "sha256": "a77ad1a2cd3c3f7374a9f4d196696dc74fa207b66ec39b635870b1f37e42e7cb",
+      "query": "https://api.github.com/search/repositories?q=filename+parser+license:mit",
+      "limit": "Repository metadata is search-time evidence, not a substitute for commit-pinned source/license bytes or proof against every possible shared influence."
+    },
+    {
+      "source_id": "machard-releascenify",
+      "repo": "dmachard/ReleascenIFY",
+      "fork": false,
+      "license": "MIT",
+      "preserved": "metadata/machard-releascenify.github-search.json.source",
+      "bytes": 115041,
+      "sha256": "964bfcc1312cd966d57d2d544c40ad5f001d4e2bea4fee2c982583db335872b6",
+      "query": "https://api.github.com/search/repositories?q=release+name+parser+license:mit",
+      "limit": "Repository metadata is search-time evidence, not a substitute for commit-pinned source/license bytes or proof against every possible shared influence."
+    },
+    {
+      "source_id": "mahler-torrenttitleparser",
+      "repo": "bhmahler/TorrentTitleParser",
+      "fork": false,
+      "license": "MIT",
+      "preserved": "metadata/mahler-torrenttitleparser.github-search.json.source",
+      "bytes": 45025,
+      "sha256": "8c255c23513cf5b6b23601f412d095d4fb678c87a919b082f3100f00c1ac899e",
+      "query": "https://api.github.com/search/repositories?q=torrent+title+parser+license:mit",
+      "limit": "Repository metadata is search-time evidence, not a substitute for commit-pinned source/license bytes or proof against every possible shared influence."
+    },
+    {
+      "source_id": "ngtrio-tnp",
+      "repo": "ngtrio/tnp",
+      "fork": false,
+      "license": "MIT",
+      "preserved": "metadata/ngtrio-tnp.github-search.json.source",
+      "bytes": 127275,
+      "sha256": "9b0961f7e664f07d133b16e7778954e08a5a778cef1569e2a86daa53d39c90c6",
+      "query": "https://api.github.com/search/repositories?q=torrent+name+parser+license:mit",
+      "limit": "Repository metadata is search-time evidence, not a substitute for commit-pinned source/license bytes or proof against every possible shared influence."
+    }
+  ],
+  "existing_reserve_inventory": {
+    "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/inventory.json",
+    "sha256": "58da160e17a6832a1e3024d52b82d123b7ff6635e5b4b765cfef19f7068baa12"
+  },
+  "note": "Source capacity only. Newly acquired inputs plus separately identified existing unused direct title assertions cover the numerical shortfall against the explicitly frozen current gold. The original 864-entry baseline remains in inventory.json; concurrent external changes are recorded separately, not silently substituted. These are not completed full contracts, passing parser cases, gold additions, or M3-02 acceptance. No parser output was used as expected data. COMPLETE/pack/OVA/special or ambiguous coverage can only yield review contracts with zero confidence and coverage."
+}

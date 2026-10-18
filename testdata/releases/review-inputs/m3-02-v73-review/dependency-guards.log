@@ -1,0 +1,15 @@
+DEPENDENCY_REJECTED domain-http
+DEPENDENCY_REJECTED domain-platform
+DEPENDENCY_REJECTED ports-usecase
+DEPENDENCY_REJECTED usecase-adapter
+DEPENDENCY_REJECTED httpapi-adapter
+DEPENDENCY_REJECTED library-store
+DEPENDENCY_REJECTED library-driver
+DEPENDENCY_REJECTED search-endpoint-store
+DEPENDENCY_REJECTED search-endpoint-driver
+DEPENDENCY_REJECTED movie-matcher-store
+DEPENDENCY_REJECTED movie-matcher-driver
+DEPENDENCY_REJECTED mediaserver-store
+DEPENDENCY_REJECTED mediaserver-driver
+0 issues.
+DEPENDENCY_GUARD_POSITIVE_AND_NEGATIVE_PASS

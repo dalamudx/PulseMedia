@@ -1,0 +1,66 @@
+{
+  "source_id": "chill-parser-original",
+  "review_status": "partially_reviewed_literal_source",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "canonical_unit_authorization": false,
+  "coverage_authority": false,
+  "reviewed_entries": 22,
+  "candidate_count": 157,
+  "counts": {
+    "positive_title_assertions": 157,
+    "positive_exact_unique_inputs": 157,
+    "exact_unique_overlap_with_gold": 0,
+    "exact_unique_new_beyond_gold": 157,
+    "excluded_inputs": 22
+  },
+  "provenance": {
+    "repository": "https://github.com/chill-institute/torrentname",
+    "commit": "c0ad751b88845467d456f15829efb3db18957b7c",
+    "license": "MIT",
+    "files": [
+      {
+        "path": "LICENSE",
+        "preserved": "review-inputs/chill-parser-original.LICENSE",
+        "sha256": "5c01505f1974f6562d9f972acbcba24504ce20e68a58241b5f8d0dfc85512b84",
+        "bytes": 1074,
+        "lines": 21
+      },
+      {
+        "path": "parser_test.go",
+        "preserved": "upstream-mit/chill-parser-original.parser_test.go.source",
+        "sha256": "736c8736b4ac98e911a2d4add59673a9c555fb99fe0e2a0bb802d2df70dbadea",
+        "bytes": 47838,
+        "lines": 1891
+      },
+      {
+        "path": "fixture_accuracy_test.go",
+        "preserved": "upstream-mit/chill-parser-original.fixture_accuracy_test.go.source",
+        "sha256": "0f6a30e98072e4706baa8678faa6aa47b57116620133d770057e7c543e5b57bf",
+        "bytes": 12654,
+        "lines": 409
+      }
+    ]
+  },
+  "inventory": "chill-parser-original.inventory.json",
+  "verification": "Exact immutable commit fetched into unique owned temporary directory; originals and MIT licenses read completely with hashline pi.read; preserved bytes compared directly with git show blobs and SHA256 checked. Upstream parsers/tests/builds and fixture generators were not executed. No output-generated datasets preserved.",
+  "exclusions": "15 parser literals without title equality and 7 fixture rows without title in selected fields excluded. External testdata/jackett JSON remains unfetched and unimported. Synthetic literals are explicitly classified and not independent real-source capacity.",
+  "gold_snapshot": {
+    "declared_reviewed_entries": 609,
+    "actual_entries": 609,
+    "exact_unique_inputs": 609,
+    "sha256": "16f12b79fcad6c2effbdec5804b216e7593b4197384fdb1be36c0216a24354c9"
+  },
+  "capacity": {
+    "requested_starting_gold": 605,
+    "observed_gold": 609,
+    "all_literal_union_with_observed_gold": 771,
+    "all_literal_gap_to_1000": 229,
+    "non_synthetic_literal_candidates": 29,
+    "non_synthetic_literal_union_upper_bound_with_observed_gold": 638,
+    "non_synthetic_gap_to_1000": 362,
+    "all_known_sources_census": false,
+    "note": "Only the two assigned fixed sources and exact overlap with existing gold are counted. Main must union other source censuses. Upper bounds are not acceptance or evidence that every candidate is independent or fully annotatable."
+  }
+}

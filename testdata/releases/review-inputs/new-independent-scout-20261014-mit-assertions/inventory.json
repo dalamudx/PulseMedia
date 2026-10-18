@@ -1,0 +1,4923 @@
+{
+  "schema": "pulse.independent-source-scout.v1",
+  "accepted": false,
+  "authority": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "formal_golden_acceptance": false,
+  "reviewed_entries": 0,
+  "review_status": "unreviewed",
+  "gold_entries": 864,
+  "remaining_complete_reviews_required": 136,
+  "rows": [
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 0,
+      "input": "Outbreak.1995.1080p.BluRay.REMUX.AVC.DTS-HD-MA.5.1-UnKn0wn.nzb",
+      "title": "Outbreak",
+      "input_line": 13,
+      "title_line": 15,
+      "original_assertion_block": "const got = ok('movies', 'Outbreak.1995.1080p.BluRay.REMUX.AVC.DTS-HD-MA.5.1-UnKn0wn.nzb');\n  assert.equal(got.kind, 'movie');\n  assert.equal(got.title, 'Outbreak');\n  assert.equal(got.year, 1995);\n  assert.equal(got.group, 'UnKn0wn');\n  assert.equal(got.quality.resolution, '1080p');\n  assert.equal(got.quality.source, 'BluRay');\n  assert.equal(got.categoryDisagreement, false);\n});",
+      "original_category": "movies",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 1,
+      "input": "Mortal.Kombat.II.2026.UHD.BluRay.1080p.DD+Atmos.5.1.DoVi.HDR10+.x265-SM737.nzb",
+      "title": "Mortal Kombat II",
+      "input_line": 24,
+      "title_line": 25,
+      "original_assertion_block": "const got = ok('movies', 'Mortal.Kombat.II.2026.UHD.BluRay.1080p.DD+Atmos.5.1.DoVi.HDR10+.x265-SM737.nzb');\n  assert.equal(got.title, 'Mortal Kombat II');\n  assert.equal(got.quality.resolution, '1080p');\n});",
+      "original_category": "movies",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 2,
+      "input": "Movies/Interstellar (2014)/00136.m2ts",
+      "title": "Interstellar",
+      "input_line": 30,
+      "title_line": 32,
+      "original_assertion_block": "const got = ok('movies', 'Movies/Interstellar (2014)/00136.m2ts');\n  assert.equal(got.kind, 'movie');\n  assert.equal(got.title, 'Interstellar');\n  assert.equal(got.year, 2014);\n  assert.deepEqual(got.hints.fromDirectories, ['Interstellar (2014)']);\n});",
+      "original_category": "movies",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 3,
+      "input": "TV Shows/Moon Knight/Season 1/Moon Knight - S01E03 - The Friendly Type Bluray-2160p Remux.mkv",
+      "title": "Moon Knight",
+      "input_line": 38,
+      "title_line": 40,
+      "original_assertion_block": "const got = ok('tv', 'TV Shows/Moon Knight/Season 1/Moon Knight - S01E03 - The Friendly Type Bluray-2160p Remux.mkv');\n  assert.equal(got.kind, 'episode');\n  assert.equal(got.title, 'Moon Knight');\n  if (got.kind !== 'episode') throw new Error('unreachable');\n  assert.equal(got.seasonNumber, 1);\n  assert.deepEqual(got.episodeNumbers, [3]);\n  assert.equal(got.episodeTitle, 'The Friendly Type');\n  assert.equal(got.quality.resolution, '2160p');\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 4,
+      "input": "TV Shows/Star Trek - Prodigy/Season 2/Star Trek - Prodigy - S02E01-E02 - Into the Breach Bluray-1080p Remux.mkv",
+      "title": "Star Trek Prodigy",
+      "input_line": 49,
+      "title_line": 50,
+      "original_assertion_block": "const got = ok('tv', 'TV Shows/Star Trek - Prodigy/Season 2/Star Trek - Prodigy - S02E01-E02 - Into the Breach Bluray-1080p Remux.mkv');\n  assert.equal(got.title, 'Star Trek Prodigy');\n  if (got.kind !== 'episode') throw new Error('unreachable');\n  assert.deepEqual(got.episodeNumbers, [1, 2]);\n  assert.equal(got.episodeTitle, 'Into the Breach');\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 5,
+      "input": "TV Shows/Ghosts (US)/Season 5/Ghosts (US) - S05E12 - The List WEBRip-1080p.mkv",
+      "title": "Ghosts",
+      "input_line": 57,
+      "title_line": 58,
+      "original_assertion_block": "const got = ok('tv', 'TV Shows/Ghosts (US)/Season 5/Ghosts (US) - S05E12 - The List WEBRip-1080p.mkv');\n  assert.equal(got.title, 'Ghosts');\n  assert.equal(got.hints.disambiguator, 'US');\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 6,
+      "input": "TV Shows/Ghosts (2019)/Season 1/Ghosts (2019) - S01E01 - Pilot WEBDL-1080p.mkv",
+      "title": "Ghosts",
+      "input_line": 63,
+      "title_line": 64,
+      "original_assertion_block": "const got = ok('tv', 'TV Shows/Ghosts (2019)/Season 1/Ghosts (2019) - S01E01 - Pilot WEBDL-1080p.mkv');\n  assert.equal(got.title, 'Ghosts');\n  assert.equal(got.hints.disambiguator, '2019');\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 7,
+      "input": "TV Shows/Wheel of Fortune/Season 43/Wheel of Fortune - 2026-03-23 - Hawaiian Vacation 1 HDTV-720p.mkv",
+      "title": "Wheel of Fortune",
+      "input_line": 76,
+      "title_line": 77,
+      "original_assertion_block": "const got = ok('tv', 'TV Shows/Wheel of Fortune/Season 43/Wheel of Fortune - 2026-03-23 - Hawaiian Vacation 1 HDTV-720p.mkv');\n  assert.equal(got.title, 'Wheel of Fortune');\n  if (got.kind !== 'episode') throw new Error('unreachable');\n  assert.equal(got.airDate, '2026-03-23');\n  assert.equal(got.seasonNumber, 43);\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 8,
+      "input": "Koln.50667.S2013E015.German.1080p.RTLP.WEB-DL.AAC2.0.H.264-GLOTZE.nzb",
+      "title": "Koln 50667",
+      "input_line": 84,
+      "title_line": 88,
+      "original_assertion_block": "const got = ok('tv', 'Koln.50667.S2013E015.German.1080p.RTLP.WEB-DL.AAC2.0.H.264-GLOTZE.nzb');\n  if (got.kind !== 'episode') throw new Error('unreachable');\n  assert.equal(got.seasonNumber, 2013);\n  assert.equal(got.yearSeason, true);\n  assert.equal(got.title, 'Koln 50667');\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 11,
+      "input": "Star.Wars.Episode.VI.Return.of.the.Jedi.1983.2160p.UHD.BluRay.REMUX.DV.HDR.HEVC.TrueHD7.1.Atmos-3L.DUAL-LACTATO.nzb",
+      "title": "Star Wars Episode VI Return of the Jedi",
+      "input_line": 106,
+      "title_line": 108,
+      "original_assertion_block": "const got = ok('tv', 'Star.Wars.Episode.VI.Return.of.the.Jedi.1983.2160p.UHD.BluRay.REMUX.DV.HDR.HEVC.TrueHD7.1.Atmos-3L.DUAL-LACTATO.nzb');\n  assert.equal(got.kind, 'series');\n  assert.equal(got.title, 'Star Wars Episode VI Return of the Jedi');\n  assert.equal(got.categoryDisagreement, true);\n  assert.equal(got.group, '3L');\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 27,
+      "input": "Speed.Racer.2008.PAL.GER.DVD9-AndreMor",
+      "title": "Speed Racer",
+      "input_line": 282,
+      "title_line": 285,
+      "original_assertion_block": "const got = ok('movies', 'Speed.Racer.2008.PAL.GER.DVD9-AndreMor');\n  assert.equal(got.quality.resolution, '576i');\n  assert.equal(got.quality.source, 'DVD9');\n  assert.equal(got.title, 'Speed Racer');\n  assert.equal(got.year, 2008);\n});",
+      "original_category": "movies",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 28,
+      "input": "Spirit.Untamed.2021.NTSC.USA.DVD5-AndreMor",
+      "title": "Spirit Untamed",
+      "input_line": 290,
+      "title_line": 293,
+      "original_assertion_block": "const got = ok('movies', 'Spirit.Untamed.2021.NTSC.USA.DVD5-AndreMor');\n  assert.equal(got.quality.resolution, '480i');\n  assert.equal(got.quality.source, 'DVD5');\n  assert.equal(got.title, 'Spirit Untamed');\n  assert.equal(got.year, 2021);\n});",
+      "original_category": "movies",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/video.test.ts",
+      "source_index": 29,
+      "input": "Space.Buddies.2009.WIDESCREEN.PAL.EUR.DVD9-AndreMor.nzb",
+      "title": "Space Buddies",
+      "input_line": 301,
+      "title_line": 302,
+      "original_assertion_block": "const got = ok('movies', 'Space.Buddies.2009.WIDESCREEN.PAL.EUR.DVD9-AndreMor.nzb');\n  assert.equal(got.title, 'Space Buddies');\n  assert.equal(got.year, 2009);\n  assert.equal(got.quality.resolution, '576i');\n  assert.equal(got.quality.source, 'DVD9');\n  assert.deepEqual(got.edition, ['WIDESCREEN']);\n});",
+      "original_category": "movies",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/leadingGroup.test.ts",
+      "source_index": 0,
+      "input": "[Onalrie] ReZero kara Hajimeru Isekai Seikatsu - S04E18 [1080p WEBRip AV1]",
+      "title": "ReZero kara Hajimeru Isekai Seikatsu",
+      "input_line": 45,
+      "title_line": 47,
+      "original_assertion_block": "const result = parseVideo('tv', '[Onalrie] ReZero kara Hajimeru Isekai Seikatsu - S04E18 [1080p WEBRip AV1]');\n  if (!result.ok) throw new Error(`refused: ${result.refusal}`);\n  assert.equal(result.parsed.title, 'ReZero kara Hajimeru Isekai Seikatsu');\n  assert.equal(result.parsed.group, 'Onalrie', 'the group is recovered, not merely dropped');\n  assert.equal(result.parsed.quality.resolution, '1080p');\n  assert.equal(result.parsed.kind, 'episode');\n  if (result.parsed.kind !== 'episode') return;\n  assert.equal(result.parsed.seasonNumber, 4);\n  assert.deepEqual(result.parsed.episodeNumbers, [18]);\n});",
+      "original_category": "tv",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/leadingGroup.test.ts",
+      "source_index": 1,
+      "input": "{tmdb-603} The Matrix (1999).mkv",
+      "title": "The Matrix",
+      "input_line": 72,
+      "title_line": 75,
+      "original_assertion_block": "const result = parseVideo('movies', '{tmdb-603} The Matrix (1999).mkv');\n  if (!result.ok) throw new Error('refused');\n  assert.deepEqual(result.parsed.externalId, { source: 'tmdb', id: '603' });\n  assert.equal(result.parsed.title, 'The Matrix');\n  assert.equal(result.parsed.group, null, 'the id was consumed as an id');\n});",
+      "original_category": "movies",
+      "oracle_kind": "direct-node-assert-title-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/leadingGroup.test.ts",
+      "source_index": 10000,
+      "input": "[SubsPlease] Frieren - S01E12 [1080p].mkv",
+      "title": "Frieren",
+      "input_line": 58,
+      "title_line": 58,
+      "original_group": "SubsPlease",
+      "original_category": "tv",
+      "oracle_kind": "literal-triple-table-direct-node-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/leadingGroup.test.ts",
+      "source_index": 10001,
+      "input": "(Erai-raws) Bleach - S01E05 [1080p][HEVC].mkv",
+      "title": "Bleach",
+      "input_line": 59,
+      "title_line": 59,
+      "original_group": "Erai-raws",
+      "original_category": "tv",
+      "oracle_kind": "literal-triple-table-direct-node-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "test/parse/leadingGroup.test.ts",
+      "source_index": 10002,
+      "input": "{Judas} Jujutsu Kaisen - S02E03 [1080p].mkv",
+      "title": "Jujutsu Kaisen",
+      "input_line": 60,
+      "title_line": 60,
+      "original_group": "Judas",
+      "original_category": "tv",
+      "oracle_kind": "literal-triple-table-direct-node-equality",
+      "source_id": "walker-media-name-parser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 0,
+      "input": "Higher Power 2018 MULTi VFF 2160p 10bit 4KLight BluRay x265 @@UnPourTous@@",
+      "title": "Higher Power",
+      "input_line": 3,
+      "title_line": 5,
+      "original_expected": {
+        "title": "Higher Power",
+        "year": 2018,
+        "category": "movie",
+        "resolution": "4KLIGHT",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "languages": [
+          "MULTI",
+          "VFF"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 1,
+      "input": "Lady.Gaga.MAYHEM.Requiem.2026.2160p.ATV.WEB-DL.Hybrid.H265.DV.HDR10+DDP.Atmos.5.1.English-HONE",
+      "title": "Lady Gaga MAYHEM Requiem",
+      "input_line": 18,
+      "title_line": 20,
+      "original_expected": {
+        "title": "Lady Gaga MAYHEM Requiem",
+        "year": 2026,
+        "category": "movie",
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "v_quality": "HDR10+ DV",
+        "audio": "EAC3 ATMOS",
+        "channels": "5.1",
+        "languages": []
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 2,
+      "input": "The.Devil.at.4.OClock.1961.MULTi.VFi.1080p.WEBRip.AC3.2.0.H264-Wawacity.WIN",
+      "title": "The Devil at 4 OClock",
+      "input_line": 33,
+      "title_line": 35,
+      "original_expected": {
+        "title": "The Devil at 4 OClock",
+        "year": 1961,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "WEBRIP",
+        "codec": "H264",
+        "audio": "AC3",
+        "channels": "2.0",
+        "languages": [
+          "MULTI",
+          "VFI"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 3,
+      "input": "Sexcrimes.(Wild Things).1998.BDRip.1080p.MULTi.VF2.HDLight.x264.AC3.5.1.AC3.2.0-BzH29",
+      "title": "Sexcrimes (Wild Things)",
+      "input_line": 50,
+      "title_line": 52,
+      "original_expected": {
+        "title": "Sexcrimes (Wild Things)",
+        "year": 1998,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "BDRIP",
+        "codec": "H264",
+        "audio": "AC3",
+        "channels": "5.1",
+        "languages": [
+          "MULTI",
+          "VF2"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 4,
+      "input": "L'Arme fatale 2 1989 MULTi VFF 1080p BluRay x265 @@UnPourTous@@",
+      "title": "L'Arme fatale 2",
+      "input_line": 67,
+      "title_line": 69,
+      "original_expected": {
+        "title": "L'Arme fatale 2",
+        "year": 1989,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "languages": [
+          "MULTI",
+          "VFF"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 5,
+      "input": "Les Trois Mousquetaires Milady 2023 VFF 1080p Web x265 @@UnPourTous@@",
+      "title": "Les Trois Mousquetaires Milady",
+      "input_line": 82,
+      "title_line": 84,
+      "original_expected": {
+        "title": "Les Trois Mousquetaires Milady",
+        "year": 2023,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "languages": [
+          "VFF"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 6,
+      "input": "Evangelion__3.33_You_Can_(Not)_Redo.2012.VF-VOSTFR.1080p.HDlight.EAC3-AC3.x265.Wawacity.win",
+      "title": "Evangelion 3 33 You Can (Not) Redo",
+      "input_line": 96,
+      "title_line": 98,
+      "original_expected": {
+        "title": "Evangelion 3 33 You Can (Not) Redo",
+        "year": 2012,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "HDLIGHT",
+        "codec": "H265",
+        "languages": [
+          "VF",
+          "VOSTFR"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 7,
+      "input": "Le.Retour.du.Roi.2003.MULTi.1080p.theatrical.version.BluRay.AC3.5.1.x264-PopHD",
+      "title": "Le Retour du Roi",
+      "input_line": 111,
+      "title_line": 113,
+      "original_expected": {
+        "title": "Le Retour du Roi",
+        "year": 2003,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "audio": "AC3",
+        "channels": "5.1",
+        "languages": [
+          "MULTI"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 8,
+      "input": "Ladies First (2026) Multi.1080P.Web.Eac3X265-ParadiZe.mkv",
+      "title": "Ladies First",
+      "input_line": 127,
+      "title_line": 129,
+      "original_expected": {
+        "title": "Ladies First",
+        "year": 2026,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "EAC3",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "ParadiZe",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 9,
+      "input": "1917.2019.MULTi.VFF.2160p.BLURAY.4KLight.DV.HDR.x265.TrueHD.7.1.Atmos.Bender_37.mkv",
+      "title": "1917",
+      "input_line": 144,
+      "title_line": 146,
+      "original_expected": {
+        "title": "1917",
+        "year": 2019,
+        "category": "movie",
+        "resolution": "4KLIGHT",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "audio": "TRUEHD ATMOS",
+        "channels": "7.1",
+        "v_quality": "HDR DV",
+        "languages": [
+          "MULTI",
+          "VFF"
+        ],
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 10,
+      "input": "Oppenheimer.2023.MULTi.TRUEFRENCH.2160p.UHD.BluRay.REMUX.HDR.HEVC-GROUP",
+      "title": "Oppenheimer",
+      "input_line": 163,
+      "title_line": 165,
+      "original_expected": {
+        "title": "Oppenheimer",
+        "year": 2023,
+        "category": "movie",
+        "resolution": "2160P",
+        "quality": "REMUX",
+        "codec": "H265",
+        "v_quality": "HDR",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "GROUP"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 11,
+      "input": "Big+Fish+%282003%29+MULTi+VFI+2160p+10bit+4KLight+HDR+BluRay+DTS-HD+MA+7.1+x265-QTZ",
+      "title": "Big Fish",
+      "input_line": 180,
+      "title_line": 182,
+      "original_expected": {
+        "title": "Big Fish",
+        "category": "movie",
+        "year": 2003,
+        "resolution": "4KLIGHT",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "audio": "DTS-HD MA",
+        "channels": "7.1",
+        "v_quality": "HDR 10BIT",
+        "languages": [
+          "MULTI",
+          "VFI"
+        ],
+        "group": "QTZ"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 12,
+      "input": "Ghostbusters.Afterlife.2021.MULTi.VF2.2160p.UHD.BluRay.REMUX.HEVC.HDR.DV.TrueHD.Atmos.7.1.DTS-HDMA.AC3.5.1-TSC",
+      "title": "Ghostbusters Afterlife",
+      "input_line": 199,
+      "title_line": 201,
+      "original_expected": {
+        "title": "Ghostbusters Afterlife",
+        "category": "movie",
+        "year": 2021,
+        "resolution": "2160P",
+        "quality": "REMUX",
+        "codec": "H265",
+        "audio": "TRUEHD ATMOS",
+        "channels": "7.1",
+        "v_quality": "HDR DV",
+        "languages": [
+          "MULTI",
+          "VF2"
+        ],
+        "group": "TSC",
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 13,
+      "input": "Scary Movie 5 (2013)   1080p FR EN x264 ac3 mHDgz-Zone-Telechargement.OrG",
+      "title": "Scary Movie 5",
+      "input_line": 219,
+      "title_line": 221,
+      "original_expected": {
+        "title": "Scary Movie 5",
+        "category": "movie",
+        "year": 2013,
+        "resolution": "1080P",
+        "codec": "H264",
+        "audio": "AC3",
+        "languages": [
+          "MULTI",
+          "VF",
+          "EN"
+        ],
+        "group": "Zone",
+        "extra": "Telechargement.OrG"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 14,
+      "input": "Indiana Jones et la Dernière Croisade 1989 VFI VO DOLBY TRUEHD ATMOS 2160P UHD BLURAY REMUX HEVC HDR10 DOLBY VISION-Obi (Indiana Jones and the Last Crusade)",
+      "title": "Indiana Jones et la Derniere Croisade",
+      "input_line": 237,
+      "title_line": 239,
+      "original_expected": {
+        "title": "Indiana Jones et la Derniere Croisade",
+        "category": "movie",
+        "year": 1989,
+        "resolution": "2160P",
+        "quality": "REMUX",
+        "codec": "H265",
+        "audio": "TRUEHD ATMOS",
+        "v_quality": "HDR10 DV",
+        "languages": [
+          "VFI",
+          "VO",
+          "MULTI"
+        ],
+        "group": "Obi",
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 15,
+      "input": "Si.J.En.Avais.La.Force.2025.MULTi.VFF.2160p.DV.HDR.WEB.EAC3.5.1.H265-TFA",
+      "title": "Si J En Avais La Force",
+      "input_line": 257,
+      "title_line": 259,
+      "original_expected": {
+        "title": "Si J En Avais La Force",
+        "category": "movie",
+        "year": 2025,
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "EAC3",
+        "channels": "5.1",
+        "v_quality": "HDR DV",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "TFA"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 16,
+      "input": "Vacancy (2007) 720p Bluray Dual Audio [Hindi + English] ⭐800 MB⭐ DD - 2.0 MSub x264 - Shadow (BonsaiHD)",
+      "title": "Vacancy",
+      "input_line": 276,
+      "title_line": 278,
+      "original_expected": {
+        "title": "Vacancy",
+        "category": "movie",
+        "year": 2007,
+        "resolution": "720P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "channels": "2.0",
+        "group": "Shadow"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 17,
+      "input": "J_accuse_2019_VFF_1080p_HDLight_x264.mkv",
+      "title": "J accuse",
+      "input_line": 289,
+      "title_line": 291,
+      "original_expected": {
+        "title": "J accuse",
+        "year": 2019,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "HDLIGHT",
+        "codec": "H264",
+        "languages": [
+          "VFF"
+        ],
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 18,
+      "input": "Malcolm X (1992) - 1080p FR EN x264 aac mHDgz.mkv",
+      "title": "Malcolm X",
+      "input_line": 304,
+      "title_line": 306,
+      "original_expected": {
+        "title": "Malcolm X",
+        "year": 1992,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": null,
+        "codec": "H264",
+        "audio": "AAC",
+        "languages": [
+          "VF",
+          "EN",
+          "MULTI"
+        ],
+        "group": "mHDgz",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 19,
+      "input": "Kingsman.The.Golden.Circle.2017.MULTi.VFF.2160p.BLURAY.4KLight.DV.HDR.x265.TrueHD.Atmos.7.1.Bender_37.mkv",
+      "title": "Kingsman The Golden Circle",
+      "input_line": 323,
+      "title_line": 325,
+      "original_expected": {
+        "title": "Kingsman The Golden Circle",
+        "year": 2017,
+        "category": "movie",
+        "resolution": "4KLIGHT",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "audio": "TRUEHD ATMOS",
+        "channels": "7.1",
+        "v_quality": "HDR DV",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "Bender_37",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 20,
+      "input": "Kingsman.The.Golden.Circle.2017.FASTSUB.VOSTFR.1080p.x264-GROUP.mkv",
+      "title": "Kingsman The Golden Circle",
+      "input_line": 343,
+      "title_line": 345,
+      "original_expected": {
+        "title": "Kingsman The Golden Circle",
+        "year": 2017,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": null,
+        "codec": "H264",
+        "languages": [
+          "VOSTFR",
+          "FASTSUB"
+        ],
+        "group": "GROUP",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 21,
+      "input": "Marie-Martine_1943_french_hdlight_1080p_ac3_x264.mkv",
+      "title": "Marie-Martine",
+      "input_line": 360,
+      "title_line": 362,
+      "original_expected": {
+        "title": "Marie-Martine",
+        "year": 1943,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "HDLIGHT",
+        "codec": "H264",
+        "audio": "AC3",
+        "languages": [
+          "FRENCH"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 22,
+      "input": "Hunter_Killer_(2018)_MULTi_VFF_2160p_10bit_4KLight_HDR_BluRay_x265_HE-AAC_5.1_-_QTZ.mkv",
+      "title": "Hunter Killer",
+      "input_line": 377,
+      "title_line": 379,
+      "original_expected": {
+        "title": "Hunter Killer",
+        "year": 2018,
+        "category": "movie",
+        "resolution": "4KLIGHT",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "audio": "AAC",
+        "channels": "5.1",
+        "v_quality": "HDR 10BIT",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "QTZ",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 23,
+      "input": "Rango (2011) [1080p.MULTi.x264.AC3].mkv",
+      "title": "Rango",
+      "input_line": 397,
+      "title_line": 399,
+      "original_expected": {
+        "title": "Rango",
+        "year": 2011,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": null,
+        "codec": "H264",
+        "audio": "AC3",
+        "channels": null,
+        "v_quality": "",
+        "languages": [
+          "MULTI"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 24,
+      "input": "Pirates des Caraibes - La malediction du Black Pearl (2003) [1080p.MULTI.x264.AC3].mkv",
+      "title": "Pirates des Caraibes - La malediction du Black Pearl",
+      "input_line": 416,
+      "title_line": 418,
+      "original_expected": {
+        "title": "Pirates des Caraibes - La malediction du Black Pearl",
+        "year": 2003,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": null,
+        "codec": "H264",
+        "audio": "AC3",
+        "channels": null,
+        "v_quality": "",
+        "languages": [
+          "MULTI"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 25,
+      "input": "Dip.huet.seung.hung.1989.AKA.The.Killer.2160p.GBR.UHD.Blu-ray.Remux.DV.HDR.HEVC.FLAC.1.0-CiNEPHiLES",
+      "title": "Dip huet seung hung",
+      "input_line": 435,
+      "title_line": 437,
+      "original_expected": {
+        "title": "Dip huet seung hung",
+        "year": 1989,
+        "category": "movie",
+        "resolution": "2160P",
+        "quality": "REMUX",
+        "codec": "H265",
+        "audio": "FLAC",
+        "channels": "1.0",
+        "v_quality": "HDR DV",
+        "languages": [],
+        "group": "CiNEPHiLES",
+        "container": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 26,
+      "input": "Love and Monsters (2020) [2160p HDR10 DV8 x265 MULTI VFI 5.1 DDP VO 7.1 DTS-HDMA].mkv",
+      "title": "Love and Monsters",
+      "input_line": 452,
+      "title_line": 454,
+      "original_expected": {
+        "title": "Love and Monsters",
+        "year": 2020,
+        "category": "movie",
+        "resolution": "2160P",
+        "quality": null,
+        "codec": "H265",
+        "audio": "DTS-HD MA",
+        "channels": "5.1",
+        "v_quality": "HDR10 DV",
+        "languages": [
+          "MULTI",
+          "VFI",
+          "VO"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 27,
+      "input": "La.Derniere.Maison.Sur.La.Gauche.(The.Last.House.On.The.Left).2009.BD.Remux.Custom.2160p.UHD.4k.HDR10.DV.x265.DTS-HD.DTS.5.1.Repack-Wolverine59500.mkv",
+      "title": "La Derniere Maison Sur La Gauche (The Last House On The Left)",
+      "input_line": 473,
+      "title_line": 475,
+      "original_expected": {
+        "title": "La Derniere Maison Sur La Gauche (The Last House On The Left)",
+        "year": 2009,
+        "category": "movie",
+        "resolution": "2160P",
+        "quality": "REMUX",
+        "codec": "H265",
+        "audio": "DTS-HD",
+        "channels": "5.1",
+        "v_quality": "HDR10 DV",
+        "languages": [],
+        "group": "Wolverine59500",
+        "extra": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 28,
+      "input": "Vacances.Romaines.(Roman Holiday) 1953.BDRip.2160p.UHD.4K.HDR10.MULTi.FR-EN.x265.TrueHD.AC3.2.0-DON.Repack.mkv",
+      "title": "Vacances Romaines (Roman Holiday)",
+      "input_line": 491,
+      "title_line": 493,
+      "original_expected": {
+        "title": "Vacances Romaines (Roman Holiday)",
+        "year": 1953,
+        "category": "movie",
+        "resolution": "2160P",
+        "quality": "BDRIP",
+        "codec": "H265",
+        "audio": "TRUEHD",
+        "channels": "2.0",
+        "v_quality": "HDR10",
+        "languages": [
+          "MULTI",
+          "VF",
+          "EN"
+        ],
+        "group": "DON",
+        "extra": "Repack",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 29,
+      "input": "Empire_of_Light_(2022)[WEBDL-2160p][DV_HDR10][EAC3_Atmos_5.1][h265].mkv",
+      "title": "Empire of Light",
+      "input_line": 513,
+      "title_line": 515,
+      "original_expected": {
+        "title": "Empire of Light",
+        "category": "movie",
+        "year": 2022,
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "EAC3 ATMOS",
+        "channels": "5.1",
+        "v_quality": "HDR10 DV",
+        "languages": [],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 30,
+      "input": "Concert-Lady.Gaga-Mayhem.Requiem.2026.VO.1080p.x264.AC3.5.1.mkv",
+      "title": "Concert-Lady Gaga-Mayhem Requiem",
+      "input_line": 530,
+      "title_line": 532,
+      "original_expected": {
+        "title": "Concert-Lady Gaga-Mayhem Requiem",
+        "category": "movie",
+        "year": 2026,
+        "resolution": "1080P",
+        "codec": "H264",
+        "audio": "AC3",
+        "channels": "5.1",
+        "languages": [
+          "VO"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 31,
+      "input": "Art.Of.Love.2024.Multi.HDRIP.mp4",
+      "title": "Art Of Love",
+      "input_line": 547,
+      "title_line": 549,
+      "original_expected": {
+        "title": "Art Of Love",
+        "year": 2024,
+        "category": "movie",
+        "resolution": null,
+        "quality": "HDRIP",
+        "codec": null,
+        "audio": null,
+        "channels": null,
+        "v_quality": "",
+        "languages": [
+          "MULTI"
+        ],
+        "group": null,
+        "container": "MP4"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 32,
+      "input": "HamLeT.(1990).MULTI.VFF.[ST.FrF-Fr-En].mHD.1080P.x264.AC3.2ch⚡-KyX-LazerTeam⚡.mkv",
+      "title": "HamLeT",
+      "input_line": 566,
+      "title_line": 568,
+      "original_expected": {
+        "title": "HamLeT",
+        "year": 1990,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": null,
+        "codec": "H264",
+        "audio": "AC3",
+        "languages": [
+          "VFF",
+          "MULTI",
+          "VF",
+          "EN"
+        ],
+        "group": "⚡-KyX-LazerTeam⚡",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 33,
+      "input": "Asterix_-_1985_-_Asterix_Et_La_Surprise_De_Cesar_-_1080p.mkv",
+      "title": "Asterix",
+      "input_line": 586,
+      "title_line": 588,
+      "original_expected": {
+        "title": "Asterix",
+        "year": 1985,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": null,
+        "codec": null,
+        "audio": null,
+        "channels": null,
+        "languages": [],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 34,
+      "input": "Les.Ringards.1978_.WEBRip.FR.x264.AAC.2.0_Fz.mkv",
+      "title": "Les Ringards",
+      "input_line": 602,
+      "title_line": 604,
+      "original_expected": {
+        "title": "Les Ringards",
+        "year": 1978,
+        "category": "movie",
+        "resolution": null,
+        "quality": "WEBRIP",
+        "codec": "H264",
+        "audio": "AAC",
+        "channels": "2.0",
+        "languages": [
+          "VF"
+        ],
+        "group": "Fz",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 35,
+      "input": "Junk.Head.2021.VOSTFR.1080p.BluRay.Remux.AVC.AC-3.mkv",
+      "title": "Junk Head",
+      "input_line": 620,
+      "title_line": 622,
+      "original_expected": {
+        "title": "Junk Head",
+        "year": 2021,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "REMUX",
+        "codec": "H264",
+        "audio": "AC3",
+        "languages": [
+          "VOSTFR"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 36,
+      "input": "I ROBOT 2004.BluRay.2160.10bit.4KLight HDR.MULTi.VFF.Sub.AC3@640Kbps.H265⚡XRS-LazerTeam⚡.mkv",
+      "title": "I ROBOT",
+      "input_line": 637,
+      "title_line": 639,
+      "original_expected": {
+        "title": "I ROBOT",
+        "category": "movie",
+        "year": 2004,
+        "resolution": "4KLIGHT",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "audio": "AC3",
+        "v_quality": "HDR 10BIT",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "⚡XRS-LazerTeam⚡",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 37,
+      "input": "1917 (m4K HDR10+ 10bit x265-QTZ) [Multi TrueHD 7.1 Atmos].mkv",
+      "title": "1917",
+      "input_line": 656,
+      "title_line": 658,
+      "original_expected": {
+        "title": "1917",
+        "category": "movie",
+        "year": 1917,
+        "resolution": "2160P",
+        "quality": null,
+        "codec": "H265",
+        "audio": "TRUEHD ATMOS",
+        "channels": "7.1",
+        "v_quality": "HDR10+ 10BIT",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "QTZ",
+        "container": "MKV",
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 38,
+      "input": "Marsupilami 2026 Fr 4K HDR WebLight AC3 5.1c.mkv",
+      "title": "Marsupilami",
+      "input_line": 676,
+      "title_line": 678,
+      "original_expected": {
+        "title": "Marsupilami",
+        "category": "movie",
+        "year": 2026,
+        "resolution": "2160P",
+        "quality": "WEBLIGHT",
+        "audio": "AC3",
+        "channels": "5.1",
+        "v_quality": "HDR",
+        "languages": [
+          "VF"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 39,
+      "input": "Deathstalker.2025.MULTi.1080p.BluRay.x264-Ulysse.part01.rar",
+      "title": "Deathstalker",
+      "input_line": 694,
+      "title_line": 696,
+      "original_expected": {
+        "title": "Deathstalker",
+        "category": "movie",
+        "year": 2025,
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "Ulysse",
+        "container": "PART01.RAR"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 40,
+      "input": "Insidious_-Chapitre_2[1080p][DTS-HD_MA][VO-VFF].mkv",
+      "title": "Insidious -Chapitre 2",
+      "input_line": 710,
+      "title_line": 712,
+      "original_expected": {
+        "title": "Insidious -Chapitre 2",
+        "category": "movie",
+        "resolution": "1080P",
+        "audio": "DTS-HD MA",
+        "languages": [
+          "VFF",
+          "VO",
+          "MULTI"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 41,
+      "input": "Kill.Bill.II-2004-Truefrench-DVDrip-x264-AC3.mkv",
+      "title": "Kill Bill II",
+      "input_line": 726,
+      "title_line": 728,
+      "original_expected": {
+        "title": "Kill Bill II",
+        "category": "movie",
+        "year": 2004,
+        "resolution": null,
+        "quality": "DVDRIP",
+        "codec": "H264",
+        "audio": "AC3",
+        "languages": [
+          "VFF"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 42,
+      "input": "Footloose.(1984).Multi.VFF.HDLight.4K.10bIt.Dolby.Vision.AC3x265⚡XRS-LazerTeam⚡.mkv",
+      "title": "Footloose",
+      "input_line": 743,
+      "title_line": 745,
+      "original_expected": {
+        "title": "Footloose",
+        "category": "movie",
+        "year": 1984,
+        "resolution": "2160P",
+        "quality": "HDLIGHT",
+        "codec": "H265",
+        "audio": "AC3",
+        "channels": null,
+        "v_quality": "DV 10BIT",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "⚡XRS-LazerTeam⚡",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 43,
+      "input": "Blood.Diamond.2006.MULTI.Full.Blu-Ray.Multi.1080p.VC-1-NoTag.iso",
+      "title": "Blood Diamond",
+      "input_line": 763,
+      "title_line": 765,
+      "original_expected": {
+        "title": "Blood Diamond",
+        "category": "movie",
+        "year": 2006,
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "VC-1",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "NoTag",
+        "container": "ISO"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 44,
+      "input": "Le flingueur 1972 Fr stfi 4K HDR WebLight AC3 3.1cs.mkv",
+      "title": "Le flingueur",
+      "input_line": 779,
+      "title_line": 781,
+      "original_expected": {
+        "title": "Le flingueur",
+        "category": "movie",
+        "year": 1972,
+        "resolution": "2160P",
+        "quality": "WEBLIGHT",
+        "codec": null,
+        "audio": "AC3",
+        "channels": "3.1",
+        "v_quality": "HDR",
+        "languages": [
+          "VF"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 45,
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HDMA_x264.mkv",
+      "title": "Redemption",
+      "input_line": 798,
+      "title_line": 800,
+      "original_expected": {
+        "title": "Redemption",
+        "category": "movie",
+        "year": 2013,
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "audio": "DTS-HD MA",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 46,
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD.MA.x264.mkv",
+      "title": "Redemption",
+      "input_line": 815,
+      "title_line": 817,
+      "original_expected": {
+        "title": "Redemption",
+        "category": "movie",
+        "year": 2013,
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "audio": "DTS-HD MA",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "container": "MKV",
+        "group": null,
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 47,
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD-MA.x264.mkv",
+      "title": "Redemption",
+      "input_line": 834,
+      "title_line": 836,
+      "original_expected": {
+        "title": "Redemption",
+        "category": "movie",
+        "year": 2013,
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "audio": "DTS-HD MA",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "container": "MKV",
+        "group": null,
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 48,
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS.HD.x264.mkv",
+      "title": "Redemption",
+      "input_line": 853,
+      "title_line": 855,
+      "original_expected": {
+        "title": "Redemption",
+        "category": "movie",
+        "year": 2013,
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "audio": "DTS-HD",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "container": "MKV",
+        "group": null,
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 49,
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD.MA.ATMOS.x264.mkv",
+      "title": "Redemption",
+      "input_line": 872,
+      "title_line": 874,
+      "original_expected": {
+        "title": "Redemption",
+        "category": "movie",
+        "year": 2013,
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H264",
+        "audio": "DTS-HD MA ATMOS",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "container": "MKV",
+        "group": null,
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 50,
+      "input": "Bat-man.1989.Fanedit.Silent-Film.1080p.AAC.x265.mkv",
+      "title": "Bat-man",
+      "input_line": 891,
+      "title_line": 893,
+      "original_expected": {
+        "title": "Bat-man",
+        "category": "movie",
+        "year": 1989,
+        "resolution": "1080P",
+        "quality": null,
+        "codec": "H265",
+        "audio": "AAC",
+        "languages": [],
+        "container": "MKV",
+        "group": null,
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 51,
+      "input": "Cry.Macho.2021.MULTi.BluRay.2160p.REMUX.HEVC.HDR10.DTS-HDMA5.1-PéPiTE.mkv",
+      "title": "Cry Macho",
+      "input_line": 907,
+      "title_line": 909,
+      "original_expected": {
+        "title": "Cry Macho",
+        "category": "movie",
+        "year": 2021,
+        "resolution": "2160P",
+        "quality": "REMUX",
+        "codec": "H265",
+        "audio": "DTS-HD MA",
+        "channels": "5.1",
+        "v_quality": "HDR10",
+        "languages": [
+          "MULTI"
+        ],
+        "container": "MKV",
+        "group": "PéPiTE"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 52,
+      "input": "Police_Story_4_-Contre_Attaque(1996).mkv",
+      "title": "Police Story 4 -Contre Attaque",
+      "input_line": 926,
+      "title_line": 928,
+      "original_expected": {
+        "title": "Police Story 4 -Contre Attaque",
+        "category": "movie",
+        "year": 1996,
+        "container": "MKV",
+        "group": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 53,
+      "input": "La_Charge_Fantastique_(1941)_-VFR-720p-_AC3.mkv",
+      "title": "La Charge Fantastique",
+      "input_line": 936,
+      "title_line": 938,
+      "original_expected": {
+        "title": "La Charge Fantastique",
+        "category": "movie",
+        "year": 1941,
+        "resolution": "720P",
+        "audio": "AC3",
+        "languages": [
+          "VF"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 54,
+      "input": "Banzaï_1080p_x264_DTSHDMA2.0_SUBFRFORCED.mkv",
+      "title": "Banzai",
+      "input_line": 951,
+      "title_line": 953,
+      "original_expected": {
+        "title": "Banzai",
+        "category": "movie",
+        "resolution": "1080P",
+        "codec": "H264",
+        "audio": "DTS-HD MA",
+        "channels": "2.0",
+        "languages": [
+          "SUBFRFORCED"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 55,
+      "input": "The.Death.of.Robin.Hood.2026.1080p.VOSTFR.CAM.x264-FS.mp4",
+      "title": "The Death of Robin Hood",
+      "input_line": 967,
+      "title_line": 969,
+      "original_expected": {
+        "title": "The Death of Robin Hood",
+        "year": 2026,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "CAM",
+        "codec": "H264",
+        "languages": [
+          "VOSTFR"
+        ],
+        "group": "FS",
+        "container": "MP4"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 56,
+      "input": "Kirikou.Et.Les.Betes.Sauvages.2005.French.1080P.Hdlight.mkv",
+      "title": "Kirikou Et Les Betes Sauvages",
+      "input_line": 983,
+      "title_line": 985,
+      "original_expected": {
+        "title": "Kirikou Et Les Betes Sauvages",
+        "year": 2005,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "HDLIGHT",
+        "languages": [
+          "FRENCH"
+        ],
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 57,
+      "input": "The.Plague.Dogs.1982.VOSTFR.1080p.HDLight.AC3.x264-Dread-Team.mkv",
+      "title": "The Plague Dogs",
+      "input_line": 998,
+      "title_line": 1000,
+      "original_expected": {
+        "title": "The Plague Dogs",
+        "year": 1982,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "HDLIGHT",
+        "codec": "H264",
+        "audio": "AC3",
+        "languages": [
+          "VOSTFR"
+        ],
+        "group": "Dread-Team",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_movies.json",
+      "source_index": 58,
+      "input": "Masters_of_the_Universe._2026.1080p.VOSTFR.DCPRiP.x264-FS.mkv",
+      "title": "Masters of the Universe",
+      "input_line": 1015,
+      "title_line": 1017,
+      "original_expected": {
+        "title": "Masters of the Universe",
+        "year": 2026,
+        "category": "movie",
+        "resolution": "1080P",
+        "quality": "DCPRIP",
+        "codec": "H264",
+        "languages": [
+          "VOSTFR"
+        ],
+        "group": "FS",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 0,
+      "input": "Euphoria.2019.S03E06.MULTi.4KLight.DV.HDR.WEBRip.DDP5.1.Atmos.HEVC-[BATGirl]",
+      "title": "Euphoria",
+      "input_line": 3,
+      "title_line": 5,
+      "original_expected": {
+        "title": "Euphoria",
+        "year": 2019,
+        "category": "series",
+        "season": "3",
+        "episode": "6",
+        "resolution": "4KLIGHT",
+        "quality": "WEBRIP",
+        "codec": "H265",
+        "audio": "EAC3 ATMOS",
+        "channels": "5.1",
+        "v_quality": "HDR DV",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "BATGirl"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 1,
+      "input": "Tongari.Boushi.no.Atelier.E08.MULTi.1080p.WEB.x264-AMB3R",
+      "title": "Tongari Boushi no Atelier",
+      "input_line": 23,
+      "title_line": 25,
+      "original_expected": {
+        "title": "Tongari Boushi no Atelier",
+        "category": "series",
+        "episode": "8",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "languages": [
+          "MULTI"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 2,
+      "input": "Berlin.and.the.Lady.with.an.Ermine.S01E08.FiNAL.MULTi.HDR.DV.2160p.WEB.H265-FW-Wawacity.win",
+      "title": "Berlin and the Lady with an Ermine",
+      "input_line": 37,
+      "title_line": 39,
+      "original_expected": {
+        "title": "Berlin and the Lady with an Ermine",
+        "category": "series",
+        "season": "1",
+        "episode": "8",
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "v_quality": "HDR DV",
+        "languages": [
+          "MULTI"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 3,
+      "input": "Les.Aventures.De.Pil.S01E25.FRENCH.1080p.WEB.x264-D4KiD",
+      "title": "Les Aventures De Pil",
+      "input_line": 53,
+      "title_line": 55,
+      "original_expected": {
+        "title": "Les Aventures De Pil",
+        "category": "series",
+        "season": "1",
+        "episode": "25",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "languages": [
+          "FRENCH"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 4,
+      "input": "The.West.Wing.S01E12.MULTi.1080p.WEBRip.DDP2.0.HEVC-[BATGirl]",
+      "title": "The West Wing",
+      "input_line": 68,
+      "title_line": 70,
+      "original_expected": {
+        "title": "The West Wing",
+        "category": "series",
+        "season": "1",
+        "episode": "12",
+        "resolution": "1080P",
+        "quality": "WEBRIP",
+        "codec": "H265",
+        "audio": "EAC3",
+        "languages": [
+          "MULTI"
+        ]
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 5,
+      "input": "Maximum.Pleasure.Guaranteed.S01E02.FRENCH.1080p.WEB.H264-HiggsBoson-Wawacity.win",
+      "title": "Maximum Pleasure Guaranteed",
+      "input_line": 84,
+      "title_line": 86,
+      "original_expected": {
+        "title": "Maximum Pleasure Guaranteed",
+        "category": "series",
+        "season": "1",
+        "episode": "2",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "languages": [
+          "FRENCH"
+        ],
+        "group": "HiggsBoson",
+        "extra": "Wawacity.win"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 6,
+      "input": "Maximum.Pleasure.Guaranteed.S01E02.FRENCH.1080p.WEB.H264-HiggsBoson-Wawacity.win.mkv",
+      "title": "Maximum Pleasure Guaranteed",
+      "input_line": 101,
+      "title_line": 103,
+      "original_expected": {
+        "title": "Maximum Pleasure Guaranteed",
+        "category": "series",
+        "season": "1",
+        "episode": "2",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "languages": [
+          "FRENCH"
+        ],
+        "group": "HiggsBoson",
+        "container": "MKV",
+        "extra": "Wawacity.win"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 7,
+      "input": "Mort.Ou.Vif.Joaquin.Murrieta.S01E01.2160p.AMZN.WEB-DL.MULTI.VFi.DDP5.1.HDR10+.DV.10bit.x265-MPx",
+      "title": "Mort Ou Vif Joaquin Murrieta",
+      "input_line": 119,
+      "title_line": 121,
+      "original_expected": {
+        "title": "Mort Ou Vif Joaquin Murrieta",
+        "category": "series",
+        "season": "1",
+        "episode": "1",
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "v_quality": "HDR10+ DV 10BIT",
+        "audio": "EAC3",
+        "channels": "5.1",
+        "languages": [
+          "MULTI",
+          "VFI"
+        ],
+        "group": "MPx"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 8,
+      "input": "The.Pitt.S01.1080p.x265.rar",
+      "title": "The Pitt",
+      "input_line": 139,
+      "title_line": 141,
+      "original_expected": {
+        "title": "The Pitt",
+        "category": "series",
+        "season": "1",
+        "resolution": "1080P",
+        "codec": "H265"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 9,
+      "input": "The.Last.of.Us.S02E03.MULTi.1080p.AMZN.WEB-DL.DDP5.1.H.264-FLUX",
+      "title": "The Last of Us",
+      "input_line": 149,
+      "title_line": 151,
+      "original_expected": {
+        "title": "The Last of Us",
+        "category": "series",
+        "season": "2",
+        "episode": "3",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "audio": "EAC3",
+        "channels": "5.1",
+        "network": "Amazon Prime",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "FLUX"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 10,
+      "input": "Arcane.S01.COMPLETE.2160p.NF.WEB-DL.DDP5.1.Atmos.HDR.H265",
+      "title": "Arcane",
+      "input_line": 168,
+      "title_line": 170,
+      "original_expected": {
+        "title": "Arcane",
+        "category": "series",
+        "season": "1",
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "EAC3 ATMOS",
+        "channels": "5.1",
+        "network": "Netflix",
+        "v_quality": "HDR"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 11,
+      "input": "B.R.I.S02E02.FRENCH.AD.2160p.WEB.SDR.H265-THESYNDiCATE",
+      "title": "B R I",
+      "input_line": 183,
+      "title_line": 185,
+      "original_expected": {
+        "title": "B R I",
+        "category": "series",
+        "season": "2",
+        "episode": "2",
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "v_quality": "SDR",
+        "languages": [
+          "FRENCH"
+        ],
+        "group": "THESYNDiCATE",
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 12,
+      "input": "Leverage.S03E15.CUSTOM.2160p.MULTI.AMZN.WEB-DL.DDP5.1.H.265-Mad.Darks27",
+      "title": "Leverage",
+      "input_line": 201,
+      "title_line": 203,
+      "original_expected": {
+        "title": "Leverage",
+        "category": "series",
+        "season": "3",
+        "episode": "15",
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "EAC3",
+        "channels": "5.1",
+        "network": "Amazon Prime",
+        "languages": [
+          "MULTI"
+        ],
+        "group": null,
+        "extra": "Mad.Darks27"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 13,
+      "input": "Firefly Lane (2021) - S02E10 - All The World’s A Stage [WEBDL-2160p][DV HDR10][EAC3 Atmos 5.1][EN+FR][h265]-FRESH",
+      "title": "Firefly Lane",
+      "input_line": 221,
+      "title_line": 223,
+      "original_expected": {
+        "title": "Firefly Lane",
+        "category": "series",
+        "year": 2021,
+        "season": "2",
+        "episode": "10",
+        "resolution": "2160P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "EAC3 ATMOS",
+        "channels": "5.1",
+        "v_quality": "HDR10 DV",
+        "languages": [
+          "VF",
+          "EN",
+          "MULTI"
+        ],
+        "group": "FRESH"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 14,
+      "input": "Goldorak.U.2024.S01E06.HDTVLight.1080p.x264.VF.AC3.2.0.@BS",
+      "title": "Goldorak U",
+      "input_line": 243,
+      "title_line": 245,
+      "original_expected": {
+        "title": "Goldorak U",
+        "category": "series",
+        "year": 2024,
+        "season": "1",
+        "episode": "6",
+        "resolution": "1080P",
+        "quality": "HDTV",
+        "codec": "H264",
+        "audio": "AC3",
+        "channels": "2.0",
+        "languages": [
+          "VF"
+        ],
+        "group": "@BS"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 15,
+      "input": "Stranger.Things.Tales.From.85.S01E01.MULTi.2160p.DV.HDR.DDP5.1.Atmos.HEVC-[BATGirl]",
+      "title": "Stranger Things Tales From 85",
+      "input_line": 262,
+      "title_line": 264,
+      "original_expected": {
+        "title": "Stranger Things Tales From 85",
+        "category": "series",
+        "season": "1",
+        "episode": "1",
+        "resolution": "2160P",
+        "codec": "H265",
+        "audio": "EAC3 ATMOS",
+        "channels": "5.1",
+        "v_quality": "HDR DV",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "BATGirl"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 16,
+      "input": "The Pitt - S01E08 - 1400 2160p.DV.HDR.x265-Amen",
+      "title": "The Pitt",
+      "input_line": 280,
+      "title_line": 282,
+      "original_expected": {
+        "title": "The Pitt",
+        "category": "series",
+        "season": "1",
+        "episode": "8",
+        "resolution": "2160P",
+        "codec": "H265",
+        "v_quality": "HDR DV",
+        "group": "Amen"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 17,
+      "input": "Zorro (Dujardin) S01E07 1080p Web H264 @@UnPourTous@@",
+      "title": "Zorro (Dujardin)",
+      "input_line": 293,
+      "title_line": 295,
+      "original_expected": {
+        "title": "Zorro (Dujardin)",
+        "category": "series",
+        "season": "1",
+        "episode": "7",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "group": "@@UnPourTous@@"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 18,
+      "input": "1923.S01E05.Ghost.of.Zebrina.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb.mkv",
+      "title": "1923",
+      "input_line": 306,
+      "title_line": 308,
+      "original_expected": {
+        "title": "1923",
+        "category": "series",
+        "year": 1923,
+        "season": "1",
+        "episode": "5",
+        "episode_name": "Ghost of Zebrina",
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "audio": "EAC3",
+        "channels": "5.1",
+        "group": "NTb",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 20,
+      "input": "Deadliest.Catch.S00E66.No.Safe.Passage.720p.AMZN.WEB-DL.DDP2.0.H.264-NTb[TGx]",
+      "title": "Deadliest Catch",
+      "input_line": 337,
+      "title_line": 339,
+      "original_expected": {
+        "title": "Deadliest Catch",
+        "category": "series",
+        "season": "0",
+        "episode": "66",
+        "episode_name": "No Safe Passage",
+        "resolution": "720P",
+        "quality": "WEB-DL",
+        "codec": "H264",
+        "audio": "EAC3",
+        "channels": "2.0",
+        "network": "Amazon Prime",
+        "group": "NTb"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 21,
+      "input": "Insecure.S04.COMPLETE.720p.AMZN.WEBRip.x264-GalaxyTV",
+      "title": "Insecure",
+      "input_line": 354,
+      "title_line": 356,
+      "original_expected": {
+        "title": "Insecure",
+        "category": "series",
+        "season": "4",
+        "episode": null,
+        "resolution": "720P",
+        "quality": "WEBRIP",
+        "codec": "H264",
+        "network": "Amazon Prime",
+        "group": "GalaxyTV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 22,
+      "input": "Landman.S02.MULTi.VFF.1080p.WEB.EAC3.5.1.H265-TyHD.zip",
+      "title": "Landman",
+      "input_line": 368,
+      "title_line": 370,
+      "original_expected": {
+        "title": "Landman",
+        "category": "series",
+        "season": "2",
+        "episode": null,
+        "resolution": "1080P",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "EAC3",
+        "channels": "5.1",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "TyHD",
+        "container": "ZIP"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 23,
+      "input": "The Mandalorian S03 MULTi VFI 2160p 10bit 4KLight DV HDR WebRip DDP 5.1 Atmos x265-QTZ.rar",
+      "title": "The Mandalorian",
+      "input_line": 388,
+      "title_line": 390,
+      "original_expected": {
+        "title": "The Mandalorian",
+        "category": "series",
+        "season": "3",
+        "episode": null,
+        "resolution": "4KLIGHT",
+        "quality": "WEBRIP",
+        "codec": "H265",
+        "audio": "EAC3 ATMOS",
+        "channels": "5.1",
+        "v_quality": "HDR DV 10BIT",
+        "languages": [
+          "MULTI",
+          "VFI"
+        ],
+        "group": "QTZ",
+        "container": "RAR"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 24,
+      "input": "Halo (2024) - S02E06 - Onyx Multi.VFF.2160p.10bit.4KLight.HDR+Dolby.Vision.WEB.Custom.AC3.h265.⚡XRS-LazerTeam⚡.mkv",
+      "title": "Halo",
+      "input_line": 409,
+      "title_line": 411,
+      "original_expected": {
+        "title": "Halo",
+        "category": "series",
+        "season": "2",
+        "episode": "6",
+        "episode_name": "Onyx",
+        "resolution": "4KLIGHT",
+        "quality": "WEB-DL",
+        "codec": "H265",
+        "audio": "AC3",
+        "v_quality": "HDR DV 10BIT",
+        "languages": [
+          "VFF",
+          "MULTI"
+        ],
+        "group": "⚡XRS-LazerTeam⚡",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 25,
+      "input": "[SR-71] Kaifuku Jutsushi no Yarinaoshi S01 VOSTFR [1080p][X265][10BITS].zip",
+      "title": "Kaifuku Jutsushi no Yarinaoshi",
+      "input_line": 430,
+      "title_line": 432,
+      "original_expected": {
+        "title": "Kaifuku Jutsushi no Yarinaoshi",
+        "category": "series",
+        "season": "1",
+        "resolution": "1080P",
+        "codec": "H265",
+        "v_quality": "10BIT",
+        "languages": [
+          "VOSTFR"
+        ],
+        "group": "SR-71",
+        "container": "ZIP"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 26,
+      "input": "Naruto S02 E53-104 MULTi 1080p 10bits BluRay x265-SR-71.zip",
+      "title": "Naruto",
+      "input_line": 446,
+      "title_line": 448,
+      "original_expected": {
+        "title": "Naruto",
+        "category": "series",
+        "season": "2",
+        "episode": "53",
+        "episode_name": "104",
+        "resolution": "1080P",
+        "quality": "BLURAY",
+        "codec": "H265",
+        "v_quality": "10BIT",
+        "languages": [
+          "MULTI"
+        ],
+        "group": "SR-71",
+        "container": "ZIP",
+        "extra": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 27,
+      "input": "Ten Pound Poms - 1x01 - Épisode 1.mkv",
+      "title": "Ten Pound Poms",
+      "input_line": 466,
+      "title_line": 468,
+      "original_expected": {
+        "title": "Ten Pound Poms",
+        "category": "series",
+        "season": "1",
+        "episode": "1",
+        "episode_name": "Épisode 1",
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 28,
+      "input": "Gomorra S04E08 - Vices cachés.mkv",
+      "title": "Gomorra",
+      "input_line": 478,
+      "title_line": 480,
+      "original_expected": {
+        "title": "Gomorra",
+        "category": "series",
+        "season": "4",
+        "episode": "8",
+        "episode_name": "Vices cachés",
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 29,
+      "input": "Les Mystères de l_ouest - S02E16 - La Nuit des traquenards.mkv",
+      "title": "Les Mysteres de l ouest",
+      "input_line": 490,
+      "title_line": 492,
+      "original_expected": {
+        "title": "Les Mysteres de l ouest",
+        "category": "series",
+        "season": "2",
+        "episode": "16",
+        "episode_name": "La Nuit des traquenards",
+        "group": null,
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 30,
+      "input": "The.Sommerdahl.Murders.S05E07E08.FiNAL.Un.gros.poisson.FRENCH.WEBRip.x264.mp4",
+      "title": "The Sommerdahl Murders",
+      "input_line": 502,
+      "title_line": 504,
+      "original_expected": {
+        "title": "The Sommerdahl Murders",
+        "category": "series",
+        "season": "5",
+        "episode": "7-8",
+        "quality": "WEBRIP",
+        "codec": "H264",
+        "languages": [
+          "FRENCH"
+        ],
+        "container": "MP4"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 31,
+      "input": "Catch-22.S01.MULTi.1080p.SDR.H265.NvEnc.10bit.Ac3.Custom.7z",
+      "title": "Catch-22",
+      "input_line": 517,
+      "title_line": 519,
+      "original_expected": {
+        "title": "Catch-22",
+        "category": "series",
+        "season": "1",
+        "resolution": "1080P",
+        "codec": "H265",
+        "audio": "AC3",
+        "v_quality": "SDR 10BIT",
+        "languages": [
+          "MULTI"
+        ],
+        "container": "7Z"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 32,
+      "input": "The_Mandalorian_S01E05_-_Le_Mercenaire_(The_Gunslinger).mkv",
+      "title": "The Mandalorian",
+      "input_line": 533,
+      "title_line": 535,
+      "original_expected": {
+        "title": "The Mandalorian",
+        "category": "series",
+        "season": "1",
+        "episode": "5",
+        "episode_name": "Le Mercenaire (The Gunslinger)",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 33,
+      "input": "Tropiques_criminels_-_S07E06_-_La_prairie.mkv",
+      "title": "Tropiques criminels",
+      "input_line": 544,
+      "title_line": 546,
+      "original_expected": {
+        "title": "Tropiques criminels",
+        "category": "series",
+        "season": "7",
+        "episode": "6",
+        "episode_name": "La prairie",
+        "container": "MKV"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 34,
+      "input": "Lethal Weapon S01E06 Retrouvailles.mkv",
+      "title": "Lethal Weapon",
+      "input_line": 555,
+      "title_line": 557,
+      "original_expected": {
+        "title": "Lethal Weapon",
+        "category": "series",
+        "season": "1",
+        "episode": "6",
+        "episode_name": "Retrouvailles",
+        "container": "MKV",
+        "group": null
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 35,
+      "input": "The.Fall.of.the.House.of.Usher.S01.x265.rar",
+      "title": "The Fall of the House of Usher",
+      "input_line": 567,
+      "title_line": 569,
+      "original_expected": {
+        "title": "The Fall of the House of Usher",
+        "category": "series",
+        "season": "1",
+        "episode": null,
+        "episode_name": null,
+        "codec": "H265",
+        "container": "RAR"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 36,
+      "input": "[1923] S01 x265.rar",
+      "title": "1923",
+      "input_line": 579,
+      "title_line": 581,
+      "original_expected": {
+        "title": "1923",
+        "category": "series",
+        "year": 1923,
+        "season": "1",
+        "episode": null,
+        "codec": "H265",
+        "container": "RAR"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 0,
+      "input": "Wuthering Heights E01-E02 2009 1080p Blu-ray x265 AC3￡cXcY@FRDS",
+      "title": "Wuthering Heights",
+      "input_line": 12,
+      "title_line": 14,
+      "original_assertion_block": "info := Parse(\"Wuthering Heights E01-E02 2009 1080p Blu-ray x265 AC3￡cXcY@FRDS\", false)\n\tis.NotNil(info)\n\tis.Equal(info.Name, \"Wuthering Heights\")\n\tis.Equal(info.Episode, []int{1, 2})\n\tis.Equal(info.Year, \"2009\")\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"Blu-ray\")\n\tis.Equal(info.Codec, \"x265\")\n\tis.Equal(info.Audio, \"AC3\")\n\tis.Equal(info.Producer, \"￡cXcY@FRDS\")\n\n\t",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "false",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 2,
+      "input": "The Walking Dead Complete S01-S11 2010-2021 1080p Blu-ray x265 AC3￡cXcY@FRDS",
+      "title": "The Walking Dead",
+      "input_line": 34,
+      "title_line": 35,
+      "original_assertion_block": "info = Parse(\"The Walking Dead Complete S01-S11 2010-2021 1080p Blu-ray x265 AC3￡cXcY@FRDS\", false)\n\tis.Equal(info.Name, \"The Walking Dead\")\n\tis.Equal(info.Season, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})\n\tis.Equal(info.Year, \"2010-2021\")\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"Blu-ray\")\n\tis.Equal(info.Codec, \"x265\")\n\tis.Equal(info.Audio, \"AC3\")\n\tis.Equal(info.Producer, \"￡cXcY@FRDS\")\n\tis.Equal(info.MediaType, TypeTVSeries)\n\n\t",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "false",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 4,
+      "input": "21 2008 1080p CEE Blu-ray AVC TrueHD 5.1-HDMaN",
+      "title": "21",
+      "input_line": 56,
+      "title_line": 57,
+      "original_assertion_block": "info = Parse(\"21 2008 1080p CEE Blu-ray AVC TrueHD 5.1-HDMaN\", false)\n\tis.Equal(info.Name, \"21\")\n\tis.Equal(info.Year, \"2008\")\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"Blu-ray\")\n\tis.Equal(info.Codec, \"AVC\")\n\tis.Equal(info.Audio, \"TrueHD 5.1\")\n\tis.Equal(info.Producer, \"HDMaN\")\n\tis.Equal(info.MediaType, TypeMovie)\n\n\t",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "false",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 6,
+      "input": "Das Boot S04 WEB-DL 1080p H.264 DDP 5.1-WAYNE",
+      "title": "Das Boot",
+      "input_line": 76,
+      "title_line": 77,
+      "original_assertion_block": "info = Parse(\"Das Boot S04 WEB-DL 1080p H.264 DDP 5.1-WAYNE\", false)\n\tis.Equal(info.Name, \"Das Boot\")\n\tis.Equal(info.Season, []int{4})\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"WEB-DL\")\n\tis.Equal(info.Codec, \"H.264\")\n\tis.Equal(info.Audio, \"DDP 5.1\")\n\tis.Equal(info.Producer, \"WAYNE\")\n\tis.Equal(info.MediaType, TypeTVSeason)\n\n\t",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "false",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0
+    }
+  ],
+  "excluded": [
+    {
+      "source_file": "tests/test_cases_series.json",
+      "source_index": 19,
+      "input": "The Walking Dead S05E03 720p HDTV x264-ASAP[ettv]",
+      "title": "The Walking Dead",
+      "input_line": 324,
+      "title_line": 326,
+      "original_expected": {
+        "title": "The Walking Dead",
+        "category": "series",
+        "season": "5",
+        "episode": "3",
+        "resolution": "720P",
+        "quality": "HDTV",
+        "codec": "H264",
+        "group": "ASAP"
+      },
+      "oracle_kind": "literal-json-expected-fields",
+      "source_id": "machard-releascenify",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/moistari-rls-original.inventory.json",
+        "testdata/releases/review-inputs/moistari-rls-original.literals.jsonl",
+        "testdata/releases/review-inputs/moistari-rls-original.overlap.json",
+        "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/gold-overlap.json",
+        "testdata/releases/review-inputs/moistari-rls-original.sources/tests.yaml",
+        "testdata/releases/review-inputs/rust-ptn.json",
+        "testdata/releases/review-inputs/rust-ptn.source",
+        "testdata/releases/reviewed-full.json",
+        "testdata/releases/upstream-mit/go-ptn.json",
+        "testdata/releases/upstream-mit/ptn.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 3,
+      "input": "1923 S01E01 2022 1080p x264 meGusta",
+      "title": "1923",
+      "input_line": 40,
+      "title_line": 41,
+      "original_assertion_block": "new Torrent(\"1923 S01E01 2022 1080p x264 meGusta\");\n            Assert.AreEqual(\"1923\", torrent.Title);\n            Assert.AreEqual(1, torrent.Season);\n            Assert.AreEqual(1, torrent.Episode);\n            Assert.AreEqual(2022, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"meGusta\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n        }\n\n        [TestMethod]\n        public void TestMovieTitles()\n        {\n            \n            var torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": false,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 4,
+      "input": "The Flash 2023 1080p V2 Cam X264 Will1869",
+      "title": "The Flash",
+      "input_line": 57,
+      "title_line": 58,
+      "original_assertion_block": "new Torrent(\"The Flash 2023 1080p V2 Cam X264 Will1869\");\n            Assert.AreEqual(\"The Flash\", torrent.Title);\n            Assert.AreEqual(2023, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"Cam\", torrent.Quality);\n            Assert.AreEqual(\"X264\", torrent.Codec);\n            Assert.AreEqual(\"Will1869\", torrent.Group);\n            Assert.IsTrue(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 5,
+      "input": "Iron Man 3 2013 REMASTERED 2160p UHD BluRay X265-IAMABLE",
+      "title": "Iron Man 3",
+      "input_line": 68,
+      "title_line": 69,
+      "original_assertion_block": "new Torrent(\"Iron Man 3 2013 REMASTERED 2160p UHD BluRay X265-IAMABLE\");\n            Assert.AreEqual(\"Iron Man 3\", torrent.Title);\n            Assert.AreEqual(2013, torrent.Year);\n            Assert.IsTrue(torrent.Remastered);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.AreEqual(\"UHD BluRay\", torrent.Quality);\n            Assert.AreEqual(\"X265\", torrent.Codec);\n            Assert.AreEqual(\"IAMABLE\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent= ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 6,
+      "input": "John Wick 3 2019 1080p Bluray DTS-HD MA 5 1 x264-EVO",
+      "title": "John Wick 3",
+      "input_line": 80,
+      "title_line": 81,
+      "original_assertion_block": "new Torrent(\"John Wick 3 2019 1080p Bluray DTS-HD MA 5 1 x264-EVO\");\n            Assert.AreEqual(\"John Wick 3\", torrent.Title);\n            Assert.AreEqual(2019, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"Bluray\", torrent.Quality);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"DTS-HD MA\", torrent.Audio);\n            Assert.AreEqual(\"5.1\", torrent.AudioChannels);\n            Assert.AreEqual(\"EVO\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 7,
+      "input": "Annabelle Comes Home 2019 1080p HC HDRip X264-EVO",
+      "title": "Annabelle Comes Home",
+      "input_line": 93,
+      "title_line": 94,
+      "original_assertion_block": "new Torrent(\"Annabelle Comes Home 2019 1080p HC HDRip X264-EVO\");\n            Assert.AreEqual(\"Annabelle Comes Home\", torrent.Title);\n            Assert.AreEqual(2019, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.IsTrue(torrent.HardCoded);\n            Assert.IsFalse(torrent.HDR);\n            Assert.AreEqual(\"HDRip\", torrent.Quality);\n            Assert.AreEqual(\"X264\", torrent.Codec);\n            Assert.AreEqual(\"EVO\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 8,
+      "input": "Men in Black International 2019 1080p WEB-DL H264 AC3-EVO",
+      "title": "Men in Black International",
+      "input_line": 106,
+      "title_line": 107,
+      "original_assertion_block": "new Torrent(\"Men in Black International 2019 1080p WEB-DL H264 AC3-EVO\");\n            Assert.AreEqual(\"Men in Black International\", torrent.Title);\n            Assert.AreEqual(2019, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"WEB-DL\", torrent.Quality);\n            Assert.AreEqual(\"H264\", torrent.Codec);\n            Assert.AreEqual(\"AC3\", torrent.Audio);\n            Assert.AreEqual(\"EVO\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 9,
+      "input": "A Few Good Men 1992 BluRay 1080p Dts-6Ch H264-PiR8",
+      "title": "A Few Good Men",
+      "input_line": 118,
+      "title_line": 119,
+      "original_assertion_block": "new Torrent(\"A Few Good Men 1992 BluRay 1080p Dts-6Ch H264-PiR8\");\n            Assert.AreEqual(\"A Few Good Men\", torrent.Title);\n            Assert.AreEqual(1992, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"BluRay\", torrent.Quality);\n            Assert.AreEqual(\"H264\", torrent.Codec);\n            Assert.AreEqual(\"Dts-6Ch\", torrent.Audio);\n            Assert.AreEqual(\"PiR8\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 10,
+      "input": "Avengers Endgame 2019 3D 1080p BluRay x264-GUACAMOLE",
+      "title": "Avengers Endgame",
+      "input_line": 130,
+      "title_line": 131,
+      "original_assertion_block": "new Torrent(\"Avengers Endgame 2019 3D 1080p BluRay x264-GUACAMOLE\");\n            Assert.AreEqual(\"Avengers Endgame\", torrent.Title);\n            Assert.AreEqual(2019, torrent.Year);\n            Assert.IsTrue(torrent.Is3D);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"BluRay\", torrent.Quality);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"GUACAMOLE\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 11,
+      "input": "Solo A Star Wars Story 2018 1080p 3D BluRay BluRay Half-SBS x264 DTS-HD MA 7 1-FGT",
+      "title": "Solo A Star Wars Story",
+      "input_line": 142,
+      "title_line": 143,
+      "original_assertion_block": "new Torrent(\"Solo A Star Wars Story 2018 1080p 3D BluRay BluRay Half-SBS x264 DTS-HD MA 7 1-FGT\");\n            Assert.AreEqual(\"Solo A Star Wars Story\", torrent.Title);\n            Assert.AreEqual(2018, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.IsTrue(torrent.Is3D);\n            Assert.AreEqual(\"Half-SBS\", torrent.ThreeDFormat);\n            Assert.AreEqual(\"BluRay\", torrent.Quality);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"DTS-HD MA\", torrent.Audio);\n            Assert.AreEqual(\"7.1\", torrent.AudioChannels);\n            Assert.AreEqual(\"FGT\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 12,
+      "input": "Iron Man 2008 MULTi 2160p UHD BluRay x265-SESKAPiLE",
+      "title": "Iron Man",
+      "input_line": 157,
+      "title_line": 158,
+      "original_assertion_block": "new Torrent(\"Iron Man 2008 MULTi 2160p UHD BluRay x265-SESKAPiLE\");\n            Assert.AreEqual(\"Iron Man\", torrent.Title);\n            Assert.AreEqual(2008, torrent.Year);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.IsTrue(torrent.MultipleLanguages);\n            Assert.AreEqual(\"UHD BluRay\", torrent.Quality);\n            Assert.AreEqual(\"x265\", torrent.Codec);\n            Assert.AreEqual(\"SESKAPiLE\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 13,
+      "input": "Pokemon Detective Pikachu 2019 PROPER MULTi 2160p UHD BluRay x265-OohLaLa",
+      "title": "Pokemon Detective Pikachu",
+      "input_line": 169,
+      "title_line": 170,
+      "original_assertion_block": "new Torrent(\"Pokemon Detective Pikachu 2019 PROPER MULTi 2160p UHD BluRay x265-OohLaLa\");\n            Assert.AreEqual(\"Pokemon Detective Pikachu\", torrent.Title);\n            Assert.AreEqual(2019, torrent.Year);\n            Assert.IsTrue(torrent.Proper);\n            Assert.IsTrue(torrent.MultipleLanguages);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.AreEqual(\"UHD BluRay\", torrent.Quality);\n            Assert.AreEqual(\"x265\", torrent.Codec);\n            Assert.AreEqual(\"OohLaLa\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 14,
+      "input": "(REQ) Return Of The Living Dead Necropolis 2005 H264 AC3 DD2 0 Will1869",
+      "title": "Return Of The Living Dead Necropolis",
+      "input_line": 182,
+      "title_line": 183,
+      "original_assertion_block": "new Torrent(\"(REQ) Return Of The Living Dead Necropolis 2005 H264 AC3 DD2 0 Will1869\");\n            Assert.AreEqual(\"Return Of The Living Dead Necropolis\", torrent.Title);\n            Assert.AreEqual(2005, torrent.Year);\n            Assert.AreEqual(\"H264\", torrent.Codec);\n            Assert.AreEqual(\"AC3 DD\", torrent.Audio);\n            Assert.AreEqual(\"2.0\", torrent.AudioChannels);\n            Assert.AreEqual(\"Will1869\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": false,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 15,
+      "input": "[REQ] Three Wishes 1995 DVDRip X264 Ac3 SNAKE",
+      "title": "Three Wishes",
+      "input_line": 193,
+      "title_line": 194,
+      "original_assertion_block": "new Torrent(\"[REQ] Three Wishes 1995 DVDRip X264 Ac3 SNAKE\");\n            Assert.AreEqual(\"Three Wishes\", torrent.Title);\n            Assert.AreEqual(1995, torrent.Year);\n            Assert.AreEqual(\"DVDRip\", torrent.Quality);\n            Assert.AreEqual(\"X264\", torrent.Codec);\n            Assert.AreEqual(\"Ac3\", torrent.Audio);\n            Assert.AreEqual(\"SNAKE\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": false,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 16,
+      "input": "Where The Red Fern Grows-1974-X264-AAC-BigTimeCube",
+      "title": "Where The Red Fern Grows",
+      "input_line": 204,
+      "title_line": 205,
+      "original_assertion_block": "new Torrent(\"Where The Red Fern Grows-1974-X264-AAC-BigTimeCube\");\n            Assert.AreEqual(\"Where The Red Fern Grows\", torrent.Title);\n            Assert.AreEqual(1974, torrent.Year);\n            Assert.AreEqual(\"X264\", torrent.Codec);\n            Assert.AreEqual(\"AAC\", torrent.Audio);\n            Assert.AreEqual(\"BigTimeCube\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 17,
+      "input": "Alita Battle Angel 2019 BluRay 10Bit 1080p DD+5 1 H265-d3g",
+      "title": "Alita Battle Angel",
+      "input_line": 214,
+      "title_line": 215,
+      "original_assertion_block": "new Torrent(\"Alita Battle Angel 2019 BluRay 10Bit 1080p DD+5 1 H265-d3g\");\n            Assert.AreEqual(\"Alita Battle Angel\", torrent.Title);\n            Assert.AreEqual(2019, torrent.Year);\n            Assert.AreEqual(10, torrent.BitDepth);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"BluRay\", torrent.Quality);\n            Assert.AreEqual(\"H265\", torrent.Codec);\n            Assert.AreEqual(\"DD+\", torrent.Audio);\n            Assert.AreEqual(\"5.1\", torrent.AudioChannels);\n            Assert.AreEqual(\"d3g\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 18,
+      "input": "Avengers.Endgame.2019.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos-FGT",
+      "title": "Avengers Endgame",
+      "input_line": 228,
+      "title_line": 229,
+      "original_assertion_block": "new Torrent(\"Avengers.Endgame.2019.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos-FGT\");\n            Assert.AreEqual(\"Avengers Endgame\", torrent.Title);\n            Assert.AreEqual(2019, torrent.Year);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.IsTrue(torrent.Remux);\n            Assert.AreEqual(\"BluRay\", torrent.Quality);\n            Assert.AreEqual(\"HEVC\", torrent.Codec);\n            Assert.AreEqual(\"DTS-HD MA\", torrent.Audio);\n            Assert.IsTrue(torrent.TrueHD);\n            Assert.AreEqual(\"7.1\", torrent.AudioChannels);\n            Assert.IsTrue(torrent.DolbyAtmos);\n            Assert.AreEqual(\"FGT\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 19,
+      "input": "John Wick 2014 BluRay 1080p AC-3 TrueHD 7 1 HEVC-d3g",
+      "title": "John Wick",
+      "input_line": 245,
+      "title_line": 246,
+      "original_assertion_block": "new Torrent(\"John Wick 2014 BluRay 1080p AC-3 TrueHD 7 1 HEVC-d3g\");\n            Assert.AreEqual(\"John Wick\", torrent.Title);\n            Assert.AreEqual(2014, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"BluRay\", torrent.Quality);\n            Assert.AreEqual(\"HEVC\", torrent.Codec);\n            Assert.AreEqual(\"AC-3\", torrent.Audio);\n            Assert.IsTrue(torrent.TrueHD);\n            Assert.AreEqual(\"7.1\", torrent.AudioChannels);\n            Assert.AreEqual(\"d3g\", torrent.Group);\n            Assert.IsFalse(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 20,
+      "input": "Inside Out 2 2024 1080p TELESYNC x264 COLLECTiVE",
+      "title": "Inside Out 2",
+      "input_line": 259,
+      "title_line": 260,
+      "original_assertion_block": "new Torrent(\"Inside Out 2 2024 1080p TELESYNC x264 COLLECTiVE\");\n            Assert.AreEqual(\"Inside Out 2\", torrent.Title);\n            Assert.AreEqual(2024, torrent.Year);\n            Assert.AreEqual(\"1080p\", torrent.Resolution);\n            Assert.AreEqual(\"TELESYNC\", torrent.Quality);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"COLLECTiVE\", torrent.Group);\n            Assert.IsTrue(torrent.IsPreRelease);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 21,
+      "input": "Fountain Of Youth 2025 2160p HDR10Plus DV WEBRip 6CH X265 HEVC-PSA",
+      "title": "Fountain Of Youth",
+      "input_line": 270,
+      "title_line": 271,
+      "original_assertion_block": "new Torrent(\"Fountain Of Youth 2025 2160p HDR10Plus DV WEBRip 6CH X265 HEVC-PSA\");\n            Assert.AreEqual(\"Fountain Of Youth\", torrent.Title);\n            Assert.AreEqual(2025, torrent.Year);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.IsTrue(torrent.HDR);\n            Assert.IsTrue(torrent.DolbyVision);\n            Assert.AreEqual(\"WEBRip\", torrent.Quality);\n            Assert.AreEqual(\"6\", torrent.AudioChannels);\n            Assert.AreEqual(\"X265\", torrent.Codec);\n            Assert.AreEqual(\"PSA\", torrent.Group);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = new Torrent(\n                \"Lord of War 2005 2160p UHD BluRay REMUX HEVC Dolby Vision TrueHD Atmos 7 1-FraMeSToR\");\n            Assert.AreEqual(\"Lord of War\", torrent.Title);\n            Assert.AreEqual(2005, torrent.Year);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.IsTrue(torrent.Remux);\n            Assert.AreEqual(\"UHD BluRay\", torrent.Quality);\n            Assert.AreEqual(\"HEVC\", torrent.Codec);\n            Assert.IsTrue(torrent.DolbyVision);\n            Assert.IsTrue(torrent.TrueHD);\n            Assert.IsTrue(torrent.DolbyAtmos);\n            Assert.AreEqual(\"7.1\", torrent.AudioChannels);\n            Assert.AreEqual(\"FraMeSToR\", torrent.Group);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n        }\n\n        [TestMethod]\n        public void TestTVTitles()\n        {\n            var torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 22,
+      "input": "Suits S09E05 720p HDTV x264-aAF",
+      "title": "Suits",
+      "input_line": 303,
+      "title_line": 304,
+      "original_assertion_block": "new Torrent(\"Suits S09E05 720p HDTV x264-aAF\");\n            Assert.AreEqual(\"Suits\", torrent.Title);\n            Assert.AreEqual(9, torrent.Season);\n            Assert.AreEqual(5, torrent.Episode);\n            Assert.AreEqual(\"720p\", torrent.Resolution);\n            Assert.AreEqual(\"HDTV\", torrent.Quality);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"aAF\", torrent.Group);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 23,
+      "input": "Bosch S05 2160p AMZN WEBRip DD+5 1 x264-AJP69",
+      "title": "Bosch",
+      "input_line": 314,
+      "title_line": 315,
+      "original_assertion_block": "new Torrent(\"Bosch S05 2160p AMZN WEBRip DD+5 1 x264-AJP69\");\n            Assert.AreEqual(\"Bosch\", torrent.Title);\n            Assert.AreEqual(5, torrent.Season);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.IsTrue(torrent.Amazon);\n            Assert.AreEqual(\"WEBRip\", torrent.Quality);\n            Assert.AreEqual(\"DD+\", torrent.Audio);\n            Assert.AreEqual(\"5.1\", torrent.AudioChannels);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"AJP69\", torrent.Group);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": false,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 24,
+      "input": "Stranger Things S03E06 2160p WEBRip x264-STRiFE",
+      "title": "Stranger Things",
+      "input_line": 327,
+      "title_line": 328,
+      "original_assertion_block": "new Torrent(\"Stranger Things S03E06 2160p WEBRip x264-STRiFE\");\n            Assert.AreEqual(\"Stranger Things\", torrent.Title);\n            Assert.AreEqual(3, torrent.Season);\n            Assert.AreEqual(6, torrent.Episode);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.AreEqual(\"WEBRip\", torrent.Quality);\n            Assert.AreEqual(\"x264\", torrent.Codec);\n            Assert.AreEqual(\"STRiFE\", torrent.Group);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n\n            torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 25,
+      "input": "The Boys S01 2160p WEB-DL DDP5 1 HDR HEVC-NEOLUTiON",
+      "title": "The Boys",
+      "input_line": 338,
+      "title_line": 339,
+      "original_assertion_block": "new Torrent(\"The Boys S01 2160p WEB-DL DDP5 1 HDR HEVC-NEOLUTiON\");\n            Assert.AreEqual(\"The Boys\", torrent.Title);\n            Assert.AreEqual(1, torrent.Season);\n            Assert.AreEqual(\"2160p\", torrent.Resolution);\n            Assert.AreEqual(\"WEB-DL\", torrent.Quality);\n            Assert.AreEqual(\"DDP\", torrent.Audio);\n            Assert.AreEqual(\"5.1\", torrent.AudioChannels);\n            Assert.IsTrue(torrent.HDR);\n            Assert.AreEqual(\"HEVC\", torrent.Codec);\n            Assert.AreEqual(\"NEOLUTiON\", torrent.Group);\n\n            Trace.WriteLine(JsonConvert.SerializeObject(torrent, Formatting.Indented, JsonSettings));\n        }\n\n        [TestMethod]\n        public void TestOddTitle()\n        {\n            var torrent = ",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": false,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source"
+      ]
+    },
+    {
+      "source_file": "TorrentTitleParser.Tests/TitleTests.cs",
+      "source_index": 26,
+      "input": "Saving Private Ryan 1998 720p BDRip DD5 1 x264-ITSat",
+      "title": "Saving Private Ryan",
+      "input_line": 355,
+      "title_line": 356,
+      "original_assertion_block": "new Torrent(\"Saving Private Ryan 1998 720p BDRip DD5 1 x264-ITSat\");\n            Assert.AreEqual(\"Saving Private Ryan\", torrent.Title);\n        }\n    }\n}\n",
+      "oracle_kind": "direct-MSTest-title-equality",
+      "source_id": "mahler-torrenttitleparser",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "exact-existing-input-evidence",
+      "gold_overlap": true,
+      "baseline_matches": [
+        "testdata/releases/review-inputs/titleparser.json",
+        "testdata/releases/review-inputs/titleparser.source",
+        "testdata/releases/reviewed-full.json"
+      ]
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 1,
+      "input": "Wuthering Heights E01-E02 2009 1080p Blu-ray x265 AC3￡cXcY@FRDS",
+      "title": "Wuthering Heights",
+      "input_line": 23,
+      "title_line": 25,
+      "original_assertion_block": "info = Parse(\"Wuthering Heights E01-E02 2009 1080p Blu-ray x265 AC3￡cXcY@FRDS\", true)\n\tis.NotNil(info)\n\tis.Equal(info.Name, \"Wuthering Heights\")\n\tis.Equal(info.Episode, []int{1, 2})\n\tis.Equal(info.Year, \"2009\")\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"Blu-ray\")\n\tis.Equal(info.Codec, \"H.265\")\n\tis.Equal(info.Audio, \"Dolby Digital\")\n\tis.Equal(info.Producer, \"￡cXcY@FRDS\")\n\n\t",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "true",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "duplicate-in-new-source-pool",
+      "gold_overlap": false,
+      "baseline_matches": []
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 3,
+      "input": "The Walking Dead Complete S01-S11 2010-2021 1080p Blu-ray x265 AC3￡cXcY@FRDS",
+      "title": "The Walking Dead",
+      "input_line": 45,
+      "title_line": 46,
+      "original_assertion_block": "info = Parse(\"The Walking Dead Complete S01-S11 2010-2021 1080p Blu-ray x265 AC3￡cXcY@FRDS\", true)\n\tis.Equal(info.Name, \"The Walking Dead\")\n\tis.Equal(info.Season, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11})\n\tis.Equal(info.Year, \"2010-2021\")\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"Blu-ray\")\n\tis.Equal(info.Codec, \"H.265\")\n\tis.Equal(info.Audio, \"Dolby Digital\")\n\tis.Equal(info.Producer, \"￡cXcY@FRDS\")\n\tis.Equal(info.MediaType, TypeTVSeries)\n\n\t",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "true",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "duplicate-in-new-source-pool",
+      "gold_overlap": false,
+      "baseline_matches": []
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 5,
+      "input": "21 2008 1080p CEE Blu-ray AVC TrueHD 5.1-HDMaN",
+      "title": "21",
+      "input_line": 66,
+      "title_line": 67,
+      "original_assertion_block": "info = Parse(\"21 2008 1080p CEE Blu-ray AVC TrueHD 5.1-HDMaN\", true)\n\tis.Equal(info.Name, \"21\")\n\tis.Equal(info.Year, \"2008\")\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"Blu-ray\")\n\tis.Equal(info.Codec, \"H.264\")\n\tis.Equal(info.Audio, \"Dolby TrueHD 5.1\")\n\tis.Equal(info.Producer, \"HDMaN\")\n\tis.Equal(info.MediaType, TypeMovie)\n\n\t",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "true",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "duplicate-in-new-source-pool",
+      "gold_overlap": false,
+      "baseline_matches": []
+    },
+    {
+      "source_file": "parser_test.go",
+      "source_index": 7,
+      "input": "Das Boot S04 WEB-DL 1080p H.264 DDP 5.1-WAYNE",
+      "title": "Das Boot",
+      "input_line": 86,
+      "title_line": 87,
+      "original_assertion_block": "info = Parse(\"Das Boot S04 WEB-DL 1080p H.264 DDP 5.1-WAYNE\", true)\n\tis.Equal(info.Name, \"Das Boot\")\n\tis.Equal(info.Season, []int{4})\n\tis.Equal(info.Resoluton, \"1080p\")\n\tis.Equal(info.Quality, \"WEB-DL\")\n\tis.Equal(info.Codec, \"H.264\")\n\tis.Equal(info.Audio, \"Dolby Digital Plus 5.1\")\n\tis.Equal(info.Producer, \"WAYNE\")\n\tis.Equal(info.MediaType, TypeTVSeason)\n}\n",
+      "oracle_kind": "direct-testify-Name-equality",
+      "original_parse_mode": "true",
+      "source_id": "ngtrio-tnp",
+      "review_status": "unreviewed",
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "exclusion": "duplicate-in-new-source-pool",
+      "gold_overlap": false,
+      "baseline_matches": []
+    }
+  ],
+  "baseline_snapshots": [
+    {
+      "path": "testdata/releases/README.md",
+      "sha256": "cfbeb91c6204679644c73305eb2b5b31e21362bf5aeff5db2faca80c3df13a40",
+      "bytes": 67230
+    },
+    {
+      "path": "testdata/releases/review-inputs/README.md",
+      "sha256": "e7205335c54abfe9ec97846a54d38f54e4eb8c1242586b77ede652b7bb8b0f76",
+      "bytes": 3572
+    },
+    {
+      "path": "testdata/releases/review-inputs/atama-metadata-original.LICENSE",
+      "sha256": "da1ab0a4449807fd161b8d028f79c42cc00e2e67ee8f9f583cb37a2c2cbaa0fd",
+      "bytes": 1067
+    },
+    {
+      "path": "testdata/releases/review-inputs/atama-metadata-original.manifest.json",
+      "sha256": "b078d7c990b73dba5847f1dd1106f316ebeaaa0629fe9ba87b24f14a7b7fb8ba",
+      "bytes": 4893
+    },
+    {
+      "path": "testdata/releases/review-inputs/beast-full-original.LICENSE",
+      "sha256": "4b204d94be3a7487c902684b4ef5d240d169d367b17de72d54360f8351fa27ac",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/review-inputs/beast-full-original.manifest.json",
+      "sha256": "a0f21d780907f0e0cebaf30ccba91b335fd6145b14c9dcfe52400c88609c332d",
+      "bytes": 4263
+    },
+    {
+      "path": "testdata/releases/review-inputs/cehbz-parse-original.LICENSE",
+      "sha256": "31aa89620a821a00659bfb779f63b1df54a82e01036569882cd6bbedbf1d0af6",
+      "bytes": 1062
+    },
+    {
+      "path": "testdata/releases/review-inputs/cehbz-parse-original.manifest.json",
+      "sha256": "5b61adad684c663d4ec4c95e76370135e7391b12930c9266445831532b4d27ee",
+      "bytes": 2173
+    },
+    {
+      "path": "testdata/releases/review-inputs/chill-parser-original.LICENSE",
+      "sha256": "5c01505f1974f6562d9f972acbcba24504ce20e68a58241b5f8d0dfc85512b84",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/review-inputs/chill-parser-original.inventory.json",
+      "sha256": "6b0bde6922a6b9ae3c491b67acc8d4838d5a2d0a409390dc3a3e3b562b7205a3",
+      "bytes": 114358
+    },
+    {
+      "path": "testdata/releases/review-inputs/chill-parser-original.manifest.json",
+      "sha256": "46f0c4aea08c5c242629d0cd45c680c62bfb4b2fbc44f39e5daac24dee5f524c",
+      "bytes": 2961
+    },
+    {
+      "path": "testdata/releases/review-inputs/clement-full-original.LICENSE",
+      "sha256": "4b204d94be3a7487c902684b4ef5d240d169d367b17de72d54360f8351fa27ac",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/review-inputs/clement-full-original.manifest.json",
+      "sha256": "662ef1d015ca0d7a86524fd889a38d8a04fff185dfaed3efe593fd3a30e1a8df",
+      "bytes": 2328
+    },
+    {
+      "path": "testdata/releases/review-inputs/flexget-parser-original.LICENSE",
+      "sha256": "35e41be01051fa5886876dfb1aad55e6b476e7e7c80010a7848e54e106f3669f",
+      "bytes": 1121
+    },
+    {
+      "path": "testdata/releases/review-inputs/flexget-parser-original.inventory.json",
+      "sha256": "07d4f1e4797814229eb6953c927bead6517330415bd8f8ba8e8fe8d10ed5ac4c",
+      "bytes": 19260
+    },
+    {
+      "path": "testdata/releases/review-inputs/flexget-parser-original.manifest.json",
+      "sha256": "18e98f8a7793ee1a282dbba49e93800aab526e7106b3d344c543022c060a0cd4",
+      "bytes": 7861
+    },
+    {
+      "path": "testdata/releases/review-inputs/independent-title-capacity.json",
+      "sha256": "c2d7475180375e99dc3b6cc415baaf6ea634ffef1a4fe7683d02493a3538405f",
+      "bytes": 1631
+    },
+    {
+      "path": "testdata/releases/review-inputs/mdaubie-parser-original.LICENSE",
+      "sha256": "2565ca8bb69ecfef1e9cee779396c359cd711616c15f9c2f198f5dcf385c60be",
+      "bytes": 1073
+    },
+    {
+      "path": "testdata/releases/review-inputs/mdaubie-parser-original.inventory.json",
+      "sha256": "82309aa76e39bc870c4f220ea56c6792af1b0a1fd016bd1bb4c9bebfa2494ae9",
+      "bytes": 9172
+    },
+    {
+      "path": "testdata/releases/review-inputs/mdaubie-parser-original.manifest.json",
+      "sha256": "0fdff958870a8606e83f254f338df6081831747d4133b3b82af5c62d16d52fc4",
+      "bytes": 2713
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.README.md",
+      "sha256": "e245989313e704d6ab2f8dd17344374c7f615df5494bb77ceb8a1ca44cf3d55b",
+      "bytes": 3716
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.audit.json",
+      "sha256": "a28fe992f5aabab8b604b2e5949ebeed7b35d288a55a200cf0817ea0bb8e64ac",
+      "bytes": 61725
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.completion.json",
+      "sha256": "59d0bb4f3ee2dd2b57981ac2f225f1a874c9f7cf292be7fb64480f59c2deb3bf",
+      "bytes": 1393
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.inventory.json",
+      "sha256": "337b0f733c313f51c6b09ef5d6be5cc3bcf911d22af17f44fb24459a939502f1",
+      "bytes": 323743
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.literals.jsonl",
+      "sha256": "a881492e1ce8ce4a3027166eeeead36113aeb2b087624153684550592028fbc7",
+      "bytes": 113459
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.manifest.json",
+      "sha256": "4e26a27c554fcce62785fa6806dfde2af5f52f80fb21adb55e6be98d97b07cdc",
+      "bytes": 3638
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.overlap.json",
+      "sha256": "a36d8602a5981168923c0bb98fb6d788b7ae017f22388a0fb4bfdbe776269fcd",
+      "bytes": 12562
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/gold-overlap.json",
+      "sha256": "e3885fdb4901b554f1a732eddf4ec6bdde85193388bf79d260a9834150828c48",
+      "bytes": 9980
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/overlay.json",
+      "sha256": "52d05ea32af01bd2c93c587e3bb0fccea9128c7a222b6782cff3217ab9435705",
+      "bytes": 336
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt1-source-gate.jsonl",
+      "sha256": "08f2f6c2064e88a09b217199f0c19083797d65519de8a68ccf80f0bc6b435f39",
+      "bytes": 52366
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt1.stderr",
+      "sha256": "22669e5f9577021503b64a0b2dcc34c5196de0695044d1de2af860f118f9009a",
+      "bytes": 46
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt2.jsonl",
+      "sha256": "0369a2f39975fbf597ec8ab46016eacb37e0146a0d8e3fb42075e30165d23f07",
+      "bytes": 2597
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt3.jsonl",
+      "sha256": "42846a4b8eea7c43e49d286ea31b628a559692a642d60a3553bb7bc1969003b0",
+      "bytes": 56835
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/probe-attempt3.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-evidence/reviewed_full_corpus_test.go.source",
+      "sha256": "ec69727e03076c6f9be2b3e8327509c1dbc270a18b7de1daa3d58c55c4372db0",
+      "bytes": 16147
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.probe-summary.json",
+      "sha256": "d8da7167f089fb5a59de89c82585d33aeb4848e63cd8cf62d589ff48f2ae019b",
+      "bytes": 14630
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/LICENSE",
+      "sha256": "4fd0093da480945ec7ead12424001aab0e3678f5dddbc2af1a580a2bfe4668cf",
+      "bytes": 1084
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/git-tree.txt",
+      "sha256": "e0033a88e0c783feaea49ba847a64247e9bd94856d58e8831058a8038d13fd5e",
+      "bytes": 317
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/history.txt",
+      "sha256": "7e6374d36c1452aad6a1df66f6bfaca23503ae612be6af38f8acdec3de579f26",
+      "bytes": 421
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/rls_test.go",
+      "sha256": "924c0367698b5a37a05401cd9d6944969fd2f568b3768d580d9cdb71a852b976",
+      "bytes": 23727
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/scan_test.go",
+      "sha256": "09a6b2be3009521495dac0d65ff6e680fce5a34e7ded359c476fed5a91570a3b",
+      "bytes": 2993
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/test.sh",
+      "sha256": "7b625ec52cda776aeadee5e4be99e3d4b9f2b7735de13981a653869f238800f1",
+      "bytes": 85
+    },
+    {
+      "path": "testdata/releases/review-inputs/moistari-rls-original.sources/tests.yaml",
+      "sha256": "59a168ae628271f51f361ed1bbe6e91ba97ec03befdb7b400079861337f87620",
+      "bytes": 89575
+    },
+    {
+      "path": "testdata/releases/review-inputs/pending-frozen-contracts.json",
+      "sha256": "d2d5f41a9b1e9e03a7fc6a96565a5d44dcd1aac7114432bb3cfbf861f6dde6e6",
+      "bytes": 154382
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-main-original-assertions.json",
+      "sha256": "9474f5c969fe01961873b794e7c266c81f2a3d54000bcd2db41888c9f6294ad9",
+      "bytes": 104428
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.json",
+      "sha256": "a317bd47b4622bc678c566d8e284977d69ca40ace814689f3b70fa90e568dbba",
+      "bytes": 273392
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/LICENSE",
+      "sha256": "285e18dd1c15cbfa29380cd73ec9804bfebae088c54be6cd3b3d1ca765c25370",
+      "bytes": 1063
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/source-manifest.json",
+      "sha256": "2385d476fe552a7d2be2a6a3eb59b6856f4de0bedfbe05c650a37b0a6cb5db50",
+      "bytes": 7265
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_adult.py.source",
+      "sha256": "37480172f99b7f244baeee8e801858c6da86983208eafdde5ef2613905c8a0ac",
+      "bytes": 719
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_anime.py.source",
+      "sha256": "340137e2bf2cde8f56e9116b70d291adf35d83cda6ddbceb3a8e5efa0d017318",
+      "bytes": 1370
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_audio.py.source",
+      "sha256": "5114ee1944c30f4d28757f4459dc41c104d8729b78e7cd762a091a0b8689f878",
+      "bytes": 8395
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_codec.py.source",
+      "sha256": "74bb82e23714de4db9513984fe1d5025620a19d2913ecafb64ad27daa063af94",
+      "bytes": 1826
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_collection.py.source",
+      "sha256": "a232c4e158727030d8bb75d26b07b0d538773981747578dc50e3c44a3e3d9837",
+      "bytes": 3090
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_container.py.source",
+      "sha256": "db538d2ac1db4e2f5d883fa761fbf95dd4ca0b86e238e1d3bd638347dbe40984",
+      "bytes": 821
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_convert.py.source",
+      "sha256": "9d32b417c74832a1e460f97a9f86d02bfb084461fe73264f45dac5b55cf7e885",
+      "bytes": 835
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_date.py.source",
+      "sha256": "baf61921c6953ce33dbf66c101f7f90cdd3113ad5d73f7b1ab6796994e20c72e",
+      "bytes": 1917
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_dubbed.py.source",
+      "sha256": "de0eedb8cca9f216222c36db92f48642589886c0d7239700886d772bb7e0dc17",
+      "bytes": 1590
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_edition.py.source",
+      "sha256": "c49f016c0f924d6537866a3a30e256c9e66a11765c5a4678e8c53a544d6001cf",
+      "bytes": 1556
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_episode_code.py.source",
+      "sha256": "867ae91598c2c11d4bc1a275bdd49c562fc974937fb141b52095f05097a8e8be",
+      "bytes": 2026
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_episodes.py.source",
+      "sha256": "f4bef5f3d092549a9a1942ca8302e8184e2a51d022abe2a2f87a624431819bda",
+      "bytes": 13485
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_extras.py.source",
+      "sha256": "725e7aa87a98d39bf578efda62a61838bd95e276ed8476d00e0197b41e2175c9",
+      "bytes": 952
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_group.py.source",
+      "sha256": "a6e274e4a37926ada2836498a8d3a09a4d937af1267b9548c9e8115f3a9666e2",
+      "bytes": 2073
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_hardcoded.py.source",
+      "sha256": "b7ed201e7c2b29334780b900adafc92d1895c339cae1bb88f953ca39d62d7ce7",
+      "bytes": 757
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_hdr.py.source",
+      "sha256": "773eabd31198944fce6ca68b03dc8d7acfd118143b4c2cb786ff88dcb1356880",
+      "bytes": 1525
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_language.py.source",
+      "sha256": "1053f13cf58bb904596bcc6adef08cc4f8f1277d47bbf771a8965a4a38824ac9",
+      "bytes": 16290
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_main.py.source",
+      "sha256": "941ef023f528bc5a4881770bbc5b06ad460d26960d491ef18e179c8973b68081",
+      "bytes": 53349
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_network.py.source",
+      "sha256": "43b4587158042429b44664658cc1ba9176d4d0b5067e1f85aa6a7b4fb1578cca",
+      "bytes": 2306
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_parser.py.source",
+      "sha256": "d1b584f25cbdc855cad62851f12bcd73584e8df8883a2053a78c6f3d7891735b",
+      "bytes": 2846
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_proper.py.source",
+      "sha256": "11b0ba3f9872b0f38ae9dac78c63cf64705b0952fff822133d56b93f6b7b27c1",
+      "bytes": 665
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_quality.py.source",
+      "sha256": "fe3d6707423ded5a4799bea0ccc5b7a9d3b9ffd4ed31994439ba0f251177dc6b",
+      "bytes": 5173
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_region.py.source",
+      "sha256": "e2cc95ea7a290ab0aca2b0079b1b2c8434d7f78932ee72404853512217a868b6",
+      "bytes": 872
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_repack.py.source",
+      "sha256": "d50170496b42412191a58ff7de20a8b5e245b0899e6b6478f880e8ce320c2c02",
+      "bytes": 684
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_resolution.py.source",
+      "sha256": "7bc0634785c7634b59b1e42ac59705756b125c8c4da493d85f192e103b283479",
+      "bytes": 1578
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_retail.py.source",
+      "sha256": "90c640b79d333e330cc304639f2586ea37b17993902e1010bdea709b5eb90d2b",
+      "bytes": 609
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_season.py.source",
+      "sha256": "5f51bb9e255a6c5802807b5fce3790f48b5607f672aed36a33bc5d8f5f588047",
+      "bytes": 8073
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_site.py.source",
+      "sha256": "55783dc40f9e9a1f1584d843cf8a5b1a03b57fc5ba9bde30def97038aa9c97bb",
+      "bytes": 1701
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_size.py.source",
+      "sha256": "1f678e4d5b58712b8c53d9ae97408594216db3a64ef22a729942e7a2696b3caf",
+      "bytes": 885
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_sports.py.source",
+      "sha256": "8b5f7fdc1bd09bd6a5d46d6241aa701be778f176edf36c7e49970dbdeba44213",
+      "bytes": 1176
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_title.py.source",
+      "sha256": "ffd8c015e7d8577d9117ad43f67a9f747e7738fdae900a32349cc68ea09a57e9",
+      "bytes": 6719
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_trash.py.source",
+      "sha256": "22684446993f243b971d90f5b01f96f68b53cbf5e448f396c9739ca1805d0e4a",
+      "bytes": 1549
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_unrated.py.source",
+      "sha256": "859914b77e318363889d6061459027e01095b7b2fc502ddfaf1095db31f00cba",
+      "bytes": 1289
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_volume.py.source",
+      "sha256": "9a81b2a3b94e4abeacd8248858564cfe9d04b3250b9cee04626ad0c52dd728a7",
+      "bytes": 1529
+    },
+    {
+      "path": "testdata/releases/review-inputs/ptt-original-assertions.sources/test_year.py.source",
+      "sha256": "382c51b6e38e0376969a235a6c69139a7319b73c1f58ba8e1aabd89015b15baa",
+      "bytes": 1700
+    },
+    {
+      "path": "testdata/releases/review-inputs/rakun-full-original.LICENSE",
+      "sha256": "d14c13422112e483e91faf496cc0bfd75ec072766053a340b2ff9afc483fb468",
+      "bytes": 1067
+    },
+    {
+      "path": "testdata/releases/review-inputs/rakun-full-original.manifest.json",
+      "sha256": "9245099966784c6a6fb550d8f9860d6841f88b8ad52f1b01c4b9459c96336750",
+      "bytes": 1748
+    },
+    {
+      "path": "testdata/releases/review-inputs/rank-torrent-name.LICENSE",
+      "sha256": "48f46d8b1ea2773ad67bad973cd99c413bb90473591f7d1e9ab65910275e270c",
+      "bytes": 1084
+    },
+    {
+      "path": "testdata/releases/review-inputs/rank-torrent-name.json",
+      "sha256": "918a1cd2a7d85659ac6cc71250c5b06bf4d82177fdb00d25ea45beb724b6ae42",
+      "bytes": 6950
+    },
+    {
+      "path": "testdata/releases/review-inputs/rust-ptn.LICENSE",
+      "sha256": "555de1884458c8c87eb69a5be47724d7b8ea50a5a2ef73864c8bcfe1e40eb36c",
+      "bytes": 1069
+    },
+    {
+      "path": "testdata/releases/review-inputs/rust-ptn.json",
+      "sha256": "54d2bf95a42c771d4aa2445df2cc5bacfce04490ad1b3e3f510c0220dcc1ff4a",
+      "bytes": 30700
+    },
+    {
+      "path": "testdata/releases/review-inputs/rust-ptn.source",
+      "sha256": "2b600d6f0a051cd651b9ff74a3b9d2e528b62ff755b59e0f53c06294eab47d1d",
+      "bytes": 28191
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/README.md",
+      "sha256": "4ec7904c1ee3291089f580bfb8a0d3eff26b9ad944c43af1143095cf835b3674",
+      "bytes": 4714
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/esparza-dlshow.LICENSE",
+      "sha256": "f456110687fd203c2f076933c4187b2de9f0af1b75593cc40860bfa2f926ebe8",
+      "bytes": 1068
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/esparza-dlshow.README.source",
+      "sha256": "a9d231487e54e3fc21807bda406a6aee16c95849e2abfa1e1320bef61a881ebd",
+      "bytes": 428
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/esparza-dlshow.test.source",
+      "sha256": "a7f13635679a58b431628ab544c90b65905144b6413efc07ff514fe0f0835ebf",
+      "bytes": 2716
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/hellberg-release.LICENSE",
+      "sha256": "8a9c15bd36fc2962d98036b33e1455d293cd504691530014f35c5a5629fce3ca",
+      "bytes": 1076
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/hellberg-release.README.source",
+      "sha256": "541c7f5e13cba43dfdba1ff2ec925ab9a2b0df7f5851875a71fef709ecf94ba5",
+      "bytes": 2364
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/hellberg-release.test.source",
+      "sha256": "722ad3e6286dc47f2473f0ea2a1c938e75df9044751233eaa42bd8c908629941",
+      "bytes": 12418
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/husar-movie-title.LICENSE",
+      "sha256": "97f6c80a9d90040ec13e5fc71cccae1854e1568416479a5eb2ed17f7fc94e2c6",
+      "bytes": 1097
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/husar-movie-title.README.source",
+      "sha256": "41c1c79d420b0ec37399deae06a0019fddf526168b5fc7dfd5cde88fbdc6ba0d",
+      "bytes": 811
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/husar-movie-title.test.source",
+      "sha256": "63ea882c452954eb1dc41323079ace4c965005b0cfe21d4bb16228d3bf4423ac",
+      "bytes": 2456
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/inventory.json",
+      "sha256": "58da160e17a6832a1e3024d52b82d123b7ff6635e5b4b765cfef19f7068baa12",
+      "bytes": 116684
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/manifest.json",
+      "sha256": "a70b20a00b1a6d7491cc5b9ec4f7421345ac3d72a789f3802e6d651b27d6c421",
+      "bytes": 10162
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/singers-scene-release.LICENSE",
+      "sha256": "3d6c5f0286590b529c2647657e121d5f2d294c8867a9b6acd94476e1895c253a",
+      "bytes": 1117
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/singers-scene-release.README.source",
+      "sha256": "1252428333c01e91efce18f01d752cdb497cd7ab892042f94bd15993c3c5f296",
+      "bytes": 1526
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/singers-scene-release.test.source",
+      "sha256": "6c1ea498d143d480945549b94fbfc6280f071ae536fcd7699350ba240105a1b6",
+      "bytes": 10588
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-hellberg-singers-husar-esparza-20261013/verify.cjs",
+      "sha256": "3985587d267f92423a1da88ebe7d665d314211760a399c1d716cd351b18cd8a0",
+      "bytes": 4179
+    },
+    {
+      "path": "testdata/releases/review-inputs/scout-mit-individual-progress.json",
+      "sha256": "5e428a63827ab5b4f1fff59e3f299a4c7ee00abd8f1efe98dea0bf53c15058d6",
+      "bytes": 606
+    },
+    {
+      "path": "testdata/releases/review-inputs/titleparser.LICENSE",
+      "sha256": "3009a1211aea38b4e08a403c44cea0002fd531cc1906ed448e387c33c00a1475",
+      "bytes": 1079
+    },
+    {
+      "path": "testdata/releases/review-inputs/titleparser.json",
+      "sha256": "fe05d03f3ed4031e6b78b382f03aa864b140fc9d09451dbbdb0b6824066e98bb",
+      "bytes": 12211
+    },
+    {
+      "path": "testdata/releases/review-inputs/titleparser.source",
+      "sha256": "ba1eb5502901f0f369995fc9db6df5827e830042fbab9ce616cad348789b65f3",
+      "bytes": 17321
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.json",
+      "sha256": "9e9c0dbef35ae22c6b2012c8ade6bdcc56afe2a3ab438971572d6a32f6344d82",
+      "bytes": 241173
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/LICENSE",
+      "sha256": "da337cfa918334bb9d4c84dd8610485b9a4fecd85b6b373028951028deb2b252",
+      "bytes": 1085
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/audioChannels.spec.ts.source",
+      "sha256": "2fd1ed5b2b9f44e25de89ad936b6a9e6ea43304a1a36b9f1fe3ab581b6c4482d",
+      "bytes": 1807
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/audioCodec.spec.ts.source",
+      "sha256": "bfb164da17fa69263844cbc99fbb6b1690dd50bba92eee6e6aa3ec81a6b384d4",
+      "bytes": 3373
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/codec.spec.ts.source",
+      "sha256": "ae1a2bd20ed15bebabf31378efa65bed673e438032bb308b105ff67b5965bcff",
+      "bytes": 2235
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/complete.spec.ts.source",
+      "sha256": "e7a72b2421be46054b89f281003c12712fef996516e584a61a2850af8edfa1bf",
+      "bytes": 412
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/edition.spec.ts.source",
+      "sha256": "79446f8d7940d40eb48e96839793b8180b41699829f83f5f0fe1c33245324ccc",
+      "bytes": 4631
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/extensions.spec.ts.source",
+      "sha256": "57593b504bc9474ce434913cb2f557810b2b9c1be05c800c334e1b5f1be442bb",
+      "bytes": 1038
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/filenameParse.spec.ts.source",
+      "sha256": "3c7ebc611f504bce41146d5fb9539f6faa54bb420587dabc87f65d35e6c175d8",
+      "bytes": 11257
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/group.spec.ts.source",
+      "sha256": "c5b33e71bbf5dba5578eaf3ace32137948ec0f3cae5cc15c2790d733031ca872",
+      "bytes": 4945
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/language.spec.ts.source",
+      "sha256": "111b13795a13cb61d17a8642daf2c93bdd367ef63696aa47c82a83f7f2650f5d",
+      "bytes": 8163
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/quality.spec.ts.source",
+      "sha256": "efa5d68c4545aaf4c34800c66ffbebfb25157350d9b5fca018f0e36eabfeb5b4",
+      "bytes": 20550
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/resolution.spec.ts.source",
+      "sha256": "6a44768d6d0b4f4deb4b9853b3f41793e50e0ae8ff05beb8e30f8029ecd06d29",
+      "bytes": 3031
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/revisionUpgrade.spec.ts.source",
+      "sha256": "f17e23f74b7b6269fa4c625505eae2f794348f16ebb36a46a4e9e0612b6f8150",
+      "bytes": 3834
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/season.spec.ts.source",
+      "sha256": "0e8e22c6b800ad005ee95fc71c0ee1fbbf14e6a727d8a32cf61ee78eae4d9c38",
+      "bytes": 22163
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/simplifyTitle.spec.ts.source",
+      "sha256": "cc1ae2b246b8c3860f411364a622a863ecdbc1f10220b8f1258fb59df99b5538",
+      "bytes": 2546
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/source-manifest.json",
+      "sha256": "23f289ed8fff3b1e2f2d8f944cade27b8073c9702f09e14205857ed46b448485",
+      "bytes": 3688
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/source.spec.ts.source",
+      "sha256": "54652fb53eb82f1ca9abb2024517b0050b6bb29cdd7b6cae1214cefa68a7b43f",
+      "bytes": 4177
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/title.spec.ts.source",
+      "sha256": "386011eb6add5e463162d4a7f56d853e8feb43e77413adf94da15039f83eca48",
+      "bytes": 6282
+    },
+    {
+      "path": "testdata/releases/review-inputs/video-filename-parser-original-assertions.sources/utils.spec.ts.source",
+      "sha256": "f025e77f4b8d9f316e46dcd858f37cfffd262e4610e3d904933adec47ef3145e",
+      "bytes": 415
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-full-main-original.manifest.json",
+      "sha256": "e0f35d5538d88f6b52807a512f9ff1785b7e7deb99eda473dcb1f8a9ea53030f",
+      "bytes": 1054
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-title-original-assertions.LICENSE",
+      "sha256": "5c44be7aac21777dcc84933675ee7f0b08c736aeaed6c78aedd0e3d7a6856d3a",
+      "bytes": 1065
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-title-original-assertions.json",
+      "sha256": "01ab7a2b44771fffea4212d4776716e96915919c02b3a1dbb8570cc952815533",
+      "bytes": 29500
+    },
+    {
+      "path": "testdata/releases/review-inputs/viren-title-original-assertions.title.test.ts.source",
+      "sha256": "c21deed849fd334ed72bd4244aca3e0637a019b74e7237b8902708e035ea70ec",
+      "bytes": 18442
+    },
+    {
+      "path": "testdata/releases/reviewed-full.json",
+      "sha256": "daf2f48d4eb493ae7fc8b9c906dc6be4e2cf5d7678ec5c1738b39808cbfaa720",
+      "bytes": 689274
+    },
+    {
+      "path": "testdata/releases/safety.jsonl",
+      "sha256": "4b210e1d859338db1c2b114e5b6f47a17d2947dbab3bccc30aa1060491c74168",
+      "bytes": 2543
+    },
+    {
+      "path": "testdata/releases/upstream-mit/atama-metadata-original.test.php",
+      "sha256": "963d02bd058f469b23b12c1e0596f57af7fb0033ff9312910ea755bed280ca87",
+      "bytes": 2685
+    },
+    {
+      "path": "testdata/releases/upstream-mit/atama-metadata-title-original.json",
+      "sha256": "577e0e718d496781ae94183bd9b60a21505b0d5e67c560e98c431ac33ff4a83c",
+      "bytes": 10816
+    },
+    {
+      "path": "testdata/releases/upstream-mit/beast-full-main-original.test.js",
+      "sha256": "2ec8d9bdd8efbb2f6fd872a1cc5d0b095aafddc52cc92dbfbe7d9ff5389e1116",
+      "bytes": 13543
+    },
+    {
+      "path": "testdata/releases/upstream-mit/beast-full-title-original.test.js",
+      "sha256": "8eb2936eba975f4fd8c003bbcc89c067b1682a69e7f84cac36bdc86bbb2da3c4",
+      "bytes": 24604
+    },
+    {
+      "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+      "sha256": "3848e40b8117f4c447a9f6a350052b5d255c80604d72b73bac04f483878c51df",
+      "bytes": 29804
+    },
+    {
+      "path": "testdata/releases/upstream-mit/chill-parser-original.fixture_accuracy_test.go.source",
+      "sha256": "0f6a30e98072e4706baa8678faa6aa47b57116620133d770057e7c543e5b57bf",
+      "bytes": 12654
+    },
+    {
+      "path": "testdata/releases/upstream-mit/chill-parser-original.parser_test.go.source",
+      "sha256": "736c8736b4ac98e911a2d4add59673a9c555fb99fe0e2a0bb802d2df70dbadea",
+      "bytes": 47838
+    },
+    {
+      "path": "testdata/releases/upstream-mit/clement-full-original.main.js",
+      "sha256": "b8922941a9f9bd0effb7c61cc440e1a1181e5f824993558650820657662f666c",
+      "bytes": 13857
+    },
+    {
+      "path": "testdata/releases/upstream-mit/clement-full-original.title.js",
+      "sha256": "56a23101d5a19cac27a353b9cfd8bb821d2ad51fd1dc2058bd02dbdf2e89f160",
+      "bytes": 904
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-conftest-original.py.source",
+      "sha256": "e2bb6ffc3fcf891b7066eb40c8b899e100d8a7167d256d5fe13feb44ab1538c8",
+      "bytes": 16449
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-movieparser-original.py.source",
+      "sha256": "b0cceae08ddb90ab8d1f28e68011c2756c2c7f95c36fa492cdae748813b72197",
+      "bytes": 3329
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-parsingapi-original.py.source",
+      "sha256": "3fa730e829cea226c610e3d348709eceb967833785dc1ff246b0eb3ab4684cff",
+      "bytes": 1291
+    },
+    {
+      "path": "testdata/releases/upstream-mit/flexget-seriesparser-original.py.source",
+      "sha256": "40182216f6a5b7f1d4292a31fa671a1ae422850be7d6087a243b9ae6971ec091",
+      "bytes": 34759
+    },
+    {
+      "path": "testdata/releases/upstream-mit/go-ptn.LICENSE",
+      "sha256": "5c01505f1974f6562d9f972acbcba24504ce20e68a58241b5f8d0dfc85512b84",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/upstream-mit/go-ptn.json",
+      "sha256": "e5e90057cd128ec8bf8ffd41bdc2d631f0f0d1b5f372e1c77c4decd8e9437a12",
+      "bytes": 23848
+    },
+    {
+      "path": "testdata/releases/upstream-mit/manifest.json",
+      "sha256": "d928a935968c00469297a37ab768c685b1ae2a53eb06d28b71fb2333c4ef52f8",
+      "bytes": 2225
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-model-original.ParsedFilename.java.source",
+      "sha256": "edc62e88a09e4c3d3759321480b3d0eed2be654f1d2142e3be898fc56ce25ea3",
+      "bytes": 2131
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-model-original.ParsedMovieFilename.java.source",
+      "sha256": "1dd9100057abf0d70c6b71e8ed069c8d98f13047af6c8f4dee6870cd2b7de213",
+      "bytes": 948
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-model-original.ParsedSeriesEpisodeFilename.java.source",
+      "sha256": "30209f1c38e0c2920def7f79ec172939397814b286529171712f4a35c6315a06",
+      "bytes": 1277
+    },
+    {
+      "path": "testdata/releases/upstream-mit/mdaubie-parser-original.ParserTest.java.source",
+      "sha256": "3527ae8481fbaa741bba3ecb954198a2387bba6ec86c972935b9858f3792c1b3",
+      "bytes": 2436
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptn.LICENSE",
+      "sha256": "6f9ae4dd0d1973fb448bd26642cffcf1dc202446bab0ac23f2b185d5f6599775",
+      "bytes": 1120
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptn.json",
+      "sha256": "02352ecee5d4c2d04dce19861119c55720348bedfba4fa0bd5ab5e150c4a2fb7",
+      "bytes": 19874
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptt.LICENSE",
+      "sha256": "285e18dd1c15cbfa29380cd73ec9804bfebae088c54be6cd3b3d1ca765c25370",
+      "bytes": 1063
+    },
+    {
+      "path": "testdata/releases/upstream-mit/ptt.json",
+      "sha256": "bc263db970d661a0cf093888d23a7c2134b768d9b631ec6550afbf17b7b21fb8",
+      "bytes": 94485
+    },
+    {
+      "path": "testdata/releases/upstream-mit/rakun-full-original.test.js",
+      "sha256": "888c44b6f29deeb52fcf2ced59873326973881aae4976c725c38d258ba33f91c",
+      "bytes": 25200
+    },
+    {
+      "path": "testdata/releases/upstream-mit/rakun-full-original.tester.js",
+      "sha256": "56a8bcd6273986354ffc61d0d933d8567ac785737fceaa4268c20113682ed569",
+      "bytes": 642
+    },
+    {
+      "path": "testdata/releases/upstream-mit/thcolin.LICENSE",
+      "sha256": "cd43e5ac0f31f0437331794c96242864b0b344e6edf3cd196a50b9118296a91d",
+      "bytes": 1074
+    },
+    {
+      "path": "testdata/releases/upstream-mit/thcolin.json",
+      "sha256": "81fadd429d237f9b9714e3c910265bd7eae438eaad6cc221f6bd67479d536293",
+      "bytes": 39888
+    },
+    {
+      "path": "testdata/releases/upstream-mit/viren-full-main-original.test.ts",
+      "sha256": "4b25201f0f2e4a04929ad154b91252f8bc4c9a24a36aac322987e12e3d79f5cd",
+      "bytes": 61824
+    }
+  ]
+}

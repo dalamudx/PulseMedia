@@ -1,0 +1,54 @@
+{
+  "id": "cehbz-parse-original",
+  "repository": "https://github.com/cehbz/torrentname",
+  "commit": "803fda3c3c111ae99bfb8ecd98eaca0719503068",
+  "provenance": [
+    {
+      "path": "LICENSE",
+      "preserved_file": "testdata/releases/review-inputs/cehbz-parse-original.LICENSE",
+      "sha256": "31aa89620a821a00659bfb779f63b1df54a82e01036569882cd6bbedbf1d0af6",
+      "bytes": 1062,
+      "lines": 21,
+      "git_blob": "80c88d065b85fb68d7bc4c619285e8ef88369732",
+      "byte_equality": true
+    },
+    {
+      "path": "parse_test.go",
+      "preserved_file": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+      "sha256": "3848e40b8117f4c447a9f6a350052b5d255c80604d72b73bac04f483878c51df",
+      "bytes": 29804,
+      "lines": 1000,
+      "git_blob": "cf2b952186def1564e971c81eb9a867f5a70c6f8",
+      "byte_equality": true
+    }
+  ],
+  "counts": {
+    "positive_literal_assertions": 51,
+    "positive_unique_inputs": 47,
+    "duplicate_occurrences": 4,
+    "synthetic_literal_occurrences": 22,
+    "synthetic_unique_inputs": 22,
+    "generated_fixtures": 0,
+    "exact_unique_duplicates_gold": 0,
+    "new_unique_vs_gold": 47,
+    "exact_unique_duplicates_prior_original_census": 0,
+    "new_unique_vs_gold_and_prior_original_census": 47
+  },
+  "flags": {
+    "accepted": false,
+    "authority": false,
+    "formal_golden_acceptance": false,
+    "canonical_unit_authorization": false,
+    "coverage_authority": false,
+    "reviewed_entries": 17
+  },
+  "license": "MIT",
+  "review_status": "partially_reviewed_literal_source",
+  "exclusions": [
+    "4 benchmark literals without title assertions excluded.",
+    "8 NormalizeTitle normalization cases excluded: not parse-title identity.",
+    "MatchTitles booleans and calculateSimilarity numbers excluded.",
+    "Confidence expressions retained verbatim, not evaluated."
+  ],
+  "method": "Fetched exact Git commit; all requested original and LICENSE lines read through hashline pi.read; complete blobs preserved; byte equality, SHA256 and Git blob ID verified. Static literal extraction only. No upstream execution, range expansion, expectation generation or output-generated datasets."
+}

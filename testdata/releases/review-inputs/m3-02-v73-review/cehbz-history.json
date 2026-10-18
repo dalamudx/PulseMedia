@@ -1,0 +1,1416 @@
+{
+  "method": "Static reading of original Git test literals only. No upstream execution, expected-value generation or external torrent-occurrence requirement. Commit history corroborates independently authored direct assertions; it does not certify download existence or human keystrokes.",
+  "records": [
+    {
+      "id": "cehbz-original-matrix-1999",
+      "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+      "title": "The Matrix",
+      "fixed_occurrences": [
+        {
+          "input_line": 16,
+          "title_line": 18
+        },
+        {
+          "input_line": 234,
+          "title_line": 236
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 16
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 16
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 15
+            },
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 232
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 15
+            },
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 232
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 16
+            },
+            {
+              "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 234
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-fellowship-extended",
+      "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+      "title": "The Lord of the Rings The Fellowship of the Ring",
+      "fixed_occurrences": [
+        {
+          "input_line": 29,
+          "title_line": 31
+        },
+        {
+          "input_line": 398,
+          "title_line": 400
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 29
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 29
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 28
+            },
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 396
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 28
+            },
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 396
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 29
+            },
+            {
+              "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+              "title": "The Lord of the Rings The Fellowship of the Ring",
+              "inputLine": 398
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-thrones-season-eight",
+      "input": "Game.of.Thrones.S08.Complete.1080p.BluRay.x264-ROVERS[rartv]",
+      "title": "Game of Thrones",
+      "fixed_occurrences": [
+        {
+          "input_line": 43,
+          "title_line": 45
+        }
+      ],
+      "history": [
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "Game.of.Thrones.S08.Complete.1080p.BluRay.x264-ROVERS[rartv]",
+              "title": "Game of Thrones",
+              "inputLine": 43
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Game.of.Thrones.S08.Complete.1080p.BluRay.x264-ROVERS[rartv]",
+              "title": "Game of Thrones",
+              "inputLine": 42
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Game.of.Thrones.S08.Complete.1080p.BluRay.x264-ROVERS[rartv]",
+              "title": "Game of Thrones",
+              "inputLine": 42
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Game.of.Thrones.S08.Complete.1080p.BluRay.x264-ROVERS[rartv]",
+              "title": "Game of Thrones",
+              "inputLine": 43
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-inception-proper",
+      "input": "Inception.2010.1080p.BluRay.x264.PROPER-SPARKS",
+      "title": "Inception",
+      "fixed_occurrences": [
+        {
+          "input_line": 57,
+          "title_line": 59
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "Inception.2010.1080p.BluRay.x264.PROPER-SPARKS",
+              "title": "Inception",
+              "inputLine": 87
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "Inception.2010.1080p.BluRay.x264.PROPER-SPARKS",
+              "title": "Inception",
+              "inputLine": 57
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Inception.2010.1080p.BluRay.x264.PROPER-SPARKS",
+              "title": "Inception",
+              "inputLine": 56
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Inception.2010.1080p.BluRay.x264.PROPER-SPARKS",
+              "title": "Inception",
+              "inputLine": 56
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Inception.2010.1080p.BluRay.x264.PROPER-SPARKS",
+              "title": "Inception",
+              "inputLine": 57
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-blade-runner-2049",
+      "input": "Blade.Runner.2049.2017.2160p.BluRay.HEVC.TrueHD.7.1.Atmos-COASTER",
+      "title": "Blade Runner 2049",
+      "fixed_occurrences": [
+        {
+          "input_line": 71,
+          "title_line": 73
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "Blade.Runner.2049.2017.2160p.BluRay.HEVC.TrueHD.7.1.Atmos-COASTER",
+              "title": "Blade Runner 2049",
+              "inputLine": 101
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "Blade.Runner.2049.2017.2160p.BluRay.HEVC.TrueHD.7.1.Atmos-COASTER",
+              "title": "Blade Runner 2049",
+              "inputLine": 71
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Blade.Runner.2049.2017.2160p.BluRay.HEVC.TrueHD.7.1.Atmos-COASTER",
+              "title": "Blade Runner 2049",
+              "inputLine": 70
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Blade.Runner.2049.2017.2160p.BluRay.HEVC.TrueHD.7.1.Atmos-COASTER",
+              "title": "Blade Runner 2049",
+              "inputLine": 70
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Blade.Runner.2049.2017.2160p.BluRay.HEVC.TrueHD.7.1.Atmos-COASTER",
+              "title": "Blade Runner 2049",
+              "inputLine": 71
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-mandalorian-s02e08",
+      "input": "The.Mandalorian.S02E08.1080p.WEBRip.x265-RARBG.mkv",
+      "title": "The Mandalorian",
+      "fixed_occurrences": [
+        {
+          "input_line": 85,
+          "title_line": 87
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "The.Mandalorian.S02E08.1080p.WEBRip.x265-RARBG.mkv",
+              "title": "The Mandalorian",
+              "inputLine": 115
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "The.Mandalorian.S02E08.1080p.WEBRip.x265-RARBG.mkv",
+              "title": "The Mandalorian",
+              "inputLine": 85
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Mandalorian.S02E08.1080p.WEBRip.x265-RARBG.mkv",
+              "title": "The Mandalorian",
+              "inputLine": 84
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Mandalorian.S02E08.1080p.WEBRip.x265-RARBG.mkv",
+              "title": "The Mandalorian",
+              "inputLine": 84
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Mandalorian.S02E08.1080p.WEBRip.x265-RARBG.mkv",
+              "title": "The Mandalorian",
+              "inputLine": 85
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-aliens-directors-cut",
+      "input": "Aliens.1986.Directors.Cut.1080p.BluRay.x264-SPARKS",
+      "title": "Aliens",
+      "fixed_occurrences": [
+        {
+          "input_line": 100,
+          "title_line": 102
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "Aliens.1986.Directors.Cut.1080p.BluRay.x264-SPARKS",
+              "title": "Aliens",
+              "inputLine": 130
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "Aliens.1986.Directors.Cut.1080p.BluRay.x264-SPARKS",
+              "title": "Aliens",
+              "inputLine": 100
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Aliens.1986.Directors.Cut.1080p.BluRay.x264-SPARKS",
+              "title": "Aliens",
+              "inputLine": 99
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Aliens.1986.Directors.Cut.1080p.BluRay.x264-SPARKS",
+              "title": "Aliens",
+              "inputLine": 99
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Aliens.1986.Directors.Cut.1080p.BluRay.x264-SPARKS",
+              "title": "Aliens",
+              "inputLine": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-parasite-korean",
+      "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+      "title": "Parasite",
+      "fixed_occurrences": [
+        {
+          "input_line": 114,
+          "title_line": 116
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+              "title": "Parasite",
+              "inputLine": 144
+            },
+            {
+              "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+              "title": "Parasite",
+              "inputLine": 590
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+              "title": "Parasite",
+              "inputLine": 114
+            },
+            {
+              "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+              "title": "Parasite",
+              "inputLine": 474
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+              "title": "Parasite",
+              "inputLine": 113
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+              "title": "Parasite",
+              "inputLine": 113
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+              "title": "Parasite",
+              "inputLine": 114
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-house-alt-pilot",
+      "input": "House.1x01.Pilot.720p.HDTV.x264",
+      "title": "House",
+      "fixed_occurrences": [
+        {
+          "input_line": 129,
+          "title_line": 131
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "House.1x01.Pilot.720p.HDTV.x264",
+              "title": "House",
+              "inputLine": 159
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "House.1x01.Pilot.720p.HDTV.x264",
+              "title": "House",
+              "inputLine": 129
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "House.1x01.Pilot.720p.HDTV.x264",
+              "title": "House",
+              "inputLine": 128
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "House.1x01.Pilot.720p.HDTV.x264",
+              "title": "House",
+              "inputLine": 128
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "House.1x01.Pilot.720p.HDTV.x264",
+              "title": "House",
+              "inputLine": 129
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-endgame-cam",
+      "input": "Avengers.Endgame.2019.CAM.x264-ETRG",
+      "title": "Avengers Endgame",
+      "fixed_occurrences": [
+        {
+          "input_line": 143,
+          "title_line": 145
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.CAM.x264-ETRG",
+              "title": "Avengers Endgame",
+              "inputLine": 198
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.CAM.x264-ETRG",
+              "title": "Avengers Endgame",
+              "inputLine": 142
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.CAM.x264-ETRG",
+              "title": "Avengers Endgame",
+              "inputLine": 141
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.CAM.x264-ETRG",
+              "title": "Avengers Endgame",
+              "inputLine": 141
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.CAM.x264-ETRG",
+              "title": "Avengers Endgame",
+              "inputLine": 143
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-witcher-repack-web",
+      "input": "The.Witcher.S01E01.REPACK.1080p.WEB.H264-METCON",
+      "title": "The Witcher",
+      "fixed_occurrences": [
+        {
+          "input_line": 155,
+          "title_line": 157
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "The.Witcher.S01E01.REPACK.1080p.WEB.H264-METCON",
+              "title": "The Witcher",
+              "inputLine": 210
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "The.Witcher.S01E01.REPACK.1080p.WEB.H264-METCON",
+              "title": "The Witcher",
+              "inputLine": 154
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Witcher.S01E01.REPACK.1080p.WEB.H264-METCON",
+              "title": "The Witcher",
+              "inputLine": 153
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Witcher.S01E01.REPACK.1080p.WEB.H264-METCON",
+              "title": "The Witcher",
+              "inputLine": 153
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Witcher.S01E01.REPACK.1080p.WEB.H264-METCON",
+              "title": "The Witcher",
+              "inputLine": 155
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-odyssey-1968",
+      "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+      "title": "2001 A Space Odyssey",
+      "fixed_occurrences": [
+        {
+          "input_line": 170,
+          "title_line": 172
+        },
+        {
+          "input_line": 247,
+          "title_line": 249
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 248
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 169
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 168
+            },
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 245
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 168
+            },
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 245
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 170
+            },
+            {
+              "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 247
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-1941-1979",
+      "input": "1941.1979.1080p.BluRay.x264-SPARKS",
+      "title": "1941",
+      "fixed_occurrences": [
+        {
+          "input_line": 183,
+          "title_line": 185
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "1941.1979.1080p.BluRay.x264-SPARKS",
+              "title": "1941",
+              "inputLine": 261
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "1941.1979.1080p.BluRay.x264-SPARKS",
+              "title": "1941",
+              "inputLine": 182
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "1941.1979.1080p.BluRay.x264-SPARKS",
+              "title": "1941",
+              "inputLine": 181
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "1941.1979.1080p.BluRay.x264-SPARKS",
+              "title": "1941",
+              "inputLine": 181
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "1941.1979.1080p.BluRay.x264-SPARKS",
+              "title": "1941",
+              "inputLine": 183
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-1984-without-release-year",
+      "input": "1984.1080p.BluRay.x264-SPARKS",
+      "title": "1984",
+      "fixed_occurrences": [
+        {
+          "input_line": 196,
+          "title_line": 198
+        }
+      ],
+      "history": [
+        {
+          "commit": "f34593c0283b11bff69bd260966e817d276bcdd4",
+          "match": [
+            {
+              "input": "1984.1080p.BluRay.x264-SPARKS",
+              "title": "1984",
+              "inputLine": 274
+            }
+          ]
+        },
+        {
+          "commit": "169bcb1b624dee58ee36498097f21b7ea52f8383",
+          "match": [
+            {
+              "input": "1984.1080p.BluRay.x264-SPARKS",
+              "title": "1984",
+              "inputLine": 195
+            }
+          ]
+        },
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "1984.1080p.BluRay.x264-SPARKS",
+              "title": "1984",
+              "inputLine": 194
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "1984.1080p.BluRay.x264-SPARKS",
+              "title": "1984",
+              "inputLine": 194
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "1984.1080p.BluRay.x264-SPARKS",
+              "title": "1984",
+              "inputLine": 196
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-matrix-year-after-metadata",
+      "input": "The.Matrix.1080p.BluRay.1999.x264-SPARKS",
+      "title": "The Matrix",
+      "fixed_occurrences": [
+        {
+          "input_line": 208,
+          "title_line": 210
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Matrix.1080p.BluRay.1999.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 206
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Matrix.1080p.BluRay.1999.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 206
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Matrix.1080p.BluRay.1999.x264-SPARKS",
+              "title": "The Matrix",
+              "inputLine": 208
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-odyssey-year-after-metadata",
+      "input": "2001.A.Space.Odyssey.1080p.BluRay.1968.x264-SPARKS",
+      "title": "2001 A Space Odyssey",
+      "fixed_occurrences": [
+        {
+          "input_line": 221,
+          "title_line": 223
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1080p.BluRay.1968.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 219
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1080p.BluRay.1968.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 219
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "2001.A.Space.Odyssey.1080p.BluRay.1968.x264-SPARKS",
+              "title": "2001 A Space Odyssey",
+              "inputLine": 221
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-squid-game-hardcoded",
+      "input": "Squid.Game.S01E01.HC.1080p.WEBRip",
+      "title": "Squid Game",
+      "fixed_occurrences": [
+        {
+          "input_line": 308,
+          "title_line": 310
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Squid.Game.S01E01.HC.1080p.WEBRip",
+              "title": "Squid Game",
+              "inputLine": 306
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Squid.Game.S01E01.HC.1080p.WEBRip",
+              "title": "Squid Game",
+              "inputLine": 306
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Squid.Game.S01E01.HC.1080p.WEBRip",
+              "title": "Squid Game",
+              "inputLine": 308
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-daily-show-calendar",
+      "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+      "title": "The Daily Show",
+      "fixed_occurrences": [
+        {
+          "input_line": 321,
+          "title_line": 323
+        },
+        {
+          "input_line": 386,
+          "title_line": 388
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+              "title": "The Daily Show",
+              "inputLine": 319
+            },
+            {
+              "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+              "title": "The Daily Show",
+              "inputLine": 384
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+              "title": "The Daily Show",
+              "inputLine": 319
+            },
+            {
+              "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+              "title": "The Daily Show",
+              "inputLine": 384
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+              "title": "The Daily Show",
+              "inputLine": 321
+            },
+            {
+              "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+              "title": "The Daily Show",
+              "inputLine": 386
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-endgame-mp4",
+      "input": "Avengers.Endgame.2019.1080p.BluRay.x264-SPARKS.mp4",
+      "title": "Avengers Endgame",
+      "fixed_occurrences": [
+        {
+          "input_line": 359,
+          "title_line": 361
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.1080p.BluRay.x264-SPARKS.mp4",
+              "title": "Avengers Endgame",
+              "inputLine": 357
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.1080p.BluRay.x264-SPARKS.mp4",
+              "title": "Avengers Endgame",
+              "inputLine": 357
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Avengers.Endgame.2019.1080p.BluRay.x264-SPARKS.mp4",
+              "title": "Avengers Endgame",
+              "inputLine": 359
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-complete-works-shakespeare",
+      "input": "The.Complete.Works.of.Shakespeare.1995.1080p.BluRay.x264-SPARKS",
+      "title": "The Complete Works of Shakespeare",
+      "fixed_occurrences": [
+        {
+          "input_line": 412,
+          "title_line": 414
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Complete.Works.of.Shakespeare.1995.1080p.BluRay.x264-SPARKS",
+              "title": "The Complete Works of Shakespeare",
+              "inputLine": 410
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Complete.Works.of.Shakespeare.1995.1080p.BluRay.x264-SPARKS",
+              "title": "The Complete Works of Shakespeare",
+              "inputLine": 410
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Complete.Works.of.Shakespeare.1995.1080p.BluRay.x264-SPARKS",
+              "title": "The Complete Works of Shakespeare",
+              "inputLine": 412
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-final-countdown",
+      "input": "The.Final.Countdown.1980.1080p.BluRay.x264-SPARKS",
+      "title": "The Final Countdown",
+      "fixed_occurrences": [
+        {
+          "input_line": 503,
+          "title_line": 505
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Final.Countdown.1980.1080p.BluRay.x264-SPARKS",
+              "title": "The Final Countdown",
+              "inputLine": 501
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Final.Countdown.1980.1080p.BluRay.x264-SPARKS",
+              "title": "The Final Countdown",
+              "inputLine": 501
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Final.Countdown.1980.1080p.BluRay.x264-SPARKS",
+              "title": "The Final Countdown",
+              "inputLine": 503
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-avatar-resolution-only",
+      "input": "Avatar.2009.1080p",
+      "title": "Avatar",
+      "fixed_occurrences": [
+        {
+          "input_line": 524,
+          "title_line": 526
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Avatar.2009.1080p",
+              "title": "Avatar",
+              "inputLine": 522
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Avatar.2009.1080p",
+              "title": "Avatar",
+              "inputLine": 522
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Avatar.2009.1080p",
+              "title": "Avatar",
+              "inputLine": 524
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-breaking-bad-season-one",
+      "input": "Breaking.Bad.S01.Complete.720p.BluRay.x264-DEMAND",
+      "title": "Breaking Bad",
+      "fixed_occurrences": [
+        {
+          "input_line": 534,
+          "title_line": 536
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "Breaking.Bad.S01.Complete.720p.BluRay.x264-DEMAND",
+              "title": "Breaking Bad",
+              "inputLine": 532
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "Breaking.Bad.S01.Complete.720p.BluRay.x264-DEMAND",
+              "title": "Breaking Bad",
+              "inputLine": 532
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Breaking.Bad.S01.Complete.720p.BluRay.x264-DEMAND",
+              "title": "Breaking Bad",
+              "inputLine": 534
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-dark-knight-dts",
+      "input": "The.Dark.Knight.2008.1080p.BluRay.DTS.x264-ESiR",
+      "title": "The Dark Knight",
+      "fixed_occurrences": [
+        {
+          "input_line": 548,
+          "title_line": 550
+        }
+      ],
+      "history": [
+        {
+          "commit": "7e04c5187af335e23a8710f734eb19e009f94019",
+          "match": [
+            {
+              "input": "The.Dark.Knight.2008.1080p.BluRay.DTS.x264-ESiR",
+              "title": "The Dark Knight",
+              "inputLine": 546
+            }
+          ]
+        },
+        {
+          "commit": "31308368aec81260096d73a6e2dbd6bc6be4fe9c",
+          "match": [
+            {
+              "input": "The.Dark.Knight.2008.1080p.BluRay.DTS.x264-ESiR",
+              "title": "The Dark Knight",
+              "inputLine": 546
+            }
+          ]
+        },
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "The.Dark.Knight.2008.1080p.BluRay.DTS.x264-ESiR",
+              "title": "The Dark Knight",
+              "inputLine": 548
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cehbz-original-breaking-bad-s01e01-pilot",
+      "input": "Breaking Bad S01E01 Pilot 1080p",
+      "title": "Breaking Bad",
+      "fixed_occurrences": [
+        {
+          "input_line": 628,
+          "title_line": 630
+        }
+      ],
+      "history": [
+        {
+          "commit": "545c903b9ec6d2ab014f4b1e1b0803e31b675ab6",
+          "match": [
+            {
+              "input": "Breaking Bad S01E01 Pilot 1080p",
+              "title": "Breaking Bad",
+              "inputLine": 628
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import ts from 'typescript';
+const raw=readFileSync(new URL('../src/features/configuration/completeTVJournal.ts',import.meta.url),'utf8');
+const js=ts.transpileModule(raw,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
+const {journalKey,readJournal,saveEntry,sendEntry}=await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}`);
+const id=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
+const owner=id(1),sub=id(2),key=journalKey(owner,sub),stamp='a'.repeat(64);
+const entry=()=>({materialStamp:'b'.repeat(64),userId:owner,subscriptionId:sub,coverage:[{unitId:id(9),unitKey:'S02E03'},{unitId:id(10),unitKey:'S02E05'}],key:id(3),signature:'intent-7',candidateId:id(4),kind:'review',phase:'pending',body:{candidate_id:id(4),expected_input_stamp:stamp,confirmed:true,reason:'人工逐集复核'}});
+const storage=()=>{const m=new Map();return {getItem:k=>m.get(k)??null,setItem:(k,v)=>m.set(k,v)}};
+test('cross-account copied storage is refused before transport',async()=>{const s=storage();saveEntry(s,key,entry());const other=journalKey(id(99),sub);s.setItem(other,s.getItem(key));await assert.rejects(sendEntry(s,other,entry(),async()=>assert.fail('cross-account POST'),()=>{}));});
+test('cross-subscription copied storage is refused',()=>{const s=storage();saveEntry(s,key,entry());const other=journalKey(owner,id(99));s.setItem(other,s.getItem(key));assert.throws(()=>readJournal(s,other));});
+test('scope remains original explicit non-contiguous set after lost receipt',async()=>{const s=storage();await assert.rejects(sendEntry(s,key,entry(),async()=>{throw Error('lost')},()=>{}));const p=readJournal(s,key).entries[0];assert.deepEqual(p.coverage.map(r=>r.unitKey),['S02E03','S02E05']);assert.throws(()=>saveEntry(s,key,{...p,coverage:[{unitId:id(9),unitKey:'S02E04'}]}));});
+test('unexpected secret and URL fields cannot enter durable commands',()=>{for(const change of [e=>({...e,url:'https://example.invalid/private'}),e=>({...e,body:{...e.body,token:'secret'}}),e=>({...e,coverage:[{unitId:id(9),unitKey:'S02E03',url:'private'}]})]){const s=storage();assert.throws(()=>saveEntry(s,key,change(entry())));assert.equal(s.getItem(key),null);}});
+test('duplicate episode identity or key rejected',()=>{for(const coverage of [[{unitId:id(9),unitKey:'S02E03'},{unitId:id(9),unitKey:'S02E05'}],[{unitId:id(9),unitKey:'S02E03'},{unitId:id(10),unitKey:'S02E03'}]])assert.throws(()=>saveEntry(storage(),key,{...entry(),coverage}));});
+test('403 after ambiguous commit preserves exact original scope and key',async()=>{const s=storage();await assert.rejects(sendEntry(s,key,entry(),async()=>{throw Error('lost')},()=>{}));await assert.rejects(sendEntry(s,key,entry(),async()=>({status:403}),()=>{}));assert.deepEqual(readJournal(s,key).entries,[entry()]);});
+test('v1 legacy record is retained and blocks silently creating a v2 command',async()=>{const s=storage(),oldKey=key.replace(':v2:',':v1:'),old=JSON.stringify({version:1,entries:[{phase:'pending',key:id(3)}]});s.setItem(oldKey,old);await assert.rejects(sendEntry(s,key,entry(),async()=>assert.fail('legacy unknown bypassed'),()=>{}));assert.equal(s.getItem(oldKey),old);assert.equal(s.getItem(key),null);});
+test('review receipt must match the frozen material stamp',async()=>{const s=storage();await assert.rejects(sendEntry(s,key,entry(),async()=>({status:200,data:{id:id(8),subscription_id:sub,candidate_id:id(4),input_stamp:stamp,material_stamp:'c'.repeat(64),status:'reviewed_not_executable'}}),()=>assert.fail('wrong material accepted')));assert.equal(readJournal(s,key).entries[0].phase,'pending');});
+for(const status of [400,404,409]) test(`HTTP ${status} recovery cannot disprove the earlier lost receipt`,async()=>{const s=storage();await assert.rejects(sendEntry(s,key,entry(),async()=>{throw Error('lost')},()=>{}));await assert.rejects(sendEntry(s,key,entry(),async()=>({status}),()=>{}));assert.deepEqual(readJournal(s,key).entries,[entry()]);});
+

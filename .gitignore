@@ -1,0 +1,23 @@
+# 本地数据与个人配置
+.data/
+.mise.local.toml
+mise.local.toml
+.env
+.env.*
+/config.yaml
+/.jev-fabric-native/
+
+# 构建产物
+/bin/
+/dist/
+web/dist/
+web/node_modules/
+coverage.out
+*.test
+
+# 编辑器与工具
+.idea/
+.vscode/
+.DS_Store
+.astrolabe/
+.pi/

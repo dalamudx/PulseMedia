@@ -1,0 +1,28 @@
+{
+  "status": "verified",
+  "command": "mise exec -- node testdata/releases/review-inputs/new-independent-scout-20261014-mit-assertions/scout.cjs",
+  "new_unique_inputs": 125,
+  "initial_inputs": 117,
+  "supplement_inputs": 8,
+  "excluded_occurrences": 29,
+  "verified_original_and_history_files": 47,
+  "verified_existing_baseline_files": 166,
+  "current_gold_at_receipt": 878,
+  "potential_total_without_existing_reserve": 1003,
+  "exact_overlap_in_kept_inputs": 0,
+  "full_new_contracts_frozen": 0,
+  "pulse_probes": 0,
+  "upstream_executed": false,
+  "new_gold": 0,
+  "parser_pass_count": null,
+  "parser_defect_count": null,
+  "checks": [
+    "original MIT license and source bytes, lengths, SHA-256 and fixed-commit identity",
+    "literal input/title extraction reproduced with original source indices and assertion positions",
+    "direct handwritten test-oracle flow separated from generated corpus output",
+    "preserved GitHub non-fork and MIT search metadata",
+    "all 166 current baseline fingerprints and explicitly recorded original gold drift",
+    "exact dedup against decoded JSON/JSONL values and keys, escaped literals, serialized spellings and raw source text",
+    "initial/final receipt and helper checkpoint hashes"
+  ]
+}

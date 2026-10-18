@@ -1,0 +1,1934 @@
+{
+  "schema": "pulse.next-scout-B-frozen.v1",
+  "partition": [
+    63,
+    125
+  ],
+  "reviewed_entries": 62,
+  "formal_golden_acceptance": false,
+  "upstream_executed": false,
+  "pulse_probed": false,
+  "entries": [
+    {
+      "id": "next-scout-B-63",
+      "source": "machard-releascenify",
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HDMA_x264.mkv",
+      "review_note": "Independent item-by-item preprobe review. Unique 2013 movie declaration; BluRay/x264 explicit; DTS-HD audio variants do not measure audio or establish a group.",
+      "expected": {
+        "title": "Redemption",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-64",
+      "source": "machard-releascenify",
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD.MA.x264.mkv",
+      "review_note": "Independent item-by-item preprobe review. Literal title/year retained; source explicitly null group and extra; DTS-HD.MA is audio metadata only.",
+      "expected": {
+        "title": "Redemption",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-65",
+      "source": "machard-releascenify",
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD-MA.x264.mkv",
+      "review_note": "Independent item-by-item preprobe review. DTS-HD-MA internal dashes are audio boundaries, never release-group evidence; null group preserved.",
+      "expected": {
+        "title": "Redemption",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-66",
+      "source": "machard-releascenify",
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS.HD.x264.mkv",
+      "review_note": "Independent item-by-item preprobe review. DTS.HD variation leaves audio unknown; explicit 1080p BluRay and x264 establish only token facts.",
+      "expected": {
+        "title": "Redemption",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-67",
+      "source": "machard-releascenify",
+      "input": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD.MA.ATMOS.x264.mkv",
+      "review_note": "Independent item-by-item preprobe review. ATMOS is audio metadata, not HDR; title/year and null group remain original.",
+      "expected": {
+        "title": "Redemption",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-68",
+      "source": "machard-releascenify",
+      "input": "Bat-man.1989.Fanedit.Silent-Film.1080p.AAC.x265.mkv",
+      "review_note": "Independent item-by-item preprobe review. Preserve literal title hyphen; Fanedit and Silent-Film supply no supported edition/source; explicit null source/group.",
+      "expected": {
+        "title": "Bat-man",
+        "year": 1989,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-69",
+      "source": "machard-releascenify",
+      "input": "Cry.Macho.2021.MULTi.BluRay.2160p.REMUX.HEVC.HDR10.DTS-HDMA5.1-PéPiTE.mkv",
+      "review_note": "Independent item-by-item preprobe review. BluRay REMUX and HDR10 explicit; preserve accented group exactly; DTS and 5.1 are unmeasured audio declarations.",
+      "expected": {
+        "title": "Cry Macho",
+        "year": 2021,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "HDR10",
+          "audio": "",
+          "edition": "",
+          "group": "PéPiTE"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-70",
+      "source": "machard-releascenify",
+      "input": "Police_Story_4_-Contre_Attaque(1996).mkv",
+      "review_note": "Independent item-by-item preprobe review. Original title preserves numeric sequel and attached -Contre spelling; MKV supplies no quality; null group.",
+      "expected": {
+        "title": "Police Story 4 -Contre Attaque",
+        "year": 1996,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-71",
+      "source": "machard-releascenify",
+      "input": "La_Charge_Fantastique_(1941)_-VFR-720p-_AC3.mkv",
+      "review_note": "Independent item-by-item preprobe review. VFR and AC3 tail metadata is not group or observed audio; exact original title/year.",
+      "expected": {
+        "title": "La Charge Fantastique",
+        "year": 1941,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-72",
+      "source": "machard-releascenify",
+      "input": "Banzaï_1080p_x264_DTSHDMA2.0_SUBFRFORCED.mkv",
+      "review_note": "Independent item-by-item preprobe review. Original Banzai assertion lacks raw diaeresis in Banzaï: retain that independent disagreement. No year or unit; source null group; audio unknown.",
+      "expected": {
+        "title": "Banzai",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-73",
+      "source": "machard-releascenify",
+      "input": "The.Death.of.Robin.Hood.2026.1080p.VOSTFR.CAM.x264-FS.mp4",
+      "review_note": "Independent item-by-item preprobe review. CAM is unsupported source; VOSTFR not group/audio; explicit movie-year and group FS remain literal.",
+      "expected": {
+        "title": "The Death of Robin Hood",
+        "year": 2026,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FS"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-74",
+      "source": "machard-releascenify",
+      "input": "Kirikou.Et.Les.Betes.Sauvages.2005.French.1080P.Hdlight.mkv",
+      "review_note": "Independent item-by-item preprobe review. HDLIGHT is not a supported source; French language does not invent codec/audio; title and source null group retained.",
+      "expected": {
+        "title": "Kirikou Et Les Betes Sauvages",
+        "year": 2005,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-75",
+      "source": "machard-releascenify",
+      "input": "The.Plague.Dogs.1982.VOSTFR.1080p.HDLight.AC3.x264-Dread-Team.mkv",
+      "review_note": "Independent item-by-item preprobe review. HDLight unsupported; preserve complete hyphenated original group Dread-Team; AC3 is declaration only.",
+      "expected": {
+        "title": "The Plague Dogs",
+        "year": 1982,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Dread-Team"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-76",
+      "source": "machard-releascenify",
+      "input": "Masters_of_the_Universe._2026.1080p.VOSTFR.DCPRiP.x264-FS.mkv",
+      "review_note": "Independent item-by-item preprobe review. DCPRiP does not establish supported source; leading title case follows literal assertion; VOSTFR metadata and group FS.",
+      "expected": {
+        "title": "Masters of the Universe",
+        "year": 2026,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FS"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-77",
+      "source": "machard-releascenify",
+      "input": "Euphoria.2019.S03E06.MULTi.4KLight.DV.HDR.WEBRip.DDP5.1.Atmos.HEVC-[BATGirl]",
+      "review_note": "Independent item-by-item preprobe review. Explicit S03E06 and 2019; 4KLight alone is not measured/explicit 2160p; DV+HDR favors explicit DV label; bracket group literal.",
+      "expected": {
+        "title": "Euphoria",
+        "year": 2019,
+        "media_type": "tv",
+        "season": 3,
+        "episodes": [
+          6
+        ],
+        "unit_keys": [
+          "S03E06"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "WEBRip",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "BATGirl"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-78",
+      "source": "machard-releascenify",
+      "input": "Tongari.Boushi.no.Atelier.E08.MULTi.1080p.WEB.x264-AMB3R",
+      "review_note": "Independent item-by-item preprobe review. E08 has no canonical season and cannot authorize S01; retain original scalar episode 8 for refusal. Bare WEB supplies no subtype; AMB3R explicit tail.",
+      "withheld_source_fields": [
+        "episode"
+      ],
+      "expected": {
+        "title": "Tongari Boushi no Atelier",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AMB3R"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-79",
+      "source": "machard-releascenify",
+      "input": "Berlin.and.the.Lady.with.an.Ermine.S01E08.FiNAL.MULTi.HDR.DV.2160p.WEB.H265-FW-Wawacity.win",
+      "review_note": "Independent item-by-item preprobe review. S01E08 explicit; FINAL not a collection claim. Bare WEB unknown; omitted upstream group is not negative: preserve undissected tail FW-Wawacity.win.",
+      "expected": {
+        "title": "Berlin and the Lady with an Ermine",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          8
+        ],
+        "unit_keys": [
+          "S01E08"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "FW-Wawacity.win"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-80",
+      "source": "machard-releascenify",
+      "input": "Les.Aventures.De.Pil.S01E25.FRENCH.1080p.WEB.x264-D4KiD",
+      "review_note": "Independent item-by-item preprobe review. S01E25 explicit; FRENCH language is not French season syntax; bare WEB subtype unknown; explicit D4KiD tail.",
+      "expected": {
+        "title": "Les Aventures De Pil",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          25
+        ],
+        "unit_keys": [
+          "S01E25"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "D4KiD"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-81",
+      "source": "machard-releascenify",
+      "input": "The.West.Wing.S01E12.MULTi.1080p.WEBRip.DDP2.0.HEVC-[BATGirl]",
+      "review_note": "Independent item-by-item preprobe review. Original S01E12 and WEBRip/HEVC; DDP2.0 cannot add measured audio; omitted group not negative, bracket BATGirl literal.",
+      "expected": {
+        "title": "The West Wing",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          12
+        ],
+        "unit_keys": [
+          "S01E12"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEBRip",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BATGirl"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-82",
+      "source": "machard-releascenify",
+      "input": "Maximum.Pleasure.Guaranteed.S01E02.FRENCH.1080p.WEB.H264-HiggsBoson-Wawacity.win",
+      "review_note": "Independent item-by-item preprobe review. Original explicitly separates group HiggsBoson from extra Wawacity.win; bare WEB remains unknown; S01E02 exact.",
+      "expected": {
+        "title": "Maximum Pleasure Guaranteed",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          2
+        ],
+        "unit_keys": [
+          "S01E02"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HiggsBoson"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-83",
+      "source": "machard-releascenify",
+      "input": "Maximum.Pleasure.Guaranteed.S01E02.FRENCH.1080p.WEB.H264-HiggsBoson-Wawacity.win.mkv",
+      "review_note": "Independent item-by-item preprobe review. Separate literal input includes MKV, not duplicate string; original group HiggsBoson/extra Wawacity.win retained; WEB unknown.",
+      "expected": {
+        "title": "Maximum Pleasure Guaranteed",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          2
+        ],
+        "unit_keys": [
+          "S01E02"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HiggsBoson"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-84",
+      "source": "machard-releascenify",
+      "input": "Mort.Ou.Vif.Joaquin.Murrieta.S01E01.2160p.AMZN.WEB-DL.MULTI.VFi.DDP5.1.HDR10+.DV.10bit.x265-MPx",
+      "review_note": "Independent item-by-item preprobe review. S01E01 exact; HDR10+ plus DV explicit token labels; 10bit not additional HDR or measured audio; MPx literal.",
+      "expected": {
+        "title": "Mort Ou Vif Joaquin Murrieta",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "MPx"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-85",
+      "source": "machard-releascenify",
+      "input": "The.Pitt.S01.1080p.x265.rar",
+      "review_note": "Independent item-by-item preprobe review. S01-only RAR is unknown coverage, not a movie or whole-season unit; original season string retained but no reported partial scope.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "The Pitt",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-86",
+      "source": "machard-releascenify",
+      "input": "The.Last.of.Us.S02E03.MULTi.1080p.AMZN.WEB-DL.DDP5.1.H.264-FLUX",
+      "review_note": "Independent item-by-item preprobe review. Canonical S02E03; H.264 bounded codec; AMZN/DDP5.1 no measured audio or year; FLUX literal group.",
+      "expected": {
+        "title": "The Last of Us",
+        "year": 0,
+        "media_type": "tv",
+        "season": 2,
+        "episodes": [
+          3
+        ],
+        "unit_keys": [
+          "S02E03"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FLUX"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-87",
+      "source": "machard-releascenify",
+      "input": "Arcane.S01.COMPLETE.2160p.NF.WEB-DL.DDP5.1.Atmos.HDR.H265",
+      "review_note": "Independent item-by-item preprobe review. S01 COMPLETE cannot prove actual episodes; refuse all units and reported season. HDR filename marker only; original audio/network remain raw.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "Arcane",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "HDR10",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-88",
+      "source": "machard-releascenify",
+      "input": "B.R.I.S02E02.FRENCH.AD.2160p.WEB.SDR.H265-THESYNDiCATE",
+      "review_note": "Independent item-by-item preprobe review. Original spaced initials retained with separately frozen exact raw B.R.I. punctuation proof; bare WEB unknown; SDR literal.",
+      "expected": {
+        "title": "B R I",
+        "year": 0,
+        "media_type": "tv",
+        "season": 2,
+        "episodes": [
+          2
+        ],
+        "unit_keys": [
+          "S02E02"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "SDR",
+          "audio": "",
+          "edition": "",
+          "group": "THESYNDiCATE"
+        },
+        "title_punctuation_evidence": {
+          "raw_initials": "B.R.I.",
+          "reviewed_title": "B.R.I."
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-89",
+      "source": "machard-releascenify",
+      "input": "Leverage.S03E15.CUSTOM.2160p.MULTI.AMZN.WEB-DL.DDP5.1.H.265-Mad.Darks27",
+      "review_note": "Independent item-by-item preprobe review. Explicit S03E15 and H.265; original group is null and Mad.Darks27 is extra, so do not promote it to group or audio fact.",
+      "expected": {
+        "title": "Leverage",
+        "year": 0,
+        "media_type": "tv",
+        "season": 3,
+        "episodes": [
+          15
+        ],
+        "unit_keys": [
+          "S03E15"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-90",
+      "source": "machard-releascenify",
+      "input": "Firefly Lane (2021) - S02E10 - All The World’s A Stage [WEBDL-2160p][DV HDR10][EAC3 Atmos 5.1][EN+FR][h265]-FRESH",
+      "review_note": "Independent item-by-item preprobe review. 2021 prefix work year; S02E10 canonical. Episode title is not work title; WEBDL bounded token and DV HDR10 labels; FRESH literal.",
+      "expected": {
+        "title": "Firefly Lane",
+        "year": 2021,
+        "media_type": "tv",
+        "season": 2,
+        "episodes": [
+          10
+        ],
+        "unit_keys": [
+          "S02E10"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "FRESH"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-91",
+      "source": "machard-releascenify",
+      "input": "Goldorak.U.2024.S01E06.HDTVLight.1080p.x264.VF.AC3.2.0.@BS",
+      "review_note": "Independent item-by-item preprobe review. Original year and S01E06 retained; HDTVLight is not complete HDTV token and cannot assert supported source; @BS original group; AC3 unmeasured.",
+      "expected": {
+        "title": "Goldorak U",
+        "year": 2024,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          6
+        ],
+        "unit_keys": [
+          "S01E06"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "@BS"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-92",
+      "source": "machard-releascenify",
+      "input": "Stranger.Things.Tales.From.85.S01E01.MULTi.2160p.DV.HDR.DDP5.1.Atmos.HEVC-[BATGirl]",
+      "review_note": "Independent item-by-item preprobe review. 85 belongs to original title, not year/episode. S01E01 exact; DV explicit; no source declaration; bracket BATGirl.",
+      "expected": {
+        "title": "Stranger Things Tales From 85",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "BATGirl"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-93",
+      "source": "machard-releascenify",
+      "input": "The Pitt - S01E08 - 1400 2160p.DV.HDR.x265-Amen",
+      "review_note": "Independent item-by-item preprobe review. Original S01E08 must not turn episode title 1400 into additional episode; no source/year; literal Amen group.",
+      "expected": {
+        "title": "The Pitt",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          8
+        ],
+        "unit_keys": [
+          "S01E08"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "Amen"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-94",
+      "source": "machard-releascenify",
+      "input": "Zorro (Dujardin) S01E07 1080p Web H264 @@UnPourTous@@",
+      "review_note": "Independent item-by-item preprobe review. Parenthetical Dujardin is independent title text; S01E07 exact; bare Web unknown; preserve unusual original group verbatim.",
+      "expected": {
+        "title": "Zorro (Dujardin)",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          7
+        ],
+        "unit_keys": [
+          "S01E07"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "@@UnPourTous@@"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-95",
+      "source": "machard-releascenify",
+      "input": "1923.S01E05.Ghost.of.Zebrina.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb.mkv",
+      "review_note": "Independent item-by-item preprobe review. Original explicitly labels year1923 although also entire title1923: preserve competing declaration, flag source-semantic pending on mismatch rather than rewrite. S01E05 literal.",
+      "expected": {
+        "title": "1923",
+        "year": 1923,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          5
+        ],
+        "unit_keys": [
+          "S01E05"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NTb"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-96",
+      "source": "machard-releascenify",
+      "input": "Deadliest.Catch.S00E66.No.Safe.Passage.720p.AMZN.WEB-DL.DDP2.0.H.264-NTb[TGx]",
+      "review_note": "Independent item-by-item preprobe review. S00E66 is special-season evidence; user requires zero confidence/coverage review, no special unit. Preserve original season0/episode66 unchanged; TGx relay excluded from asserted NTb.",
+      "withheld_source_fields": [
+        "episode"
+      ],
+      "expected": {
+        "title": "Deadliest Catch",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NTb"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-97",
+      "source": "machard-releascenify",
+      "input": "Insecure.S04.COMPLETE.720p.AMZN.WEBRip.x264-GalaxyTV",
+      "review_note": "Independent item-by-item preprobe review. Original null episode and S04 COMPLETE cannot certify a full set or any endpoint; keep original season string independently, zero all coverage.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "Insecure",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEBRip",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "GalaxyTV"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-98",
+      "source": "machard-releascenify",
+      "input": "Landman.S02.MULTi.VFF.1080p.WEB.EAC3.5.1.H265-TyHD.zip",
+      "review_note": "Independent item-by-item preprobe review. S02 archive with null episode is unknown coverage; bare WEB subtype unknown; EAC3/5.1 no audio measurement; literal TyHD group.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "Landman",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "TyHD"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-99",
+      "source": "machard-releascenify",
+      "input": "The Mandalorian S03 MULTi VFI 2160p 10bit 4KLight DV HDR WebRip DDP 5.1 Atmos x265-QTZ.rar",
+      "review_note": "Independent item-by-item preprobe review. S03-only RAR and null episode cannot authorize whole season; explicit2160p remains despite 4KLight declaration; DV not bitdepth measurement; QTZ literal.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "The Mandalorian",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEBRip",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "QTZ"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-100",
+      "source": "machard-releascenify",
+      "input": "Halo (2024) - S02E06 - Onyx Multi.VFF.2160p.10bit.4KLight.HDR+Dolby.Vision.WEB.Custom.AC3.h265.⚡XRS-LazerTeam⚡.mkv",
+      "review_note": "Independent item-by-item preprobe review. 2024 in title prefix is work-year evidence, omission upstream not negative. Explicit S02E06/2160p/Dolby Vision; bare WEB unknown; preserve lightning group original.",
+      "expected": {
+        "title": "Halo",
+        "year": 2024,
+        "media_type": "tv",
+        "season": 2,
+        "episodes": [
+          6
+        ],
+        "unit_keys": [
+          "S02E06"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "2160p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "⚡XRS-LazerTeam⚡"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-101",
+      "source": "machard-releascenify",
+      "input": "[SR-71] Kaifuku Jutsushi no Yarinaoshi S01 VOSTFR [1080p][X265][10BITS].zip",
+      "review_note": "Independent item-by-item preprobe review. S01 ZIP lacks episode evidence and cannot create season units. SR-71 literal prefix group; 10BITS not HDR; no anime absolute number supplied.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "Kaifuku Jutsushi no Yarinaoshi",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SR-71"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-102",
+      "source": "machard-releascenify",
+      "input": "Naruto S02 E53-104 MULTi 1080p 10bits BluRay x265-SR-71.zip",
+      "review_note": "Independent item-by-item preprobe review. Original episode scalar53 and episode_name104 contradict pretending one unit; E53-104 exceeds bounded20 range and archive scope unresolved. Preserve both declarations, expand no samples or coverage.",
+      "withheld_source_fields": [
+        "season",
+        "episode"
+      ],
+      "expected": {
+        "title": "Naruto",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SR-71"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-103",
+      "source": "machard-releascenify",
+      "input": "Ten Pound Poms - 1x01 - Épisode 1.mkv",
+      "review_note": "Independent item-by-item preprobe review. 1x01 is explicit alternative canonical numbering; Épisode1 repeats description, no new unit. Original null group and no measured qualities.",
+      "expected": {
+        "title": "Ten Pound Poms",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "alt_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-104",
+      "source": "machard-releascenify",
+      "input": "Gomorra S04E08 - Vices cachés.mkv",
+      "review_note": "Independent item-by-item preprobe review. S04E08 literal, Vices cachés is episode subtitle not release group; explicit original null group retained.",
+      "expected": {
+        "title": "Gomorra",
+        "year": 0,
+        "media_type": "tv",
+        "season": 4,
+        "episodes": [
+          8
+        ],
+        "unit_keys": [
+          "S04E08"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-105",
+      "source": "machard-releascenify",
+      "input": "Les Mystères de l_ouest - S02E16 - La Nuit des traquenards.mkv",
+      "review_note": "Independent item-by-item preprobe review. Original title removes accent from raw Mystères; retain independent spelling and flag source-semantic pending if strict comparison fails. Original group null; canonical S02E16.",
+      "expected": {
+        "title": "Les Mysteres de l ouest",
+        "year": 0,
+        "media_type": "tv",
+        "season": 2,
+        "episodes": [
+          16
+        ],
+        "unit_keys": [
+          "S02E16"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-106",
+      "source": "machard-releascenify",
+      "input": "The.Sommerdahl.Murders.S05E07E08.FiNAL.Un.gros.poisson.FRENCH.WEBRip.x264.mp4",
+      "review_note": "Independent item-by-item preprobe review. Original episode string7-8 and full input explicitly E07E08 establish exactly7,8; no range expansion into samples. FINAL descriptive, no group tail.",
+      "expected": {
+        "title": "The Sommerdahl Murders",
+        "year": 0,
+        "media_type": "tv",
+        "season": 5,
+        "episodes": [
+          7,
+          8
+        ],
+        "unit_keys": [
+          "S05E07",
+          "S05E08"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "explicit_episode_list",
+        "quality": {
+          "resolution": "",
+          "source": "WEBRip",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-107",
+      "source": "machard-releascenify",
+      "input": "Catch-22.S01.MULTi.1080p.SDR.H265.NvEnc.10bit.Ac3.Custom.7z",
+      "review_note": "Independent item-by-item preprobe review. S01 archive unknown set; preserve Catch-22 numeric title hyphen. NvEnc and 10bit not audio/HDR facts; explicit SDR and H265 only.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "Catch-22",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "SDR",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-108",
+      "source": "machard-releascenify",
+      "input": "The_Mandalorian_S01E05_-_Le_Mercenaire_(The_Gunslinger).mkv",
+      "review_note": "Independent item-by-item preprobe review. S01E05 exact; Le Mercenaire (The Gunslinger) episode subtitle is not group; absent upstream group is not negative by itself, raw gives no group evidence.",
+      "expected": {
+        "title": "The Mandalorian",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          5
+        ],
+        "unit_keys": [
+          "S01E05"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-109",
+      "source": "machard-releascenify",
+      "input": "Tropiques_criminels_-_S07E06_-_La_prairie.mkv",
+      "review_note": "Independent item-by-item preprobe review. S07E06 canonical; La prairie is episode subtitle rather than group; underscore separators preserve original title case.",
+      "expected": {
+        "title": "Tropiques criminels",
+        "year": 0,
+        "media_type": "tv",
+        "season": 7,
+        "episodes": [
+          6
+        ],
+        "unit_keys": [
+          "S07E06"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-110",
+      "source": "machard-releascenify",
+      "input": "Lethal Weapon S01E06 Retrouvailles.mkv",
+      "review_note": "Independent item-by-item preprobe review. S01E06 literal with Retrouvailles episode subtitle; original null group; MKV alone supplies no quality fields.",
+      "expected": {
+        "title": "Lethal Weapon",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          6
+        ],
+        "unit_keys": [
+          "S01E06"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-111",
+      "source": "machard-releascenify",
+      "input": "The.Fall.of.the.House.of.Usher.S01.x265.rar",
+      "review_note": "Independent item-by-item preprobe review. S01 RAR and explicit null episode/name do not prove complete season; original title retained, codec H265 only.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "The Fall of the House of Usher",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-112",
+      "source": "machard-releascenify",
+      "input": "[1923] S01 x265.rar",
+      "review_note": "Independent item-by-item preprobe review. S01-only archive cannot authorize season; bracket1923 is original title and source also labels year1923, preserved raw and withheld for zeroauthority refusal.",
+      "withheld_source_fields": [
+        "year",
+        "season"
+      ],
+      "expected": {
+        "title": "1923",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-113",
+      "source": "ngtrio-tnp",
+      "input": "Wuthering Heights E01-E02 2009 1080p Blu-ray x265 AC3￡cXcY@FRDS",
+      "review_note": "Independent item-by-item preprobe review. Read original full Episode array[1,2] unchanged: E01-E02 has no season, so neither endpoint is canonical. Preserve producer literal; original year2009, audio AC3 is unmeasured.",
+      "withheld_source_fields": [
+        "episode"
+      ],
+      "expected": {
+        "title": "Wuthering Heights",
+        "year": 2009,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "￡cXcY@FRDS"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-114",
+      "source": "ngtrio-tnp",
+      "input": "The Walking Dead Complete S01-S11 2010-2021 1080p Blu-ray x265 AC3￡cXcY@FRDS",
+      "review_note": "Independent item-by-item preprobe review. Preserve original Season array1..11 and Year string2010-2021 verbatim; complete series/year range supplies no canonical season or work year, zero coverage and no array truncation.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "The Walking Dead",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "￡cXcY@FRDS"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-115",
+      "source": "ngtrio-tnp",
+      "input": "21 2008 1080p CEE Blu-ray AVC TrueHD 5.1-HDMaN",
+      "review_note": "Independent item-by-item preprobe review. Numeric title21 is not episode; distinct work-year2008, Blu-ray/AVC tokens and HDMaN original producer. CEE and TrueHD5.1 not edition/audio measurements.",
+      "expected": {
+        "title": "21",
+        "year": 2008,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDMaN"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-116",
+      "source": "ngtrio-tnp",
+      "input": "Das Boot S04 WEB-DL 1080p H.264 DDP 5.1-WAYNE",
+      "review_note": "Independent item-by-item preprobe review. Original Season array[4], TypeTVSeason retained; no episode set, so no season/keys. DDP5.1 only audio metadata; WAYNE exact.",
+      "withheld_source_fields": [
+        "season"
+      ],
+      "expected": {
+        "title": "Das Boot",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "episode_coverage_unresolved",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WAYNE"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-117",
+      "source": "walker-media-name-parser-extra",
+      "input": "Treasure.Island.1999.FULLSCREEN.2003.RERELEASE.NTSC.USA.DVD9-AndreMor",
+      "review_note": "Independent item-by-item preprobe review. Original title Treasure Island/year1999 and edition array FULLSCREEN,RERELEASE retained separately. Competing1999/2003 require zeroidentity-year review; do not adopt first-year rule. DVD9 unsupported; edition unmeasured.",
+      "withheld_source_fields": [
+        "title",
+        "year"
+      ],
+      "expected": {
+        "title": "Treasure Island 1999 FULLSCREEN 2003 RERELEASE NTSC USA DVD9",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "ambiguous_media_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AndreMor"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-118",
+      "source": "walker-media-name-parser-extra",
+      "input": "Romeo.Must.Die.2000.Open.Matte.1080p.WEB-DL.HEVC.x265.5.1-BONE",
+      "review_note": "Independent item-by-item preprobe review. Original literal title/year/group and OpenMatte edition array retained; HEVC and x265 agree, but edition and 5.1 not measured facts.",
+      "expected": {
+        "title": "Romeo Must Die",
+        "year": 2000,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BONE"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-119",
+      "source": "walker-media-name-parser-extra",
+      "input": "The.Informer.2019.1080p.BluRay.REMUX.MULTi-Ben.The.Men",
+      "review_note": "Independent item-by-item preprobe review. Preserve original multiword dotted group Ben.The.Men and title/year; BluRay REMUX explicit but no codec asserted by input.",
+      "expected": {
+        "title": "The Informer",
+        "year": 2019,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Ben.The.Men"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-120",
+      "source": "spann-tvshowfile-date",
+      "input": "Jimmy.Fallon.2019.01.29.Matthew.Broderick.720p.HDTV.x264-SORNY[eztv].mkv",
+      "review_note": "Independent item-by-item preprobe review. All original title/extension assertions read. 2019.01.29 is airdate, not work year or S/E; Matthew Broderick guest text not title; eztv relay only.",
+      "expected": {
+        "title": "Jimmy Fallon",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "calendar_coverage_unresolved",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SORNY"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-121",
+      "source": "spann-tvshowfile-date",
+      "input": "Stephen.Colbert.2019.01.29.Chris.Christie.480p.x264-mSD[eztv].mkv",
+      "review_note": "Independent item-by-item preprobe review. 2019.01.29 airdate creates no canonical unit/year; Chris Christie guest text not show name; explicit480p/x264 and mSD, no source inference.",
+      "expected": {
+        "title": "Stephen Colbert",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "calendar_coverage_unresolved",
+        "quality": {
+          "resolution": "480p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "mSD"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-122",
+      "source": "spann-tvshowfile-date",
+      "input": "TMZ.on.TV.2019.01.28.480p.x264-mSD[eztv].mkv",
+      "review_note": "Independent item-by-item preprobe review. Original clean title and extension only; absence no negative year assertion. Date2019.01.28 cannot infer work year or default season; token qualities only.",
+      "expected": {
+        "title": "TMZ on TV",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "calendar_coverage_unresolved",
+        "quality": {
+          "resolution": "480p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "mSD"
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-123",
+      "source": "spann-tvshowfile-date",
+      "input": "Jeopardy.2019.01.30.720p.HDTV.x264[eztv].mkv",
+      "review_note": "Independent item-by-item preprobe review. Original Jeopardy title; date2019.01.30 supplies no canonical scope/year. No release group before known eztv relay; retain explicit720p/HDTV/x264.",
+      "expected": {
+        "title": "Jeopardy",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "calendar_coverage_unresolved",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "next-scout-B-124",
+      "source": "matsimitsu-release-parser",
+      "input": "Looped (2016) S01E14A Space Burrito 720p HDTV x264-DEADPOOL",
+      "review_note": "Independent item-by-item preprobe review. Read every RSpec field including season1/episode14/year2016/audio-empty/language-empty/freeleechfalse. E14A is a segment, so zero coverage/confidence and review despite scalar14. Original title/year and group retained.",
+      "expected": {
+        "title": "Looped",
+        "year": 2016,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "partial_episode_content",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "DEADPOOL"
+        }
+      }
+    }
+  ]
+}

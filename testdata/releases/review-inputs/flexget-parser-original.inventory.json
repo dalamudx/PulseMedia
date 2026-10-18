@@ -1,0 +1,555 @@
+{
+  "source_id": "flexget-parser-original",
+  "review_status": "pending_static_literal_source_census",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "canonical_unit_authorization": false,
+  "coverage_authority": false,
+  "reviewed_entries": 0,
+  "schema": "pulse.original-positive-title-inventory.v1",
+  "counts": {
+    "per_file": {
+      "tests/test_movieparser.py": {
+        "test_functions": 2,
+        "static_parse_call_sites": 10,
+        "direct_literal_input_occurrences": 10,
+        "direct_literal_unique_inputs": 10,
+        "direct_literal_duplicate_occurrences": 0,
+        "constructed_parse_call_sites_not_expanded": 0,
+        "indirect_parse_call_sites_not_expanded": 0,
+        "inline_literal_loop_pool_entries": 0,
+        "positive_literal_title_assertions": 9
+      },
+      "tests/test_seriesparser.py": {
+        "test_functions": 55,
+        "static_parse_call_sites": 155,
+        "direct_literal_input_occurrences": 148,
+        "direct_literal_unique_inputs": 130,
+        "direct_literal_duplicate_occurrences": 18,
+        "constructed_parse_call_sites_not_expanded": 4,
+        "indirect_parse_call_sites_not_expanded": 3,
+        "inline_literal_loop_pool_entries": 3,
+        "positive_literal_title_assertions": 1,
+        "literal_loop_pools_excluded_from_title_capacity": [
+          {
+            "test": "test_zeroes",
+            "line": 437,
+            "values": [
+              "Test.S00E00-FlexGet",
+              "Test.S00E01-FlexGet",
+              "Test.S01E00-FlexGet"
+            ]
+          }
+        ]
+      },
+      "tests/test_parsingapi.py": {
+        "test_functions": 3,
+        "static_parse_call_sites": 0,
+        "direct_literal_input_occurrences": 0,
+        "direct_literal_unique_inputs": 0,
+        "direct_literal_duplicate_occurrences": 0,
+        "constructed_parse_call_sites_not_expanded": 0,
+        "indirect_parse_call_sites_not_expanded": 0,
+        "inline_literal_loop_pool_entries": 0,
+        "positive_literal_title_assertions": 0
+      }
+    },
+    "static_parse_call_sites": 165,
+    "direct_literal_input_occurrences": 158,
+    "direct_literal_unique_inputs": 140,
+    "direct_literal_duplicate_occurrences": 18,
+    "direct_literal_occurrences_without_positive_title_assertion": 148,
+    "constructed_parse_call_sites_not_expanded": 4,
+    "indirect_parse_call_sites_not_expanded": 3,
+    "positive_title_assertions": 10,
+    "positive_exact_unique_inputs": 10,
+    "positive_duplicate_occurrences": 0,
+    "exact_unique_overlap_with_gold": 0,
+    "exact_unique_new_beyond_gold": 10,
+    "placeholder_positive_inputs": 1,
+    "work_named_test_fixtures_with_unverified_real_release_origin": 9,
+    "verified_independent_real_release_inputs": 0,
+    "reviewed_entries": 0
+  },
+  "semantics": "Static syntax census only. Count an exact raw literal input only when the same parser result has a direct positive name equality to a nonempty literal title. ParserInternal/ParserGuessit fixture parametrization does not multiply input capacity. name= configuration alone, validity, episode IDs and quality equalities do not prove title identity. Constructed strings, nested quality loops and Cartesian expansions are excluded. Assertions are copied from upstream code without executing any upstream module or the PulseMedia parser; unasserted fields are not filled from input tokens. Lexical quality.name is preserved verbatim and is not a measured media fact. Full canonical coverage, confidence and rationale remain unreviewed. Real-release provenance must be independently established before a work-named fixture can count as independent real-release gold.",
+  "entries": [
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-01",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "The.Matrix.1999.1080p.HDDVD.x264-FlexGet",
+      "parse_call_line": 21,
+      "input_line": 21,
+      "parse_call_end_line": 21,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "The Matrix",
+        "line": 22,
+        "end_line": 22
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "The Matrix",
+          "line": 22,
+          "end_line": 22
+        },
+        {
+          "field": "year",
+          "value": 1999,
+          "line": 23,
+          "end_line": 23
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-02",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "WALL-E 720p BluRay x264-FlexGet",
+      "parse_call_line": 25,
+      "input_line": 25,
+      "parse_call_end_line": 25,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "WALL-E",
+        "line": 26,
+        "end_line": 26
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "WALL-E",
+          "line": 26,
+          "end_line": 26
+        },
+        {
+          "field": "quality.name",
+          "value": "720p bluray h264",
+          "line": 27,
+          "end_line": 29
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-03",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "The.Pianist.2002.HDDVD.1080p.DTS.x264-FlexGet",
+      "parse_call_line": 31,
+      "input_line": 31,
+      "parse_call_end_line": 31,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "The Pianist",
+        "line": 32,
+        "end_line": 32
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "The Pianist",
+          "line": 32,
+          "end_line": 32
+        },
+        {
+          "field": "year",
+          "value": 2002,
+          "line": 33,
+          "end_line": 33
+        },
+        {
+          "field": "quality.name",
+          "value": "1080p h264 dts",
+          "line": 34,
+          "end_line": 34
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-04",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "Howl's_Moving_Castle_(2004)_[720p,HDTV,x264,DTS]-FlexGet",
+      "parse_call_line": 36,
+      "input_line": 36,
+      "parse_call_end_line": 36,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "Howl's Moving Castle",
+        "line": 37,
+        "end_line": 37
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "Howl's Moving Castle",
+          "line": 37,
+          "end_line": 37
+        },
+        {
+          "field": "year",
+          "value": 2004,
+          "line": 38,
+          "end_line": 38
+        },
+        {
+          "field": "quality.name",
+          "value": "720p hdtv h264 dts",
+          "line": 39,
+          "end_line": 41
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-05",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "Coraline.3D.1080p.BluRay.x264-FlexGet",
+      "parse_call_line": 43,
+      "input_line": 43,
+      "parse_call_end_line": 43,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "Coraline",
+        "line": 44,
+        "end_line": 44
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "Coraline",
+          "line": 44,
+          "end_line": 44
+        },
+        {
+          "field": "quality.name",
+          "value": "1080p bluray h264",
+          "line": 45,
+          "end_line": 47
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-06",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "Slumdog.Millionaire.DVDRip.XviD-FlexGet",
+      "parse_call_line": 49,
+      "input_line": 49,
+      "parse_call_end_line": 49,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "Slumdog Millionaire",
+        "line": 50,
+        "end_line": 50
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "Slumdog Millionaire",
+          "line": 50,
+          "end_line": 50
+        },
+        {
+          "field": "quality.name",
+          "value": "dvdrip xvid",
+          "line": 51,
+          "end_line": 51
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-07",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "TRON.Legacy.3D.2010.1080p.BluRay.Half.Over-Under.DTS.x264-FlexGet",
+      "parse_call_line": 53,
+      "input_line": 53,
+      "parse_call_end_line": 53,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "TRON Legacy",
+        "line": 54,
+        "end_line": 54
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "TRON Legacy",
+          "line": 54,
+          "end_line": 54
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-08",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "[SomeThing]Up.2009.720p.x264-FlexGet",
+      "parse_call_line": 56,
+      "input_line": 56,
+      "parse_call_end_line": 56,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "Up",
+        "line": 57,
+        "end_line": 57
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "Up",
+          "line": 57,
+          "end_line": 57
+        },
+        {
+          "field": "year",
+          "value": 2009,
+          "line": 58,
+          "end_line": 58
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-09",
+      "source_path": "tests/test_movieparser.py",
+      "source_file": "../upstream-mit/flexget-movieparser-original.py.source",
+      "test": "test_parsing",
+      "input": "[720p] A.Movie.Title.2013.otherstuff.x264",
+      "parse_call_line": 60,
+      "input_line": 60,
+      "parse_call_end_line": 60,
+      "result_variable": "movie",
+      "parse_config": {},
+      "title_assertion": {
+        "field": "name",
+        "value": "A Movie Title",
+        "line": 61,
+        "end_line": 61
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "A Movie Title",
+          "line": 61,
+          "end_line": 61
+        },
+        {
+          "field": "year",
+          "value": 2013,
+          "line": 62,
+          "end_line": 62
+        },
+        {
+          "field": "quality.name",
+          "value": "720p h264",
+          "line": 63,
+          "end_line": 63
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "synthetic_placeholder_test_fixture",
+      "independent_real_release_credit": 0,
+      "notes": "Only the listed original equalities are evidence. Missing year, quality, coverage and identity fields remain unasserted."
+    },
+    {
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "canonical_unit_authorization": false,
+      "coverage_authority": false,
+      "id": "flexget-original-title-10",
+      "source_path": "tests/test_seriesparser.py",
+      "source_file": "../upstream-mit/flexget-seriesparser-original.py.source",
+      "test": "test_name_uncorrupted",
+      "input": "The.New.Adventures.of.Old.Christine.S05E16.HDTV.XviD-FlexGet",
+      "parse_call_line": 534,
+      "input_line": 536,
+      "parse_call_end_line": 537,
+      "result_variable": "s",
+      "parse_config": {
+        "name": "The New Adventures of Old Christine"
+      },
+      "title_assertion": {
+        "field": "name",
+        "value": "The New Adventures of Old Christine",
+        "line": 538,
+        "end_line": 538
+      },
+      "assertions": [
+        {
+          "field": "name",
+          "value": "The New Adventures of Old Christine",
+          "line": 538,
+          "end_line": 538
+        },
+        {
+          "field": "season",
+          "value": 5,
+          "line": 539,
+          "end_line": 539
+        },
+        {
+          "field": "episode",
+          "value": 16,
+          "line": 540,
+          "end_line": 540
+        },
+        {
+          "field": "quality.name",
+          "value": "hdtv xvid",
+          "line": 541,
+          "end_line": 541
+        }
+      ],
+      "reviewed_entries": 0,
+      "classification": "work_named_flexget_test_fixture_real_release_origin_unverified",
+      "independent_real_release_credit": 0,
+      "notes": "The same title is supplied as name configuration, but an actual result.name equality also exists at line 538. No full-coverage array or external work identity is asserted."
+    }
+  ],
+  "exclusions": [
+    {
+      "source_path": "tests/test_movieparser.py",
+      "line": 67,
+      "reason": "FlexGet movie parse config name plus valid/year/quality.source assertions; no result.name identity equality."
+    },
+    {
+      "source_path": "tests/test_seriesparser.py",
+      "reason": "147 direct literal parse occurrences lack a positive result.name equality; name= configuration and validity/number/quality assertions alone are excluded."
+    },
+    {
+      "source_path": "tests/test_seriesparser.py",
+      "line": 437,
+      "reason": "Three fixed zero-number loop literals, no identity assertion; no iteration expansion."
+    },
+    {
+      "source_path": "tests/test_seriesparser.py",
+      "line": 669,
+      "reason": "Three Alpha/Beta placeholder literals reused by two configuration-only parse call sites; no identity assertion; no Cartesian expansion."
+    },
+    {
+      "source_path": "tests/test_seriesparser.py",
+      "line": 490,
+      "reason": "Quality-component iteration, sound interpolation and nested generated episode/quality loops (lines 518/525) are constructed; four parse call sites remain unexpanded."
+    },
+    {
+      "source_path": "tests/test_parsingapi.py",
+      "reason": "Plugin interface and selected-parser reset tests contain no release input/title identity pair."
+    },
+    {
+      "source_path": "tests/conftest.py",
+      "reason": "Global lifecycle/network/logging/manager fixtures do not contribute release/title pairs."
+    }
+  ],
+  "gold_snapshot": {
+    "declared": 620,
+    "actual": 620,
+    "unique": 620,
+    "sha256": "6f60e837f6a2149ea6a350d7c6cb8c4014ee0f494f36f10ac26beb486d4f291c"
+  },
+  "overlap_with_gold": []
+}

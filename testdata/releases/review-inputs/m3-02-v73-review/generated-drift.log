@@ -1,0 +1,15 @@
+task: [gen-check] before="$(mktemp)"
+after="$(mktemp)"
+trap 'rm -f "$before" "$after"' EXIT
+find internal/store/postgres/db -name '*.go' -type f -print0 | sort -z | xargs -0 sha256sum > "$before"
+sha256sum internal/httpapi/api.gen.go web/src/api/schema.d.ts >> "$before"
+task generate
+find internal/store/postgres/db -name '*.go' -type f -print0 | sort -z | xargs -0 sha256sum > "$after"
+sha256sum internal/httpapi/api.gen.go web/src/api/schema.d.ts >> "$after"
+diff -u "$before" "$after"
+
+task: [sqlc] sqlc generate
+task: [generate-api-go] oapi-codegen -config api/oapi-codegen.yaml api/openapi.yaml
+task: [generate-api-ts] pnpm --dir web exec openapi-typescript ../api/openapi.yaml -o src/api/schema.d.ts
+✨ openapi-typescript 7.10.1
+🚀 ../api/openapi.yaml → src/api/schema.d.ts [343.3ms]

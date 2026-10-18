@@ -1,0 +1,106 @@
+name: pulsemedia-m4
+
+# Invoke with `mise exec -- task m4-services-up` so image pins come from .mise.toml.
+# All bind mounts belong to this stack; existing dev containers are not used.
+services:
+  qbittorrent:
+    image: ${PULSE_M4_QB_IMAGE:?Run via mise exec}
+    container_name: pulsemedia-m4-qbittorrent
+    restart: unless-stopped
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: UTC
+      WEBUI_PORT: '18085'
+    ports:
+      - '127.0.0.1:18085:18085'
+    volumes:
+      - ${PULSE_M4_STATE_DIR:?}/qbittorrent:/config
+      - ${PULSE_M4_STATE_DIR:?}/downloads:/downloads
+    labels:
+      io.pulsemedia.state: ${PULSE_M4_STATE_DIR:?}
+
+  transmission:
+    image: ${PULSE_M4_TR_IMAGE:?Run via mise exec}
+    container_name: pulsemedia-m4-transmission
+    restart: unless-stopped
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: UTC
+      PEERPORT: '51413'
+    ports:
+      - '127.0.0.1:19091:9091'
+    volumes:
+      - ${PULSE_M4_STATE_DIR:?}/transmission:/config
+      - ${PULSE_M4_STATE_DIR:?}/downloads:/downloads
+    labels:
+      io.pulsemedia.state: ${PULSE_M4_STATE_DIR:?}
+
+  jellyfin:
+    image: ${PULSE_M4_JELLYFIN_IMAGE:?Run via mise exec}
+    container_name: pulsemedia-m4-jellyfin
+    user: '1000:1000'
+    restart: unless-stopped
+    environment:
+      TZ: UTC
+    ports:
+      - '127.0.0.1:18096:8096'
+    volumes:
+      - ${PULSE_M4_STATE_DIR:?}/jellyfin/config:/config
+      - ${PULSE_M4_STATE_DIR:?}/jellyfin/cache:/cache
+      - ${PULSE_M4_STATE_DIR:?}/media:/media:ro
+    labels:
+      io.pulsemedia.state: ${PULSE_M4_STATE_DIR:?}
+
+  prowlarr:
+    image: ${PULSE_M4_PROWLARR_IMAGE:?Run via mise exec}
+    container_name: pulsemedia-m4-prowlarr
+    restart: unless-stopped
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: UTC
+    ports:
+      - '127.0.0.1:19696:9696'
+    volumes:
+      - ${PULSE_M4_STATE_DIR:?}/prowlarr:/config
+    labels:
+      io.pulsemedia.state: ${PULSE_M4_STATE_DIR:?}
+
+  postgres:
+    image: ${PULSE_M4_POSTGRES_IMAGE:?Run via mise exec}
+    container_name: pulsemedia-m4-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pulsemedia
+      POSTGRES_USER: pulsemedia
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      TZ: UTC
+    ports:
+      - '127.0.0.1:15432:5432'
+    volumes:
+      # PG18 expects the versioned data directory beneath this parent.
+      - ${PULSE_M4_STATE_DIR:?}/postgres:/var/lib/postgresql
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pulsemedia -d pulsemedia']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    stop_grace_period: 30s
+    labels:
+      io.pulsemedia.state: ${PULSE_M4_STATE_DIR:?}
+
+secrets:
+  postgres_password:
+    file: ${PULSE_M4_STATE_DIR:?}/secrets/postgres-password
+
+networks:
+  default:
+    name: pulsemedia-m4
+    ipam:
+      config:
+        - subnet: 10.203.44.0/24

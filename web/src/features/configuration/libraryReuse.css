@@ -1,0 +1,17 @@
+.library-reuse { min-width: 0; }
+.library-reuse summary { cursor: pointer; font-weight: 600; padding: 4px 0; }
+.library-reuse summary:focus-visible { outline: 2px solid var(--accent-primary, #3b82f6); outline-offset: 4px; }
+.library-reuse .reuse-targets { display: flex; flex-wrap: wrap; gap: 8px 20px; max-height: 240px; overflow: auto; border: 0; padding: 8px 0; margin: 12px 0; }
+.library-reuse legend { margin-bottom: 8px; }
+.library-reuse .reuse-result, .library-reuse .reuse-confirm { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-color, #303848); }
+.library-reuse .reuse-sources, .library-reuse .reuse-statuses { list-style: none; padding: 0; margin: 8px 0; }
+.library-reuse .reuse-sources li { padding: 12px 0; }
+.library-reuse .reuse-sources p { margin: 8px 0; }
+.library-reuse .reuse-sources label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; cursor: pointer; }
+.library-reuse .reuse-path { overflow-wrap: anywhere; white-space: normal; }
+.library-reuse .reuse-statuses li { display: grid; gap: 6px; padding: 12px 0; }
+.library-reuse .config-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.library-reuse .config-field { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.library-reuse .config-check { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
+.library-reuse .config-check input { flex-shrink: 0; }
+.library-reuse button { white-space: normal; }

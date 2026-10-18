@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare owned temporary paths
+        run: |
+          ci_tmp="/data/temp/pulse-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          sudo mkdir -p /data/temp
+          sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" "$ci_tmp"
+          mkdir -p "$ci_tmp/build"
+          for key in TMPDIR TMP TEMP CI_OWNED_TEMP; do echo "$key=$ci_tmp" >> "$GITHUB_ENV"; done
+          echo "GOTMPDIR=$ci_tmp/build" >> "$GITHUB_ENV"
+          echo "GOLANGCI_LINT_CACHE=$ci_tmp/lint-cache" >> "$GITHUB_ENV"
+          echo "PLAYWRIGHT_BROWSERS_PATH=$ci_tmp/browsers" >> "$GITHUB_ENV"
+
+      - name: Install mise tools
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
+
+      - name: Install and verify locked dependencies
+        run: |
+          mise exec -- pnpm --dir web install --frozen-lockfile
+          mise exec -- go mod download
+          mise exec -- go mod verify
+
+      - name: Typecheck frontend
+        run: mise exec -- task test-web
+
+      - name: Build frontend assets required by Go embedding
+        run: mise exec -- task build-web
+      - name: Lint Go and check dependency boundaries
+        run: |
+          mise exec -- task depguard-probe
+          mise exec -- task build-provenance-check
+          mise exec -- task lint
+
+      - name: Verify generation and pinned OpenAPI compatibility
+        run: |
+          mise exec -- task gen-check
+          mise exec -- task api-probe
+
+      - name: Require vulnerability scan
+        run: mise exec -- task vuln
+      - name: Run unit and PostgreSQL integration tests
+        run: mise exec -- task test
+
+      - name: Run tests with race detector
+        run: mise exec -- task test-race
+
+      - name: Install locked browser and test embedded authentication UI
+        run: |
+          mise exec -- pnpm --dir web exec playwright-core install --with-deps chromium
+          chrome=$(mise exec -- pnpm --dir web exec node -e 'console.log(require("playwright-core").chromium.executablePath())')
+          PULSE_TEST_BROWSER_EXECUTABLE="$chrome" mise exec -- task test-auth-ui
+
+      - name: Build binary with embedded frontend
+        run: mise exec -- task build
+
+      - name: Smoke check executable
+        run: ./bin/pulsemedia --version
+
+      - name: Remove owned temporary artifacts
+        if: always()
+        run: |
+          if [ -n "${CI_OWNED_TEMP:-}" ]; then
+            case "$CI_OWNED_TEMP" in
+              "/data/temp/pulse-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}") rm -rf -- "$CI_OWNED_TEMP" ;;
+              *) echo "Unexpected CI temporary path" >&2; exit 1 ;;
+            esac
+            test ! -e "$CI_OWNED_TEMP"
+          fi

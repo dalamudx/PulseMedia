@@ -1,0 +1,1045 @@
+{
+  "schema": "pulse.release-review.v1",
+  "reviewed_entries": 33,
+  "required_entries": 1000,
+  "formal_golden_acceptance": false,
+  "review_method": "Independent manual input reading before any execution of PulseMedia. No upstream parser executed. Tuples explicitly specify all 12 expected fields; seven quality values are resolution/source/codec/hdr/audio/edition/group. Expansion only changes representation. is_anime describes an unbound anime numbering interpretation, not guessed genre. Audio/edition are withheld unsupported measurement facts. No tracker occurrence proof required.",
+  "entries": [
+    {
+      "id": "chill-p-35",
+      "source": "chill-parser-original",
+      "input": "Childhood.039.s.End.2008.1080p.BluRay.x264-GRP",
+      "review_note": "Known 2008 Gurren Lagann film subtitle, realistic dot/entity-corrupted filename handwritten as an individual assertion. Common literal 039 apostrophe marker; not a fabricated work or generated permutation. Keep the original title assertion and explicit year; BluRay/x264 and delimited GRP only.",
+      "expected": {
+        "title": "Childhood's End",
+        "year": 2008,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "GRP"
+        }
+      }
+    },
+    {
+      "id": "chill-p-669",
+      "source": "chill-parser-original",
+      "input": "SD.Gundam.World.Heroes.S01E01.1080p.WEB-DL.H265",
+      "review_note": "Known series, independently handwritten full S01E01 input; leading SD belongs to the exact original title, not resolution. Explicit 1080p/WEB-DL/H265; no absolute or genre inference.",
+      "expected": {
+        "title": "SD Gundam World Heroes",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-p-680",
+      "source": "chill-parser-original",
+      "input": "SD.Gundam.World.Heroes.S01E01.WEB-DL.H265",
+      "review_note": "Second individually handwritten realistic S01E01 assertion for the same known series is a different exact filename, not generated table enumeration. No measured resolution: title SD must not manufacture one.",
+      "expected": {
+        "title": "SD Gundam World Heroes",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-p-951",
+      "source": "chill-parser-original",
+      "input": "Kaya-chan.Isnt.Scary.S01E11.1080p.CR.WEB-DL.DUAL.AAC2.0.H.264-VARYG",
+      "review_note": "Known TV series; preserve exact hyphenated title and single episode 11. CR/DUAL/AAC are retained raw source labels, not supported measured quality fields. Delimited publisher VARYG is explicit.",
+      "expected": {
+        "title": "Kaya-chan Isnt Scary",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          11
+        ],
+        "unit_keys": [
+          "S01E11"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "VARYG"
+        }
+      }
+    },
+    {
+      "id": "chill-p-967",
+      "source": "chill-parser-original",
+      "input": "Monarch Legacy of Monsters S02E04 2160p HDR10Plus DV WEBRip 6CH x265 HEVC-P",
+      "review_note": "Known series, season 2 episode 4 only. Explicit WEBRip and x265/HEVC agree. DV and HDR10Plus remain raw; the single supported HDR representative is DV. 6CH alone is not a measured audio profile; -P is an explicit group label.",
+      "expected": {
+        "title": "Monarch Legacy of Monsters",
+        "year": 0,
+        "media_type": "tv",
+        "season": 2,
+        "episodes": [
+          4
+        ],
+        "unit_keys": [
+          "S02E04"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEBRip",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "P"
+        }
+      }
+    },
+    {
+      "id": "chill-p-982",
+      "source": "chill-parser-original",
+      "input": "Zootopia 2 2025 1080p Blu ray Remux AVC TrueHD Atmos 7 1 CiNEPHiL",
+      "review_note": "Known movie, sequel number 2 stays in title and 2025 is year. Blu ray Remux/AVC explicitly support Remux/H264. TrueHD Atmos and unbound CiNEPHiL remain source evidence, not promoted audio or group facts.",
+      "expected": {
+        "title": "Zootopia 2",
+        "year": 2025,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-p-995",
+      "source": "chill-parser-original",
+      "input": "Nightmare Alley 2021 2160p UHD Blu ray Remux DV HDR HEVC TrueHD Atmos 7 1 CiNEPHiLES",
+      "review_note": "Known movie; one explicit year. REMUX/HEVC/DV are supported facts. Preserve HDR and TrueHD Atmos source labels without expanding the seven-field vocabulary; undelimited CiNEPHiLES not assigned a publisher identity.",
+      "expected": {
+        "title": "Nightmare Alley",
+        "year": 2021,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-p-1009",
+      "source": "chill-parser-original",
+      "input": "Crossing Jordan 2001 Complete Series Seasons 1 to 6 1080p WEB x264 [i_c]",
+      "review_note": "Known TV series, complete seasons 1 through 6 state no full episode list and cannot authorize any unit. Season 0 means no single season claim; explicit 2001 retained. Generic WEB does not establish WEB-DL or WEBRip. Bracket i_c is the original publisher assertion.",
+      "expected": {
+        "title": "Crossing Jordan",
+        "year": 2001,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "reason": "multi_unit_collection",
+        "requires_review": true,
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "i_c"
+        }
+      }
+    },
+    {
+      "id": "chill-p-1290",
+      "source": "chill-parser-original",
+      "input": "Mr.Hollands.Opus.1995.1080p.BluRay.x264-GRP",
+      "review_note": "Known 1995 film, individually handwritten realistic title boundary assertion. Opus belongs to title, not audio. Keep original punctuation-less title; BluRay/x264 and explicit -GRP support the three quality fields.",
+      "expected": {
+        "title": "Mr Hollands Opus",
+        "year": 1995,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "GRP"
+        }
+      }
+    },
+    {
+      "id": "chill-f-18",
+      "source": "chill-parser-original",
+      "input": "Delivery Run 2024 BluRay 1080p DDP 5 1 x264 hallowed",
+      "review_note": "Known 2024 film, exact fixture literal and explicit year. BluRay/x264 support source and codec. DDP5.1 and undelimited hallowed remain original assertions only; no audio or publisher measurement is inferred.",
+      "expected": {
+        "title": "Delivery Run",
+        "year": 2024,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-32",
+      "source": "chill-parser-original",
+      "input": "[Anime Time] Sentenced To Be A Hero (Yuusha-kei ni Shosu: Choubatsu Yuusha 9004 Tai Keimu Kiroku) - S01E05 [1080p][HEVC 10bit x265][AAC][Dual-Audio] [Multi Sub] [Weekly]",
+      "review_note": "Known series, full S01E05 coverage; the long parenthesized Japanese alternate title, including 9004, is title metadata, not a year or absolute episode. HEVC/x265 explicit; Anime Time is website evidence only; no source format is stated.",
+      "expected": {
+        "title": "Sentenced To Be A Hero",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          5
+        ],
+        "unit_keys": [
+          "S01E05"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-48",
+      "source": "chill-parser-original",
+      "input": "Kaya chan Isnt Scary S01E11 1080p CR WEB DL DUAL AAC2 0 H 264 VARYG (Kaya chan wa Kowakunai  Dual Audio  Multi Subs)",
+      "review_note": "Known series, retain original space-separated title and full episode 11. WEB DL/H 264 are explicit token-separated technical labels. Parenthesized alternate title and unbound VARYG do not change coverage or publisher authority.",
+      "expected": {
+        "title": "Kaya chan Isnt Scary",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          11
+        ],
+        "unit_keys": [
+          "S01E11"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-64",
+      "source": "chill-parser-original",
+      "input": "Nightmare Alley 2021 BW Directors Cut 2160p UHD Blu ray Remux DV HDR HEVC DTS HD MA 5 1 CiNEPHiLES",
+      "review_note": "Known movie, BW Directors Cut is edition evidence and cannot become title or measured edition fact. 2021, remux, HEVC, DV explicit. Original DTS-HD MA, edition and CiNEPHiLES labels retained without promotion.",
+      "expected": {
+        "title": "Nightmare Alley",
+        "year": 2021,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-80",
+      "source": "chill-parser-original",
+      "input": "On the Brain 2018 HDRip XviD AC3-EVO",
+      "review_note": "Known film with exact asserted 2018 in this filename; do not replace source year with external release metadata. HDRip is not HDR nor any supported source; XviD is unsupported, AC3 not measured audio. Explicit -EVO alone is group evidence.",
+      "expected": {
+        "title": "On the Brain",
+        "year": 2018,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "EVO"
+        }
+      }
+    },
+    {
+      "id": "chill-f-93",
+      "source": "chill-parser-original",
+      "input": "You and I Are Polar Opposites S01E10 Class Trip Part 1 1080p CR WEB-DL DUAL AAC2.0 H 264-VARYG (Seihantai na Kimi to Boku, Dual-Audio, Multi-Subs)",
+      "review_note": "Known episode 10; Class Trip Part 1 is an episode subtitle and source Part scalar, not evidence that the file is half of episode 10. Keep complete single-episode assertion and -VARYG; no invented absolute mapping or source-platform quality.",
+      "expected": {
+        "title": "You and I Are Polar Opposites",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          10
+        ],
+        "unit_keys": [
+          "S01E10"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "VARYG"
+        }
+      }
+    },
+    {
+      "id": "chill-f-111",
+      "source": "chill-parser-original",
+      "input": "[hchcsen] Gurren Lagann the Movie: The Lights in the Sky Are Stars (2009) v2 (BD Remux 1080p x264 8-bit TrueHD Atmos) [Dual Audio] | Tengen Toppa Gurren Lagann: Lagann-hen",
+      "review_note": "Known 2009 anime movie, exact original English title includes colon. Alternate title after | and v2 are metadata, not additional coverage. BD Remux/x264 explicit; hchcsen website, 8-bit, Dual Audio and TrueHD Atmos remain raw only.",
+      "expected": {
+        "title": "Gurren Lagann the Movie: The Lights in the Sky Are Stars",
+        "year": 2009,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-127",
+      "source": "chill-parser-original",
+      "input": "Roman Empire By Train With Alice Roberts S01E06 720p HDTV H264-JFF",
+      "review_note": "Known documentary series, full S01E06 only; no inferred year. Explicit 720p HDTV H264 and delimited -JFF.",
+      "expected": {
+        "title": "Roman Empire By Train With Alice Roberts",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          6
+        ],
+        "unit_keys": [
+          "S01E06"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "JFF"
+        }
+      }
+    },
+    {
+      "id": "chill-f-141",
+      "source": "chill-parser-original",
+      "input": "Peaky Blinders S03E01 Episode 1 1080p NF WEB-DL DDP5 1 H 264-Kitsune",
+      "review_note": "Known series, Episode 1 repeats the same episode as S03E01 rather than adding a unit. NF is platform, DDP5.1 audio evidence retained only; -Kitsune is explicit publisher.",
+      "expected": {
+        "title": "Peaky Blinders",
+        "year": 0,
+        "media_type": "tv",
+        "season": 3,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S03E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "Kitsune"
+        }
+      }
+    },
+    {
+      "id": "chill-f-157",
+      "source": "chill-parser-original",
+      "input": "Young.Sherlock.2026.S01.720p.ITA-ENG.MULTI.WEBRip.x265.AAC-V3SP4EV3R",
+      "review_note": "Known series, explicit season 1 and year 2026 but no episode enumeration. Zero coverage and confidence with review; no complete-season invention. WEBRip/x265 and -V3SP4EV3R explicit; languages and AAC not promoted.",
+      "expected": {
+        "title": "Young Sherlock",
+        "year": 2026,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "reason": "episode_coverage_unresolved",
+        "requires_review": true,
+        "quality": {
+          "resolution": "720p",
+          "source": "WEBRip",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "V3SP4EV3R"
+        }
+      }
+    },
+    {
+      "id": "chill-f-200",
+      "source": "chill-parser-original",
+      "input": "Silkwood 1983 1080p BluRay x265 10bit EAC3 2 0 r00t QxR",
+      "review_note": "Known 1983 movie; BluRay/x265 explicit. 10bit and EAC3 2.0 retained raw, not HDR/audio quality. r00t/QxR have no delimiter establishing a measured publisher identity.",
+      "expected": {
+        "title": "Silkwood",
+        "year": 1983,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-229",
+      "source": "chill-parser-original",
+      "input": "[ToonsHub] In the Clear Moonlit Dusk S01E09 1080p CR WEB DL DUAL AAC2 0 H 264 (Uruwashi no Yoi no Tsuki  Dual Audio  Multi Subs)",
+      "review_note": "Known series, S01E09 complete. ToonsHub is explicitly a Website assertion and original selected Group is empty. CR is platform; WEB DL/H 264 support two quality fields without promoting website or dual-audio edition.",
+      "expected": {
+        "title": "In the Clear Moonlit Dusk",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          9
+        ],
+        "unit_keys": [
+          "S01E09"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-258",
+      "source": "chill-parser-original",
+      "input": "[hchcsen] Gurren Lagann The Movie  Childhood  039 s End (2008) v2 (BD Remux 1080p x264 8 bit TrueHD Atmos) [Dual Audio]",
+      "review_note": "Known 2008 movie, original assertion explicitly decodes tracker 039 apostrophe. Preserve original asserted casing and title. v2 is revision; BD Remux/x264 explicit; website, TrueHD Atmos, bit depth and Dual Audio remain raw.",
+      "expected": {
+        "title": "Gurren Lagann The Movie Childhood's End",
+        "year": 2008,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-274",
+      "source": "chill-parser-original",
+      "input": "Tar 2022 HDRip XviD AC3 EVO[TGx]",
+      "review_note": "Known 2022 movie under the original ASCII title. HDRip/XviD are unsupported source/codec, not HDR. Original TGx group assertion is a relay tag, not publisher identity; EVO without a group delimiter does not establish it either.",
+      "expected": {
+        "title": "Tar",
+        "year": 2022,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-299",
+      "source": "chill-parser-original",
+      "input": "Pyramid.Builders.New.Clues.2019.720p.x265.aac.subs.mkv",
+      "review_note": "Known documentary title under original exact title/year assertion; no episode syntax. Explicit 720p/x265, no source token. aac/subs/mkv are audio/subtitle/container evidence only, not publisher or source.",
+      "expected": {
+        "title": "Pyramid Builders New Clues",
+        "year": 2019,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-p-1690",
+      "source": "chill-parser-original",
+      "input": "It 2017 1080p BluRay x264",
+      "review_note": "Previously excluded only because its original assertion is negative platform Source empty. Known 2017 movie with explicit BluRay/x264; It must remain title, not an Italian platform or language-derived source.",
+      "expected": {
+        "title": "It",
+        "year": 2017,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "reason": "clean_movie_with_year",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-p-1700",
+      "source": "chill-parser-original",
+      "input": "Critical Role S01E01 1080p WEB x264",
+      "review_note": "Previously excluded title-unasserted but known TV/web series, explicit S01E01. Preserve negative Source empty; Critical must not manufacture CR platform. Generic WEB leaves source unknown.",
+      "expected": {
+        "title": "Critical Role",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-172",
+      "source": "chill-parser-original",
+      "input": "Widow's Bay (2026) s01e04 [Mkv - 1080p H264 - MultiLang Aac 2 0 - MultiSubs]",
+      "review_note": "Known series, exact possessive spelling, year 2026 and S01E04 explicit. Original only selected Group empty; bracket is technical metadata, not group. Mkv/MultiLang/Aac/MultiSubs do not establish source or audio measurement.",
+      "expected": {
+        "title": "Widow's Bay",
+        "year": 2026,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          4
+        ],
+        "unit_keys": [
+          "S01E04"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-178",
+      "source": "chill-parser-original",
+      "input": "Widow s Bay (2026) s01e04 [Mkv  1080p H264  MultiLang Aac 2 0  MultiSubs]",
+      "review_note": "Distinct exact handwritten filename for known series. Retain literal collapsed punctuation, no speculative apostrophe restoration. Same explicit year and S01E04; negative original Group empty must survive technical bracket.",
+      "expected": {
+        "title": "Widow s Bay",
+        "year": 2026,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          4
+        ],
+        "unit_keys": [
+          "S01E04"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-184",
+      "source": "chill-parser-original",
+      "input": "WidowS Bay S01e04 [1080p Ita Eng Spa HEVC10 SubS] byMe7alh [MIRCrew]",
+      "review_note": "Distinct known-series filename; literal WidowS spelling, no year in input. Full S01E04 explicit; HEVC10 states HEVC plus bit depth, not HDR. Original bracket MIRCrew publisher is positively asserted; byMe7alh not a second group.",
+      "expected": {
+        "title": "WidowS Bay",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          4
+        ],
+        "unit_keys": [
+          "S01E04"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "MIRCrew"
+        }
+      }
+    },
+    {
+      "id": "chill-f-192",
+      "source": "chill-parser-original",
+      "input": "Widows Bay S01E04 Beach Reads 2160p ATVP WEB-DL DD 5 1 Atmos H 265-playWEB",
+      "review_note": "Known series, Beach Reads is episode subtitle following unambiguous S01E04. No inferred year. WEB-DL/H 265 and -playWEB explicit; ATVP platform and DD Atmos source labels do not become measured audio or HDR.",
+      "expected": {
+        "title": "Widows Bay",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          4
+        ],
+        "unit_keys": [
+          "S01E04"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "playWEB"
+        }
+      }
+    },
+    {
+      "id": "chill-f-215",
+      "source": "chill-parser-original",
+      "input": "56 дней / 56 Days / S1E1-8 of 8 (Шена Стейн, Алетеа Джонс) [2026, США, триллер, драма, мелодрама, криминал, детектив, HEVC, HDR10+, WEB-DL 2160p] 3 x MVO (Дубляжная, LE-Production, Dragon Money Studio) + Original + Sub (Eng)",
+      "review_note": "Known series; bilingual title is before the explicit S1E1-8 of 8 declaration. Original scalar Season=1, Episode=1, EpisodeEnd=8 is a full interval, never just first episode. Manually enumerate all eight episodes and keys. Explicit metadata year 2026, HEVC/HDR10+/WEB-DL/2160p; slash title must not erase coverage. No audio/group promotion.",
+      "expected": {
+        "title": "56 дней / 56 Days",
+        "year": 2026,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "unit_keys": [
+          "S01E01",
+          "S01E02",
+          "S01E03",
+          "S01E04",
+          "S01E05",
+          "S01E06",
+          "S01E07",
+          "S01E08"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "multi_episode_range",
+        "requires_review": false,
+        "quality": {
+          "resolution": "2160p",
+          "source": "WEB-DL",
+          "codec": "HEVC",
+          "hdr": "HDR10+",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-246",
+      "source": "chill-parser-original",
+      "input": "You and I Are Polar Opposites S01E11 Class Trip Part 2 1080p CR WEB DL AAC2 0 H 264 VARYG (Seihantai na Kimi to Boku  Multi Subs)",
+      "review_note": "Known series, original scalar Episode=11 and Part=2. Class Trip Part 2 is episode subtitle, not permission to invent half-unit or infer absolute numbering. WEB DL/H 264 explicit in input; CR/Edition retained raw; undelimited VARYG not promoted.",
+      "expected": {
+        "title": "You and I Are Polar Opposites",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          11
+        ],
+        "unit_keys": [
+          "S01E11"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "chill-f-287",
+      "source": "chill-parser-original",
+      "input": "Roman Empire By Train With Alice Roberts S01E06 720p HDTV H264 JFF EZTV",
+      "review_note": "Known documentary episode, full scalar original S01E06. Space-separated JFF EZTV is intentionally original selected Group empty; do not promote either token. 720p HDTV H264 explicit; no inferred year.",
+      "expected": {
+        "title": "Roman Empire By Train With Alice Roberts",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          6
+        ],
+        "unit_keys": [
+          "S01E06"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "reason": "standard_season_episode",
+        "requires_review": false,
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    }
+  ]
+}

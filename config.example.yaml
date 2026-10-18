@@ -1,0 +1,14 @@
+# PulseMedia 本地开发配置示例
+# 复制为 config.yaml 即可在本地运行使用
+
+server:
+  # HTTP 监听地址与端口（默认 127.0.0.1:8080 本地安全访问；如需外部/局域网访问可改为 0.0.0.0:8080）
+  http_addr: "127.0.0.1:8080"
+  read_timeout: 15s
+  write_timeout: 30s
+
+database:
+  url: "postgres://pulsemedia:pulsemedia@127.0.0.1:5432/pulsemedia?sslmode=disable"
+
+data_dir: "./.data"
+log_level: "debug"

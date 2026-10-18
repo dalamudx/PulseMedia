@@ -1,0 +1,70 @@
+{
+  "source_id": "atama-metadata-original",
+  "license": "MIT",
+  "review_status": "partially_reviewed_literal_source",
+  "reviewed_entries": 37,
+  "accepted": false,
+  "formal_golden_acceptance": false,
+  "canonical_unit_authorization": false,
+  "coverage_authority": false,
+  "candidate_count": 39,
+  "candidate_count_semantics": "Pending-source capacity only: enabled original entries with a literal name. Not reviewed gold, not a count of new inputs relative to existing sources, and not complete canonical coverage.",
+  "counts": {
+    "raw_keys": 44,
+    "should_fail_skipped": 3,
+    "provider_enabled_entries": 41,
+    "enabled_without_name_not_admissible": 2,
+    "enabled_with_name": 39
+  },
+  "excluded_inputs": {
+    "should_fail": [
+      "[Project Marego] Chocolat no Mahou 1-2 Eng sub [480p]",
+      "[Thunder] Hellsing Ultimate 06 - 10 [720p] [Dual Audio]",
+      "[Coalgirls]_Evangelion_2.22_You_Can_(Not)_Advance_(1280x720_Blu-ray_FLAC)_[12DF18F3].mkv"
+    ],
+    "enabled_without_name": [
+      "[FFF] DATE A LIVE [BD][1080p-FLAC]",
+      "[m.3.3.w] Hanasakeru Seishounen 12.5 (XviD) [89BACFB9].avi"
+    ]
+  },
+  "provenance": {
+    "repository": "https://github.com/odangomoe/Atama",
+    "commit": "d3d730399aa83805140b88bdcacdb3b8eb3216be",
+    "verification_method": "Downloaded the three complete original files from immutable raw GitHub commit/path URLs into a unique /data/temp directory. Verified actual SHA-256 values against the specified expected values, read every source line through hashline reads, preserved complete source text without JSON reserialization, and checked destination hashes and byte-for-byte equality. No upstream parser or PHP code was executed and no dependencies were installed.",
+    "files": [
+      {
+        "path": "test/data/metadata-title.json",
+        "url": "https://raw.githubusercontent.com/odangomoe/Atama/d3d730399aa83805140b88bdcacdb3b8eb3216be/test/data/metadata-title.json",
+        "source_file": "../upstream-mit/atama-metadata-title-original.json",
+        "sha256": "577e0e718d496781ae94183bd9b60a21505b0d5e67c560e98c431ac33ff4a83c",
+        "bytes": 10816,
+        "lines": 349
+      },
+      {
+        "path": "test/MetadataTest.php",
+        "url": "https://raw.githubusercontent.com/odangomoe/Atama/d3d730399aa83805140b88bdcacdb3b8eb3216be/test/MetadataTest.php",
+        "source_file": "../upstream-mit/atama-metadata-original.test.php",
+        "sha256": "963d02bd058f469b23b12c1e0596f57af7fb0033ff9312910ea755bed280ca87",
+        "bytes": 2685,
+        "lines": 92
+      },
+      {
+        "path": "LICENSE",
+        "url": "https://raw.githubusercontent.com/odangomoe/Atama/d3d730399aa83805140b88bdcacdb3b8eb3216be/LICENSE",
+        "source_file": "atama-metadata-original.LICENSE",
+        "sha256": "da1ab0a4449807fd161b8d028f79c42cc00e2e67ee8f9f583cb37a2c2cbaa0fd",
+        "bytes": 1067,
+        "lines": 21,
+        "copyright": "Copyright (c) 2017 odango.moe"
+      }
+    ]
+  },
+  "original_assertion_logic": {
+    "testTitleParsing": "test/MetadataTest.php:19-28 calls createFromTitle with the original object key. For each provided metadata field it asserts presence, then recursively compares when the actual value is set. This is a partial top-level assertion; omitted fields are unasserted, not negative facts.",
+    "assertRecursive": "test/MetadataTest.php:30-57 requires equal array sizes, sorted identical keys and recursive strict assertSame values, or scalar assertSame. Preserve exact nested endpoint structures, string suffixes, fractional numbers and original quality strings; do not normalize them into canonical units or supported quality enums.",
+    "metadataTitleProvider": "test/MetadataTest.php:73-89 reads test/data/metadata-title.json, skips truthy should_fail records, removes comment, and supplies each remaining literal key and metadata object. The two enabled records without name remain raw source evidence but are not admissible title candidates.",
+    "collection_semantics": "Nested arrays such as [[1.0],[13.0]] are original endpoint structures, not an independently enumerated complete episode set. Do not expand ranges, infer seasons, or issue canonical-unit authorization.",
+    "quality_semantics": "Retain only fields actually present in the original object, with original spelling and values. A quality token in an input key does not supply an omitted expected field; source strings are claims, not measured facts or quality-policy authorization."
+  },
+  "audit_note": "Parallel original-artifact preservation only. All 39 named enabled entries remain unreviewed. No generated expected labels, gold-count computation, parser registration, code or shared-document changes. No existing fixture, gold file or shared count file is modified. Individual identity, complete coverage, quality, confidence and rationale review is still required before any future admission."
+}

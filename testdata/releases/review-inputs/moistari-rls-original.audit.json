@@ -1,0 +1,1761 @@
+{
+  "source_id": "moistari-rls-original",
+  "schema": "pulse.release-review.v1",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "reviewed_entries": 0,
+  "individually_audited_entries": 40,
+  "parser_probed": false,
+  "method": "Forty original raw-label movies individually annotated before any PulseMedia or upstream execution; no generated expected values, no gold mutation. Independent input/version/line and original labels retained; failures must remain unchanged.",
+  "entries": [
+    {
+      "id": "moistari-rls-original-017",
+      "source": "moistari-rls-original",
+      "input": "5.Headed.Shark.Attack.German.2017.MERRY.XMAS.AC3.BDRiP.x264-XF",
+      "source_index": 17,
+      "source_input_line": 43,
+      "source_title_line": 45,
+      "original_labels": {
+        "type": "movie",
+        "title": "5 Headed Shark Attack",
+        "source": "BDRiP",
+        "year": 2017,
+        "codec": "x264",
+        "audio": "DD",
+        "other": "MERRY.XMAS",
+        "language": "GERMAN",
+        "group": "XF"
+      },
+      "review_note": "The leading 5 belongs to 5 Headed Shark Attack; 2017 is the work year. BDRiP is not an approved source token; Merry Xmas and German do not alter title or certify edition/audio. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "5 Headed Shark Attack",
+        "year": 2017,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "XF"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-019",
+      "source": "moistari-rls-original",
+      "input": "31.A.3D.Rob.Zombie.Film.UNCUT.German.2016.DL.1080p.BluRay.x264-ETM",
+      "source_index": 19,
+      "source_input_line": 61,
+      "source_title_line": 63,
+      "original_labels": {
+        "type": "movie",
+        "title": "31 A 3D Rob Zombie Film",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2016,
+        "codec": "x264",
+        "cut": "Uncut",
+        "language": "GERMAN DL",
+        "group": "ETM"
+      },
+      "review_note": "31 and A 3D remain in the independent title. Only 2016 is the work year; 1080p/BluRay/x264 are explicit. UNCUT and DL are release labels, not measured edition/audio. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "31 A 3D Rob Zombie Film",
+        "year": 2016,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "ETM"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-020",
+      "source": "moistari-rls-original",
+      "input": "[test]50.50.2011.BluRay.1080p.DTS-HD",
+      "source_index": 20,
+      "source_input_line": 71,
+      "source_title_line": 73,
+      "original_labels": {
+        "type": "movie",
+        "title": "50 50",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2011,
+        "audio": "DTS-HD",
+        "site": "test"
+      },
+      "review_note": "The real title is the source's 50 50, with literal 2011. [test] is a site decoration, not a release group; DTS-HD supplies no supported codec or audio observation. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "50 50",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-021",
+      "source": "moistari-rls-original",
+      "input": "50.50.2011.BluRay.1080p.DTS-HD.MA.5.1.AVC.REMUX-FraMeSToR.mkv",
+      "source_index": 21,
+      "source_input_line": 79,
+      "source_title_line": 81,
+      "original_labels": {
+        "type": "movie",
+        "title": "50 50",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2011,
+        "codec": "AVC",
+        "audio": "DTS-HD.MA",
+        "channels": "5.1",
+        "other": "REMUX",
+        "group": "FraMeSToR",
+        "ext": "mkv"
+      },
+      "review_note": "50 50 and 2011 are retained independently. AVC and REMUX are explicit; DTS-HD MA 5.1 is an unmeasured audio label and mkv is a container. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "50 50",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-024",
+      "source": "moistari-rls-original",
+      "input": "2001: A Space Odyssey.mkv",
+      "source_index": 24,
+      "source_input_line": 106,
+      "source_title_line": 108,
+      "original_labels": {
+        "type": "movie",
+        "title": "2001: A Space Odyssey",
+        "ext": "mkv"
+      },
+      "review_note": "The literal title includes 2001: A Space Odyssey. The numeric title prefix is not a separate work-year label; absent year requires review and grants no movie unit. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "2001: A Space Odyssey",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-025",
+      "source": "moistari-rls-original",
+      "input": "2001.A.Space.Odyssey.1968.2160p.UHD.BluRay.DD+5.1.DoVi.x265-c0kE",
+      "source_index": 25,
+      "source_input_line": 110,
+      "source_title_line": 112,
+      "original_labels": {
+        "type": "movie",
+        "title": "2001 A Space Odyssey",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 1968,
+        "codec": "x265",
+        "hdr": "DV",
+        "audio": "DDP",
+        "channels": "5.1",
+        "group": "c0kE"
+      },
+      "review_note": "The title-leading 2001 stays in the title and 1968 is the independent work year. UHD/2160p, x265 and DoVi are literal; DD+5.1 is not measured audio. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "2001 A Space Odyssey",
+        "year": 1968,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Bluray",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "c0kE"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-029",
+      "source": "moistari-rls-original",
+      "input": "2012 2012.mkv",
+      "source_index": 29,
+      "source_input_line": 150,
+      "source_title_line": 152,
+      "original_labels": {
+        "type": "movie",
+        "title": "2012",
+        "year": 2012,
+        "ext": "mkv"
+      },
+      "review_note": "The first 2012 is the independently asserted numeric title; the second is the asserted year. No quality or group can be invented from a bare mkv filename. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "2012",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-031",
+      "source": "moistari-rls-original",
+      "input": "2048.Nowhere.to.Run.2017.1080p.BluRay.DD2.0.x264-decibeL",
+      "source_index": 31,
+      "source_input_line": 163,
+      "source_title_line": 165,
+      "original_labels": {
+        "type": "movie",
+        "title": "2048 Nowhere to Run",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2017,
+        "codec": "x264",
+        "audio": "DD",
+        "channels": "2.0",
+        "group": "decibeL"
+      },
+      "review_note": "2048 is a title number, not the release year. 2017, BluRay, 1080p and x264 are explicit; DD2.0 does not change episode coverage or establish audio facts. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "2048 Nowhere to Run",
+        "year": 2017,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "decibeL"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-035",
+      "source": "moistari-rls-original",
+      "input": "A.River.Runs.Through.It.1992.Remastered.BluRay.1080p.DTS-HD.MA.5.1.AVC.REMUX-FraMeSToR",
+      "source_index": 35,
+      "source_input_line": 206,
+      "source_title_line": 208,
+      "original_labels": {
+        "type": "movie",
+        "title": "A River Runs Through It",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 1992,
+        "codec": "AVC",
+        "audio": "DTS-HD.MA",
+        "channels": "5.1",
+        "other": "REMASTERED REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "A River Runs Through It and 1992 are independent labels. Remastered remains an unverified edition description; AVC/REMUX and the final group are explicit. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "A River Runs Through It",
+        "year": 1992,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-036",
+      "source": "moistari-rls-original",
+      "input": "(2001)A Space Odyssey.mkv",
+      "source_index": 36,
+      "source_input_line": 217,
+      "source_title_line": 219,
+      "original_labels": {
+        "type": "movie",
+        "title": "A Space Odyssey",
+        "year": 2001,
+        "ext": "mkv"
+      },
+      "review_note": "Preserve the literal file's parenthesized 2001 year and A Space Odyssey label without substituting the real film's release date. This is syntax evidence, with no external identity or quality facts. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "A Space Odyssey",
+        "year": 2001,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-037",
+      "source": "moistari-rls-original",
+      "input": "A.Very.Harold.And.Kumar.3D.Christmas.2011.FRENCH.3D.HSBS.MULTISUBS.1080p.BluRay.x264.HQ-TUSAHD",
+      "source_index": 37,
+      "source_input_line": 222,
+      "source_title_line": 224,
+      "original_labels": {
+        "type": "movie",
+        "title": "A Very Harold And Kumar 3D Christmas",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2011,
+        "codec": "x264.HQ",
+        "other": "3D Half-SBS",
+        "language": "FRENCH MULTiSUB",
+        "group": "TUSAHD"
+      },
+      "review_note": "3D belongs to the independent title as well as release metadata. The year is 2011; HSBS/MULTISUBS and x264.HQ must not manufacture extra units or audio/edition observations. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "A Very Harold And Kumar 3D Christmas",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "TUSAHD"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-038",
+      "source": "moistari-rls-original",
+      "input": "Adam.Carolla.Not.Taco.Bell.Material.2019.WEB-DL",
+      "source_index": 38,
+      "source_input_line": 232,
+      "source_title_line": 234,
+      "original_labels": {
+        "type": "movie",
+        "title": "Adam Carolla Not Taco Bell Material",
+        "source": "WEB-DL",
+        "year": 2019
+      },
+      "review_note": "The long Adam Carolla Not Taco Bell Material title and 2019 are explicit. WEB-DL alone identifies source; resolution, codec, HDR and group remain unknown. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Adam Carolla Not Taco Bell Material",
+        "year": 2019,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "WEB-DL",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-039",
+      "source": "moistari-rls-original",
+      "input": "Ainbo.Spirit.of.the.Amazon.2021.DUTCH.1080p.WEB.h264-ADRENALiNE",
+      "source_index": 39,
+      "source_input_line": 237,
+      "source_title_line": 239,
+      "original_labels": {
+        "type": "movie",
+        "title": "Ainbo Spirit of the Amazon",
+        "source": "WEB",
+        "resolution": "1080p",
+        "year": 2021,
+        "codec": "H.264",
+        "language": "DUTCH",
+        "group": "ADRENALiNE"
+      },
+      "review_note": "Spirit of the Amazon remains part of Ainbo's title. Bare WEB does not distinguish WEB-DL from WEBRip; DUTCH supplies neither identity nor a measured audio profile. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Ainbo Spirit of the Amazon",
+        "year": 2021,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "ADRENALiNE"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-041",
+      "source": "moistari-rls-original",
+      "input": "Akte.X.Jenseits.der.Wahrheit.R5.Line.Dubbed.German.READ.NFO.XviD-VCF",
+      "source_index": 41,
+      "source_input_line": 258,
+      "source_title_line": 260,
+      "original_labels": {
+        "type": "movie",
+        "title": "Akte X Jenseits der Wahrheit",
+        "codec": "XViD",
+        "other": "READNFO",
+        "language": "DUBBED GERMAN",
+        "region": "R5",
+        "group": "VCF"
+      },
+      "review_note": "Keep Akte X Jenseits der Wahrheit as asserted, with no invented year. R5/Line/Dubbed/XviD are unsupported quality families; title-only review carries no unit authorization. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Akte X Jenseits der Wahrheit",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "VCF"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-042",
+      "source": "moistari-rls-original",
+      "input": "Almost.Famous.2000.Bootleg.Cut.UHD.BluRay.2160p.DTS-HD.MA.5.1.DV.HEVC.HYBRID.REMUX-FraMeSToR",
+      "source_index": 42,
+      "source_input_line": 266,
+      "source_title_line": 268,
+      "original_labels": {
+        "type": "movie",
+        "title": "Almost Famous",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 2000,
+        "codec": "HEVC",
+        "hdr": "DV",
+        "audio": "DTS-HD.MA",
+        "channels": "5.1",
+        "other": "HYBRiD REMUX",
+        "group": "FraMeSToR",
+        "unused": "Bootleg Cut"
+      },
+      "review_note": "Almost Famous and 2000 are independent. UHD/2160p, HEVC, DV and REMUX are literal; Bootleg Cut and HYBRID do not certify edition or imply a different work. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Almost Famous",
+        "year": 2000,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-043",
+      "source": "moistari-rls-original",
+      "input": "Amazon.1990.DVD.720p",
+      "source_index": 43,
+      "source_input_line": 279,
+      "source_title_line": 281,
+      "original_labels": {
+        "type": "movie",
+        "title": "Amazon",
+        "source": "DVD",
+        "resolution": "720p",
+        "year": 1990
+      },
+      "review_note": "Amazon is the asserted title, not a provider token. DVD is outside the finite approved source set; 720p and 1990 stand alone and imply no codec/HDR/audio. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Amazon",
+        "year": 1990,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-048",
+      "source": "moistari-rls-original",
+      "input": "Austin.Powers.The.Spy.Who.Shagged.Me.1999.BluRay.1080p.TrueHD.5.1.VC-1.REMUX-FraMeSToR.mkv",
+      "source_index": 48,
+      "source_input_line": 330,
+      "source_title_line": 332,
+      "original_labels": {
+        "type": "movie",
+        "title": "Austin Powers The Spy Who Shagged Me",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 1999,
+        "codec": "VC-1",
+        "audio": "TrueHD",
+        "channels": "5.1",
+        "other": "REMUX",
+        "group": "FraMeSToR",
+        "ext": "mkv"
+      },
+      "review_note": "The full Austin Powers title is retained. VC-1 is outside H264/HEVC/AV1, so codec stays unknown even though BluRay REMUX and 1080p are explicit; TrueHD remains unmeasured. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Austin Powers The Spy Who Shagged Me",
+        "year": 1999,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-050",
+      "source": "moistari-rls-original",
+      "input": "Batman.Hush.2019.UHD.BluRay.2160p.DTS-HD.MA.5.1.HEVC.REMUX-FraMeSToR",
+      "source_index": 50,
+      "source_input_line": 354,
+      "source_title_line": 356,
+      "original_labels": {
+        "type": "movie",
+        "title": "Batman Hush",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 2019,
+        "codec": "HEVC",
+        "audio": "DTS-HD.MA",
+        "channels": "5.1",
+        "other": "REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "Batman Hush and 2019 are literal. UHD/2160p and HEVC REMUX do not imply HDR; DTS-HD MA 5.1 is not accepted as observed audio. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Batman Hush",
+        "year": 2019,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-056",
+      "source": "moistari-rls-original",
+      "input": "Brave.2012.German.Subbed.DVDRip.XViD.LiNE-UNiQUE",
+      "source_index": 56,
+      "source_input_line": 415,
+      "source_title_line": 417,
+      "original_labels": {
+        "type": "movie",
+        "title": "Brave",
+        "source": "DVDRiP",
+        "year": 2012,
+        "codec": "XViD",
+        "audio": "LiNE",
+        "language": "GERMAN SUBBED",
+        "group": "UNiQUE"
+      },
+      "review_note": "Brave's 2012 year is retained. DVDRip/XViD/LiNE are unsupported source/codec/audio evidence; German Subbed is not part of the title or a unit declaration. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Brave",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "UNiQUE"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-058",
+      "source": "moistari-rls-original",
+      "input": "BURN-E.2008.BluRay.1080p.DD5.1-EX.AVC.REMUX-FraMeSToR.mkv",
+      "source_index": 58,
+      "source_input_line": 433,
+      "source_title_line": 435,
+      "original_labels": {
+        "type": "movie",
+        "title": "BURN-E",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2008,
+        "codec": "AVC",
+        "audio": "DD EX",
+        "channels": "5.1",
+        "other": "REMUX",
+        "group": "FraMeSToR",
+        "ext": "mkv"
+      },
+      "review_note": "Preserve the source's BURN-E punctuation and 2008. AVC/REMUX/1080p are explicit; DD5.1-EX is an audio label and must not become a release group. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "BURN-E",
+        "year": 2008,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-059",
+      "source": "moistari-rls-original",
+      "input": "Cat.And.Mouse.2003.2Audio.DVDRip.XviD.AC3.iNT-io",
+      "source_index": 59,
+      "source_input_line": 445,
+      "source_title_line": 447,
+      "original_labels": {
+        "type": "movie",
+        "title": "Cat And Mouse",
+        "source": "DVDRiP",
+        "year": 2003,
+        "codec": "XViD",
+        "audio": "DUAL.AUDIO DD",
+        "other": "INTERNAL",
+        "group": "io"
+      },
+      "review_note": "Cat And Mouse and 2003 are independent. 2Audio and iNT are metadata, with DVDRip/XviD outside approved enums. Keep the lowercase final io group, not AC3. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Cat And Mouse",
+        "year": 2003,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "io"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-061",
+      "source": "moistari-rls-original",
+      "input": "Cold.Pursuit.2019.UHD.BluRay.2160p.TrueHD.Atmos.7.1.DV.HEVC.REMUX-FraMeSToR",
+      "source_index": 61,
+      "source_input_line": 462,
+      "source_title_line": 464,
+      "original_labels": {
+        "type": "movie",
+        "title": "Cold Pursuit",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 2019,
+        "codec": "HEVC",
+        "hdr": "DV",
+        "audio": "TrueHD Atmos",
+        "channels": "7.1",
+        "other": "REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "Cold Pursuit and 2019 are literal. DV is explicit rather than inferred from UHD; TrueHD Atmos 7.1 is still not measured audio, while REMUX/HEVC are explicit. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Cold Pursuit",
+        "year": 2019,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "DV",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-068",
+      "source": "moistari-rls-original",
+      "input": "Deep.Web.2015.BluRay.1080i.DTS-HD.MA.2.0.AVC.REMUX-FraMeSToR",
+      "source_index": 68,
+      "source_input_line": 533,
+      "source_title_line": 535,
+      "original_labels": {
+        "type": "movie",
+        "title": "Deep Web",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2015,
+        "codec": "AVC",
+        "audio": "DTS-HD.MA",
+        "channels": "2.0",
+        "other": "REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "Deep Web and 2015 are independent. Raw input says 1080i although upstream normalized it to 1080p; reject that resolution inference and leave resolution unknown. AVC/REMUX remain explicit. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Deep Web",
+        "year": 2015,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-069",
+      "source": "moistari-rls-original",
+      "input": "Deerskin.2019.1080p.BluRay.EAC3.x264-ZQ.mkv",
+      "source_index": 69,
+      "source_input_line": 544,
+      "source_title_line": 546,
+      "original_labels": {
+        "type": "movie",
+        "title": "Deerskin",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 2019,
+        "codec": "x264",
+        "audio": "DDP",
+        "group": "ZQ",
+        "ext": "mkv"
+      },
+      "review_note": "Deerskin and 2019 precede literal 1080p/BluRay/x264. EAC3 is an unmeasured audio label; ZQ is the exact terminal group and mkv adds no quality. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Deerskin",
+        "year": 2019,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "ZQ"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-073",
+      "source": "moistari-rls-original",
+      "input": "Dont.Blink.2014.1080p.AMZN-CBR.WEB-DL.DDP5.1.H.264-NTG.mkv",
+      "source_index": 73,
+      "source_input_line": 585,
+      "source_title_line": 587,
+      "original_labels": {
+        "type": "movie",
+        "title": "Dont Blink",
+        "source": "WEB-DL",
+        "resolution": "1080p",
+        "collection": "AMZN",
+        "year": 2014,
+        "codec": "H.264",
+        "audio": "CBR DDP",
+        "channels": "5.1",
+        "group": "NTG",
+        "ext": "mkv"
+      },
+      "review_note": "Dont Blink keeps the independent spelling without adding an apostrophe. AMZN-CBR is provider/bitrate metadata, not a second group; WEB-DL/H.264 and final NTG are explicit. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Dont Blink",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NTG"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-074",
+      "source": "moistari-rls-original",
+      "input": "Dr.No.1962.INTERNAL.2160p.WEB.H265-DEFLATE",
+      "source_index": 74,
+      "source_input_line": 597,
+      "source_title_line": 599,
+      "original_labels": {
+        "type": "movie",
+        "title": "Dr No",
+        "source": "WEB",
+        "resolution": "2160p",
+        "year": 1962,
+        "codec": "H.265",
+        "other": "INTERNAL",
+        "group": "DEFLATE"
+      },
+      "review_note": "The source title is Dr No and the work year 1962. Bare WEB cannot certify a download/rip family; H265 and 2160p are explicit, INTERNAL is not an edition observation. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Dr No",
+        "year": 1962,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "DEFLATE"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-075",
+      "source": "moistari-rls-original",
+      "input": "Dr..Strangelove.or:.How.I.Learned.to.Stop.Worrying.and.Love.the.Bomb.1964.BluRay.1080p.DTS.5.1.x264.dxva-RHPSmusic",
+      "source_index": 75,
+      "source_input_line": 606,
+      "source_title_line": 608,
+      "original_labels": {
+        "type": "movie",
+        "title": "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "year": 1964,
+        "codec": "x264 dxva",
+        "audio": "DTS",
+        "channels": "5.1",
+        "group": "RHPSmusic"
+      },
+      "review_note": "Retain Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb exactly as independently asserted. 1964 is the year; dxva and DTS5.1 do not become title/group/audio observations. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
+        "year": 1964,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "RHPSmusic"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-076",
+      "source": "moistari-rls-original",
+      "input": "Dracula.Untold.TS.XViD.AC3.MrSeeN-SiMPLE",
+      "source_index": 76,
+      "source_input_line": 616,
+      "source_title_line": 618,
+      "original_labels": {
+        "type": "movie",
+        "title": "Dracula Untold",
+        "source": "TS",
+        "codec": "XViD",
+        "audio": "DD",
+        "group": "MrSeeN-SiMPLE"
+      },
+      "review_note": "Dracula Untold has no independent year. TS/XViD are unsupported source/codec families; preserve the source's compound MrSeeN-SiMPLE group rather than changing it to fit a parser result. Title-only review grants no unit. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Dracula Untold",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "MrSeeN-SiMPLE"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-078",
+      "source": "moistari-rls-original",
+      "input": "E.T.the.Extra-Terrestrial.1982.UHD.BluRay.2160p.DTS-X.7.1.HEVC.REMUX-FraMeSToR",
+      "source_index": 78,
+      "source_input_line": 635,
+      "source_title_line": 637,
+      "original_labels": {
+        "type": "movie",
+        "title": "E.T. the Extra-Terrestrial",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 1982,
+        "codec": "HEVC",
+        "audio": "DTS-X",
+        "channels": "7.1",
+        "other": "REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "Retain E.T. the Extra-Terrestrial punctuation and 1982. DTS-X.7.1 is audio metadata, not a second work number or HDR declaration; UHD REMUX and HEVC are explicit. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "E.T. the Extra-Terrestrial",
+        "year": 1982,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-080",
+      "source": "moistari-rls-original",
+      "input": "Fargo.1996.SF.20th.Anniversary.Edition.1080p.BluRay.REMUX.AVC.DTS-HD.MA.5.1-RU4HD",
+      "source_index": 80,
+      "source_input_line": 655,
+      "source_title_line": 657,
+      "original_labels": {
+        "type": "movie",
+        "title": "Fargo",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "collection": "SF",
+        "year": 1996,
+        "codec": "AVC",
+        "audio": "DTS-HD.MA",
+        "channels": "5.1",
+        "other": "REMUX",
+        "edition": "20th.Anniversary.Edition",
+        "group": "RU4HD"
+      },
+      "review_note": "Fargo's work year is 1996; 20th Anniversary Edition is not another year or an observed edition field. AVC and BluRay REMUX are explicit, with exact terminal RU4HD. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Fargo",
+        "year": 1996,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Remux",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "RU4HD"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-082",
+      "source": "moistari-rls-original",
+      "input": "FAT.A.Documentary.2019.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTG.mkv",
+      "source_index": 82,
+      "source_input_line": 677,
+      "source_title_line": 679,
+      "original_labels": {
+        "type": "movie",
+        "title": "FAT A Documentary",
+        "source": "WEB-DL",
+        "resolution": "1080p",
+        "collection": "AMZN",
+        "year": 2019,
+        "codec": "H.264",
+        "audio": "DDP",
+        "channels": "5.1",
+        "group": "NTG",
+        "ext": "mkv"
+      },
+      "review_note": "FAT A Documentary is the full independent title. AMZN is provider metadata, 2019 the work year, and DDP5.1 provides no measured audio facts or coverage. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "FAT A Documentary",
+        "year": 2019,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NTG"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-083",
+      "source": "moistari-rls-original",
+      "input": "Fear.and.Loathing.in.Las.Vegas.1998.The.Criterion.Collection.1080p.BluRay.DTS.x264-HiFi",
+      "source_index": 83,
+      "source_input_line": 689,
+      "source_title_line": 691,
+      "original_labels": {
+        "type": "movie",
+        "title": "Fear and Loathing in Las Vegas",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "collection": "Criterion.Collection",
+        "year": 1998,
+        "codec": "x264",
+        "audio": "DTS",
+        "group": "HiFi"
+      },
+      "review_note": "Fear and Loathing in Las Vegas and 1998 are retained. The Criterion Collection is release metadata rather than title; DTS alone proves no audio profile and no HDR is declared. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Fear and Loathing in Las Vegas",
+        "year": 1998,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HiFi"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-087",
+      "source": "moistari-rls-original",
+      "input": "Ghost.in.the.Shell.2017.UHD.BluRay.2160p.TrueHD.Atmos.7.1.HEVC.REMUX-FraMeSToR.mkv",
+      "source_index": 87,
+      "source_input_line": 724,
+      "source_title_line": 726,
+      "original_labels": {
+        "type": "movie",
+        "title": "Ghost in the Shell",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 2017,
+        "codec": "HEVC",
+        "audio": "TrueHD Atmos",
+        "channels": "7.1",
+        "other": "REMUX",
+        "group": "FraMeSToR",
+        "ext": "mkv"
+      },
+      "review_note": "Ghost in the Shell is explicitly the 2017 file. UHD and TrueHD Atmos do not imply HDR; 2160p/HEVC/REMUX and the group are independently visible. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Ghost in the Shell",
+        "year": 2017,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-089",
+      "source": "moistari-rls-original",
+      "input": "Guardians of the Galaxy (CamRip / 2014)",
+      "source_index": 89,
+      "source_input_line": 743,
+      "source_title_line": 745,
+      "original_labels": {
+        "type": "movie",
+        "title": "Guardians of the Galaxy",
+        "source": "CAMRiP",
+        "year": 2014
+      },
+      "review_note": "Guardians of the Galaxy has literal year 2014. CamRip is outside approved sources; the slash is metadata punctuation, not episode or multiple-movie coverage, with no invented quality. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Guardians of the Galaxy",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-101",
+      "source": "moistari-rls-original",
+      "input": "IMAX.-.Journey.to.the.South.Pacific.2013.2160p.UHD.BluRay.DTS-HD.MA.7.1.HDR10+.x265-DON",
+      "source_index": 101,
+      "source_input_line": 843,
+      "source_title_line": 845,
+      "original_labels": {
+        "type": "movie",
+        "title": "Journey to the South Pacific",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "collection": "IMAX",
+        "year": 2013,
+        "codec": "x265",
+        "hdr": "HDR10+",
+        "audio": "DTS-HD.MA",
+        "channels": "7.1",
+        "group": "DON"
+      },
+      "review_note": "The upstream title omits IMAX as collection metadata and retains Journey to the South Pacific. HDR10+ is explicit, x265 is HEVC, and no REMUX is declared; retain this title even if the parser differs. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Journey to the South Pacific",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Bluray",
+          "codec": "HEVC",
+          "hdr": "HDR10+",
+          "audio": "",
+          "edition": "",
+          "group": "DON"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-102",
+      "source": "moistari-rls-original",
+      "input": "Jurassic.World.Fallen.Kingdom.2018.UHD.BluRay.2160p.DTSX.7.1.HEVC.REMUX-FraMeSToR",
+      "source_index": 102,
+      "source_input_line": 855,
+      "source_title_line": 857,
+      "original_labels": {
+        "type": "movie",
+        "title": "Jurassic World Fallen Kingdom",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 2018,
+        "codec": "HEVC",
+        "audio": "DTS-X",
+        "channels": "7.1",
+        "other": "REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "Jurassic World Fallen Kingdom and 2018 are explicit. DTSX.7.1 is an audio label, while UHD/2160p and HEVC REMUX do not establish HDR or an observed audio profile. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Jurassic World Fallen Kingdom",
+        "year": 2018,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-106",
+      "source": "moistari-rls-original",
+      "input": "Last.Train.from.Gun.Hill.1959.720p.6K.RESTORATION.BluRay.FLAC.2.0.x264-iFT.torrent",
+      "source_index": 106,
+      "source_input_line": 895,
+      "source_title_line": 897,
+      "original_labels": {
+        "type": "movie",
+        "title": "Last Train from Gun Hill",
+        "source": "BluRay",
+        "resolution": "720p",
+        "year": 1959,
+        "codec": "x264",
+        "audio": "FLAC",
+        "channels": "2.0",
+        "other": "RESTORATiON",
+        "group": "iFT",
+        "ext": "torrent"
+      },
+      "review_note": "Last Train from Gun Hill is explicitly the 1959 work. 6K RESTORATION describes restoration, not file resolution; literal 720p wins, and FLAC2.0 remains unmeasured audio. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Last Train from Gun Hill",
+        "year": 1959,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "iFT"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-116",
+      "source": "moistari-rls-original",
+      "input": "Rashômon.1950.1080p.Criterion.Collection.BluRay.FLAC.x264-decibeL.mkv",
+      "source_index": 116,
+      "source_input_line": 986,
+      "source_title_line": 988,
+      "original_labels": {
+        "type": "movie",
+        "title": "Rashômon",
+        "source": "BluRay",
+        "resolution": "1080p",
+        "collection": "Criterion.Collection",
+        "year": 1950,
+        "codec": "x264",
+        "audio": "FLAC",
+        "group": "decibeL",
+        "ext": "mkv"
+      },
+      "review_note": "Preserve Rashômon's accented title and 1950. Criterion Collection is release metadata; literal 1080p/BluRay/x264 stand independently of FLAC audio and mkv container. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "Rashômon",
+        "year": 1950,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "decibeL"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-117",
+      "source": "moistari-rls-original",
+      "input": "RED.2010.UHD.BluRay.2160p.TrueHD.Atmos.7.1.HEVC.REMUX-FraMeSToR",
+      "source_index": 117,
+      "source_input_line": 997,
+      "source_title_line": 999,
+      "original_labels": {
+        "type": "movie",
+        "title": "RED",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 2010,
+        "codec": "HEVC",
+        "audio": "TrueHD Atmos",
+        "channels": "7.1",
+        "other": "REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "RED is the complete title with work year 2010. UHD/2160p/HEVC REMUX do not imply HDR, and TrueHD Atmos7.1 does not certify measured audio. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "RED",
+        "year": 2010,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "moistari-rls-original-118",
+      "source": "moistari-rls-original",
+      "input": "RED.2.2013.UHD.BluRay.2160p.TrueHD.Atmos.7.1.HEVC.REMUX-FraMeSToR",
+      "source_index": 118,
+      "source_input_line": 1008,
+      "source_title_line": 1010,
+      "original_labels": {
+        "type": "movie",
+        "title": "RED 2",
+        "source": "UHD.BluRay",
+        "resolution": "2160p",
+        "year": 2013,
+        "codec": "HEVC",
+        "audio": "TrueHD Atmos",
+        "channels": "7.1",
+        "other": "REMUX",
+        "group": "FraMeSToR"
+      },
+      "review_note": "The 2 belongs to RED 2, not episode coverage; 2013 is the work year. HEVC REMUX/2160p are literal and no HDR/observed audio/edition is invented. Single movie syntax only: no episode, season, anime or absolute-number assertion. All quality fields are explicit; empty audio/edition mean unknown, and syntax confidence never authorizes acquisition.",
+      "expected": {
+        "title": "RED 2",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "2160p",
+          "source": "Remux",
+          "codec": "HEVC",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "repository": "scttcper/video-filename-parser",
+  "commit": "84fece54bf097ddd2d7980523d00bb46126cf51f",
+  "license_sha256": "da337cfa918334bb9d4c84dd8610485b9a4fecd85b6b373028951028deb2b252",
+  "sources": [
+    {
+      "path": "test/audioChannels.spec.ts",
+      "sha256": "2fd1ed5b2b9f44e25de89ad936b6a9e6ea43304a1a36b9f1fe3ab581b6c4482d",
+      "bytes": 1807,
+      "local_name": "audioChannels.spec.ts.source"
+    },
+    {
+      "path": "test/audioCodec.spec.ts",
+      "sha256": "bfb164da17fa69263844cbc99fbb6b1690dd50bba92eee6e6aa3ec81a6b384d4",
+      "bytes": 3373,
+      "local_name": "audioCodec.spec.ts.source"
+    },
+    {
+      "path": "test/codec.spec.ts",
+      "sha256": "ae1a2bd20ed15bebabf31378efa65bed673e438032bb308b105ff67b5965bcff",
+      "bytes": 2235,
+      "local_name": "codec.spec.ts.source"
+    },
+    {
+      "path": "test/complete.spec.ts",
+      "sha256": "e7a72b2421be46054b89f281003c12712fef996516e584a61a2850af8edfa1bf",
+      "bytes": 412,
+      "local_name": "complete.spec.ts.source"
+    },
+    {
+      "path": "test/edition.spec.ts",
+      "sha256": "79446f8d7940d40eb48e96839793b8180b41699829f83f5f0fe1c33245324ccc",
+      "bytes": 4631,
+      "local_name": "edition.spec.ts.source"
+    },
+    {
+      "path": "test/extensions.spec.ts",
+      "sha256": "57593b504bc9474ce434913cb2f557810b2b9c1be05c800c334e1b5f1be442bb",
+      "bytes": 1038,
+      "local_name": "extensions.spec.ts.source"
+    },
+    {
+      "path": "test/filenameParse.spec.ts",
+      "sha256": "3c7ebc611f504bce41146d5fb9539f6faa54bb420587dabc87f65d35e6c175d8",
+      "bytes": 11257,
+      "local_name": "filenameParse.spec.ts.source"
+    },
+    {
+      "path": "test/group.spec.ts",
+      "sha256": "c5b33e71bbf5dba5578eaf3ace32137948ec0f3cae5cc15c2790d733031ca872",
+      "bytes": 4945,
+      "local_name": "group.spec.ts.source"
+    },
+    {
+      "path": "test/language.spec.ts",
+      "sha256": "111b13795a13cb61d17a8642daf2c93bdd367ef63696aa47c82a83f7f2650f5d",
+      "bytes": 8163,
+      "local_name": "language.spec.ts.source"
+    },
+    {
+      "path": "test/quality.spec.ts",
+      "sha256": "efa5d68c4545aaf4c34800c66ffbebfb25157350d9b5fca018f0e36eabfeb5b4",
+      "bytes": 20550,
+      "local_name": "quality.spec.ts.source"
+    },
+    {
+      "path": "test/resolution.spec.ts",
+      "sha256": "6a44768d6d0b4f4deb4b9853b3f41793e50e0ae8ff05beb8e30f8029ecd06d29",
+      "bytes": 3031,
+      "local_name": "resolution.spec.ts.source"
+    },
+    {
+      "path": "test/revisionUpgrade.spec.ts",
+      "sha256": "f17e23f74b7b6269fa4c625505eae2f794348f16ebb36a46a4e9e0612b6f8150",
+      "bytes": 3834,
+      "local_name": "revisionUpgrade.spec.ts.source"
+    },
+    {
+      "path": "test/season.spec.ts",
+      "sha256": "0e8e22c6b800ad005ee95fc71c0ee1fbbf14e6a727d8a32cf61ee78eae4d9c38",
+      "bytes": 22163,
+      "local_name": "season.spec.ts.source"
+    },
+    {
+      "path": "test/simplifyTitle.spec.ts",
+      "sha256": "cc1ae2b246b8c3860f411364a622a863ecdbc1f10220b8f1258fb59df99b5538",
+      "bytes": 2546,
+      "local_name": "simplifyTitle.spec.ts.source"
+    },
+    {
+      "path": "test/source.spec.ts",
+      "sha256": "54652fb53eb82f1ca9abb2024517b0050b6bb29cdd7b6cae1214cefa68a7b43f",
+      "bytes": 4177,
+      "local_name": "source.spec.ts.source"
+    },
+    {
+      "path": "test/title.spec.ts",
+      "sha256": "386011eb6add5e463162d4a7f56d853e8feb43e77413adf94da15039f83eca48",
+      "bytes": 6282,
+      "local_name": "title.spec.ts.source"
+    },
+    {
+      "path": "test/utils.spec.ts",
+      "sha256": "f025e77f4b8d9f316e46dcd858f37cfffd262e4610e3d904933adec47ef3145e",
+      "bytes": 415,
+      "local_name": "utils.spec.ts.source"
+    }
+  ]
+}

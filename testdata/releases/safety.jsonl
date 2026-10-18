@@ -1,0 +1,20 @@
+{"id":"gap-chain","input":"Northern.Road.S01E01E03.1080p","keys":["S01E01","S01E03"],"review":false,"reason":"explicit_episode_list"}
+{"id":"closed-range","input":"River.of.Stars.S02E04-E06.720p.mkv","keys":["S02E04","S02E05","S02E06"],"review":false,"reason":"multi_episode_range"}
+{"id":"descending","input":"归途.S03E07-E02.WEB-DL.mkv","keys":null,"review":true,"reason":"invalid_episode_range"}
+{"id":"absolute-unmapped","input":"[OwnGroup] 晨星 - 125 [1080p].mkv","keys":null,"review":true,"reason":"absolute_mapping_required"}
+{"id":"different-seasons","input":"City.Courier.S01E03.S02E01.mp4","keys":null,"review":true,"reason":"conflicting_episode_coverage"}
+{"id":"zero-episode","input":"Tide.Clock.S00E00.mkv","keys":null,"review":true,"reason":"invalid_episode_coverage"}
+{"id":"special-season","input":"长夜.S00E02.1080p.WEB-DL.mkv","keys":["S00E02"],"review":false,"reason":"standard_season_episode"}
+{"id":"no-extension-tv","input":"Solar.Route.S09E108.1080p.WEB-DL","keys":["S09E108"],"review":false,"reason":"standard_season_episode"}
+{"id":"max-season","input":"Index.Room.S99E999.mkv","keys":["S99E999"],"review":false,"reason":"standard_season_episode"}
+{"id":"alt-x","input":"Valley.Clock.4x08.HDTV.mp4","keys":["S04E08"],"review":false,"reason":"alt_season_episode"}
+{"id":"pack-incomplete","input":"海风.S04.COMPLETE.1080p.mkv","keys":null,"review":true,"reason":"episode_coverage_unresolved"}
+{"id":"season-overflow","input":"Old.Catalog.S100E01.2015.mkv","keys":null,"review":true,"reason":"episode_coverage_unresolved"}
+{"id":"title-absent","input":"S07E09.mkv","keys":null,"review":true,"reason":"missing_media_title"}
+{"id":"range-overlap","input":"Town.Diary.S01E01-E03.S02E04.mkv","keys":null,"review":true,"reason":"conflicting_episode_coverage"}
+{"id":"duplicate-chain","input":"Sky.Gate.S01E01E01.mkv","keys":null,"review":true,"reason":"invalid_episode_coverage"}
+{"id":"zero-range","input":"Dawn.Paper.S01E00-E03.mkv","keys":null,"review":true,"reason":"invalid_episode_range"}
+{"id":"excessive-range","input":"Meadow.News.S01E01-E21.mkv","keys":null,"review":true,"reason":"invalid_episode_range"}
+{"id":"equal-range","input":"Glass.Harbor.S01E05-E05.mkv","keys":["S01E05"],"review":false,"reason":"multi_episode_range"}
+{"id":"uneven-chain","input":"Forest.Post.S02E02E07E11.mkv","keys":["S02E02","S02E07","S02E11"],"review":false,"reason":"explicit_episode_list"}
+{"id":"underscore-unresolved","input":"Test_Bridge_S01E01_2018.mkv","keys":null,"review":true,"reason":"episode_coverage_unresolved"}

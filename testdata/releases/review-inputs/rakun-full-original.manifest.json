@@ -1,0 +1,21 @@
+{
+  "source_id": "rakun-full-original",
+  "license": "MIT",
+  "review_status": "partially_reviewed_verbatim_source",
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "reviewed_entries": 50,
+  "literal_input_count": 93,
+  "provenance": {
+    "repository": "https://github.com/lowlighter/rakun",
+    "commit": "9cb4960da05b79c4bcea3eafc1b5f2ca6c816b56",
+    "path": "tests/cases/all.js",
+    "source_file": "../upstream-mit/rakun-full-original.test.js",
+    "source_sha256": "888c44b6f29deeb52fcf2ced59873326973881aae4976c725c38d258ba33f91c",
+    "assertion_file": "../upstream-mit/rakun-full-original.tester.js",
+    "assertion_sha256": "56a8bcd6273986354ffc61d0d933d8567ac785737fceaa4268c20113682ed569",
+    "license_file": "rakun-full-original.LICENSE",
+    "license_sha256": "d14c13422112e483e91faf496cc0bfd75ec072766053a340b2ff9afc483fb468"
+  },
+  "audit_note": "Unexecuted verbatim MIT source. Fifty distinct literals have complete independent annotations in reviewed-full.json; 43 remain pending identity, coverage, quality, confidence and rationale review. Original titles, complete numbering strings, source labels and source positions remain intact. Individually audited literal ranges are retained unexpanded as refusal evidence; computed and fractional numbering cannot become reliable units. Publisher/technical layouts used for yearless lexical titles do not change original-input authority guards or quality. Part-relative and collection metadata do not certify canonical units. Raw audio_5_1 measures no audio channels. No upstream parser execution, source-wide acceptance or canonical coverage authority; these93 literals remain outside the established1758-input pool, and exact duplicates never count twice."
+}

@@ -1,0 +1,5 @@
+-- Run only on a disposable database migrated to the current schema.
+INSERT INTO library_root(id,path,media_type,name,health,generation,scan_token,mutation_seq) VALUES(gen_random_uuid(),'/tmp/pulse-config-ui-movies','movie','UI Movies','online',1,0,0),(gen_random_uuid(),'/tmp/pulse-config-ui-tv','tv','UI TV','online',1,0,0);
+INSERT INTO media(id,title,year,media_type,metadata_version) VALUES('00000000-0000-4000-8000-000000900001','UI Movie',2020,'movie',1),('00000000-0000-4000-8000-000000900002','UI Show',2021,'tv',1);
+INSERT INTO media_identity(id,media_id,namespace,external_id) VALUES(gen_random_uuid(),'00000000-0000-4000-8000-000000900001','tmdb.movie','900001'),(gen_random_uuid(),'00000000-0000-4000-8000-000000900002','tmdb.tv','900002');
+INSERT INTO media_unit(id,media_id,unit_key,season_number,episode_number) VALUES(gen_random_uuid(),'00000000-0000-4000-8000-000000900001','movie',NULL,NULL),(gen_random_uuid(),'00000000-0000-4000-8000-000000900002','S01E01',1,1),(gen_random_uuid(),'00000000-0000-4000-8000-000000900002','S01E02',1,2),(gen_random_uuid(),'00000000-0000-4000-8000-000000900002','S02E01',2,1);

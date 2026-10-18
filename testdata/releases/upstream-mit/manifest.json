@@ -1,0 +1,47 @@
+{
+  "derived_fixture_commit": "3c73072b8971d412935c6f749be63c564dd41385",
+  "sources": [
+    {
+      "id": "ptt",
+      "url": "https://raw.githubusercontent.com/guessit-io/guessit/3c73072b8971d412935c6f749be63c564dd41385/guessit/test/cross_parser/ptt.json",
+      "sha256": "bc263db970d661a0cf093888d23a7c2134b768d9b631ec6550afbf17b7b21fb8",
+      "entries": 453,
+      "license": "MIT",
+      "upstream": "dreulavelle/PTT",
+      "license_revision": "88429bb90acef55673f421f45038878809b1e577",
+      "license_sha256": "285e18dd1c15cbfa29380cd73ec9804bfebae088c54be6cd3b3d1ca765c25370"
+    },
+    {
+      "id": "ptn",
+      "url": "https://raw.githubusercontent.com/guessit-io/guessit/3c73072b8971d412935c6f749be63c564dd41385/guessit/test/cross_parser/ptn.json",
+      "sha256": "02352ecee5d4c2d04dce19861119c55720348bedfba4fa0bd5ab5e150c4a2fb7",
+      "entries": 76,
+      "license": "MIT",
+      "upstream": "divijbindlish/parse-torrent-name",
+      "license_revision": "681d95828a66a563d8450c349d6513965dc99c4d",
+      "license_sha256": "6f9ae4dd0d1973fb448bd26642cffcf1dc202446bab0ac23f2b185d5f6599775"
+    },
+    {
+      "id": "go-ptn",
+      "url": "https://raw.githubusercontent.com/guessit-io/guessit/3c73072b8971d412935c6f749be63c564dd41385/guessit/test/cross_parser/go-ptn.json",
+      "sha256": "e5e90057cd128ec8bf8ffd41bdc2d631f0f0d1b5f372e1c77c4decd8e9437a12",
+      "entries": 87,
+      "license": "MIT",
+      "upstream": "razsteinmetz/go-ptn",
+      "license_revision": "ed99045bc5cf7d3044f29b8b385f39450a484a2f",
+      "license_sha256": "5c01505f1974f6562d9f972acbcba24504ce20e68a58241b5f8d0dfc85512b84"
+    },
+    {
+      "id": "thcolin",
+      "url": "https://raw.githubusercontent.com/guessit-io/guessit/3c73072b8971d412935c6f749be63c564dd41385/guessit/test/cross_parser/thcolin.json",
+      "sha256": "81fadd429d237f9b9714e3c910265bd7eae438eaad6cc221f6bd67479d536293",
+      "entries": 147,
+      "license": "MIT",
+      "upstream": "thcolin/scene-release-parser-php",
+      "license_revision": "5c8e0fc9616a81b2da69d6fac2a5106830bc1a5a",
+      "license_sha256": "cd43e5ac0f31f0437331794c96242864b0b344e6edf3cd196a50b9118296a91d"
+    }
+  ],
+  "unique_inputs": 683,
+  "formal_golden_acceptance": false
+}

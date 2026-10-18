@@ -1,0 +1,8 @@
+.complete-tv-organization { min-width: 0; }
+.complete-tv-organization p, .complete-tv-organization dd { overflow-wrap: anywhere; }
+.complete-tv-organization ul { padding-inline-start: 1.25rem; }
+.complete-tv-organization li { margin-block: 1rem; }
+.complete-tv-organization dd { margin-inline-start: 0; margin-block-end: .5rem; }
+.complete-tv-organization summary { cursor: pointer; padding-block: .75rem; }
+.complete-tv-organization .config-check { display: flex; align-items: flex-start; gap: .5rem; margin-block: 1rem; }
+.complete-tv-organization button { min-height: 44px; white-space: normal; }

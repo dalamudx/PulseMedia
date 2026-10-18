@@ -1,0 +1,18 @@
+{
+  "source_id": "viren-full-main-original",
+  "license": "MIT",
+  "review_status": "unreviewed_verbatim_source",
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "reviewed_entries": 0,
+  "provenance": {
+    "repository": "https://github.com/Viren070/parse-torrent-title",
+    "commit": "46bc6fef150649410d8d307a08e97ba3a3559eb6",
+    "path": "src/__tests__/ptt.test.ts",
+    "source_file": "../upstream-mit/viren-full-main-original.test.ts",
+    "source_sha256": "4b25201f0f2e4a04929ad154b91252f8bc4c9a24a36aac322987e12e3d79f5cd",
+    "license_file": "viren-title-original-assertions.LICENSE",
+    "license_sha256": "5c44be7aac21777dcc84933675ee7f0b08c736aeaed6c78aedd0e3d7a6856d3a"
+  },
+  "audit_note": "Verbatim source only. Original intRange expressions and arrays are retained without evaluating upstream code. Each independent input requires manual full title, year, coverage, quality, confidence and refusal audit; neither ranges nor partial assertions are golden samples. Duplicate reviewed raw inputs cannot count twice."
+}

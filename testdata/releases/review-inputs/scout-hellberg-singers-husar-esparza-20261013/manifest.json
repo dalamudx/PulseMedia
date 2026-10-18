@@ -1,0 +1,218 @@
+{
+  "schema": "pulse.source-scout.v1",
+  "review_status": "unreviewed",
+  "reviewed_entries": 0,
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "sources": [
+    {
+      "review_status": "unreviewed",
+      "reviewed_entries": 0,
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "source_id": "hellberg-release",
+      "repository": "https://github.com/peterhellberg/release",
+      "commit": "681f91c2b326b7722fbae94f0ae27301c6df05f9",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "release_test.go",
+          "preserved": "hellberg-release.test.source",
+          "sha256": "722ad3e6286dc47f2473f0ea2a1c938e75df9044751233eaa42bd8c908629941",
+          "bytes": 12418,
+          "lines": 156,
+          "url": "https://github.com/peterhellberg/release/blob/681f91c2b326b7722fbae94f0ae27301c6df05f9/release_test.go"
+        },
+        {
+          "original_path": "LICENSE",
+          "preserved": "hellberg-release.LICENSE",
+          "sha256": "8a9c15bd36fc2962d98036b33e1455d293cd504691530014f35c5a5629fce3ca",
+          "bytes": 1076,
+          "lines": 21,
+          "url": "https://github.com/peterhellberg/release/blob/681f91c2b326b7722fbae94f0ae27301c6df05f9/LICENSE"
+        },
+        {
+          "original_path": "README.md",
+          "preserved": "hellberg-release.README.source",
+          "sha256": "541c7f5e13cba43dfdba1ff2ec925ab9a2b0df7f5851875a71fef709ecf94ba5",
+          "bytes": 2364,
+          "lines": 77,
+          "url": "https://github.com/peterhellberg/release/blob/681f91c2b326b7722fbae94f0ae27301c6df05f9/README.md"
+        }
+      ],
+      "expected_dataflow": "releaseTests literal Input/Title/Year -> Parse(tt.Input); failure guards compare r.Title != tt.Title and r.Year != tt.Year. No parser-output writer or generator in the fixed tree.",
+      "independence": "Separate authored fixture suite and copyright; no dependency on existing source datasets found in fixed tests/readme/tree. Shared naming conventions or similar-project links do not establish shared expected-dataflow. Exact overlap is retained in inventory, never counted as new.",
+      "candidate_count": 85,
+      "excluded": null
+    },
+    {
+      "review_status": "unreviewed",
+      "reviewed_entries": 0,
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "source_id": "singers-scene-release",
+      "repository": "https://github.com/matiassingers/scene-release",
+      "commit": "b1a01a759d94e78e80c7d8308571808ff85bcf8c",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "test.js",
+          "preserved": "singers-scene-release.test.source",
+          "sha256": "6c1ea498d143d480945549b94fbfc6280f071ae536fcd7699350ba240105a1b6",
+          "bytes": 10588,
+          "lines": 286,
+          "url": "https://github.com/matiassingers/scene-release/blob/b1a01a759d94e78e80c7d8308571808ff85bcf8c/test.js"
+        },
+        {
+          "original_path": "license",
+          "preserved": "singers-scene-release.LICENSE",
+          "sha256": "3d6c5f0286590b529c2647657e121d5f2d294c8867a9b6acd94476e1895c253a",
+          "bytes": 1117,
+          "lines": 21,
+          "url": "https://github.com/matiassingers/scene-release/blob/b1a01a759d94e78e80c7d8308571808ff85bcf8c/license"
+        },
+        {
+          "original_path": "readme.md",
+          "preserved": "singers-scene-release.README.source",
+          "sha256": "1252428333c01e91efce18f01d752cdb497cd7ab892042f94bd15993c3c5f296",
+          "bytes": 1526,
+          "lines": 58,
+          "url": "https://github.com/matiassingers/scene-release/blob/b1a01a759d94e78e80c7d8308571808ff85bcf8c/readme.md"
+        }
+      ],
+      "expected_dataflow": "Each test binds result = sceneRelease(literal input); assert.equal(result.title, literal title), and literal year where supplied. README cites scene naming rules and predb release examples; similar-project links are not a shared fixture pipeline.",
+      "independence": "Separate authored fixture suite and copyright; no dependency on existing source datasets found in fixed tests/readme/tree. Shared naming conventions or similar-project links do not establish shared expected-dataflow. Exact overlap is retained in inventory, never counted as new.",
+      "candidate_count": 14,
+      "excluded": null
+    },
+    {
+      "review_status": "unreviewed",
+      "reviewed_entries": 0,
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "source_id": "husar-movie-title",
+      "repository": "https://github.com/danielhusar/movie-title",
+      "commit": "917e4bb4c0b2e9c61b7a2e0a1086496e71c9cbaf",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "test.js",
+          "preserved": "husar-movie-title.test.source",
+          "sha256": "63ea882c452954eb1dc41323079ace4c965005b0cfe21d4bb16228d3bf4423ac",
+          "bytes": 2456,
+          "lines": 33,
+          "url": "https://github.com/danielhusar/movie-title/blob/917e4bb4c0b2e9c61b7a2e0a1086496e71c9cbaf/test.js"
+        },
+        {
+          "original_path": "license",
+          "preserved": "husar-movie-title.LICENSE",
+          "sha256": "97f6c80a9d90040ec13e5fc71cccae1854e1568416479a5eb2ed17f7fc94e2c6",
+          "bytes": 1097,
+          "lines": 21,
+          "url": "https://github.com/danielhusar/movie-title/blob/917e4bb4c0b2e9c61b7a2e0a1086496e71c9cbaf/license"
+        },
+        {
+          "original_path": "readme.md",
+          "preserved": "husar-movie-title.README.source",
+          "sha256": "41c1c79d420b0ec37399deae06a0019fddf526168b5fc7dfd5cde88fbdc6ba0d",
+          "bytes": 811,
+          "lines": 38,
+          "url": "https://github.com/danielhusar/movie-title/blob/917e4bb4c0b2e9c61b7a2e0a1086496e71c9cbaf/readme.md"
+        }
+      ],
+      "expected_dataflow": "assert.equal(movieTitle(literal raw filename), literal expected title). Both movie and TV tests are hand-maintained literals, no generated-output gold file or generator.",
+      "independence": "Separate authored fixture suite and copyright; no dependency on existing source datasets found in fixed tests/readme/tree. Shared naming conventions or similar-project links do not establish shared expected-dataflow. Exact overlap is retained in inventory, never counted as new.",
+      "candidate_count": 24,
+      "excluded": null
+    },
+    {
+      "review_status": "unreviewed",
+      "reviewed_entries": 0,
+      "accepted": false,
+      "authority": false,
+      "formal_golden_acceptance": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "source_id": "esparza-dlshow",
+      "repository": "https://github.com/danesparza/dlshow",
+      "commit": "411a1b38da88268107d2c29a418d74afb2cfd13f",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "dlshow_test.go",
+          "preserved": "esparza-dlshow.test.source",
+          "sha256": "a7f13635679a58b431628ab544c90b65905144b6413efc07ff514fe0f0835ebf",
+          "bytes": 2716,
+          "lines": 99,
+          "url": "https://github.com/danesparza/dlshow/blob/411a1b38da88268107d2c29a418d74afb2cfd13f/dlshow_test.go"
+        },
+        {
+          "original_path": "LICENSE",
+          "preserved": "esparza-dlshow.LICENSE",
+          "sha256": "f456110687fd203c2f076933c4187b2de9f0af1b75593cc40860bfa2f926ebe8",
+          "bytes": 1068,
+          "lines": 21,
+          "url": "https://github.com/danesparza/dlshow/blob/411a1b38da88268107d2c29a418d74afb2cfd13f/LICENSE"
+        },
+        {
+          "original_path": "README.md",
+          "preserved": "esparza-dlshow.README.source",
+          "sha256": "a9d231487e54e3fc21807bda406a6aee16c95849e2abfa1e1320bef61a881ebd",
+          "bytes": 428,
+          "lines": 13,
+          "url": "https://github.com/danesparza/dlshow/blob/411a1b38da88268107d2c29a418d74afb2cfd13f/README.md"
+        }
+      ],
+      "expected_dataflow": "episodeTests.filename/expectedShowName literal table -> GetEpisodeInfo(test.filename) -> ShowName comparison. Separate literal Colbert input -> ShowName != literal Colbert Report; AiredYear != 2013. Empty-name rejection row is excluded.",
+      "independence": "Separate authored fixture suite and copyright; no dependency on existing source datasets found in fixed tests/readme/tree. Shared naming conventions or similar-project links do not establish shared expected-dataflow. Exact overlap is retained in inventory, never counted as new.",
+      "candidate_count": 3,
+      "excluded": "One empty title row and invalid path case excluded."
+    }
+  ],
+  "exclusions": [
+    [
+      "MunifTanjim/go-ptt",
+      "README acknowledges PTT/Beast; not admitted as an independent new suite."
+    ],
+    [
+      "lijunzh/hunch",
+      "GuessIt-derived fixtures carry LGPL attribution; excluded."
+    ],
+    [
+      "Sec-ant/cinekey",
+      "Large public sets derive from Hunch/Oleoo; local collection is private; excluded."
+    ],
+    [
+      "Hazer/WeebFileNameParser",
+      "Test executable is an interactive console, no fixed title assertions."
+    ],
+    [
+      "majestixx/scene-release-parser-php-lib",
+      "Deprecated README points to thcolin fork; no independent fixture admission established."
+    ],
+    [
+      "Bas-Man/TVShowFile",
+      "Small mixed synthetic suite; independence not fully established in this scout."
+    ],
+    [
+      "Diaoul/subliminal",
+      "MIT and hand-written objects found, but broad fixture objects are not all literal equality tests against filename parsing; not admitted in this bounded census."
+    ]
+  ],
+  "upstream_executed": false,
+  "capacity_is_gold": false,
+  "inventory": "inventory.json",
+  "inventory_sha256": "58da160e17a6832a1e3024d52b82d123b7ff6635e5b4b765cfef19f7068baa12"
+}

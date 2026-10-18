@@ -1,0 +1,17 @@
+604b716c30c3338fbc1d73157f8000056a3b5132 Added Dolby vision flag and updated audio channel to support more formats
+1644c66f8d0f00c3721ea5d6fee17efc7ebd948f Added IsPreRelease propery for torrents from pre release sources (cam, telesync, etc.)
+36499c371b1d809fe6c4643ae1a6de1d5d355bc5 Update to match telesync regardless of casing
+955f390add619a8c79e33c919ff5d30c74dcdc0a Update to fix parsing for titles that are numerical years
+d413fe9fd8f15973b1ff39bfeeee30b293b4be60 Add net8.0 and drop net6.0. Update the regex for Quality
+2514d42a6931085c2e13bad9e6b14e0243b75b15 Update to fix crash when there are no matched groups
+32e5e235bd61a605040c7c1dc1af85bd1607a819 Fixed incorrect matching of container
+147e0817c9cd4d3fe24f0a1cbcf6b5baa2b6a910 Fixed issue with parsing torrent quality
+2ce5007f33e2a672cbb6f198a79e811dcd53dc57 Update to year parsing regex and added .net 7 and .net standard 2.0
+be7fa81a2cebb62e8746f2cdd437e1c163397a34 Updated project to support .net 6 and fixed issue with Year parsing
+39ab968610224021f91a8a24346a74173b095338 Updated parsing for 1.0.4 release
+327836f6fbdb2ea8f05aee7b57bd7261852ae56d Added Audio Channels, Dolby Atmos and TrueHD to parsed properties.  Improved audio codec parsing.  Improved various patterns.  Updated tests and readme
+9d7ef775d6d0e2a9de916579df3556c57d7cbee8 Updated to improve audio codec parsing and added parsing of 3D and 3D formats. Also added flag for multi language support.
+cc8864202ebdc70ba8675ebfb4d2961eb8e0fcf1 Updated deploy package script
+b35475d0e279971c12ebf0a7fa968aef15aedd78 Fixed issue with audio parsing for AC3 audio and updated readme
+f03c363610b111e62d90d5303b3350f8a5ab102e Updated Tests and readme
+1257aad257ac18fe1506503b74f3bc6f34c04fae Initial commit

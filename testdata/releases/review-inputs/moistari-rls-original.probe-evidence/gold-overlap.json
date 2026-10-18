@@ -1,0 +1,431 @@
+{
+  "entries": [
+    {
+      "index": 18,
+      "input": "22 Jump Street (2014) 720p BrRip x264 - YIFY",
+      "gold_ids": [
+        "ptn-jump-yify"
+      ]
+    },
+    {
+      "index": 26,
+      "input": "2012 2009 x264 720p Esub BluRay 6.0 Dual Audio English Hindi GOPISAHI",
+      "gold_ids": [
+        "go-ptn-2012-calendar-hold"
+      ]
+    },
+    {
+      "index": 27,
+      "input": "2012(2009).1080p.Dual Audio(Hindi+English) 5.1 Audios",
+      "gold_ids": [
+        "go-2012-adjacent-year-hold"
+      ]
+    },
+    {
+      "index": 28,
+      "input": "2012 (2009) 1080p BrRip x264 - 1.7GB - YIFY",
+      "gold_ids": [
+        "go-2012-spaced-year-hold"
+      ]
+    },
+    {
+      "index": 30,
+      "input": "2047 - Sights of Death (2014) 720p BrRip x264 - YIFY",
+      "gold_ids": [
+        "go-2047-stated-year-hold"
+      ]
+    },
+    {
+      "index": 40,
+      "input": "Akira (2016) - UpScaled - 720p - DesiSCR-Rip - Hindi - x264 - AC3 - 5.1 - Mafiaking - M2Tv",
+      "gold_ids": [
+        "go-ptn-full100-23"
+      ]
+    },
+    {
+      "index": 44,
+      "input": "Annabelle.2014.HC.HDRip.XViD.AC3-juggs[ETRG]",
+      "gold_ids": [
+        "go-ptn-annabelle-hcrip-xvid"
+      ]
+    },
+    {
+      "index": 45,
+      "input": "Annabelle.2014.1080p.PROPER.HC.WEBRip.x264.AAC.2.0-RARBG",
+      "gold_ids": [
+        "go-ptn-annabelle-proper-hc"
+      ]
+    },
+    {
+      "index": 46,
+      "input": "Ant-Man.2015.3D.1080p.BRRip.Half-SBS.x264.AAC-m2g",
+      "gold_ids": [
+        "go-ptn-reviewed-ant-man-half-sbs-not-half-content"
+      ]
+    },
+    {
+      "index": 53,
+      "input": "Ben Hur 2016 TELESYNC x264 AC3 MAXPRO",
+      "gold_ids": [
+        "go-ptn-full100-24"
+      ]
+    },
+    {
+      "index": 55,
+      "input": "Blade.Runner.2049.2017.1080p.WEB-DL.DD5.1.H264-FGT-[rarbg.to]",
+      "gold_ids": [
+        "go-blade-unknown-relay-year-hold"
+      ]
+    },
+    {
+      "index": 57,
+      "input": "Brave.2012.R5.DVDRip.XViD.LiNE-UNiQUE",
+      "gold_ids": [
+        "ptn-brave-dvd"
+      ]
+    },
+    {
+      "index": 66,
+      "input": "Dawn.of.the.Planet.of.the.Apes.2014.HDRip.XViD-EVO",
+      "gold_ids": [
+        "go-ptn-apes-hdrip-xvid"
+      ]
+    },
+    {
+      "index": 67,
+      "input": "Dawn.Of.The.Planet.of.The.Apes.2014.1080p.WEB-DL.DD51.H264-RARBG",
+      "gold_ids": [
+        "go-ptn-full100-4"
+      ]
+    },
+    {
+      "index": 71,
+      "input": "Dinosaur 13 2014 WEBrip XviD AC3 MiLLENiUM",
+      "gold_ids": [
+        "go-ptn-full100-2"
+      ]
+    },
+    {
+      "index": 79,
+      "input": "Eliza Graves (2014) Dual Audio WEB-DL 720p MKV x264",
+      "gold_ids": [
+        "original-movie-120-2"
+      ]
+    },
+    {
+      "index": 88,
+      "input": "Guardians of the Galaxy (2014) Dual Audio DVDRip AVI",
+      "gold_ids": [
+        "original-movie-120-1"
+      ]
+    },
+    {
+      "index": 90,
+      "input": "Guardians Of The Galaxy 2014 R6 720p HDCAM x264-JYK",
+      "gold_ids": [
+        "go-ptn-full100-0"
+      ]
+    },
+    {
+      "index": 93,
+      "input": "Hercules (2014) WEBDL DVDRip XviD-MAX",
+      "gold_ids": [
+        "go-ptn-hercules-conflicting-source"
+      ]
+    },
+    {
+      "index": 94,
+      "input": "Hercules.2014.Extended.Cut.HDRip.XViD-juggs[ETRG]",
+      "gold_ids": [
+        "go-ptn-hercules-extended-cut-xvid"
+      ]
+    },
+    {
+      "index": 95,
+      "input": "Hercules (2014) 1080p BrRip H264 - YIFY",
+      "gold_ids": [
+        "go-ptn-hercules-br-h264"
+      ]
+    },
+    {
+      "index": 96,
+      "input": "Hercules.2014.EXTENDED.1080p.WEB-DL.DD5.1.H264-RARBG",
+      "gold_ids": [
+        "go-ptn-hercules-extended-web"
+      ]
+    },
+    {
+      "index": 98,
+      "input": "Interstellar (2014) CAM ENG x264 AAC-CPG",
+      "gold_ids": [
+        "go-ptn-interstellar-camera"
+      ]
+    },
+    {
+      "index": 99,
+      "input": "Jack.And.The.Cuckoo-Clock.Heart.2013.BRRip XViD",
+      "gold_ids": [
+        "original-movie-120-0"
+      ]
+    },
+    {
+      "index": 107,
+      "input": "Lets.Be.Cops.2014.BRRip.XViD-juggs[ETRG]",
+      "gold_ids": [
+        "ptn-cops-juggs"
+      ]
+    },
+    {
+      "index": 113,
+      "input": "One Shot [2014] DVDRip XViD-ViCKY",
+      "gold_ids": [
+        "ptn-one-shot-dvd"
+      ]
+    },
+    {
+      "index": 119,
+      "input": "Red.Sonja.Queen.Of.Plagues.2016.BDRip.x264-W4F[PRiME]",
+      "gold_ids": [
+        "go-ptn-full100-17"
+      ]
+    },
+    {
+      "index": 121,
+      "input": "Return.To.Snowy.River.1988.iNTERNAL.DVDRip.x264-W4F[PRiME]",
+      "gold_ids": [
+        "go-ptn-full100-22"
+      ]
+    },
+    {
+      "index": 125,
+      "input": "Sin.City.A.Dame.to.Kill.For.2014.1080p.BluRay.x264-SPARKS",
+      "gold_ids": [
+        "go-ptn-full100-8"
+      ]
+    },
+    {
+      "index": 137,
+      "input": "Teenage.Mutant.Ninja.Turtles.2014.HDRip.XviD.MP3-RARBG",
+      "gold_ids": [
+        "go-ptn-full100-3"
+      ]
+    },
+    {
+      "index": 138,
+      "input": "Teenage.Mutant.Ninja.Turtles.2014.720p.HDRip.x264.AC3.5.1-RARBG",
+      "gold_ids": [
+        "go-ptn-full100-5"
+      ]
+    },
+    {
+      "index": 139,
+      "input": "The.Boss.2016.UNRATED.720p.BRRip.x264.AAC-ETRG",
+      "gold_ids": [
+        "go-ptn-full100-21"
+      ]
+    },
+    {
+      "index": 144,
+      "input": "The Hateful Eight (2015) 720p BluRay - x265 HEVC - 999MB - ShAaN",
+      "gold_ids": [
+        "go-ptn-full100-20"
+      ]
+    },
+    {
+      "index": 147,
+      "input": "The.Jungle.Book.2016.3D.1080p.BRRip.SBS.x264.AAC-ETRG",
+      "gold_ids": [
+        "go-ptn-full100-15"
+      ]
+    },
+    {
+      "index": 148,
+      "input": "The Purge: Election Year (2016) HC - 720p HDRiP - 900MB - ShAaNi",
+      "gold_ids": [
+        "go-ptn-full100-18"
+      ]
+    },
+    {
+      "index": 149,
+      "input": "The.Secret.Life.of.Pets.2016.HDRiP.AAC-LC.x264-LEGi0N",
+      "gold_ids": [
+        "go-ptn-pets-hdrip-unknown-source"
+      ]
+    },
+    {
+      "index": 154,
+      "input": "These.Final.Hours.2013.WBBRip XViD",
+      "gold_ids": [
+        "go-ptn-these-final-hours-typo-source"
+      ]
+    },
+    {
+      "index": 165,
+      "input": "War Dogs (2016) HDTS 600MB - NBY",
+      "gold_ids": [
+        "go-ptn-full100-19"
+      ]
+    },
+    {
+      "index": 170,
+      "input": "WWE Hell in a Cell 2014 HDTV x264 SNHD",
+      "gold_ids": [
+        "go-ptn-full100-9"
+      ]
+    },
+    {
+      "index": 171,
+      "input": "X-Men.Days.of.Future.Past.2014.1080p.WEB-DL.DD5.1.H264-RARBG",
+      "gold_ids": [
+        "ptn-xmen-rarbg"
+      ]
+    },
+    {
+      "index": 187,
+      "input": "breaking.bad.s01e01.720p.bluray.x264-reward",
+      "gold_ids": [
+        "original-tv-112-8"
+      ]
+    },
+    {
+      "index": 191,
+      "input": "Community.s02e20.rus.eng.720p.Kybik.v.Kybe",
+      "gold_ids": [
+        "original-tv-112-10"
+      ]
+    },
+    {
+      "index": 197,
+      "input": "Doctor.Who.2005.8x11.Dark.Water.720p.HDTV.x264-FoV[rartv]",
+      "gold_ids": [
+        "ptn-doctor-year-alt"
+      ]
+    },
+    {
+      "index": 198,
+      "input": "doctor_who_2005.8x12.death_in_heaven.720p_hdtv_x264-fov",
+      "gold_ids": [
+        "original-tv-112-7"
+      ]
+    },
+    {
+      "index": 200,
+      "input": "Downton Abbey 5x06 HDTV x264-FoV [eztv]",
+      "gold_ids": [
+        "ptn-downton-alt"
+      ]
+    },
+    {
+      "index": 207,
+      "input": "Game of Thrones - 4x03 - Breaker of Chains",
+      "gold_ids": [
+        "original-tv-112-9"
+      ]
+    },
+    {
+      "index": 210,
+      "input": "Gotham.S01E05.Viper.WEB-DL.x264.AAC",
+      "gold_ids": [
+        "ptn-gotham-subtitle"
+      ]
+    },
+    {
+      "index": 223,
+      "input": "Marvel's.Agents.of.S.H.I.E.L.D.S02E01.Shadows.1080p.WEB-DL.DD5.1",
+      "gold_ids": [
+        "go-ptn-agents-dotted-apostrophe-subtitle"
+      ]
+    },
+    {
+      "index": 224,
+      "input": "Marvels Agents of S H I E L D S02E05 HDTV x264-KILLERS [eztv]",
+      "gold_ids": [
+        "go-ptn-agents-spaced-acronym"
+      ]
+    },
+    {
+      "index": 225,
+      "input": "Marvels Agents of S.H.I.E.L.D. S02E06 HDTV x264-KILLERS[ettv]",
+      "gold_ids": [
+        "ptn-reviewed-shield-verbatim-dotted-single-episode"
+      ]
+    },
+    {
+      "index": 229,
+      "input": "Mr.Robot.S01.PROPER.VOSTFR.720p.WEB-DL.DD5.1.H264-ARK01",
+      "gold_ids": [
+        "thcolin-reviewed-mr-robot-season-only"
+      ]
+    },
+    {
+      "index": 244,
+      "input": "Sons.of.Anarchy.S01E03",
+      "gold_ids": [
+        "original-tv-112-6"
+      ]
+    },
+    {
+      "index": 245,
+      "input": "[720pMkv.Com]_sons.of.anarchy.s05e10.480p.BluRay.x264-GAnGSteR",
+      "gold_ids": [
+        "ptn-reviewed-bracket-site-scope-quality-conflict"
+      ]
+    },
+    {
+      "index": 246,
+      "input": "[ www.Speed.cd ] -Sons.of.Anarchy.S07E07.720p.HDTV.X264-DIMENSION",
+      "gold_ids": [
+        "ptn-reviewed-speed-site-single-episode"
+      ]
+    },
+    {
+      "index": 251,
+      "input": "South Park S18E05 HDTV x264-KILLERS [eztv]",
+      "gold_ids": [
+        "original-tv-112-2"
+      ]
+    },
+    {
+      "index": 254,
+      "input": "The Big Bang Theory S08E06 HDTV XviD-LOL [eztv]",
+      "gold_ids": [
+        "go-ptn-bigbang-no-resolution-xvid"
+      ]
+    },
+    {
+      "index": 256,
+      "input": "The Flash 2014 S01E01 HDTV x264-LOL[ettv]",
+      "gold_ids": [
+        "original-tv-112-4"
+      ]
+    },
+    {
+      "index": 259,
+      "input": "The Missing 1x01 Pilot HDTV x264-FoV [eztv]",
+      "gold_ids": [
+        "original-tv-112-5"
+      ]
+    },
+    {
+      "index": 262,
+      "input": "The Simpsons S26E05 HDTV x264 PROPER-LOL [eztv]",
+      "gold_ids": [
+        "go-ptn-simpsons-proper"
+      ]
+    },
+    {
+      "index": 264,
+      "input": "The Walking Dead S05E03 720p HDTV x264-ASAP[ettv]",
+      "gold_ids": [
+        "ptn-walking-asap"
+      ]
+    },
+    {
+      "index": 265,
+      "input": "The.Walking.Dead.S05E03.1080p.WEB-DL.DD5.1.H.264-Cyphanix[rartv]",
+      "gold_ids": [
+        "ptn-walking-cyphanix"
+      ]
+    }
+  ]
+}

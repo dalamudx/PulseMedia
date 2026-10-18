@@ -1,0 +1,464 @@
+{
+  "schema": "pulse.release-review-input.v1",
+  "source_id": "titleparser",
+  "provenance": {
+    "repository": "bhmahler/TorrentTitleParser",
+    "commit": "604b716c30c3338fbc1d73157f8000056a3b5132",
+    "path": "TorrentTitleParser.Tests/TitleTests.cs",
+    "source_sha256": "ba1eb5502901f0f369995fc9db6df5827e830042fbab9ce616cad348789b65f3",
+    "license_sha256": "3009a1211aea38b4e08a403c44cea0002fd531cc1906ed448e387c33c00a1475",
+    "unique_entries": 27
+  },
+  "license": "MIT",
+  "review_status": "unreviewed",
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "label_scope": "Original scalar getters only; episode may be the first member, not full coverage. No confidence, reasons, canonical units or measurements are inferred.",
+  "entries": [
+    {
+      "release_name": "Inside Out 2 2024 1080p TELESYNC x264 COLLECTiVE",
+      "observations": [
+        {
+          "source_line": 23,
+          "original_fields": {
+            "Quality": "TELESYNC"
+          }
+        },
+        {
+          "source_line": 259,
+          "original_fields": {
+            "Title": "Inside Out 2",
+            "Year": 2024,
+            "Resolution": "1080p",
+            "Quality": "TELESYNC",
+            "Codec": "x264",
+            "Group": "COLLECTiVE"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Inside Out 2 2024 V2 HDTS c1nem4 x264-SUNSCREEN",
+      "observations": [
+        {
+          "source_line": 27,
+          "original_fields": {
+            "Quality": "TS"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Sinners 2025 1080p TeleSync X264 COLLECTiVE",
+      "observations": [
+        {
+          "source_line": 31,
+          "original_fields": {
+            "Quality": "TeleSync"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "1923 S01E01 2022 1080p x264 meGusta",
+      "observations": [
+        {
+          "source_line": 40,
+          "original_fields": {
+            "Title": "1923",
+            "Season": 1,
+            "Episode": 1,
+            "Year": 2022,
+            "Resolution": "1080p",
+            "Codec": "x264",
+            "Group": "meGusta"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Flash 2023 1080p V2 Cam X264 Will1869",
+      "observations": [
+        {
+          "source_line": 57,
+          "original_fields": {
+            "Title": "The Flash",
+            "Year": 2023,
+            "Resolution": "1080p",
+            "Quality": "Cam",
+            "Codec": "X264",
+            "Group": "Will1869"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Iron Man 3 2013 REMASTERED 2160p UHD BluRay X265-IAMABLE",
+      "observations": [
+        {
+          "source_line": 68,
+          "original_fields": {
+            "Title": "Iron Man 3",
+            "Year": 2013,
+            "Resolution": "2160p",
+            "Quality": "UHD BluRay",
+            "Codec": "X265",
+            "Group": "IAMABLE"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "John Wick 3 2019 1080p Bluray DTS-HD MA 5 1 x264-EVO",
+      "observations": [
+        {
+          "source_line": 80,
+          "original_fields": {
+            "Title": "John Wick 3",
+            "Year": 2019,
+            "Resolution": "1080p",
+            "Quality": "Bluray",
+            "Codec": "x264",
+            "Audio": "DTS-HD MA",
+            "AudioChannels": "5.1",
+            "Group": "EVO"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Annabelle Comes Home 2019 1080p HC HDRip X264-EVO",
+      "observations": [
+        {
+          "source_line": 93,
+          "original_fields": {
+            "Title": "Annabelle Comes Home",
+            "Year": 2019,
+            "Resolution": "1080p",
+            "Quality": "HDRip",
+            "Codec": "X264",
+            "Group": "EVO"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Men in Black International 2019 1080p WEB-DL H264 AC3-EVO",
+      "observations": [
+        {
+          "source_line": 106,
+          "original_fields": {
+            "Title": "Men in Black International",
+            "Year": 2019,
+            "Resolution": "1080p",
+            "Quality": "WEB-DL",
+            "Codec": "H264",
+            "Audio": "AC3",
+            "Group": "EVO"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "A Few Good Men 1992 BluRay 1080p Dts-6Ch H264-PiR8",
+      "observations": [
+        {
+          "source_line": 118,
+          "original_fields": {
+            "Title": "A Few Good Men",
+            "Year": 1992,
+            "Resolution": "1080p",
+            "Quality": "BluRay",
+            "Codec": "H264",
+            "Audio": "Dts-6Ch",
+            "Group": "PiR8"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Avengers Endgame 2019 3D 1080p BluRay x264-GUACAMOLE",
+      "observations": [
+        {
+          "source_line": 130,
+          "original_fields": {
+            "Title": "Avengers Endgame",
+            "Year": 2019,
+            "Resolution": "1080p",
+            "Quality": "BluRay",
+            "Codec": "x264",
+            "Group": "GUACAMOLE"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Solo A Star Wars Story 2018 1080p 3D BluRay BluRay Half-SBS x264 DTS-HD MA 7 1-FGT",
+      "observations": [
+        {
+          "source_line": 142,
+          "original_fields": {
+            "Title": "Solo A Star Wars Story",
+            "Year": 2018,
+            "Resolution": "1080p",
+            "ThreeDFormat": "Half-SBS",
+            "Quality": "BluRay",
+            "Codec": "x264",
+            "Audio": "DTS-HD MA",
+            "AudioChannels": "7.1",
+            "Group": "FGT"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Iron Man 2008 MULTi 2160p UHD BluRay x265-SESKAPiLE",
+      "observations": [
+        {
+          "source_line": 157,
+          "original_fields": {
+            "Title": "Iron Man",
+            "Year": 2008,
+            "Resolution": "2160p",
+            "Quality": "UHD BluRay",
+            "Codec": "x265",
+            "Group": "SESKAPiLE"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Pokemon Detective Pikachu 2019 PROPER MULTi 2160p UHD BluRay x265-OohLaLa",
+      "observations": [
+        {
+          "source_line": 169,
+          "original_fields": {
+            "Title": "Pokemon Detective Pikachu",
+            "Year": 2019,
+            "Resolution": "2160p",
+            "Quality": "UHD BluRay",
+            "Codec": "x265",
+            "Group": "OohLaLa"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "(REQ) Return Of The Living Dead Necropolis 2005 H264 AC3 DD2 0 Will1869",
+      "observations": [
+        {
+          "source_line": 182,
+          "original_fields": {
+            "Title": "Return Of The Living Dead Necropolis",
+            "Year": 2005,
+            "Codec": "H264",
+            "Audio": "AC3 DD",
+            "AudioChannels": "2.0",
+            "Group": "Will1869"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[REQ] Three Wishes 1995 DVDRip X264 Ac3 SNAKE",
+      "observations": [
+        {
+          "source_line": 193,
+          "original_fields": {
+            "Title": "Three Wishes",
+            "Year": 1995,
+            "Quality": "DVDRip",
+            "Codec": "X264",
+            "Audio": "Ac3",
+            "Group": "SNAKE"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Where The Red Fern Grows-1974-X264-AAC-BigTimeCube",
+      "observations": [
+        {
+          "source_line": 204,
+          "original_fields": {
+            "Title": "Where The Red Fern Grows",
+            "Year": 1974,
+            "Codec": "X264",
+            "Audio": "AAC",
+            "Group": "BigTimeCube"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Alita Battle Angel 2019 BluRay 10Bit 1080p DD+5 1 H265-d3g",
+      "observations": [
+        {
+          "source_line": 214,
+          "original_fields": {
+            "Title": "Alita Battle Angel",
+            "Year": 2019,
+            "BitDepth": 10,
+            "Resolution": "1080p",
+            "Quality": "BluRay",
+            "Codec": "H265",
+            "Audio": "DD+",
+            "AudioChannels": "5.1",
+            "Group": "d3g"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Avengers.Endgame.2019.2160p.BluRay.REMUX.HEVC.DTS-HD.MA.TrueHD.7.1.Atmos-FGT",
+      "observations": [
+        {
+          "source_line": 228,
+          "original_fields": {
+            "Title": "Avengers Endgame",
+            "Year": 2019,
+            "Resolution": "2160p",
+            "Quality": "BluRay",
+            "Codec": "HEVC",
+            "Audio": "DTS-HD MA",
+            "AudioChannels": "7.1",
+            "Group": "FGT"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "John Wick 2014 BluRay 1080p AC-3 TrueHD 7 1 HEVC-d3g",
+      "observations": [
+        {
+          "source_line": 245,
+          "original_fields": {
+            "Title": "John Wick",
+            "Year": 2014,
+            "Resolution": "1080p",
+            "Quality": "BluRay",
+            "Codec": "HEVC",
+            "Audio": "AC-3",
+            "AudioChannels": "7.1",
+            "Group": "d3g"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Fountain Of Youth 2025 2160p HDR10Plus DV WEBRip 6CH X265 HEVC-PSA",
+      "observations": [
+        {
+          "source_line": 270,
+          "original_fields": {
+            "Title": "Fountain Of Youth",
+            "Year": 2025,
+            "Resolution": "2160p",
+            "Quality": "WEBRip",
+            "AudioChannels": "6",
+            "Codec": "X265",
+            "Group": "PSA"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Lord of War 2005 2160p UHD BluRay REMUX HEVC Dolby Vision TrueHD Atmos 7 1-FraMeSToR",
+      "observations": [
+        {
+          "source_line": 283,
+          "original_fields": {
+            "Title": "Lord of War",
+            "Year": 2005,
+            "Resolution": "2160p",
+            "Quality": "UHD BluRay",
+            "Codec": "HEVC",
+            "AudioChannels": "7.1",
+            "Group": "FraMeSToR"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Suits S09E05 720p HDTV x264-aAF",
+      "observations": [
+        {
+          "source_line": 303,
+          "original_fields": {
+            "Title": "Suits",
+            "Season": 9,
+            "Episode": 5,
+            "Resolution": "720p",
+            "Quality": "HDTV",
+            "Codec": "x264",
+            "Group": "aAF"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Bosch S05 2160p AMZN WEBRip DD+5 1 x264-AJP69",
+      "observations": [
+        {
+          "source_line": 314,
+          "original_fields": {
+            "Title": "Bosch",
+            "Season": 5,
+            "Resolution": "2160p",
+            "Quality": "WEBRip",
+            "Audio": "DD+",
+            "AudioChannels": "5.1",
+            "Codec": "x264",
+            "Group": "AJP69"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Stranger Things S03E06 2160p WEBRip x264-STRiFE",
+      "observations": [
+        {
+          "source_line": 327,
+          "original_fields": {
+            "Title": "Stranger Things",
+            "Season": 3,
+            "Episode": 6,
+            "Resolution": "2160p",
+            "Quality": "WEBRip",
+            "Codec": "x264",
+            "Group": "STRiFE"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Boys S01 2160p WEB-DL DDP5 1 HDR HEVC-NEOLUTiON",
+      "observations": [
+        {
+          "source_line": 338,
+          "original_fields": {
+            "Title": "The Boys",
+            "Season": 1,
+            "Resolution": "2160p",
+            "Quality": "WEB-DL",
+            "Audio": "DDP",
+            "AudioChannels": "5.1",
+            "Codec": "HEVC",
+            "Group": "NEOLUTiON"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Saving Private Ryan 1998 720p BDRip DD5 1 x264-ITSat",
+      "observations": [
+        {
+          "source_line": 355,
+          "original_fields": {
+            "Title": "Saving Private Ryan"
+          }
+        }
+      ]
+    }
+  ]
+}

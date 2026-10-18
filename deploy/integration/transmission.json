@@ -1,0 +1,16 @@
+{
+  "download-dir": "/downloads",
+  "incomplete-dir-enabled": false,
+  "rpc-enabled": true,
+  "rpc-bind-address": "0.0.0.0",
+  "rpc-port": 9091,
+  "rpc-authentication-required": false,
+  "rpc-whitelist-enabled": true,
+  "rpc-whitelist": "127.0.0.1,10.203.44.*",
+  "rpc-host-whitelist-enabled": true,
+  "rpc-host-whitelist": "localhost,127.0.0.1,transmission,pulsemedia-m4-transmission",
+  "dht-enabled": false,
+  "pex-enabled": false,
+  "lpd-enabled": false,
+  "port-forwarding-enabled": false
+}

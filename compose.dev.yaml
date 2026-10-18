@@ -1,0 +1,23 @@
+# 仅开发/CI 数据库；通过 mise exec 使用统一版本。
+services:
+  postgres:
+    image: "docker.io/postgres:${PULSE_POSTGRES_VERSION:?Run via mise exec}"
+    environment:
+      POSTGRES_USER: pulsemedia
+      POSTGRES_DB: pulsemedia
+      POSTGRES_PASSWORD: "${PULSE_POSTGRES_PASSWORD:?Set a strong development password}"
+      TZ: UTC
+    ports:
+      - "127.0.0.1:${PULSE_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # PG18 卷布局不同于旧版 /var/lib/postgresql/data。
+      - postgres18_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulsemedia -d pulsemedia"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    stop_grace_period: 30s
+
+volumes:
+  postgres18_data:

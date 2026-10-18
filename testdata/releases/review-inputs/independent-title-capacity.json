@@ -1,0 +1,40 @@
+{
+  "schema": "pulse.independent-title-capacity.v1",
+  "historical_snapshot": true,
+  "current_resolution": "Superseded as a capacity blocker: fixed independent MIT sources were added and individually reviewed;1015 complete inputs passed episode.v74. Old inventory counts and exclusions below are preserved. See m3-02-v73-review/README.md and new-independent-scout-20261014-mit-assertions for original evidence; a candidate is not gold until full strict admission.",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "reviewed_entries": 0,
+  "gold_entries": 646,
+  "required_entries": 1000,
+  "additional_complete_reviews_required": 354,
+  "source_census": {
+    "raw_positive_title_occurrences": 1527,
+    "unique_positive_inputs": 1001,
+    "unique_non_synthetic_inputs": 868,
+    "by_source": {
+      "go-ptn": 87,
+      "thcolin": 147,
+      "ptt": 177,
+      "ptn": 76,
+      "ptt-original-assertions": 92,
+      "ptt-main-original-assertions": 128,
+      "viren-title-original-assertions": 66,
+      "video-filename-parser-original-assertions": 89,
+      "beast-full-original": 119,
+      "viren-full-main-original": 170,
+      "atama-metadata-original": 39,
+      "rakun-full-original": 93,
+      "clement-full-original": 31,
+      "cehbz-parse-original": 51,
+      "chill-parser-original": 157,
+      "mdaubie-parser-original": 5
+    },
+    "accepted": false,
+    "reviewed_entries": 0,
+    "note": "Source capacity only, includes16 nonliteral Viren dictionaries and unverified real-release origins; exact full contracts still require independent review."
+  },
+  "note": "Capacity upper bound only. Inputs not flagged synthetic still include computed/nonliteral declarations and unverified provenance. This census does not prove independent eligible capacity. The existing 1758 raw-input pool and synthetic benchmarks are not complete gold. FlexGet is separately preserved as 10 test examples with zero confirmed real-release origins.",
+  "minimum_new_unique_source_inputs_even_if_all_868_qualify": 132
+}

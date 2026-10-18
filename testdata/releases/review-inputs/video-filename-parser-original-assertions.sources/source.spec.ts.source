@@ -1,0 +1,76 @@
+import { expect, it } from 'vitest';
+
+import { parseSource, Source } from '../src/index.js';
+
+const singleCases: Array<[string, Source[]]> = [
+  ['Whats.Eating.Gilbert.Grape.1993.720p.BluRay', [Source.BLURAY]],
+  ['Whats.Eating.Gilbert.Grape.1993.720p.BluRay.x264-SiNNERS', [Source.BLURAY]],
+  ['Oceans.Thirteen.2007.iNTERNAL.720p.BluRay.x264-MHQ', [Source.BLURAY]],
+  ['Rocketman 2019 2160p UHD BluRay x265-TERMiNAL', [Source.BLURAY]],
+  ['Alita Battle Angel 2019 2160p WEB-DL DD+5 1 HEVC-DEFLATE[NO RAR]', [Source.WEBDL]],
+  ['Alita: Battle Angel 2019 BRRip AC3 x264-CMRG', [Source.BLURAY]],
+  ['The Hateful Eight 2015 DVDScr XVID AC3 HQ Hive-CM8', [Source.SCREENER]],
+  ['This Is 40 2012 DVD Screener Xvid UnKnOwN', [Source.SCREENER]],
+  ['Brooklyns Finest DVDSCREENER XviD-MENTiON', [Source.SCREENER]],
+  ['50 50 2011 SCREENER XviD-REFiLL', [Source.SCREENER]],
+  ['True Grit 2010 SCR XViD - IMAGiNE', [Source.SCREENER]],
+  ['Tracers 2015 PPV XVID AC3 HQ Hive-CM8', [Source.PPV]],
+  ['X-Men Origins Wolverine 2009 WORKPRINT XviD-NoGRP', [Source.WORKPRINT]],
+  ['Half Baked 1998 720p HDDVD XVID-AC3-PULSAR', [Source.BLURAY]],
+  ['Teenage Mutant Ninja Turtles Turtles Forever 2009 WS PDTV XviD-DVSKY', [Source.TV]],
+  ['The Interview 2014 1080p WEB-DL x264 AAC MerryXmas', [Source.WEBDL]],
+  ['John Wick Chapter 2 2017 720p WEB-DL X264 AC3-EVO', [Source.WEBDL]],
+  ['Into the Storm 720 WEBDL (RUSSiAN & ENGLISH AUDIO)', [Source.WEBDL]],
+  ['Michael 1996 1080p AMZN WEBCap DD+5.1 x264-LEGi0N', [Source.WEBRIP]],
+  ['Avengers Infinity War 2018 NEW PROPER 720p HD-CAM X264 HQ-LPG', [Source.CAM]],
+  ['The Hunger Games Mockingjay - Part 1 (2014) 576p NEW CAM XViD', [Source.CAM]],
+  ['Suicide Squad 2016 CAM UnKnOwN', [Source.CAM]],
+  ['Star Trek Beyond (2016) ENG Cam V2 XviD UnKnOwN', [Source.CAM]],
+  ['Parasite.2019.MULTi.VFI.WEBrip.2160p.HDR.x265.True.HD-Tokuchi', [Source.WEBRIP]],
+  ['How You Look At Me 2019 720p AMZN WEBRip AAC2 0 X 264-EVO', [Source.WEBRIP]],
+  ['Togo 2019 2160p HDR DSNP WEBRip DDPAtmos 5 1 X265-TrollUHD', [Source.WEBRIP]],
+  ['Palmer.2021.1080p.APTV.H264.Atmos-EVO', [Source.WEBDL]],
+  ['Palmer.2021.1080p.APTV.WEB-RIP.H264.Atmos-EVO', [Source.WEBRIP]],
+  ['Finding.Ohana.2021.720p.NF.AAC2.0.X.264-EVO', [Source.WEBDL]],
+  ['Finding.Ohana.2021.720p.NF.WEBRIP.AAC2.0.X.264-EVO', [Source.WEBRIP]],
+  ['300.2006.iNTERNAL.NTSC.DVD9-FaiLED', [Source.DVD]],
+  ['The Card Counter 2021 1080p WEBSCREENER X264-EVO', [Source.SCREENER]],
+  ['Movie.Name.2016.German.DTS.DL.1080p.UHDBD.x265-TDO', [Source.BLURAY]],
+  ['127.Hours.DVDSCR.NTSC.DVDR-GALAXY', [Source.DVD, Source.SCREENER]],
+  ['Movie.Title.2019.1080p.AMZN.WEB-Rip.DDP.5.1.HEVC', [Source.WEBRIP]],
+  ['Movie.Title.S01E01.HD.TV', [Source.TV]],
+  ['Movie.Title.S01E01.SD.TV', [Source.TV]],
+  ['Movie.Name.2021.1080p.BDLight.x265-AVCDVD', [Source.BLURAY]],
+  ['Movie.Title.2012.German.DL.1080p.UHD2BD.x264-QfG', [Source.BLURAY]],
+  ['Movie.Name.2024.New.HDCAMRip.1080p', [Source.CAM]],
+  ['Movie Name (2022) 1080p HQCAM ENG x264 AAC - QRips', [Source.CAM]],
+  ['The Equalizer 2 2018 720p HD-TS x264-24HD', [Source.TELESYNC]],
+  ['Movie.Title.2024.TeleSynch.720p.HEVC-GROUP', [Source.TELESYNC]],
+  ['Movie.Title.2024.DVDSCREENER.XviD-GROUP', [Source.SCREENER]],
+];
+for (const [title, result] of singleCases) {
+  it(`parse source "${title}"`, () => {
+    expect(parseSource(title)).toEqual(result);
+  });
+}
+
+const multipeSourceCases: Array<[string, Source[]]> = [
+  ['The Office S01-S09 720p BluRay WEB-DL nHD x264-NhaNc3', [Source.BLURAY, Source.WEBDL]],
+  ['127.Hours.DVDSCR.NTSC.DVDR-GALAXY', [Source.DVD, Source.SCREENER]],
+];
+for (const [title, result] of multipeSourceCases) {
+  it(`parse multi source "${title}"`, () => {
+    expect(parseSource(title)).toEqual(result);
+  });
+}
+
+const precedenceCases: Array<[string, Source[]]> = [
+  ['Movie.Title.2020.1080p.WEBRip.WEB-DL.x264-GROUP', [Source.WEBRIP]],
+  ['Movie.Title.2020.1080p.BDRip.x264-GROUP', [Source.BLURAY]],
+  ['Movie.Title.2020.1080p.BRRip.x264-GROUP', [Source.BLURAY]],
+];
+for (const [title, result] of precedenceCases) {
+  it(`preserves source precedence for "${title}"`, () => {
+    expect(parseSource(title)).toEqual(result);
+  });
+}

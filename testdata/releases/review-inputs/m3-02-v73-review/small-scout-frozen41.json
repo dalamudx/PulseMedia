@@ -1,0 +1,1852 @@
+{
+  "schema": "pulse.scout41.manual-freeze.v1",
+  "production_probed": false,
+  "entries": [
+    {
+      "id": "scout41-singers-scene-release-0",
+      "source": "singers-scene-release",
+      "input": "Citizenfour.2014.720p.WEB-DL.AAC2.0.H.264-NOGRP",
+      "review_note": "Citizenfour original 2014 retained; WEB-DL/H.264/720p/NOGRP explicit. AAC2.0 does not measure audio; absent HDR and edition remain unknown.",
+      "expected": {
+        "title": "Citizenfour",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NOGRP"
+        }
+      },
+      "original_inventory": {
+        "input": "Citizenfour.2014.720p.WEB-DL.AAC2.0.H.264-NOGRP",
+        "title": "Citizenfour",
+        "year": "2014",
+        "input_line": 8,
+        "title_line": 10,
+        "source_id": "singers-scene-release",
+        "source_index": 0,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-1",
+      "source": "singers-scene-release",
+      "input": "The.Raid.2.2014.BluRay.720p.DTS.x264-CHD",
+      "review_note": "The Raid 2 retains sequel digit and 2014; explicit BluRay/720p/x264/CHD. DTS is not measured audio, no edition or HDR.",
+      "expected": {
+        "title": "The Raid 2",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CHD"
+        }
+      },
+      "original_inventory": {
+        "input": "The.Raid.2.2014.BluRay.720p.DTS.x264-CHD",
+        "title": "The Raid 2",
+        "year": "2014",
+        "input_line": 28,
+        "title_line": 30,
+        "source_id": "singers-scene-release",
+        "source_index": 1,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-2",
+      "source": "singers-scene-release",
+      "input": "Gravity.2013.1080p.BluRay.x264-SPARKS",
+      "review_note": "Gravity original title/year and explicit 1080p/BluRay/x264/SPARKS. No absent audio/HDR/edition is inferred.",
+      "expected": {
+        "title": "Gravity",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      },
+      "original_inventory": {
+        "input": "Gravity.2013.1080p.BluRay.x264-SPARKS",
+        "title": "Gravity",
+        "year": "2013",
+        "input_line": 48,
+        "title_line": 50,
+        "source_id": "singers-scene-release",
+        "source_index": 2,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-3",
+      "source": "singers-scene-release",
+      "input": "The.Lego.Movie.2014.3D.COMPLETE.BLURAY-BAKED",
+      "review_note": "The Lego Movie/2014 retained. Original tags[0] COMPLETE cannot prove a movie unit or full disc file coverage; zero authority pending review. BLURAY family and BAKED only; 3D is not measured edition.",
+      "expected": {
+        "title": "The Lego Movie",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "multi_unit_collection",
+        "quality": {
+          "resolution": "",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BAKED"
+        }
+      },
+      "original_inventory": {
+        "input": "The.Lego.Movie.2014.3D.COMPLETE.BLURAY-BAKED",
+        "title": "The Lego Movie",
+        "year": "2014",
+        "input_line": 68,
+        "title_line": 70,
+        "source_id": "singers-scene-release",
+        "source_index": 3,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-4",
+      "source": "singers-scene-release",
+      "input": "Thor.The.Dark.World.3D.2013.MULTi.COMPLETE.BLURAY-iND",
+      "review_note": "Thor The Dark World original title/year retained; COMPLETE declaration with 3D/MULTi cannot prove exact content. Empty unit set and zero confidence; BLURAY and iND literal, audio/edition unmeasured.",
+      "expected": {
+        "title": "Thor The Dark World",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "multi_unit_collection",
+        "quality": {
+          "resolution": "",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "iND"
+        }
+      },
+      "original_inventory": {
+        "input": "Thor.The.Dark.World.3D.2013.MULTi.COMPLETE.BLURAY-iND",
+        "title": "Thor The Dark World",
+        "year": "2013",
+        "input_line": 88,
+        "title_line": 90,
+        "source_id": "singers-scene-release",
+        "source_index": 4,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-5",
+      "source": "singers-scene-release",
+      "input": "Veronica.Mars.2014.LIMITED.FRENCH.720p.BluRay.x264-PRiDEHD",
+      "review_note": "Veronica Mars/2014 and explicit 720p/BluRay/x264/PRiDEHD retained. LIMITED/FRENCH remain original release claims, not measured edition/audio.",
+      "expected": {
+        "title": "Veronica Mars",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PRiDEHD"
+        }
+      },
+      "original_inventory": {
+        "input": "Veronica.Mars.2014.LIMITED.FRENCH.720p.BluRay.x264-PRiDEHD",
+        "title": "Veronica Mars",
+        "year": "2014",
+        "input_line": 108,
+        "title_line": 110,
+        "source_id": "singers-scene-release",
+        "source_index": 5,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-6",
+      "source": "singers-scene-release",
+      "input": "Hundraaringen.Som.Klev.Ut.Genom.Fonstret.Och.Forsvann.2013.DiRFiX.SWEDiSH.1080p.BluRay.x264-GNiSTOR",
+      "review_note": "Full Swedish original title and unique 2013 retained. DiRFiX/SWEDiSH do not alter identity or measure audio. Explicit 1080p/BluRay/x264/GNiSTOR only.",
+      "expected": {
+        "title": "Hundraaringen Som Klev Ut Genom Fonstret Och Forsvann",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "GNiSTOR"
+        }
+      },
+      "original_inventory": {
+        "input": "Hundraaringen.Som.Klev.Ut.Genom.Fonstret.Och.Forsvann.2013.DiRFiX.SWEDiSH.1080p.BluRay.x264-GNiSTOR",
+        "title": "Hundraaringen Som Klev Ut Genom Fonstret Och Forsvann",
+        "year": "2013",
+        "input_line": 128,
+        "title_line": 130,
+        "source_id": "singers-scene-release",
+        "source_index": 6,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-7",
+      "source": "singers-scene-release",
+      "input": "2001.A.Space.Odyssey.1968.iNTERNAL.1080p.BluRay.x264-MANNEKEPiS",
+      "review_note": "Original 2001 A Space Odyssey/1968 preserved as independent evidence. Distinct 2001 and 1968 year-shaped numbers require conservative ambiguous-year refusal, no movie unit; expected year zero conflicts with original and remains pending rather than rewriting it.",
+      "expected": {
+        "title": "2001 A Space Odyssey",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "ambiguous_media_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "MANNEKEPiS"
+        }
+      },
+      "original_inventory": {
+        "input": "2001.A.Space.Odyssey.1968.iNTERNAL.1080p.BluRay.x264-MANNEKEPiS",
+        "title": "2001 A Space Odyssey",
+        "year": "1968",
+        "input_line": 148,
+        "title_line": 150,
+        "source_id": "singers-scene-release",
+        "source_index": 7,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-8",
+      "source": "singers-scene-release",
+      "input": "Greys Anatomy S11E12 720p WEB-DL DD5 1 H 264-NTb",
+      "review_note": "Original title Greys Anatomy S11E12 is retained in source, but work title excludes numbering; strict original title admission must flag this conflict. Raw S11E12 only; no year inferred. Explicit 720p/WEB-DL/H 264/NTb, DD5 1 unmeasured.",
+      "expected": {
+        "title": "Greys Anatomy",
+        "year": 0,
+        "media_type": "tv",
+        "season": 11,
+        "episodes": [
+          12
+        ],
+        "unit_keys": [
+          "S11E12"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NTb"
+        }
+      },
+      "original_inventory": {
+        "input": "Greys Anatomy S11E12 720p WEB-DL DD5 1 H 264-NTb",
+        "title": "Greys Anatomy S11E12",
+        "input_line": 168,
+        "title_line": 170,
+        "source_id": "singers-scene-release",
+        "source_index": 8,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original title includes episode syntax; preserve unchanged, not canonical title gold.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-9",
+      "source": "singers-scene-release",
+      "input": "House.of.Cards.2013.S03E01.720p.NF.WEBRip.DD5.1.x264-NTb",
+      "review_note": "Original title House of Cards S03E01 conflicts with work-only title and remains untouched. Literal 2013 and S03E01; NF is network, DD5.1 not measured audio; 720p/WEBRip/x264/NTb explicit.",
+      "expected": {
+        "title": "House of Cards",
+        "year": 2013,
+        "media_type": "tv",
+        "season": 3,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S03E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEBRip",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NTb"
+        }
+      },
+      "original_inventory": {
+        "input": "House.of.Cards.2013.S03E01.720p.NF.WEBRip.DD5.1.x264-NTb",
+        "title": "House of Cards S03E01",
+        "year": "2013",
+        "input_line": 188,
+        "title_line": 190,
+        "source_id": "singers-scene-release",
+        "source_index": 9,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original title includes episode syntax; preserve unchanged, not canonical title gold.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-10",
+      "source": "singers-scene-release",
+      "input": "What.If.2013.Extended.Cut.DVDRip.x264-EXViD",
+      "review_note": "What If/2013 preserved. DVDRip unsupported source, explicit x264 and EXViD only; Extended Cut not measured edition, missing resolution/audio/HDR unknown.",
+      "expected": {
+        "title": "What If",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "EXViD"
+        }
+      },
+      "original_inventory": {
+        "input": "What.If.2013.Extended.Cut.DVDRip.x264-EXViD",
+        "title": "What If",
+        "year": "2013",
+        "input_line": 208,
+        "title_line": 210,
+        "source_id": "singers-scene-release",
+        "source_index": 10,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-11",
+      "source": "singers-scene-release",
+      "input": "The.Hobbit.The.Battle.Of.The.Five.Armies.2014.READ.NFO.NTSC.DVDR-KART3LDVD",
+      "review_note": "The Hobbit The Battle Of The Five Armies/2014 retained. DVDR unsupported and original video NTSC is a television standard, not H264. READ NFO not title/edition; KART3LDVD literal group, other quality unknown.",
+      "expected": {
+        "title": "The Hobbit The Battle Of The Five Armies",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "KART3LDVD"
+        }
+      },
+      "original_inventory": {
+        "input": "The.Hobbit.The.Battle.Of.The.Five.Armies.2014.READ.NFO.NTSC.DVDR-KART3LDVD",
+        "title": "The Hobbit The Battle Of The Five Armies",
+        "year": "2014",
+        "input_line": 228,
+        "title_line": 230,
+        "source_id": "singers-scene-release",
+        "source_index": 11,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-12",
+      "source": "singers-scene-release",
+      "input": "The.Hobbit.The.Desolation.of.Smaug.2013.EXTENDED.MULTi.COMPLETE.BLURAY-XORBiTANT",
+      "review_note": "The Hobbit The Desolation of Smaug/2013 retained verbatim. Original COMPLETE tag forces zero coverage/confidence pending review; EXTENDED/MULTi do not measure edition/audio. BLURAY family and XORBiTANT explicit.",
+      "expected": {
+        "title": "The Hobbit The Desolation of Smaug",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "multi_unit_collection",
+        "quality": {
+          "resolution": "",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "XORBiTANT"
+        }
+      },
+      "original_inventory": {
+        "input": "The.Hobbit.The.Desolation.of.Smaug.2013.EXTENDED.MULTi.COMPLETE.BLURAY-XORBiTANT",
+        "title": "The Hobbit The Desolation of Smaug",
+        "year": "2013",
+        "input_line": 248,
+        "title_line": 250,
+        "source_id": "singers-scene-release",
+        "source_index": 12,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-singers-scene-release-13",
+      "source": "singers-scene-release",
+      "input": "The.Walking.Dead.S05E16.REAL.PROPER.720p.HDTV.x264-KILLERS",
+      "review_note": "Original title The Walking Dead S05E16 remains conflicting with work-only title. Exact S05E16 only, year absent. REAL PROPER is release claim, 720p/HDTV/x264/KILLERS filename observations only.",
+      "expected": {
+        "title": "The Walking Dead",
+        "year": 0,
+        "media_type": "tv",
+        "season": 5,
+        "episodes": [
+          16
+        ],
+        "unit_keys": [
+          "S05E16"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "KILLERS"
+        }
+      },
+      "original_inventory": {
+        "input": "The.Walking.Dead.S05E16.REAL.PROPER.720p.HDTV.x264-KILLERS",
+        "title": "The Walking Dead S05E16",
+        "input_line": 268,
+        "title_line": 270,
+        "source_id": "singers-scene-release",
+        "source_index": 13,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original title includes episode syntax; preserve unchanged, not canonical title gold.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-0",
+      "source": "husar-movie-title",
+      "input": "Einstein.And.Eddington.2008.DVDRip.XviD.avi",
+      "review_note": "Einstein And Eddington original title, unique 2008 literal. DVDRip/XviD unsupported, avi container supplies no quality. No dash group or resolution and no measured audio/edition/HDR.",
+      "expected": {
+        "title": "Einstein And Eddington",
+        "year": 2008,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "Einstein.And.Eddington.2008.DVDRip.XviD.avi",
+        "title": "Einstein And Eddington",
+        "input_line": 6,
+        "title_line": 6,
+        "source_id": "husar-movie-title",
+        "source_index": 0,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-1",
+      "source": "husar-movie-title",
+      "input": "Edge of Tomorrow (2014) 720pTS-2-DVD DD2.0 NL Subs NLU002",
+      "review_note": "Edge of Tomorrow and 2014 retained. 720pTS is not a bounded 720p token; TS/DVD unsupported. DD2.0/NL Subs not measured audio, no final unambiguous dash group.",
+      "expected": {
+        "title": "Edge of Tomorrow",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "Edge of Tomorrow (2014) 720pTS-2-DVD DD2.0 NL Subs NLU002",
+        "title": "Edge of Tomorrow",
+        "input_line": 7,
+        "title_line": 7,
+        "source_id": "husar-movie-title",
+        "source_index": 1,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-2",
+      "source": "husar-movie-title",
+      "input": "Maleficent (2014) DD2.0 NL Subs TS2DVD-NLU002",
+      "review_note": "Maleficent original title and 2014 literal. TS2DVD is unsupported source, DD2.0/NL Subs not measured; final NLU002 retained as literal group only.",
+      "expected": {
+        "title": "Maleficent",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NLU002"
+        }
+      },
+      "original_inventory": {
+        "input": "Maleficent (2014) DD2.0 NL Subs TS2DVD-NLU002",
+        "title": "Maleficent",
+        "input_line": 8,
+        "title_line": 8,
+        "source_id": "husar-movie-title",
+        "source_index": 2,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-3",
+      "source": "husar-movie-title",
+      "input": "Rio 2 (2014) DD2.0 NL Subs HDTS-2-DVD-NLU002",
+      "review_note": "Rio 2 retains sequel and 2014. HDTS/DVD not modeled source, no resolution/codec. DD2.0 and subtitles do not measure audio; final NLU002 explicit.",
+      "expected": {
+        "title": "Rio 2",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NLU002"
+        }
+      },
+      "original_inventory": {
+        "input": "Rio 2 (2014) DD2.0 NL Subs HDTS-2-DVD-NLU002",
+        "title": "Rio 2",
+        "input_line": 9,
+        "title_line": 9,
+        "source_id": "husar-movie-title",
+        "source_index": 3,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-4",
+      "source": "husar-movie-title",
+      "input": "300, Rise of an Empire (2013)(dvd5)(Nl subs) WEBRIP SAM TBS",
+      "review_note": "Original comma in 300, Rise of an Empire retained and literal 2013 not corrected from external movie knowledge. dvd5 is unsupported but explicit WEBRIP supports WEBRip. No guessed SAM TBS group, audio or resolution.",
+      "expected": {
+        "title": "300, Rise of an Empire",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "WEBRip",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "300, Rise of an Empire (2013)(dvd5)(Nl subs) WEBRIP SAM TBS",
+        "title": "300, Rise of an Empire",
+        "input_line": 10,
+        "title_line": 10,
+        "source_id": "husar-movie-title",
+        "source_index": 4,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-5",
+      "source": "husar-movie-title",
+      "input": "countdown.to.zero.2010.xvid-submerge.avi",
+      "review_note": "Lowercase countdown to zero original retained, unique 2010. Unsupported xvid not upgraded; final submerge group explicit, all absent quality unknown.",
+      "expected": {
+        "title": "countdown to zero",
+        "year": 2010,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "submerge"
+        }
+      },
+      "original_inventory": {
+        "input": "countdown.to.zero.2010.xvid-submerge.avi",
+        "title": "countdown to zero",
+        "input_line": 11,
+        "title_line": 11,
+        "source_id": "husar-movie-title",
+        "source_index": 5,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-6",
+      "source": "husar-movie-title",
+      "input": "DrJn.2010.BRRip_mediafiremoviez.com.mkv",
+      "review_note": "DrJn spelling and literal 2010 preserved. BRRip supports Blu-ray family; mediafiremoviez.com is site text, not dash group or codec, no other quality.",
+      "expected": {
+        "title": "DrJn",
+        "year": 2010,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "DrJn.2010.BRRip_mediafiremoviez.com.mkv",
+        "title": "DrJn",
+        "input_line": 12,
+        "title_line": 12,
+        "source_id": "husar-movie-title",
+        "source_index": 6,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-7",
+      "source": "husar-movie-title",
+      "input": "Nim’s.Island[2008]DvDrip-aXXo.avi",
+      "review_note": "Curly apostrophe in Nim’s Island preserved, 2008 literal in brackets. DVDrip unsupported, final aXXo literal; no resolution or codec, unknown audio/HDR/edition.",
+      "expected": {
+        "title": "Nim’s Island",
+        "year": 2008,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "aXXo"
+        }
+      },
+      "original_inventory": {
+        "input": "Nim’s.Island[2008]DvDrip-aXXo.avi",
+        "title": "Nim’s Island",
+        "input_line": 13,
+        "title_line": 13,
+        "source_id": "husar-movie-title",
+        "source_index": 7,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-8",
+      "source": "husar-movie-title",
+      "input": "Invictus.DVDSCR.xViD-xSCR.CD1.avi",
+      "review_note": "Invictus original retained, year absent. CD1 is partial movie content; no complete movie unit or confidence, pending review. DVDSCR/XviD unsupported and xSCR followed by CD1 is not a clean final group.",
+      "expected": {
+        "title": "Invictus",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "partial_movie_content",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "Invictus.DVDSCR.xViD-xSCR.CD1.avi",
+        "title": "Invictus",
+        "input_line": 14,
+        "title_line": 14,
+        "source_id": "husar-movie-title",
+        "source_index": 8,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-9",
+      "source": "husar-movie-title",
+      "input": "20000 Leagues Under The Sea.avi",
+      "review_note": "20000 Leagues Under The Sea is an original numeric title, 20000 not a release year. Title-only movie syntax requires review at 0.6, no measured quality follows avi extension.",
+      "expected": {
+        "title": "20000 Leagues Under The Sea",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "20000 Leagues Under The Sea.avi",
+        "title": "20000 Leagues Under The Sea",
+        "input_line": 15,
+        "title_line": 15,
+        "source_id": "husar-movie-title",
+        "source_index": 9,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-10",
+      "source": "husar-movie-title",
+      "input": "Across The Universe.MoZinRaT CD1.avi",
+      "review_note": "Original Across The Universe MoZinRaT includes apparent group text and is preserved without correction. CD1 means partial content, zero confidence and units; no release year or quality inferred.",
+      "expected": {
+        "title": "Across The Universe MoZinRaT",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "partial_movie_content",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "Across The Universe.MoZinRaT CD1.avi",
+        "title": "Across The Universe MoZinRaT",
+        "input_line": 16,
+        "title_line": 16,
+        "source_id": "husar-movie-title",
+        "source_index": 10,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-11",
+      "source": "husar-movie-title",
+      "input": "arranged.xvid-reserved.avi",
+      "review_note": "arranged lowercase original and missing year retained. xvid unsupported; reserved is final group. Title-only confidence 0.6 with review and no units, absent technical facts unknown.",
+      "expected": {
+        "title": "arranged",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "reserved"
+        }
+      },
+      "original_inventory": {
+        "input": "arranged.xvid-reserved.avi",
+        "title": "arranged",
+        "input_line": 17,
+        "title_line": 17,
+        "source_id": "husar-movie-title",
+        "source_index": 11,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-12",
+      "source": "husar-movie-title",
+      "input": "stratos-boyhood.720p.mkv",
+      "review_note": "Original boyhood excludes stratos prefix, retained independently; no year inferred. Explicit 720p only, stratos is not final group. Title-only review and zero coverage.",
+      "expected": {
+        "title": "boyhood",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "stratos-boyhood.720p.mkv",
+        "title": "boyhood",
+        "input_line": 18,
+        "title_line": 18,
+        "source_id": "husar-movie-title",
+        "source_index": 12,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-13",
+      "source": "husar-movie-title",
+      "input": "avchd-exam.2009.720p.mkv",
+      "review_note": "Original exam excludes avchd prefix; avchd not asserted as codec. Unique 2009 and 720p; no final group/source or measured other quality.",
+      "expected": {
+        "title": "exam",
+        "year": 2009,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "avchd-exam.2009.720p.mkv",
+        "title": "exam",
+        "input_line": 19,
+        "title_line": 19,
+        "source_id": "husar-movie-title",
+        "source_index": 13,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-14",
+      "source": "husar-movie-title",
+      "input": "Requiem.For.A.Dream.DIRECTORS.CUT.2000.720p.BrRip.x264.YIFY.mp4",
+      "review_note": "Requiem For A Dream original title and unique 2000. DIRECTORS CUT not title or measured edition; explicit 720p/BrRip/x264, dotted YIFY not a final dash group.",
+      "expected": {
+        "title": "Requiem For A Dream",
+        "year": 2000,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "Requiem.For.A.Dream.DIRECTORS.CUT.2000.720p.BrRip.x264.YIFY.mp4",
+        "title": "Requiem For A Dream",
+        "input_line": 20,
+        "title_line": 20,
+        "source_id": "husar-movie-title",
+        "source_index": 14,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-15",
+      "source": "husar-movie-title",
+      "input": "blow-this.is.where.i.leave.you.2014.1080p.bluray.x264.mkv",
+      "review_note": "Original this is where i leave you excludes blow prefix and preserves lowercase. Literal 2014/1080p/bluray/x264; no final dash group, no measured audio/HDR/edition.",
+      "expected": {
+        "title": "this is where i leave you",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "blow-this.is.where.i.leave.you.2014.1080p.bluray.x264.mkv",
+        "title": "this is where i leave you",
+        "input_line": 21,
+        "title_line": 21,
+        "source_id": "husar-movie-title",
+        "source_index": 15,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-16",
+      "source": "husar-movie-title",
+      "input": "snow-white.bird.in.a.blizzard.2014.limited.720p.bluray.x264.mkv",
+      "review_note": "Original white bird in a blizzard excludes snow prefix, unchanged. 2014/720p/bluray/x264 explicit; limited is release claim, no measured edition or audio and no final group.",
+      "expected": {
+        "title": "white bird in a blizzard",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "snow-white.bird.in.a.blizzard.2014.limited.720p.bluray.x264.mkv",
+        "title": "white bird in a blizzard",
+        "input_line": 22,
+        "title_line": 22,
+        "source_id": "husar-movie-title",
+        "source_index": 16,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-17",
+      "source": "husar-movie-title",
+      "input": "12.Monkeys.BluRay.1080p.x264.5.1.Judas.mp4",
+      "review_note": "12 Monkeys numeric title and absent year retained. Explicit BluRay/1080p/x264; 5.1 is not measured audio and dotted Judas not a dash group. Title-only review, zero units.",
+      "expected": {
+        "title": "12 Monkeys",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "1080p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "12.Monkeys.BluRay.1080p.x264.5.1.Judas.mp4",
+        "title": "12 Monkeys",
+        "input_line": 23,
+        "title_line": 23,
+        "source_id": "husar-movie-title",
+        "source_index": 17,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-18",
+      "source": "husar-movie-title",
+      "input": "The Man Who Wasnt There.m4v",
+      "review_note": "The Man Who Wasnt There unchanged, no apostrophe invented and no year. m4v container provides no quality. Title-only review, no unit authority.",
+      "expected": {
+        "title": "The Man Who Wasnt There",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "The Man Who Wasnt There.m4v",
+        "title": "The Man Who Wasnt There",
+        "input_line": 24,
+        "title_line": 24,
+        "source_id": "husar-movie-title",
+        "source_index": 18,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-19",
+      "source": "husar-movie-title",
+      "input": "The.Flash.2014.S01E01.720p.WEB.x264-NOGRP[rartv]",
+      "review_note": "The Flash title and literal 2014 retained; only S01E01. Bare WEB gives no DL/Rip subtype; 720p/x264/NOGRP explicit, rartv relay not group or edition.",
+      "expected": {
+        "title": "The Flash",
+        "year": 2014,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NOGRP"
+        }
+      },
+      "original_inventory": {
+        "input": "The.Flash.2014.S01E01.720p.WEB.x264-NOGRP[rartv]",
+        "title": "The Flash",
+        "input_line": 28,
+        "title_line": 28,
+        "source_id": "husar-movie-title",
+        "source_index": 19,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-20",
+      "source": "husar-movie-title",
+      "input": "Suits.S03E03.COMPLETE.720p.HDTV.x264-PublicHD",
+      "review_note": "Suits original work title retained. S03E03 plus COMPLETE cannot authorize partial or full coverage; zero season/episodes/keys/absolute and confidence pending review. Explicit 720p/HDTV/x264/PublicHD only.",
+      "expected": {
+        "title": "Suits",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "multi_unit_collection",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PublicHD"
+        }
+      },
+      "original_inventory": {
+        "input": "Suits.S03E03.COMPLETE.720p.HDTV.x264-PublicHD",
+        "title": "Suits",
+        "input_line": 29,
+        "title_line": 29,
+        "source_id": "husar-movie-title",
+        "source_index": 20,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-21",
+      "source": "husar-movie-title",
+      "input": "24 S09E10 720p HDTV X264-DIMENSION [eztv]",
+      "review_note": "24 is original numeric title, not year or season. Exact S09E10 only, 720p/HDTV/X264/DIMENSION explicit; eztv relay, no other quality inferred.",
+      "expected": {
+        "title": "24",
+        "year": 0,
+        "media_type": "tv",
+        "season": 9,
+        "episodes": [
+          10
+        ],
+        "unit_keys": [
+          "S09E10"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "DIMENSION"
+        }
+      },
+      "original_inventory": {
+        "input": "24 S09E10 720p HDTV X264-DIMENSION [eztv]",
+        "title": "24",
+        "input_line": 30,
+        "title_line": 30,
+        "source_id": "husar-movie-title",
+        "source_index": 21,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-22",
+      "source": "husar-movie-title",
+      "input": "House of Cards Season 1 Complete.720p.BRrip.sujaidr (pimprg)",
+      "review_note": "House of Cards original title; Season 1 Complete is not a complete episode listing. Zero confidence and all coverage pending review, no release year. 720p/BRrip family explicit, sujaidr and pimprg not guessed as final group.",
+      "expected": {
+        "title": "House of Cards",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "multi_unit_collection",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "House of Cards Season 1 Complete.720p.BRrip.sujaidr (pimprg)",
+        "title": "House of Cards",
+        "input_line": 31,
+        "title_line": 31,
+        "source_id": "husar-movie-title",
+        "source_index": 22,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-husar-movie-title-23",
+      "source": "husar-movie-title",
+      "input": "House of Cards Season1 Complete.720p.BRrip.sujaidr (pimprg)",
+      "review_note": "Second independent literal has Season1 without space; original House of Cards retained. Complete still supplies no enumeration; zero coverage/confidence pending review. Explicit 720p/BRrip only; unknown codec/group and unmeasured rest.",
+      "expected": {
+        "title": "House of Cards",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "multi_unit_collection",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      },
+      "original_inventory": {
+        "input": "House of Cards Season1 Complete.720p.BRrip.sujaidr (pimprg)",
+        "title": "House of Cards",
+        "input_line": 32,
+        "title_line": 32,
+        "source_id": "husar-movie-title",
+        "source_index": 23,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-esparza-dlshow-0",
+      "source": "esparza-dlshow",
+      "input": "Once.Upon.a.Time.S03E01.720p.HDTV.X264-DIMENSION.mkv",
+      "review_note": "Original Once Upon a Time table asserts season 3 episode 1 and parseType 1, retained fully. Exact S03E01 only, no year inferred. 720p/HDTV/X264/DIMENSION explicit; no audio/edition/HDR.",
+      "expected": {
+        "title": "Once Upon a Time",
+        "year": 0,
+        "media_type": "tv",
+        "season": 3,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S03E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "DIMENSION"
+        }
+      },
+      "original_inventory": {
+        "input": "Once.Upon.a.Time.S03E01.720p.HDTV.X264-DIMENSION.mkv",
+        "title": "Once Upon a Time",
+        "season": 3,
+        "episode": 1,
+        "input_line": 41,
+        "title_line": 41,
+        "source_id": "esparza-dlshow",
+        "source_index": 0,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-esparza-dlshow-1",
+      "source": "esparza-dlshow",
+      "input": "The.Big.Bang.Theory.S01E17.720p.HDTV.X264-MRSK.mkv",
+      "review_note": "The Big Bang Theory original table asserts S01E17 and parseType 1; no other episodes or release year. 720p/HDTV/X264/MRSK explicit; unmeasured audio/edition/HDR empty.",
+      "expected": {
+        "title": "The Big Bang Theory",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          17
+        ],
+        "unit_keys": [
+          "S01E17"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "MRSK"
+        }
+      },
+      "original_inventory": {
+        "input": "The.Big.Bang.Theory.S01E17.720p.HDTV.X264-MRSK.mkv",
+        "title": "The Big Bang Theory",
+        "season": 1,
+        "episode": 17,
+        "input_line": 42,
+        "title_line": 42,
+        "source_id": "esparza-dlshow",
+        "source_index": 1,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    },
+    {
+      "id": "scout41-esparza-dlshow-2",
+      "source": "esparza-dlshow",
+      "input": "Colbert.Report.2013.10.10.Reed.Albergotti.and.Vanessa.OConnell.HDTV.x264-LMAO.mp4",
+      "review_note": "Colbert Report literal title retained. Original AiredYear 2013 and AiredMonth 10 are airdate fields, not work year or canonical episode; ParseTypeDate symbolic original retained. No season/episodes/units, zero confidence pending date mapping; HDTV/x264/LMAO explicit and no resolution guessed.",
+      "expected": {
+        "title": "Colbert Report",
+        "year": 0,
+        "media_type": "tv",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0,
+        "requires_review": true,
+        "reason": "calendar_coverage_unresolved",
+        "quality": {
+          "resolution": "",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "LMAO"
+        }
+      },
+      "original_inventory": {
+        "input": "Colbert.Report.2013.10.10.Reed.Albergotti.and.Vanessa.OConnell.HDTV.x264-LMAO.mp4",
+        "title": "Colbert Report",
+        "aired_year": 2013,
+        "input_line": 76,
+        "title_line": 89,
+        "source_id": "esparza-dlshow",
+        "source_index": 2,
+        "origin": "hand_maintained_realistic_release_example",
+        "review_status": "unreviewed",
+        "canonical_title_authority": false,
+        "note": "Original literal label preserved unchanged; title compatibility and complete safety contract need review.",
+        "exact_overlap_with_gold": false,
+        "existing_literal_evidence": [],
+        "exact_overlap_with_existing_sources": false
+      }
+    }
+  ]
+}

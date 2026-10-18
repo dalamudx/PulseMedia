@@ -1,0 +1,30 @@
+{
+  "name": "pulsemedia-web",
+  "private": true,
+  "version": "0.1.0-dev",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "test:configuration-ui": "node tests/configuration-browser.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^1.52.0",
+    "openapi-fetch": "^0.13.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "openapi-typescript": "7.10.1",
+    "playwright-core": "1.58.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0"
+  }
+}

@@ -1,0 +1,2555 @@
+{
+  "schema": "pulse.release-review.v1",
+  "reviewed_entries": 85,
+  "required_entries": 1000,
+  "formal_golden_acceptance": false,
+  "review_method": "85 explicit manually authored itemwise rows sealed before production probes; positional serialization only, no parser-derived expectations.",
+  "entries": [
+    {
+      "id": "hellberg-001",
+      "source": "hellberg-release",
+      "input": "Act.of.Valor.2012.720p.BluRay.DTS.x264-HDxT",
+      "review_note": "Act of Valor has explicit 2012, DTS is a claim, not measured audio; only one movie.",
+      "expected": {
+        "title": "Act of Valor",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDxT"
+        }
+      }
+    },
+    {
+      "id": "hellberg-002",
+      "source": "hellberg-release",
+      "input": "American.Reunion.UNRATED.720p.BluRay.X264-BLOW",
+      "review_note": "American Reunion lacks a work year; UNRATED is not a measured edition; no unit authority.",
+      "expected": {
+        "title": "American Reunion",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BLOW"
+        }
+      }
+    },
+    {
+      "id": "hellberg-003",
+      "source": "hellberg-release",
+      "input": "Attack.The.Block.2011.720p.BluRay.x264-iNFAMOUS",
+      "review_note": "Attack The Block has one 2011 year and explicit BluRay/x264; retain mixed case group.",
+      "expected": {
+        "title": "Attack The Block",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "iNFAMOUS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-004",
+      "source": "hellberg-release",
+      "input": "Avatar.720p.Bluray.x264-CBGB",
+      "review_note": "Avatar contains no work year; quality does not establish which release identity; no coverage.",
+      "expected": {
+        "title": "Avatar",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CBGB"
+        }
+      }
+    },
+    {
+      "id": "hellberg-005",
+      "source": "hellberg-release",
+      "input": "Captain.Phillips.2013.BluRay.720p.DTS.x264-CHD",
+      "review_note": "Captain Phillips retains 2013; reordered BluRay/720p is equivalent token evidence; DTS remains unmeasured.",
+      "expected": {
+        "title": "Captain Phillips",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-006",
+      "source": "hellberg-release",
+      "input": "Chronicle.2012.DC.720p.BluRay.x264-REFiNED",
+      "review_note": "Chronicle retains 2012 and explicit quality; DC is an edition claim only.",
+      "expected": {
+        "title": "Chronicle",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "REFiNED"
+        }
+      }
+    },
+    {
+      "id": "hellberg-007",
+      "source": "hellberg-release",
+      "input": "Cleanskin.2012.BluRay.720p.DTS.x264-CHD",
+      "review_note": "Cleanskin has a single 2012 work year; DTS supplies no measured audio facts.",
+      "expected": {
+        "title": "Cleanskin",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-008",
+      "source": "hellberg-release",
+      "input": "Closed.Circuit.2013.720p.BDRIP.x264.AAC-WiNNy",
+      "review_note": "Closed Circuit retains original title and 2013; BDRIP denotes Blu-ray family, AAC not measured audio.",
+      "expected": {
+        "title": "Closed Circuit",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-009",
+      "source": "hellberg-release",
+      "input": "Cloud.Atlas.2012.720p.BluRay.x264-BiDA [PublicHD]",
+      "review_note": "Cloud Atlas has 2012 and group BiDA; bracketed PublicHD is relay evidence, not another group or unit.",
+      "expected": {
+        "title": "Cloud Atlas",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BiDA"
+        }
+      }
+    },
+    {
+      "id": "hellberg-010",
+      "source": "hellberg-release",
+      "input": "Dead.Man.Down.2013.720p.BluRay.x264-SPARKS",
+      "review_note": "Dead Man Down has one 2013 year and a terminal SPARKS group; no absent attributes inferred.",
+      "expected": {
+        "title": "Dead Man Down",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-011",
+      "source": "hellberg-release",
+      "input": "Detachment.2011.LIMITED.720p.BluRay.x264-TRiPS",
+      "review_note": "Detachment retains 2011; LIMITED is a release claim and cannot populate measured edition.",
+      "expected": {
+        "title": "Detachment",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "TRiPS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-012",
+      "source": "hellberg-release",
+      "input": "Django.Unchained.2012.720p.BluRay.x264-SPARKS",
+      "review_note": "Django Unchained retains independent title/year; explicit x264 certifies only the codec marker.",
+      "expected": {
+        "title": "Django Unchained",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-013",
+      "source": "hellberg-release",
+      "input": "Elysium.2013.720p.WEB-DL.H264-WEBiOS",
+      "review_note": "Elysium has explicit 2013 and WEB-DL subtype; WEBiOS is the terminal group.",
+      "expected": {
+        "title": "Elysium",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WEBiOS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-014",
+      "source": "hellberg-release",
+      "input": "Enders.Game.2014.720p.HDRip.x264-BRENYS",
+      "review_note": "Enders Game preserves literal 2014 without correcting to external release knowledge; HDRip neither approved source nor HDR.",
+      "expected": {
+        "title": "Enders Game",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BRENYS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-015",
+      "source": "hellberg-release",
+      "input": "Equilibrium.2002.720p.BluRay.DTS.x264-HiDt",
+      "review_note": "Equilibrium retains 2002 and HiDt; DTS is not a measured channel or audio profile.",
+      "expected": {
+        "title": "Equilibrium",
+        "year": 2002,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HiDt"
+        }
+      }
+    },
+    {
+      "id": "hellberg-016",
+      "source": "hellberg-release",
+      "input": "Fast.and.Furious.6.2013.720p.WEB-DL.H264-HDCLUB",
+      "review_note": "Fast and Furious 6 retains sequel numeral as title, distinct from 2013 year; one movie.",
+      "expected": {
+        "title": "Fast and Furious 6",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDCLUB"
+        }
+      }
+    },
+    {
+      "id": "hellberg-017",
+      "source": "hellberg-release",
+      "input": "Flu.2013.720p.BRRip.XviD-TeRRa",
+      "review_note": "Flu has 2013 and BRRip source family; unsupported XviD remains unknown rather than H264.",
+      "expected": {
+        "title": "Flu",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "TeRRa"
+        }
+      }
+    },
+    {
+      "id": "hellberg-018",
+      "source": "hellberg-release",
+      "input": "Friends.with.Kids.2011.720p.BluRay.DD5.1.x264-HiDt",
+      "review_note": "Friends with Kids retains lower-case with; DD5.1 is an unmeasured audio claim.",
+      "expected": {
+        "title": "Friends with Kids",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HiDt"
+        }
+      }
+    },
+    {
+      "id": "hellberg-019",
+      "source": "hellberg-release",
+      "input": "Get.the.Gringo.2012.BluRay.720p.DTS.x264-CHD",
+      "review_note": "Get the Gringo retains lower-case the and unique 2012; DTS does not establish measured audio.",
+      "expected": {
+        "title": "Get the Gringo",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-020",
+      "source": "hellberg-release",
+      "input": "Gravity.2013.720p.WEB-DL.H264-PublicHD",
+      "review_note": "Gravity has 2013 WEB-DL; PublicHD after a dash is the actual group, not a bracket relay here.",
+      "expected": {
+        "title": "Gravity",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PublicHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-021",
+      "source": "hellberg-release",
+      "input": "Her.2013.720p.BluRay.x264-WiNNy",
+      "review_note": "Her has explicit 2013 and no episode syntax; preserve exact WiNNy group.",
+      "expected": {
+        "title": "Her",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-022",
+      "source": "hellberg-release",
+      "input": "Inception.720p.BluRay.x264-CROSSBOW",
+      "review_note": "Inception lacks a year even though the name is familiar; no guessed identity or movie key.",
+      "expected": {
+        "title": "Inception",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CROSSBOW"
+        }
+      }
+    },
+    {
+      "id": "hellberg-023",
+      "source": "hellberg-release",
+      "input": "Intolerable.Cruelty.2003.720p.Bluray.X264-DIMENSION",
+      "review_note": "Intolerable Cruelty retains 2003; Bluray/X264 spelling maps to explicit families only.",
+      "expected": {
+        "title": "Intolerable Cruelty",
+        "year": 2003,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "DIMENSION"
+        }
+      }
+    },
+    {
+      "id": "hellberg-024",
+      "source": "hellberg-release",
+      "input": "Intouchables.2011.720p.BluRay.x264.DTS-HDChina",
+      "review_note": "Intouchables retains 2011 and HDChina after DTS; DTS cannot become edition or HDR.",
+      "expected": {
+        "title": "Intouchables",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDChina"
+        }
+      }
+    },
+    {
+      "id": "hellberg-025",
+      "source": "hellberg-release",
+      "input": "Iron.Man.2.720p.BluRay.x264-EXQUiSiTE",
+      "review_note": "Iron Man 2 retains the sequel number; no work year is present so no movie coverage.",
+      "expected": {
+        "title": "Iron Man 2",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "EXQUiSiTE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-026",
+      "source": "hellberg-release",
+      "input": "Iron.Man.3.2013.720p.WEB-DL.H264-WEBiOS [PublicHD]",
+      "review_note": "Iron Man 3 separates sequel 3 from year 2013; PublicHD relay does not replace WEBiOS.",
+      "expected": {
+        "title": "Iron Man 3",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WEBiOS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-027",
+      "source": "hellberg-release",
+      "input": "Its.All.Gone.Pete.Tong.2004.720p.BluRay.x264-CiNEFiLE",
+      "review_note": "Its All Gone Pete Tong keeps the source spelling without inventing an apostrophe; 2004 is explicit.",
+      "expected": {
+        "title": "Its All Gone Pete Tong",
+        "year": 2004,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CiNEFiLE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-028",
+      "source": "hellberg-release",
+      "input": "Jack Reacher.2012 BDRip 720p DTS x264-MarGe",
+      "review_note": "Jack Reacher mixes spaces and dots; BDRip/720p/x264 and dash MarGe are explicit; DTS unmeasured.",
+      "expected": {
+        "title": "Jack Reacher",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "MarGe"
+        }
+      }
+    },
+    {
+      "id": "hellberg-029",
+      "source": "hellberg-release",
+      "input": "Jobs.2013.720p.BluRay.x264-BLOW",
+      "review_note": "Jobs has one 2013 year and final BLOW group; no additional identity evidence inferred.",
+      "expected": {
+        "title": "Jobs",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BLOW"
+        }
+      }
+    },
+    {
+      "id": "hellberg-030",
+      "source": "hellberg-release",
+      "input": "Kick-Ass.2.2013.720p.Blu.Ray.x264-VeDeTT",
+      "review_note": "Kick-Ass 2 retains its internal hyphen; split Blu.Ray is the same stated source family, not title words.",
+      "expected": {
+        "title": "Kick-Ass 2",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "VeDeTT"
+        }
+      }
+    },
+    {
+      "id": "hellberg-031",
+      "source": "hellberg-release",
+      "input": "Looper.2012.720p.BluRay.x264-SPARKS",
+      "review_note": "Looper retains independent 2012 and explicit technical markers; no HDR/audio/edition evidence.",
+      "expected": {
+        "title": "Looper",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-032",
+      "source": "hellberg-release",
+      "input": "Man of Tai Chi 2013 720p Webrip x264 AC3-FooKaS (SilverTorrent)",
+      "review_note": "Man of Tai Chi retains 2013 and FooKaS; SilverTorrent parenthesis is a relay claim, AC3 unmeasured.",
+      "expected": {
+        "title": "Man of Tai Chi",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEBRip",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FooKaS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-033",
+      "source": "hellberg-release",
+      "input": "Menace.II.Society.1993.Directors.Cut.720p.BluRay.x264-SiNNERS",
+      "review_note": "Menace II Society retains Roman II; Directors Cut is an edition claim, not an observed edition fact.",
+      "expected": {
+        "title": "Menace II Society",
+        "year": 1993,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SiNNERS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-034",
+      "source": "hellberg-release",
+      "input": "Need.For.Speed.2014.720p.BluRay.x264-SPARKS",
+      "review_note": "Need For Speed retains capital For and 2014; one movie, no seasonal hints.",
+      "expected": {
+        "title": "Need For Speed",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-035",
+      "source": "hellberg-release",
+      "input": "Nymphomaniac.Vol.II.2013.720p.BluRay.X264-AMIABLE",
+      "review_note": "Nymphomaniac Vol II retains Vol II as work title, not an inferred multi-unit volume set.",
+      "expected": {
+        "title": "Nymphomaniac Vol II",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AMIABLE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-036",
+      "source": "hellberg-release",
+      "input": "Oblivion.2013.720p.BluRay.x264-SPARKS",
+      "review_note": "Oblivion has one literal 2013 year; source and codec markers do not imply ownership.",
+      "expected": {
+        "title": "Oblivion",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-037",
+      "source": "hellberg-release",
+      "input": "Pacific.Rim.2013.720p.WEB-DL.H264-PublicHD",
+      "review_note": "Pacific Rim preserves 2013 and WEB-DL; dash PublicHD is group evidence.",
+      "expected": {
+        "title": "Pacific Rim",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PublicHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-038",
+      "source": "hellberg-release",
+      "input": "Pain.and.Gain.2013.720p.BluRay.X264-AMIABLE",
+      "review_note": "Pain and Gain keeps the original lower-case and; explicit technical tail starts after 2013.",
+      "expected": {
+        "title": "Pain and Gain",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AMIABLE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-039",
+      "source": "hellberg-release",
+      "input": "Pi.1998.LiMiTED.720p.BluRay.x264-SiNNERS",
+      "review_note": "Pi is a valid short title with 1998; LiMiTED is not a measured edition or quality rank.",
+      "expected": {
+        "title": "Pi",
+        "year": 1998,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SiNNERS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-040",
+      "source": "hellberg-release",
+      "input": "Pornopung.2013.720p.BluRay.x264-SUG",
+      "review_note": "Pornopung has explicit 2013 and SUG group; no subtitle or extra units inferred.",
+      "expected": {
+        "title": "Pornopung",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SUG"
+        }
+      }
+    },
+    {
+      "id": "hellberg-041",
+      "source": "hellberg-release",
+      "input": "Project.X.2012.Extended.BluRay.720p.DTS.x264-CHD",
+      "review_note": "Project X retains X in title; Extended and DTS remain unmeasured edition/audio claims.",
+      "expected": {
+        "title": "Project X",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-042",
+      "source": "hellberg-release",
+      "input": "Red.2.2013.720p.BDRIP.x264.AAC-WiNNy",
+      "review_note": "Red 2 retains sequel 2; BDRIP maps source family, AAC does not certify measured audio.",
+      "expected": {
+        "title": "Red 2",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-043",
+      "source": "hellberg-release",
+      "input": "Robocop.1987.4K.Remastered.DC.CEE.720p.BluRay.x264-WiNNy",
+      "review_note": "Robocop preserves 1987 and original explicit 720p label; 4K Remastered is mastering claim, DC/CEE not measured edition or HDR.",
+      "expected": {
+        "title": "Robocop",
+        "year": 1987,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-044",
+      "source": "hellberg-release",
+      "input": "Robocop.2014.720p.BluRay.x264-WiNNy",
+      "review_note": "Robocop 2014 is a distinct input from 1987; only this explicit year belongs to this annotation.",
+      "expected": {
+        "title": "Robocop",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-045",
+      "source": "hellberg-release",
+      "input": "Scott.Pilgrim.vs.The.World.2010.720p.x264-F",
+      "review_note": "Scott Pilgrim vs The World has 2010 but no source marker; single-letter F is the literal dash group.",
+      "expected": {
+        "title": "Scott Pilgrim vs The World",
+        "year": 2010,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "F"
+        }
+      }
+    },
+    {
+      "id": "hellberg-046",
+      "source": "hellberg-release",
+      "input": "Secretary.2002.720p.BluRay.x264.DTS-WiKi",
+      "review_note": "Secretary retains 2002 and terminal WiKi; reordered DTS is unmeasured audio, not part of title.",
+      "expected": {
+        "title": "Secretary",
+        "year": 2002,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiKi"
+        }
+      }
+    },
+    {
+      "id": "hellberg-047",
+      "source": "hellberg-release",
+      "input": "Sliding.Doors.1998.720p.BluRay.X264-AMIABLE",
+      "review_note": "Sliding Doors retains 1998 and stated Bluray/X264; no alternate unit or edition implied.",
+      "expected": {
+        "title": "Sliding Doors",
+        "year": 1998,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AMIABLE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-048",
+      "source": "hellberg-release",
+      "input": "Snitch.2013.720p.BluRay.DTS.x264-HDWinG",
+      "review_note": "Snitch has unique 2013; exact HDWinG group retained while DTS supplies no measured audio.",
+      "expected": {
+        "title": "Snitch",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDWinG"
+        }
+      }
+    },
+    {
+      "id": "hellberg-049",
+      "source": "hellberg-release",
+      "input": "Snowpiercer.2013.720p.BluRay.x264-WiNNy",
+      "review_note": "Snowpiercer retains literal 2013 and WiNNy; no absent quality attributes guessed.",
+      "expected": {
+        "title": "Snowpiercer",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-050",
+      "source": "hellberg-release",
+      "input": "Star.Trek.Into.Darkness.2013.720p.WEB-DL.h264-PublicHD",
+      "review_note": "Star Trek Into Darkness retains original capitalization and 2013; dash PublicHD is a group.",
+      "expected": {
+        "title": "Star Trek Into Darkness",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PublicHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-051",
+      "source": "hellberg-release",
+      "input": "Ted.2012.720p.BluRay.x264-DAA",
+      "review_note": "Ted has a short independent title and explicit 2012; no quality extrapolation beyond filename tokens.",
+      "expected": {
+        "title": "Ted",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "DAA"
+        }
+      }
+    },
+    {
+      "id": "hellberg-052",
+      "source": "hellberg-release",
+      "input": "The Bourne Legacy 2012 BRRip 720p DTS x264 MarGe",
+      "review_note": "The Bourne Legacy preserves 2012 and BRRip/x264; bare spaced MarGe lacks a group separator, original MarGe claim retained separately.",
+      "expected": {
+        "title": "The Bourne Legacy",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "hellberg-053",
+      "source": "hellberg-release",
+      "input": "The Lone Ranger (2013)",
+      "review_note": "The Lone Ranger has only parenthesized 2013; all seven quality fields unknown, one syntactic movie.",
+      "expected": {
+        "title": "The Lone Ranger",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "hellberg-054",
+      "source": "hellberg-release",
+      "input": "The Way Way Back 2013 BluRay 720p DTS x264 dxva-FraMeSToR",
+      "review_note": "The Way Way Back keeps repeated Way; dxva is not title or a new codec, DTS unmeasured.",
+      "expected": {
+        "title": "The Way Way Back",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FraMeSToR"
+        }
+      }
+    },
+    {
+      "id": "hellberg-055",
+      "source": "hellberg-release",
+      "input": "The.Amazing.Spider-Man.2012.720p.BluRay.X264-AMIABLE",
+      "review_note": "The Amazing Spider-Man retains title hyphen and 2012; terminal AMIABLE remains group.",
+      "expected": {
+        "title": "The Amazing Spider-Man",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AMIABLE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-056",
+      "source": "hellberg-release",
+      "input": "The.Best.Exotic.Marigold.Hotel.2011.720p.BluRay.X264-AMIABLE [PublicHD]",
+      "review_note": "The Best Exotic Marigold Hotel retains 2011; PublicHD relay cannot replace dash AMIABLE group.",
+      "expected": {
+        "title": "The Best Exotic Marigold Hotel",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AMIABLE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-057",
+      "source": "hellberg-release",
+      "input": "The.Bucket.List.2007.MULTiSubs.720p.BluRay.DTS.x264-BLiNK",
+      "review_note": "The Bucket List retains 2007; MULTiSubs asserts subtitles, not measured audio or edition.",
+      "expected": {
+        "title": "The Bucket List",
+        "year": 2007,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BLiNK"
+        }
+      }
+    },
+    {
+      "id": "hellberg-058",
+      "source": "hellberg-release",
+      "input": "The.Fault.in.Our.Stars.2014.EXTENDED.720p.WEB-DL.H264.AC3-FAS",
+      "review_note": "The Fault in Our Stars keeps source casing; EXTENDED and AC3 remain release claims only.",
+      "expected": {
+        "title": "The Fault in Our Stars",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "FAS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-059",
+      "source": "hellberg-release",
+      "input": "The.Five-Year.Engagement.2012.UNRATED.720p.BRRip.XviD.AC3-LEGi0N",
+      "review_note": "The Five-Year Engagement retains internal hyphen and 2012; unsupported XviD stays unknown, UNRATED/AC3 unmeasured.",
+      "expected": {
+        "title": "The Five-Year Engagement",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "LEGi0N"
+        }
+      }
+    },
+    {
+      "id": "hellberg-060",
+      "source": "hellberg-release",
+      "input": "The.Hand.That.Rocks.The.Cradle.1992.720p.BluRay.x264-HD4U",
+      "review_note": "The Hand That Rocks The Cradle retains original The casing and 1992; HD4U is group, not resolution.",
+      "expected": {
+        "title": "The Hand That Rocks The Cradle",
+        "year": 1992,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HD4U"
+        }
+      }
+    },
+    {
+      "id": "hellberg-061",
+      "source": "hellberg-release",
+      "input": "The.Hobbit.An.Unexpected.Journey.2012.720p.BluRay.x264-SPARKS",
+      "review_note": "The Hobbit An Unexpected Journey retains title without invented punctuation; one 2012 movie.",
+      "expected": {
+        "title": "The Hobbit An Unexpected Journey",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-062",
+      "source": "hellberg-release",
+      "input": "The.Hunger.Games.2012.720p.BluRay.x264.DTS-HDChina",
+      "review_note": "The Hunger Games retains 2012; x264/DTS order does not change H264 marker or supply measured audio.",
+      "expected": {
+        "title": "The Hunger Games",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDChina"
+        }
+      }
+    },
+    {
+      "id": "hellberg-063",
+      "source": "hellberg-release",
+      "input": "The.Hunger.Games.Catching.Fire.2013.IMAX.EDITION.720p.BluRay.x264-PHD",
+      "review_note": "The Hunger Games Catching Fire retains 2013; IMAX EDITION is a claim, not a measured edition fact.",
+      "expected": {
+        "title": "The Hunger Games Catching Fire",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-064",
+      "source": "hellberg-release",
+      "input": "The.Lucky.One.2012.720p.Bluray.DTS.x264-HDxT",
+      "review_note": "The Lucky One retains unique 2012 and HDxT; no DTS channel count or HDR inferred.",
+      "expected": {
+        "title": "The Lucky One",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDxT"
+        }
+      }
+    },
+    {
+      "id": "hellberg-065",
+      "source": "hellberg-release",
+      "input": "The.Machine.2013.720p.BluRay.x264-WiNNy",
+      "review_note": "The Machine preserves 2013 and explicit quality markers, with no TV or absolute numbering.",
+      "expected": {
+        "title": "The Machine",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-066",
+      "source": "hellberg-release",
+      "input": "The.Magic.Of.Belle.Isle.2012.LiMiTED.720p.BluRay.x264-SPARKS",
+      "review_note": "The Magic Of Belle Isle keeps capital Of; LiMiTED supplies no measured edition or extra coverage.",
+      "expected": {
+        "title": "The Magic Of Belle Isle",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-067",
+      "source": "hellberg-release",
+      "input": "The.Secret.Life.Of.Walter.Mitty.2013.720p.WEB-DL.H264-PublicHD",
+      "review_note": "The Secret Life Of Walter Mitty retains capital Of and 2013; dash PublicHD is group.",
+      "expected": {
+        "title": "The Secret Life Of Walter Mitty",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "WEB-DL",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PublicHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-068",
+      "source": "hellberg-release",
+      "input": "The.Wolf.of.Wall.Street.2013.720p.BluRay.x264-WiNNy",
+      "review_note": "The Wolf of Wall Street retains lower-case of and 2013; no title casing normalization.",
+      "expected": {
+        "title": "The Wolf of Wall Street",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiNNy"
+        }
+      }
+    },
+    {
+      "id": "hellberg-069",
+      "source": "hellberg-release",
+      "input": "The.Wolverine.2013.EXTENDED.720p.BluRay.x264-SPARKS[rarbg]",
+      "review_note": "The Wolverine has 2013; EXTENDED is unmeasured edition, attached rarbg relay does not change SPARKS.",
+      "expected": {
+        "title": "The Wolverine",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-070",
+      "source": "hellberg-release",
+      "input": "The.Zero.Theorem.2013.LIMITED.READ.NFO.720p.BluRay.X264-AMIABLE",
+      "review_note": "The Zero Theorem retains 2013; LIMITED READ NFO are release instructions, not title or measured attributes.",
+      "expected": {
+        "title": "The Zero Theorem",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "AMIABLE"
+        }
+      }
+    },
+    {
+      "id": "hellberg-071",
+      "source": "hellberg-release",
+      "input": "Total.Recall.2012.720p.Extended.BluRay.x264.AC3-HDChina",
+      "review_note": "Total Recall preserves explicit 2012; Extended/AC3 do not become measured edition/audio.",
+      "expected": {
+        "title": "Total Recall",
+        "year": 2012,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDChina"
+        }
+      }
+    },
+    {
+      "id": "hellberg-072",
+      "source": "hellberg-release",
+      "input": "Transcendence.2014.720p.BluRay.x264-SPARKS",
+      "review_note": "Transcendence retains 2014 and SPARKS; no HDR or edition evidence supplied.",
+      "expected": {
+        "title": "Transcendence",
+        "year": 2014,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "SPARKS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-073",
+      "source": "hellberg-release",
+      "input": "Trolljegeren.2010.NORWEGIAN.PROPER.720p.BluRay.x264-NOHD",
+      "review_note": "Trolljegeren retains Norwegian title and 2010; NORWEGIAN/PROPER are release claims, not measured attributes.",
+      "expected": {
+        "title": "Trolljegeren",
+        "year": 2010,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NOHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-074",
+      "source": "hellberg-release",
+      "input": "Tron.Legacy.2010.BluRay.720p.DTS.x264-CHD",
+      "review_note": "Tron Legacy has explicit 2010 and reordered BluRay/720p; DTS remains unmeasured.",
+      "expected": {
+        "title": "Tron Legacy",
+        "year": 2010,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "CHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-075",
+      "source": "hellberg-release",
+      "input": "Wanderlust.720p.BluRay.X264-BLOW",
+      "review_note": "Wanderlust lacks year; quality cannot select a work identity, so no movie key is certified.",
+      "expected": {
+        "title": "Wanderlust",
+        "year": 0,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.6,
+        "requires_review": true,
+        "reason": "title_only_without_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "BLOW"
+        }
+      }
+    },
+    {
+      "id": "hellberg-076",
+      "source": "hellberg-release",
+      "input": "We're the Millers (2013)",
+      "review_note": "We're the Millers preserves apostrophe and lower-case the; only 2013 is explicit, all quality unknown.",
+      "expected": {
+        "title": "We're the Millers",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "",
+          "source": "",
+          "codec": "",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": ""
+        }
+      }
+    },
+    {
+      "id": "hellberg-077",
+      "source": "hellberg-release",
+      "input": "Weekender.2011.720p.BluRay.X264-7SinS",
+      "review_note": "Weekender retains 2011; group 7SinS starts with digit and is not a year or episode.",
+      "expected": {
+        "title": "Weekender",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "7SinS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-078",
+      "source": "hellberg-release",
+      "input": "Welcome to the Punch 2013 720p BluRay DTS x264-TayTO",
+      "review_note": "Welcome to the Punch retains spaced title and 2013; explicit dash TayTO, DTS unmeasured.",
+      "expected": {
+        "title": "Welcome to the Punch",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "TayTO"
+        }
+      }
+    },
+    {
+      "id": "hellberg-079",
+      "source": "hellberg-release",
+      "input": "While.You.Were.Sleeping.1995.720p.BluRay.2Audio.DTS.AC3.x264-HDWinG",
+      "review_note": "While You Were Sleeping retains 1995; 2Audio/DTS/AC3 declare tracks, not measured audio, edition or coverage.",
+      "expected": {
+        "title": "While You Were Sleeping",
+        "year": 1995,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "HDWinG"
+        }
+      }
+    },
+    {
+      "id": "hellberg-080",
+      "source": "hellberg-release",
+      "input": "White.House.Down.2013.720p.BluRay.DTS.x264-PublicHD",
+      "review_note": "White House Down retains 2013; PublicHD is dash group and DTS unmeasured.",
+      "expected": {
+        "title": "White House Down",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "PublicHD"
+        }
+      }
+    },
+    {
+      "id": "hellberg-081",
+      "source": "hellberg-release",
+      "input": "Wild.Bill.2011.720p.BluRay.X264-7SinS",
+      "review_note": "Wild Bill has explicit 2011 and 7SinS group; no absent HDR/audio/edition guessed.",
+      "expected": {
+        "title": "Wild Bill",
+        "year": 2011,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "7SinS"
+        }
+      }
+    },
+    {
+      "id": "hellberg-082",
+      "source": "hellberg-release",
+      "input": "World.War.Z.2013.Unrated.Cut.720p.BluRay.x264.DTS-WiKi [PublicHD]",
+      "review_note": "World War Z retains Z in title; Unrated Cut is not a measured edition and PublicHD is relay.",
+      "expected": {
+        "title": "World War Z",
+        "year": 2013,
+        "media_type": "movie",
+        "season": 0,
+        "episodes": [],
+        "unit_keys": [
+          "movie"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.9,
+        "requires_review": false,
+        "reason": "clean_movie_with_year",
+        "quality": {
+          "resolution": "720p",
+          "source": "Bluray",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "WiKi"
+        }
+      }
+    },
+    {
+      "id": "hellberg-083",
+      "source": "hellberg-release",
+      "input": "The.Handmaids.Tale.S02E01.June.1080p.HULU.WEBRip.AAC2.0.H264-NTb[rarbg]",
+      "review_note": "PENDING original title contains S02E01 June rather than just series identity; retain title and exact source 2/1, HULU not identity, AAC2.0 unmeasured.",
+      "expected": {
+        "title": "The Handmaids Tale S02E01 June",
+        "year": 0,
+        "media_type": "tv",
+        "season": 2,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S02E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "WEBRip",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NTb"
+        }
+      }
+    },
+    {
+      "id": "hellberg-084",
+      "source": "hellberg-release",
+      "input": "The.Mandalorian.S01E01.INTERNAL.1080p.WEB.H264-NOCROP[rartv]",
+      "review_note": "PENDING original title contains S01E01 INTERNAL; preserve it and source 1/1, bare WEB has no modeled subtype; rartv is relay.",
+      "expected": {
+        "title": "The Mandalorian S01E01 INTERNAL",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          1
+        ],
+        "unit_keys": [
+          "S01E01"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "1080p",
+          "source": "",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "NOCROP"
+        }
+      }
+    },
+    {
+      "id": "hellberg-085",
+      "source": "hellberg-release",
+      "input": "Mr.Robot.S01E07.720p.HDTV.x264-KILLERS[rarbg]",
+      "review_note": "PENDING original title includes S01E07; preserve title and full original 1/7 numbering, rarbg relay grants no title rewrite.",
+      "expected": {
+        "title": "Mr Robot S01E07",
+        "year": 0,
+        "media_type": "tv",
+        "season": 1,
+        "episodes": [
+          7
+        ],
+        "unit_keys": [
+          "S01E07"
+        ],
+        "absolute_episode": 0,
+        "is_anime": false,
+        "confidence": 0.95,
+        "requires_review": false,
+        "reason": "standard_season_episode",
+        "quality": {
+          "resolution": "720p",
+          "source": "HDTV",
+          "codec": "H264",
+          "hdr": "",
+          "audio": "",
+          "edition": "",
+          "group": "KILLERS"
+        }
+      }
+    }
+  ]
+}

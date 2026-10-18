@@ -1,0 +1,513 @@
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Search, Loader2, Sparkles, Film, Tv, Trophy, Rss, RefreshCw } from "lucide-react";
+import { api } from "@/api/client";
+import { useToast } from "@/features/toast/ToastContext";
+import { MediaCard, type MediaItem } from "@/components/cards/MediaCard";
+import { MediaDetailModal } from "@/components/dialog/MediaDetailModal";
+import { TorrentSearchModal } from "@/components/dialog/TorrentSearchModal";
+import type { paths } from "@/api/client";
+
+type ReleaseItem = paths["/api/v1/releases/search"]["get"]["responses"]["200"]["content"]["application/json"]["results"][number];
+
+export const DiscoverView: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const toast = useToast();
+
+  const [activeCategory, setActiveCategory] = useState<"trending" | "movies" | "tv" | "douban">("trending");
+  const [selectedGenre, setSelectedGenre] = useState<string>("全部");
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState<"all" | "movie" | "tv">("all");
+  const [searchYear, setSearchYear] = useState<string>("");
+  const [searching, setSearching] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [movies, setMovies] = useState<MediaItem[]>([]);
+  const [subscribingId, setSubscribingId] = useState<number | null>(null);
+
+  // Dynamic Discover Feed (TMDB API 20+ items)
+  const [feedItems, setFeedItems] = useState<MediaItem[]>([]);
+  const [loadingFeed, setLoadingFeed] = useState(false);
+
+  // Detail Modal
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedDetailMedia, setSelectedDetailMedia] = useState<MediaItem | null>(null);
+
+  // Release Search Modal
+  const [showReleaseModal, setShowReleaseModal] = useState(false);
+  const [loadingReleases, setLoadingReleases] = useState(false);
+  const [currentMedia, setCurrentMedia] = useState<MediaItem | null>(null);
+  const [releases, setReleases] = useState<ReleaseItem[]>([]);
+const [releaseError,setReleaseError]=useState("");const[releasePartial,setReleasePartial]=useState(false);const releaseOwner=useRef<AbortController|null>(null);useEffect(()=>()=>releaseOwner.current?.abort(),[]);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const [feedError, setFeedError] = useState("");
+  const feedRequest = useRef<AbortController | null>(null);
+
+  const switchCategory = (cat: "trending" | "movies" | "tv" | "douban") => {
+    setActiveCategory(cat);
+    setSelectedGenre("全部");
+    setSearched(false);
+    setSearchQuery("");
+    setMovies([]);
+  };
+
+  const refreshDiscoverData = (notify = false) => {
+    feedRequest.current?.abort();
+    const controller = new AbortController(); feedRequest.current = controller;
+    setLoadingFeed(true); setFeedItems([]); setFeedError("");
+    let category: "trending" | "movie" | "tv" | "top_rated" = "trending";
+    if (activeCategory === "movies") category = "movie";
+    if (activeCategory === "tv") category = "tv";
+    if (activeCategory === "douban") category = "top_rated";
+    api.GET("/api/v1/discover", { params: { query: { category, page: 1 } }, signal: controller.signal })
+      .then(({ data, error }) => {
+        if (controller.signal.aborted) return;
+        if (error || !data) { setFeedError("推荐读取失败，请检查元数据配置或重新加载。"); if (notify) toast.error("刷新失败", "未取得推荐数据。"); return; }
+        setFeedItems(data.results.map(item => ({ ...item, year: item.year ?? undefined, overview: item.overview ?? undefined, poster_url: item.poster_url ?? undefined, backdrop_url: item.backdrop_url ?? undefined, rating: item.rating ?? undefined, genres: item.genres ?? undefined })));
+        if (notify) toast.success("推荐列表已刷新", data.results.length ? "已读取推荐数据。" : "暂无推荐影视。");
+      })
+      .catch(() => { if (!controller.signal.aborted) setFeedError("连接失败，未取得推荐数据。"); })
+      .finally(() => { if (!controller.signal.aborted) setLoadingFeed(false); });
+  };
+
+  useEffect(() => {
+    refreshDiscoverData(false);
+    return () => feedRequest.current?.abort();
+  }, [activeCategory, location.key]);
+
+  // Real genre filtering and display computation
+  const currentDisplayList = useMemo(() => {
+    const baseList = searched ? movies : feedItems;
+    if (selectedGenre === "全部") return baseList;
+
+    return baseList.filter((m) => {
+      const inGenres = m.genres?.some(
+        (g) => g.includes(selectedGenre) || selectedGenre.includes(g)
+      );
+      const inOverview = m.overview?.includes(selectedGenre);
+      const inTitle = m.title.includes(selectedGenre);
+      return inGenres || inOverview || inTitle;
+    });
+  }, [searched, movies, feedItems, selectedGenre]);
+
+  const spotlightItem = feedItems[0];
+
+  const handleSearch = async (queryText?: string, typeVal?: "all" | "movie" | "tv") => {
+    const q = (queryText ?? searchQuery).trim();
+    if (!q) return;
+    const t = typeVal ?? searchType;
+
+    setSearching(true);
+    try {
+      const yearNum = searchYear ? parseInt(searchYear, 10) : undefined;
+      const { data, error } = await api.GET("/api/v1/search/movies", {
+        params: {
+          query: {
+            query: q,
+            type: t,
+            year: yearNum,
+          },
+        },
+      });
+      if (error) {
+        toast.error("搜索失败", error.message || "未能检索到影片");
+        setMovies([]);
+        return;
+      }
+      setMovies((data?.results as MediaItem[]) || []);
+      setSearched(true);
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const resetSearch = () => {
+    setSearched(false);
+    setSearchQuery("");
+    setSearchYear("");
+    setMovies([]);
+  };
+
+  const quickSearch = (title: string, t: "all" | "movie" | "tv") => {
+    setSearchQuery(title);
+    setSearchType(t);
+    setSearchYear("");
+    handleSearch(title, t);
+  };
+
+  const openMediaDetail = (m: MediaItem) => {
+    setSelectedDetailMedia(m);
+    setShowDetailModal(true);
+  };
+
+  const subscribeMedia = async (
+    m: MediaItem,
+    scope: "all" | "selected" = "all",
+    seasons: number[] = [],
+    episodes: string[] = [],
+    includeSpecials = false,
+    downloaderId?: string,
+    indexerIds: string[] = [],
+    policyId = "default",
+    rootId?:string
+  ) => {
+    setSubscribingId(m.tmdb_id);
+    try {
+      const scopeType = scope === "selected" && (seasons.length > 0 || episodes.length > 0) ? "selected" : "all";
+      const seasonsToSend = scope === "selected" && seasons.length > 0 ? seasons : undefined;
+      const episodesToSend = scope === "selected" && episodes.length > 0 ? episodes : undefined;
+      const { data, error } = await api.POST("/api/v1/subscriptions", {
+        body: {
+          tmdb_id: m.tmdb_id,
+          media_type: (m.media_type as any) || "movie",
+          title: m.title,
+          year: m.year,
+          scope_type: scopeType as any,
+          quality_policy_id: policyId,
+root_id:rootId,
+          seasons: seasonsToSend,
+          episodes: episodesToSend,
+          include_specials: includeSpecials,
+          downloader_id: downloaderId,
+          indexer_ids: indexerIds,
+        },
+      });
+      if (error) {
+        toast.error("订阅失败", error.message || "未知错误");
+        return;
+      }
+      if (data) {
+        setShowDetailModal(false);
+        const subMsg = scope === "selected" && seasons.length > 0
+          ? `已成功订阅《${m.title}》指定第 ${seasons.join("、")} 季！`
+          : `《${m.title}》全剧订阅成功！`;
+        toast.success(subMsg, m.media_type === "tv" ? "季集范围已保存；剧集自动获取尚未启用。" : indexerIds.length ? "端点配置已保存；自动补缺仍须通过目标根、匹配和质量核验。" : "未绑定索引器，自动搜索未启用；可在订阅详情中编辑绑定。");
+        setTimeout(() => {
+          navigate("/subscriptions");
+        }, 1000);
+      }
+    } finally {
+      setSubscribingId(null);
+    }
+  };
+
+  const openReleaseSearch = async (m: MediaItem) => {
+    setShowDetailModal(false);
+    setCurrentMedia(m);
+    setShowReleaseModal(true);
+    setLoadingReleases(true);
+    setReleases([]);setReleaseError("");setReleasePartial(false);releaseOwner.current?.abort();const c=new AbortController();releaseOwner.current=c;
+    try {
+      const { data,error } = await api.GET("/api/v1/releases/search", {signal:c.signal,cache:"no-store",
+        params: {
+          query: {
+            query: m.title,
+            media_type: m.media_type as "movie" | "tv",
+          },
+        },
+      });
+      if(c.signal.aborted||releaseOwner.current!==c)return;if(error||!data){setReleaseError("站点资源检索失败，不能判定没有资源。请关闭后重新检索。");return}setReleasePartial(data.partial);setReleases(data.results);
+    }catch{if(!c.signal.aborted&&releaseOwner.current===c){setReleases([]);setReleasePartial(false);setReleaseError("资源检索连接失败，未沿用旧结果。")}} finally {
+      if(releaseOwner.current===c){releaseOwner.current=null;setLoadingReleases(false)}
+    }
+  };
+
+  const downloadRelease = async (rel: ReleaseItem, clientId?: string) => {
+    if (!currentMedia) return;
+    setDownloadingId(rel.id);
+    try {
+      const { data, error } = await api.POST("/api/v1/releases/download", {
+        body: {
+          candidate_id: rel.id,
+          client_id: clientId as any,
+        },
+      });
+      if (error) {
+        toast.error("下载提交失败", error.message || "请稍后重试");
+        return;
+      }
+      if (data) {
+        setShowReleaseModal(false);
+        toast.success("下载任务已提交", `持久获取已创建，尚不是下载器回执。操作 ID: ${data.operation_id}`);
+        navigate("/activity");
+      }
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  return (
+    <div className="discover-container">
+      {/* Top Header */}
+      <div className="page-header">
+        <div>
+          <h2>影视探索与选季订阅</h2>
+          <p className="subtitle">
+            聚合 TMDB 官方实时推荐与海量榜单，支持电影与电视剧全类型检索、选季订阅与种子下载
+          </p>
+        </div>
+        <div className="header-actions">
+          <button
+            type="button"
+            className="btn-secondary btn-sm"
+            disabled={loadingFeed}
+            onClick={() => refreshDiscoverData(true)}
+            title="刷新推荐数据"
+          >
+            <RefreshCw size={14} className={loadingFeed ? "spinner-icon" : ""} />
+            <span>{loadingFeed ? "刷新中..." : "刷新数据"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Featured Spotlight Banner (MoviePilot Style) */}
+      {!searched && spotlightItem && (
+        <div
+          className="spotlight-banner"
+          style={{
+            backgroundImage: spotlightItem.backdrop_url
+              ? `linear-gradient(to right, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.8) 40%, rgba(9, 13, 22, 0.3) 100%), url(${spotlightItem.backdrop_url})`
+              : undefined,
+          }}
+        >
+          <div className="spotlight-content">
+            <span className="spotlight-pill">
+              🔥 今日热门焦点 · {spotlightItem.media_type === "tv" ? "电视剧" : "电影"}
+            </span>
+            <h1 className="spotlight-title">{spotlightItem.title}</h1>
+            <p className="spotlight-desc">{spotlightItem.overview}</p>
+            <div className="spotlight-actions">
+              <button
+                className="btn-primary"
+                onClick={() => openMediaDetail(spotlightItem)}
+              >
+                <Rss size={16} />
+                <span>🌟 立即追更订阅</span>
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => openReleaseSearch(spotlightItem)}
+              >
+                <Search size={16} />
+                <span>🔍 检索站点种子</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modern Search Form */}
+      <div className="search-box">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+          className="search-form"
+        >
+          <div className="type-filter">
+            <button
+              type="button"
+              className={`type-btn ${searchType === "all" ? "active" : ""}`}
+              onClick={() => {
+                setSearchType("all");
+                if (searchQuery.trim()) handleSearch(searchQuery, "all");
+              }}
+            >
+              全部
+            </button>
+            <button
+              type="button"
+              className={`type-btn ${searchType === "movie" ? "active" : ""}`}
+              onClick={() => {
+                setSearchType("movie");
+                if (searchQuery.trim()) handleSearch(searchQuery, "movie");
+              }}
+            >
+              电影
+            </button>
+            <button
+              type="button"
+              className={`type-btn ${searchType === "tv" ? "active" : ""}`}
+              onClick={() => {
+                setSearchType("tv");
+                if (searchQuery.trim()) handleSearch(searchQuery, "tv");
+              }}
+            >
+              电视剧
+            </button>
+          </div>
+
+          <input
+            type="text"
+            required
+            placeholder="输入电影或电视剧名称 (例如 绝命毒师, Breaking Bad, 权力的游戏, 我不是药神)..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="年份 (可选)"
+            className="year-input"
+            value={searchYear}
+            onChange={(e) => setSearchYear(e.target.value)}
+          />
+          <button type="submit" className="btn-primary" disabled={searching}>
+            {searching ? <Loader2 size={16} className="spinner-icon" /> : <Search size={16} />}
+            <span>{searching ? "搜索中..." : "搜索影视"}</span>
+          </button>
+          {searched && (
+            <button type="button" className="btn-secondary" onClick={resetSearch}>
+              返回推荐流
+            </button>
+          )}
+        </form>
+      </div>
+
+      {/* Quick Search Recommendations */}
+      <div className="recommend-box">
+        <span className="recommend-label">快捷搜索建议:</span>
+        <div className="tag-list">
+          <button
+            type="button"
+            className="tag-btn"
+            onClick={() => quickSearch("Breaking Bad", "tv")}
+          >
+            绝命毒师 (Breaking Bad)
+          </button>
+          <button
+            type="button"
+            className="tag-btn"
+            onClick={() => quickSearch("Game of Thrones", "tv")}
+          >
+            权力的游戏 (TV)
+          </button>
+          <button
+            type="button"
+            className="tag-btn"
+            onClick={() => quickSearch("我不是药神", "movie")}
+          >
+            我不是药神
+          </button>
+          <button
+            type="button"
+            className="tag-btn"
+            onClick={() => quickSearch("流浪地球", "movie")}
+          >
+            流浪地球
+          </button>
+        </div>
+      </div>
+
+      {/* Source Category Tabs (Trending / Movies / TV / Douban) */}
+      {!searched && (
+        <div className="tabs-bar">
+          <button
+            className={`tab-btn ${activeCategory === "trending" ? "active" : ""}`}
+            onClick={() => switchCategory("trending")}
+          >
+            <Sparkles size={14} />
+            <span>🔥 热门流行 (20+)</span>
+          </button>
+          <button
+            className={`tab-btn ${activeCategory === "movies" ? "active" : ""}`}
+            onClick={() => switchCategory("movies")}
+          >
+            <Film size={14} />
+            <span>🎬 热门电影 (20+)</span>
+          </button>
+          <button
+            className={`tab-btn ${activeCategory === "tv" ? "active" : ""}`}
+            onClick={() => switchCategory("tv")}
+          >
+            <Tv size={14} />
+            <span>📺 热门剧集 (20+)</span>
+          </button>
+          <button
+            className={`tab-btn tab-calendar ${activeCategory === "douban" ? "active" : ""}`}
+            onClick={() => switchCategory("douban")}
+          >
+            <Trophy size={14} />
+            <span>🏆 豆瓣 Top250</span>
+          </button>
+        </div>
+      )}
+
+      {/* Genre Filter Pills with Real Live Filtering */}
+      <div className="recommend-box">
+        <span className="recommend-label">题材筛选:</span>
+        <div className="tag-list">
+          {["全部", "剧情", "动作", "科幻", "悬疑", "犯罪", "动画", "喜剧", "惊悚", "冒险", "战争"].map(
+            (g) => (
+              <button
+                key={g}
+                type="button"
+                className={`tag-btn ${selectedGenre === g ? "tag-btn-active" : ""}`}
+                onClick={() => setSelectedGenre(g)}
+              >
+                {g}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+
+      {!searched && feedError && <div role="alert" className="config-error">{feedError} <button className="btn-sm btn-secondary" onClick={() => refreshDiscoverData(false)}>重新加载推荐</button></div>}
+
+      {/* Search State / Loading State / Display Grid */}
+      {searching || loadingFeed ? (
+        <div className="loading-state">
+          <div className="spinner"></div>
+          <p>正在加载影视数据…</p>
+        </div>
+      ) : currentDisplayList.length > 0 ? (
+        <div className="movie-grid">
+          {currentDisplayList.map((m) => (
+            <MediaCard
+              key={`${m.tmdb_id}-${m.media_type}`}
+              media={m}
+              subscribing={subscribingId === m.tmdb_id}
+              onClick={openMediaDetail}
+              onSubscribe={() => openMediaDetail(m)}
+              onSearch={openReleaseSearch}
+            />
+          ))}
+        </div>
+      ) : feedError && !searched ? null : (
+        <div className="empty-state" role="status">
+          <h3>{searched || selectedGenre !== "全部" ? "当前筛选没有影视" : "暂无推荐影视"}</h3>
+          <p>{searched || selectedGenre !== "全部" ? "可调整题材筛选或更换搜索关键词。" : "元数据源成功返回空列表，可稍后重新加载。"}</p>
+        </div>
+      )}
+
+      {/* Media Detail & Season Picker Modal */}
+      {showDetailModal && (
+        <MediaDetailModal
+          media={selectedDetailMedia}
+          subscribing={subscribingId === selectedDetailMedia?.tmdb_id}
+          onClose={() => setShowDetailModal(false)}
+          onSubscribe={subscribeMedia}
+          onSearchReleases={openReleaseSearch}
+        />
+      )}
+
+      {/* Torrent Releases Modal */}
+      {showReleaseModal && (
+        <TorrentSearchModal
+          mediaTitle={currentMedia?.title || ""}
+          movieId={currentMedia?.tmdb_id}
+          mediaType={currentMedia?.media_type??"movie"}
+          releases={releases}
+          error={releaseError}
+          partial={releasePartial}
+          loading={loadingReleases}
+          downloadingId={downloadingId}
+          onClose={() => {releaseOwner.current?.abort();releaseOwner.current=null;setShowReleaseModal(false);setLoadingReleases(false)}}
+          onDownload={downloadRelease}
+        />
+      )}
+    </div>
+  );
+};

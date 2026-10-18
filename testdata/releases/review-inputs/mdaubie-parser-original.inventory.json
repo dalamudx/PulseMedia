@@ -1,0 +1,181 @@
+{
+  "schema": "pulse.pending-literal-title-census.v1",
+  "accepted": false,
+  "authority": false,
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "reviewed_entries": 0,
+  "summary": {
+    "gold_snapshot": {
+      "declared_reviewed_entries": 609,
+      "actual_entries": 609,
+      "exact_unique_inputs": 609
+    },
+    "positive_title_assertions": 162,
+    "positive_exact_unique_inputs": 162,
+    "exact_unique_overlap_with_gold": 0,
+    "exact_unique_new_beyond_gold": 162,
+    "duplicates_within_new_sources": 0,
+    "gold_plus_all_literal_upper_bound": 771,
+    "per_source": {
+      "chill-parser-original": {
+        "positive_title_assertions": 157,
+        "positive_exact_unique_inputs": 157,
+        "exact_unique_overlap_with_gold": 0,
+        "exact_unique_new_beyond_gold": 157,
+        "excluded_inputs": 22
+      },
+      "mdaubie-parser-original": {
+        "positive_title_assertions": 5,
+        "positive_exact_unique_inputs": 5,
+        "exact_unique_overlap_with_gold": 0,
+        "exact_unique_new_beyond_gold": 5,
+        "excluded_inputs": 1
+      }
+    },
+    "per_origin": {
+      "synthetic_literal": {
+        "positive_title_assertions": 133,
+        "positive_exact_unique_inputs": 133,
+        "exact_unique_overlap_with_gold": 0,
+        "exact_unique_new_beyond_gold": 133
+      },
+      "release_example_literal_unverified_origin": {
+        "positive_title_assertions": 14,
+        "positive_exact_unique_inputs": 14,
+        "exact_unique_overlap_with_gold": 0,
+        "exact_unique_new_beyond_gold": 14
+      },
+      "fixture_backed_literal": {
+        "positive_title_assertions": 15,
+        "positive_exact_unique_inputs": 15,
+        "exact_unique_overlap_with_gold": 0,
+        "exact_unique_new_beyond_gold": 15
+      }
+    }
+  },
+  "method": "Static exact literals only; no parser/tests executed, no normalization, inferred expectations, range expansion, generated datasets or external Jackett files. Synthetic literals are not independent real-source capacity. Positive title candidates are not full reviewed gold. Release-example origin remains unverified.",
+  "rows": [
+    {
+      "source_id": "mdaubie-parser-original",
+      "original_file": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+      "test": "parseValidName",
+      "input": "The Walking Dead S08E08 How It's Gotta Be.mkv",
+      "title": "The Walking Dead",
+      "input_line": 24,
+      "title_line": 30,
+      "origin": "release_example_literal_unverified_origin",
+      "assertion": "assertEquals(actualResult, expectedResult), ParsedFilename.get literal title; no superclass; model comparison semantics not inspected",
+      "generated": false,
+      "exact_duplicate_in_existing_gold": false,
+      "input_original_line": "        String file1 = \"The Walking Dead S08E08 How It's Gotta Be.mkv\";",
+      "title_original_line": "                Arguments.of(file1, ParsedFilename.get(\"The Walking Dead\", \"8\", \"8\", null, null, null, null, null, null, null, null, \"mkv\")),"
+    },
+    {
+      "source_id": "mdaubie-parser-original",
+      "original_file": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+      "test": "parseValidName",
+      "input": "The.Walking.Dead.S07E01.REPACK.720p.HDTV.x265.ShAaNiG.mkv",
+      "title": "The Walking Dead",
+      "input_line": 25,
+      "title_line": 31,
+      "origin": "release_example_literal_unverified_origin",
+      "assertion": "assertEquals(actualResult, expectedResult), ParsedFilename.get literal title; no superclass; model comparison semantics not inspected",
+      "generated": false,
+      "exact_duplicate_in_existing_gold": false,
+      "input_original_line": "        String file2 = \"The.Walking.Dead.S07E01.REPACK.720p.HDTV.x265.ShAaNiG.mkv\";",
+      "title_original_line": "                Arguments.of(file2, ParsedFilename.get(\"The Walking Dead\", \"7\", \"1\", null, \"REPACK\", \"720p\", \"HDTV\", \"x265\", null, null, null, \"mkv\")),"
+    },
+    {
+      "source_id": "mdaubie-parser-original",
+      "original_file": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+      "test": "parseValidName",
+      "input": "The Walking Dead 7x01 The Day Will Come When You Won't Be.HDTV.KILLERS.en.srt",
+      "title": "The Walking Dead",
+      "input_line": 26,
+      "title_line": 32,
+      "origin": "release_example_literal_unverified_origin",
+      "assertion": "assertEquals(actualResult, expectedResult), ParsedFilename.get literal title; no superclass; model comparison semantics not inspected",
+      "generated": false,
+      "exact_duplicate_in_existing_gold": false,
+      "input_original_line": "        String file3 = \"The Walking Dead 7x01 The Day Will Come When You Won't Be.HDTV.KILLERS.en.srt\";",
+      "title_original_line": "                Arguments.of(file3, ParsedFilename.get(\"The Walking Dead\", \"7\", \"1\", null, null, null, \"HDTV\", null, null, null, \"en\", \"srt\")),"
+    },
+    {
+      "source_id": "mdaubie-parser-original",
+      "original_file": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+      "test": "parseValidName",
+      "input": "Shame.2011.720p.webrip.x265-RARBG.mp4",
+      "title": "Shame",
+      "input_line": 27,
+      "title_line": 33,
+      "origin": "release_example_literal_unverified_origin",
+      "assertion": "assertEquals(actualResult, expectedResult), ParsedFilename.get literal title; no superclass; model comparison semantics not inspected",
+      "generated": false,
+      "exact_duplicate_in_existing_gold": false,
+      "input_original_line": "        String file4 = \"Shame.2011.720p.webrip.x265-RARBG.mp4\";",
+      "title_original_line": "                Arguments.of(file4, ParsedFilename.get(\"Shame\", null, null, \"2011\", null, \"720p\", \"webrip\", \"x265\", null, \"RARBG\", null, \"mp4\")),"
+    },
+    {
+      "source_id": "mdaubie-parser-original",
+      "original_file": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+      "test": "parseValidName",
+      "input": "Whiplash [2014] 1080p 10bit BluRay AAC5.1 HEVC-Vyndros.txt",
+      "title": "Whiplash",
+      "input_line": 28,
+      "title_line": 34,
+      "origin": "release_example_literal_unverified_origin",
+      "assertion": "assertEquals(actualResult, expectedResult), ParsedFilename.get literal title; no superclass; model comparison semantics not inspected",
+      "generated": false,
+      "exact_duplicate_in_existing_gold": false,
+      "input_original_line": "        String file5 = \"Whiplash [2014] 1080p 10bit BluRay AAC5.1 HEVC-Vyndros.txt\";",
+      "title_original_line": "                Arguments.of(file5, ParsedFilename.get(\"Whiplash\", null, null, \"2014\", null, \"1080p\", \"BluRay\", \"HEVC\", \"AAC5.1\", \"Vyndros\", null, \"txt\"))"
+    }
+  ],
+  "excluded": [
+    {
+      "source_id": "mdaubie-parser-original",
+      "original_file": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+      "input": "README.txt",
+      "input_line": 46,
+      "reason": "Exception assertion only",
+      "input_original_line": "                Arguments.of(\"README.txt\", InvalidParameterException.class));"
+    }
+  ],
+  "source_id": "mdaubie-parser-original",
+  "provenance": {
+    "repository": "https://github.com/mdaubie/torrent-name-parser",
+    "commit": "ec8304db676f3dfe1cfe87a5e569106ef6efbd65",
+    "license": "MIT",
+    "files": [
+      {
+        "path": "LICENSE",
+        "preserved": "review-inputs/mdaubie-parser-original.LICENSE",
+        "sha256": "2565ca8bb69ecfef1e9cee779396c359cd711616c15f9c2f198f5dcf385c60be",
+        "bytes": 1073,
+        "lines": 21
+      },
+      {
+        "path": "src/test/java/io/github/mdaubie/torrentnameparser/ParserTest.java",
+        "preserved": "upstream-mit/mdaubie-parser-original.ParserTest.java.source",
+        "sha256": "3527ae8481fbaa741bba3ecb954198a2387bba6ec86c972935b9858f3792c1b3",
+        "bytes": 2436,
+        "lines": 48
+      }
+    ]
+  },
+  "gold_snapshot_sha256": "16f12b79fcad6c2effbdec5804b216e7593b4197384fdb1be36c0216a24354c9",
+  "synthetic_classification": "Conservative lexical classification: parser_test placeholder titles (Sample/Demo/Example/Movie/Show/Open/Classic/Archive/Indie/Festival/The Series Title) and apostrophe-normalization illustrative cases. Other literal release examples have unverified real-world origin. No upstream-generated fixture datasets imported; only explicit literals with an asserted title in the preserved test tables are included.",
+  "capacity": {
+    "requested_starting_gold": 605,
+    "observed_gold": 609,
+    "all_literal_union_with_observed_gold": 771,
+    "all_literal_gap_to_1000": 229,
+    "non_synthetic_literal_candidates": 29,
+    "non_synthetic_literal_union_upper_bound_with_observed_gold": 638,
+    "non_synthetic_gap_to_1000": 362,
+    "all_known_sources_census": false,
+    "note": "Only the two assigned fixed sources and exact overlap with existing gold are counted. Main must union other source censuses. Upper bounds are not acceptance or evidence that every candidate is independent or fully annotatable."
+  }
+}

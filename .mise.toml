@@ -1,0 +1,57 @@
+# PulseMedia 开发工具链版本的唯一来源。
+# 首次使用：mise trust && mise install
+# 升级工具：只修改本文件中的精确版本号，单独提交并跑完整 CI。
+# 个人覆盖写在 .mise.local.toml（不提交）。
+
+min_version = "2026.10.0"
+
+[vars]
+postgres_version = "18.6"  # PG18 唯一版本源，供工具与镜像共同使用
+
+[tools]
+# 语言运行时
+go = "1.26.9"
+node = "24.21.0"          # LTS
+pnpm = "12.9.1"
+ffmpeg = "8.1.2"         # M4 自生成授权色块媒体与真实服务验证
+postgres = "{{vars.postgres_version}}"        # 唯一支持的数据库主版本：18；本地 CLI/服务端与容器基准一致
+
+# 任务入口
+task = "3.54.0"
+"github:docker/compose" = "5.6.0"   # 独立 docker-compose CLI；Docker Engine 由宿主提供
+"go:github.com/air-verse/air" = "1.61.7" # Go 后端热重载工具
+
+# 后端代码生成与数据库迁移
+# 使用 Go 模块后端构建：保留 Go 模块校验，避免依赖不可达的二进制下载域名。
+"go:github.com/sqlc-dev/sqlc/cmd/sqlc" = "1.31.1"
+"aqua:pressly/goose" = "3.28.0"
+"go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "2.8.0"
+
+# 质量与安全
+# Go 模块后端构建，避免预编译产物的 attestation 身份不匹配；不关闭验证。
+"go:github.com/golangci/golangci-lint/v2/cmd/golangci-lint" = "2.14.0"
+"go:golang.org/x/vuln/cmd/govulncheck" = "1.8.0"
+
+[env]
+# 只使用 mise 安装的 Go，禁止自动下载其它工具链
+GOTOOLCHAIN = "local"
+# 本地开发数据目录与日志级别（生产部署由配置文件/环境变量指定）
+PULSE_DATA_DIR = "{{config_root}}/.data"
+PULSE_HTTP_ADDR = "0.0.0.0:8088"      # 开发环境监听所有网卡，使用 8088 端口避开 8080 冲突
+PULSE_BACKEND_URL = "http://127.0.0.1:8088"
+PULSE_POSTGRES_PORT = "5433"
+PULSE_DATABASE_URL = "postgres://postgres@127.0.0.1:5433/pulsemedia?sslmode=disable"
+PULSE_LOG_LEVEL = "debug"
+# 开发/CI 数据库镜像版本；compose.dev.yaml 必须通过 mise exec 启动。
+PULSE_POSTGRES_VERSION = "{{vars.postgres_version}}"
+# M4 隔离联调服务：只由 compose.integration.yaml 使用，不覆盖 dev 服务。
+PULSE_M4_QB_IMAGE = "docker.io/linuxserver/qbittorrent@sha256:b111319eb7fb541edc2b1c1df9cf82e68cfffd694caa9ed5e8a0eb78a5112533"
+PULSE_M4_TR_IMAGE = "docker.io/linuxserver/transmission@sha256:4813745e2c721997d8849f5718786fd4406b3c656fbef479f87a161e51383cbd"
+PULSE_M4_JELLYFIN_IMAGE = "docker.io/jellyfin/jellyfin@sha256:357724bf0ae27a672c7cbaa899db2d9abeb13dbd8657ccce750258a4c059d037"
+PULSE_M4_PROWLARR_IMAGE = "lscr.io/linuxserver/prowlarr@sha256:20bc5fdf919b4f86f9ab9b46d0f51a3b5d3fa83108819a0e4bbbc7bc2fee11cf"
+PULSE_M4_POSTGRES_IMAGE = "docker.io/library/postgres@sha256:74935e72241653ca55e0414067e6d8763aceb8a810eb51b452253ec3dcfc4336"
+PULSE_M4_NFS_PROBE_IMAGE = "docker.io/library/alpine@sha256:d56c381f961d307a21b3ca004cf1e3910f106644aefb1f43e654c8a56c4fd395"
+PULSE_M4_GANESHA_VERSION = "6.5-5"
+# 应用运行镜像包含同版本 PG18 客户端；由 build-container 只接收构建产物。
+PULSE_CONTAINER_BASE_IMAGE = "{{env.PULSE_M4_POSTGRES_IMAGE}}"
+# 注意：不要在此全局设置 CGO_ENABLED=0，`go test -race` 需要 CGO；发布构建在 task build 中单独设置。

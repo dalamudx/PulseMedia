@@ -1,0 +1,1030 @@
+[
+    {
+        "filename": "Higher Power 2018 MULTi VFF 2160p 10bit 4KLight BluRay x265 @@UnPourTous@@",
+        "expected": {
+            "title": "Higher Power",
+            "year": 2018,
+            "category": "movie",
+            "resolution": "4KLIGHT",
+            "quality": "BLURAY",
+            "codec": "H265",
+            "languages": [
+                "MULTI",
+                "VFF"
+            ]
+        }
+    },
+    {
+        "filename": "Lady.Gaga.MAYHEM.Requiem.2026.2160p.ATV.WEB-DL.Hybrid.H265.DV.HDR10+DDP.Atmos.5.1.English-HONE",
+        "expected": {
+            "title": "Lady Gaga MAYHEM Requiem",
+            "year": 2026,
+            "category": "movie",
+            "resolution": "2160P",
+            "quality": "WEB-DL",
+            "codec": "H265",
+            "v_quality": "HDR10+ DV",
+            "audio": "EAC3 ATMOS",
+            "channels": "5.1",
+            "languages": []
+        }
+    },
+    {
+        "filename": "The.Devil.at.4.OClock.1961.MULTi.VFi.1080p.WEBRip.AC3.2.0.H264-Wawacity.WIN",
+        "expected": {
+            "title": "The Devil at 4 OClock",
+            "year": 1961,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "WEBRIP",
+            "codec": "H264",
+            "audio": "AC3",
+            "channels": "2.0",
+            "languages": [
+                "MULTI",
+                "VFI"
+            ]
+        }
+    },
+    {
+        "filename": "Sexcrimes.(Wild Things).1998.BDRip.1080p.MULTi.VF2.HDLight.x264.AC3.5.1.AC3.2.0-BzH29",
+        "expected": {
+            "title": "Sexcrimes (Wild Things)",
+            "year": 1998,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "BDRIP",
+            "codec": "H264",
+            "audio": "AC3",
+            "channels": "5.1",
+            "languages": [
+                "MULTI",
+                "VF2"
+            ]
+        }
+    },
+    {
+        "filename": "L'Arme fatale 2 1989 MULTi VFF 1080p BluRay x265 @@UnPourTous@@",
+        "expected": {
+            "title": "L'Arme fatale 2",
+            "year": 1989,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H265",
+            "languages": [
+                "MULTI",
+                "VFF"
+            ]
+        }
+    },
+    {
+        "filename": "Les Trois Mousquetaires Milady 2023 VFF 1080p Web x265 @@UnPourTous@@",
+        "expected": {
+            "title": "Les Trois Mousquetaires Milady",
+            "year": 2023,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "WEB-DL",
+            "codec": "H265",
+            "languages": [
+                "VFF"
+            ]
+        }
+    },
+    {
+        "filename": "Evangelion__3.33_You_Can_(Not)_Redo.2012.VF-VOSTFR.1080p.HDlight.EAC3-AC3.x265.Wawacity.win",
+        "expected": {
+            "title": "Evangelion 3 33 You Can (Not) Redo",
+            "year": 2012,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "HDLIGHT",
+            "codec": "H265",
+            "languages": [
+                "VF",
+                "VOSTFR"
+            ]
+        }
+    },
+    {
+        "filename": "Le.Retour.du.Roi.2003.MULTi.1080p.theatrical.version.BluRay.AC3.5.1.x264-PopHD",
+        "expected": {
+            "title": "Le Retour du Roi",
+            "year": 2003,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "audio": "AC3",
+            "channels": "5.1",
+            "languages": [
+                "MULTI"
+            ]
+        }
+    },
+    {
+        "filename": "Ladies First (2026) Multi.1080P.Web.Eac3X265-ParadiZe.mkv",
+        "expected": {
+            "title": "Ladies First",
+            "year": 2026,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "WEB-DL",
+            "codec": "H265",
+            "audio": "EAC3",
+            "languages": [
+                "MULTI"
+            ],
+            "group": "ParadiZe",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "1917.2019.MULTi.VFF.2160p.BLURAY.4KLight.DV.HDR.x265.TrueHD.7.1.Atmos.Bender_37.mkv",
+        "expected": {
+            "title": "1917",
+            "year": 2019,
+            "category": "movie",
+            "resolution": "4KLIGHT",
+            "quality": "BLURAY",
+            "codec": "H265",
+            "audio": "TRUEHD ATMOS",
+            "channels": "7.1",
+            "v_quality": "HDR DV",
+            "languages": [
+                "MULTI",
+                "VFF"
+            ],
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Oppenheimer.2023.MULTi.TRUEFRENCH.2160p.UHD.BluRay.REMUX.HDR.HEVC-GROUP",
+        "expected": {
+            "title": "Oppenheimer",
+            "year": 2023,
+            "category": "movie",
+            "resolution": "2160P",
+            "quality": "REMUX",
+            "codec": "H265",
+            "v_quality": "HDR",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "group": "GROUP"
+        }
+    },
+    {
+        "filename": "Big+Fish+%282003%29+MULTi+VFI+2160p+10bit+4KLight+HDR+BluRay+DTS-HD+MA+7.1+x265-QTZ",
+        "expected": {
+            "title": "Big Fish",
+            "category": "movie",
+            "year": 2003,
+            "resolution": "4KLIGHT",
+            "quality": "BLURAY",
+            "codec": "H265",
+            "audio": "DTS-HD MA",
+            "channels": "7.1",
+            "v_quality": "HDR 10BIT",
+            "languages": [
+                "MULTI",
+                "VFI"
+            ],
+            "group": "QTZ"
+        }
+    },
+    {
+        "filename": "Ghostbusters.Afterlife.2021.MULTi.VF2.2160p.UHD.BluRay.REMUX.HEVC.HDR.DV.TrueHD.Atmos.7.1.DTS-HDMA.AC3.5.1-TSC",
+        "expected": {
+            "title": "Ghostbusters Afterlife",
+            "category": "movie",
+            "year": 2021,
+            "resolution": "2160P",
+            "quality": "REMUX",
+            "codec": "H265",
+            "audio": "TRUEHD ATMOS",
+            "channels": "7.1",
+            "v_quality": "HDR DV",
+            "languages": [
+                "MULTI",
+                "VF2"
+            ],
+            "group": "TSC",
+            "extra": null
+        }
+    },
+    {
+        "filename": "Scary Movie 5 (2013)   1080p FR EN x264 ac3 mHDgz-Zone-Telechargement.OrG",
+        "expected": {
+            "title": "Scary Movie 5",
+            "category": "movie",
+            "year": 2013,
+            "resolution": "1080P",
+            "codec": "H264",
+            "audio": "AC3",
+            "languages": [
+                "MULTI",
+                "VF",
+                "EN"
+            ],
+            "group": "Zone",
+            "extra": "Telechargement.OrG"
+        }
+    },
+    {
+        "filename": "Indiana Jones et la Derni\u00e8re Croisade 1989 VFI VO DOLBY TRUEHD ATMOS 2160P UHD BLURAY REMUX HEVC HDR10 DOLBY VISION-Obi (Indiana Jones and the Last Crusade)",
+        "expected": {
+            "title": "Indiana Jones et la Derniere Croisade",
+            "category": "movie",
+            "year": 1989,
+            "resolution": "2160P",
+            "quality": "REMUX",
+            "codec": "H265",
+            "audio": "TRUEHD ATMOS",
+            "v_quality": "HDR10 DV",
+            "languages": [
+                "VFI",
+                "VO",
+                "MULTI"
+            ],
+            "group": "Obi",
+            "extra": null
+        }
+    },
+    {
+        "filename": "Si.J.En.Avais.La.Force.2025.MULTi.VFF.2160p.DV.HDR.WEB.EAC3.5.1.H265-TFA",
+        "expected": {
+            "title": "Si J En Avais La Force",
+            "category": "movie",
+            "year": 2025,
+            "resolution": "2160P",
+            "quality": "WEB-DL",
+            "codec": "H265",
+            "audio": "EAC3",
+            "channels": "5.1",
+            "v_quality": "HDR DV",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "group": "TFA"
+        }
+    },
+    {
+        "filename": "Vacancy (2007) 720p Bluray Dual Audio [Hindi + English] \u2b50800 MB\u2b50 DD - 2.0 MSub x264 - Shadow (BonsaiHD)",
+        "expected": {
+            "title": "Vacancy",
+            "category": "movie",
+            "year": 2007,
+            "resolution": "720P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "channels": "2.0",
+            "group": "Shadow"
+        }
+    },
+    {
+        "filename": "J_accuse_2019_VFF_1080p_HDLight_x264.mkv",
+        "expected": {
+            "title": "J accuse",
+            "year": 2019,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "HDLIGHT",
+            "codec": "H264",
+            "languages": [
+                "VFF"
+            ],
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Malcolm X (1992) - 1080p FR EN x264 aac mHDgz.mkv",
+        "expected": {
+            "title": "Malcolm X",
+            "year": 1992,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": null,
+            "codec": "H264",
+            "audio": "AAC",
+            "languages": [
+                "VF",
+                "EN",
+                "MULTI"
+            ],
+            "group": "mHDgz",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Kingsman.The.Golden.Circle.2017.MULTi.VFF.2160p.BLURAY.4KLight.DV.HDR.x265.TrueHD.Atmos.7.1.Bender_37.mkv",
+        "expected": {
+            "title": "Kingsman The Golden Circle",
+            "year": 2017,
+            "category": "movie",
+            "resolution": "4KLIGHT",
+            "quality": "BLURAY",
+            "codec": "H265",
+            "audio": "TRUEHD ATMOS",
+            "channels": "7.1",
+            "v_quality": "HDR DV",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "group": "Bender_37",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Kingsman.The.Golden.Circle.2017.FASTSUB.VOSTFR.1080p.x264-GROUP.mkv",
+        "expected": {
+            "title": "Kingsman The Golden Circle",
+            "year": 2017,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": null,
+            "codec": "H264",
+            "languages": [
+                "VOSTFR",
+                "FASTSUB"
+            ],
+            "group": "GROUP",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Marie-Martine_1943_french_hdlight_1080p_ac3_x264.mkv",
+        "expected": {
+            "title": "Marie-Martine",
+            "year": 1943,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "HDLIGHT",
+            "codec": "H264",
+            "audio": "AC3",
+            "languages": [
+                "FRENCH"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Hunter_Killer_(2018)_MULTi_VFF_2160p_10bit_4KLight_HDR_BluRay_x265_HE-AAC_5.1_-_QTZ.mkv",
+        "expected": {
+            "title": "Hunter Killer",
+            "year": 2018,
+            "category": "movie",
+            "resolution": "4KLIGHT",
+            "quality": "BLURAY",
+            "codec": "H265",
+            "audio": "AAC",
+            "channels": "5.1",
+            "v_quality": "HDR 10BIT",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "group": "QTZ",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Rango (2011) [1080p.MULTi.x264.AC3].mkv",
+        "expected": {
+            "title": "Rango",
+            "year": 2011,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": null,
+            "codec": "H264",
+            "audio": "AC3",
+            "channels": null,
+            "v_quality": "",
+            "languages": [
+                "MULTI"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Pirates des Caraibes - La malediction du Black Pearl (2003) [1080p.MULTI.x264.AC3].mkv",
+        "expected": {
+            "title": "Pirates des Caraibes - La malediction du Black Pearl",
+            "year": 2003,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": null,
+            "codec": "H264",
+            "audio": "AC3",
+            "channels": null,
+            "v_quality": "",
+            "languages": [
+                "MULTI"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Dip.huet.seung.hung.1989.AKA.The.Killer.2160p.GBR.UHD.Blu-ray.Remux.DV.HDR.HEVC.FLAC.1.0-CiNEPHiLES",
+        "expected": {
+            "title": "Dip huet seung hung",
+            "year": 1989,
+            "category": "movie",
+            "resolution": "2160P",
+            "quality": "REMUX",
+            "codec": "H265",
+            "audio": "FLAC",
+            "channels": "1.0",
+            "v_quality": "HDR DV",
+            "languages": [],
+            "group": "CiNEPHiLES",
+            "container": null
+        }
+    },
+    {
+        "filename": "Love and Monsters (2020) [2160p HDR10 DV8 x265 MULTI VFI 5.1 DDP VO 7.1 DTS-HDMA].mkv",
+        "expected": {
+            "title": "Love and Monsters",
+            "year": 2020,
+            "category": "movie",
+            "resolution": "2160P",
+            "quality": null,
+            "codec": "H265",
+            "audio": "DTS-HD MA",
+            "channels": "5.1",
+            "v_quality": "HDR10 DV",
+            "languages": [
+                "MULTI",
+                "VFI",
+                "VO"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "La.Derniere.Maison.Sur.La.Gauche.(The.Last.House.On.The.Left).2009.BD.Remux.Custom.2160p.UHD.4k.HDR10.DV.x265.DTS-HD.DTS.5.1.Repack-Wolverine59500.mkv",
+        "expected": {
+            "title": "La Derniere Maison Sur La Gauche (The Last House On The Left)",
+            "year": 2009,
+            "category": "movie",
+            "resolution": "2160P",
+            "quality": "REMUX",
+            "codec": "H265",
+            "audio": "DTS-HD",
+            "channels": "5.1",
+            "v_quality": "HDR10 DV",
+            "languages": [],
+            "group": "Wolverine59500",
+            "extra": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Vacances.Romaines.(Roman Holiday) 1953.BDRip.2160p.UHD.4K.HDR10.MULTi.FR-EN.x265.TrueHD.AC3.2.0-DON.Repack.mkv",
+        "expected": {
+            "title": "Vacances Romaines (Roman Holiday)",
+            "year": 1953,
+            "category": "movie",
+            "resolution": "2160P",
+            "quality": "BDRIP",
+            "codec": "H265",
+            "audio": "TRUEHD",
+            "channels": "2.0",
+            "v_quality": "HDR10",
+            "languages": [
+                "MULTI",
+                "VF",
+                "EN"
+            ],
+            "group": "DON",
+            "extra": "Repack",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Empire_of_Light_(2022)[WEBDL-2160p][DV_HDR10][EAC3_Atmos_5.1][h265].mkv",
+        "expected": {
+            "title": "Empire of Light",
+            "category": "movie",
+            "year": 2022,
+            "resolution": "2160P",
+            "quality": "WEB-DL",
+            "codec": "H265",
+            "audio": "EAC3 ATMOS",
+            "channels": "5.1",
+            "v_quality": "HDR10 DV",
+            "languages": [],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Concert-Lady.Gaga-Mayhem.Requiem.2026.VO.1080p.x264.AC3.5.1.mkv",
+        "expected": {
+            "title": "Concert-Lady Gaga-Mayhem Requiem",
+            "category": "movie",
+            "year": 2026,
+            "resolution": "1080P",
+            "codec": "H264",
+            "audio": "AC3",
+            "channels": "5.1",
+            "languages": [
+                "VO"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Art.Of.Love.2024.Multi.HDRIP.mp4",
+        "expected": {
+            "title": "Art Of Love",
+            "year": 2024,
+            "category": "movie",
+            "resolution": null,
+            "quality": "HDRIP",
+            "codec": null,
+            "audio": null,
+            "channels": null,
+            "v_quality": "",
+            "languages": [
+                "MULTI"
+            ],
+            "group": null,
+            "container": "MP4"
+        }
+    },
+    {
+        "filename": "HamLeT.(1990).MULTI.VFF.[ST.FrF-Fr-En].mHD.1080P.x264.AC3.2ch\u26a1-KyX-LazerTeam\u26a1.mkv",
+        "expected": {
+            "title": "HamLeT",
+            "year": 1990,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": null,
+            "codec": "H264",
+            "audio": "AC3",
+            "languages": [
+                "VFF",
+                "MULTI",
+                "VF",
+                "EN"
+            ],
+            "group": "\u26a1-KyX-LazerTeam\u26a1",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Asterix_-_1985_-_Asterix_Et_La_Surprise_De_Cesar_-_1080p.mkv",
+        "expected": {
+            "title": "Asterix",
+            "year": 1985,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": null,
+            "codec": null,
+            "audio": null,
+            "channels": null,
+            "languages": [],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Les.Ringards.1978_.WEBRip.FR.x264.AAC.2.0_Fz.mkv",
+        "expected": {
+            "title": "Les Ringards",
+            "year": 1978,
+            "category": "movie",
+            "resolution": null,
+            "quality": "WEBRIP",
+            "codec": "H264",
+            "audio": "AAC",
+            "channels": "2.0",
+            "languages": [
+                "VF"
+            ],
+            "group": "Fz",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Junk.Head.2021.VOSTFR.1080p.BluRay.Remux.AVC.AC-3.mkv",
+        "expected": {
+            "title": "Junk Head",
+            "year": 2021,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "REMUX",
+            "codec": "H264",
+            "audio": "AC3",
+            "languages": [
+                "VOSTFR"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "I ROBOT 2004.BluRay.2160.10bit.4KLight HDR.MULTi.VFF.Sub.AC3@640Kbps.H265\u26a1XRS-LazerTeam\u26a1.mkv",
+        "expected": {
+            "title": "I ROBOT",
+            "category": "movie",
+            "year": 2004,
+            "resolution": "4KLIGHT",
+            "quality": "BLURAY",
+            "codec": "H265",
+            "audio": "AC3",
+            "v_quality": "HDR 10BIT",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "group": "\u26a1XRS-LazerTeam\u26a1",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "1917 (m4K HDR10+ 10bit x265-QTZ) [Multi TrueHD 7.1 Atmos].mkv",
+        "expected": {
+            "title": "1917",
+            "category": "movie",
+            "year": 1917,
+            "resolution": "2160P",
+            "quality": null,
+            "codec": "H265",
+            "audio": "TRUEHD ATMOS",
+            "channels": "7.1",
+            "v_quality": "HDR10+ 10BIT",
+            "languages": [
+                "MULTI"
+            ],
+            "group": "QTZ",
+            "container": "MKV",
+            "extra": null
+        }
+    },
+    {
+        "filename": "Marsupilami 2026 Fr 4K HDR WebLight AC3 5.1c.mkv",
+        "expected": {
+            "title": "Marsupilami",
+            "category": "movie",
+            "year": 2026,
+            "resolution": "2160P",
+            "quality": "WEBLIGHT",
+            "audio": "AC3",
+            "channels": "5.1",
+            "v_quality": "HDR",
+            "languages": [
+                "VF"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Deathstalker.2025.MULTi.1080p.BluRay.x264-Ulysse.part01.rar",
+        "expected": {
+            "title": "Deathstalker",
+            "category": "movie",
+            "year": 2025,
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "languages": [
+                "MULTI"
+            ],
+            "group": "Ulysse",
+            "container": "PART01.RAR"
+        }
+    },
+    {
+        "filename": "Insidious_-Chapitre_2[1080p][DTS-HD_MA][VO-VFF].mkv",
+        "expected": {
+            "title": "Insidious -Chapitre 2",
+            "category": "movie",
+            "resolution": "1080P",
+            "audio": "DTS-HD MA",
+            "languages": [
+                "VFF",
+                "VO",
+                "MULTI"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Kill.Bill.II-2004-Truefrench-DVDrip-x264-AC3.mkv",
+        "expected": {
+            "title": "Kill Bill II",
+            "category": "movie",
+            "year": 2004,
+            "resolution": null,
+            "quality": "DVDRIP",
+            "codec": "H264",
+            "audio": "AC3",
+            "languages": [
+                "VFF"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Footloose.(1984).Multi.VFF.HDLight.4K.10bIt.Dolby.Vision.AC3x265\u26a1XRS-LazerTeam\u26a1.mkv",
+        "expected": {
+            "title": "Footloose",
+            "category": "movie",
+            "year": 1984,
+            "resolution": "2160P",
+            "quality": "HDLIGHT",
+            "codec": "H265",
+            "audio": "AC3",
+            "channels": null,
+            "v_quality": "DV 10BIT",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "group": "\u26a1XRS-LazerTeam\u26a1",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Blood.Diamond.2006.MULTI.Full.Blu-Ray.Multi.1080p.VC-1-NoTag.iso",
+        "expected": {
+            "title": "Blood Diamond",
+            "category": "movie",
+            "year": 2006,
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "VC-1",
+            "languages": [
+                "MULTI"
+            ],
+            "group": "NoTag",
+            "container": "ISO"
+        }
+    },
+    {
+        "filename": "Le flingueur 1972 Fr stfi 4K HDR WebLight AC3 3.1cs.mkv",
+        "expected": {
+            "title": "Le flingueur",
+            "category": "movie",
+            "year": 1972,
+            "resolution": "2160P",
+            "quality": "WEBLIGHT",
+            "codec": null,
+            "audio": "AC3",
+            "channels": "3.1",
+            "v_quality": "HDR",
+            "languages": [
+                "VF"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HDMA_x264.mkv",
+        "expected": {
+            "title": "Redemption",
+            "category": "movie",
+            "year": 2013,
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "audio": "DTS-HD MA",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD.MA.x264.mkv",
+        "expected": {
+            "title": "Redemption",
+            "category": "movie",
+            "year": 2013,
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "audio": "DTS-HD MA",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "container": "MKV",
+            "group": null,
+            "extra": null
+        }
+    },
+    {
+        "filename": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD-MA.x264.mkv",
+        "expected": {
+            "title": "Redemption",
+            "category": "movie",
+            "year": 2013,
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "audio": "DTS-HD MA",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "container": "MKV",
+            "group": null,
+            "extra": null
+        }
+    },
+    {
+        "filename": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS.HD.x264.mkv",
+        "expected": {
+            "title": "Redemption",
+            "category": "movie",
+            "year": 2013,
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "audio": "DTS-HD",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "container": "MKV",
+            "group": null,
+            "extra": null
+        }
+    },
+    {
+        "filename": "Redemption.2013.MULTi.VFF.1080p.BluRay.DTS-HD.MA.ATMOS.x264.mkv",
+        "expected": {
+            "title": "Redemption",
+            "category": "movie",
+            "year": 2013,
+            "resolution": "1080P",
+            "quality": "BLURAY",
+            "codec": "H264",
+            "audio": "DTS-HD MA ATMOS",
+            "languages": [
+                "VFF",
+                "MULTI"
+            ],
+            "container": "MKV",
+            "group": null,
+            "extra": null
+        }
+    },
+    {
+        "filename": "Bat-man.1989.Fanedit.Silent-Film.1080p.AAC.x265.mkv",
+        "expected": {
+            "title": "Bat-man",
+            "category": "movie",
+            "year": 1989,
+            "resolution": "1080P",
+            "quality": null,
+            "codec": "H265",
+            "audio": "AAC",
+            "languages": [],
+            "container": "MKV",
+            "group": null,
+            "extra": null
+        }
+    },
+    {
+        "filename": "Cry.Macho.2021.MULTi.BluRay.2160p.REMUX.HEVC.HDR10.DTS-HDMA5.1-PéPiTE.mkv",
+        "expected": {
+            "title": "Cry Macho",
+            "category": "movie",
+            "year": 2021,
+            "resolution": "2160P",
+            "quality": "REMUX",
+            "codec": "H265",
+            "audio": "DTS-HD MA",
+            "channels": "5.1",
+            "v_quality": "HDR10",
+            "languages": [
+                "MULTI"
+            ],
+            "container": "MKV",
+            "group": "PéPiTE"
+        }
+    },
+    {
+        "filename": "Police_Story_4_-Contre_Attaque(1996).mkv",
+        "expected": {
+            "title": "Police Story 4 -Contre Attaque",
+            "category": "movie",
+            "year": 1996,
+            "container": "MKV",
+            "group": null
+        }
+    },
+    {
+        "filename": "La_Charge_Fantastique_(1941)_-VFR-720p-_AC3.mkv",
+        "expected": {
+            "title": "La Charge Fantastique",
+            "category": "movie",
+            "year": 1941,
+            "resolution": "720P",
+            "audio": "AC3",
+            "languages": [
+                "VF"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Banzaï_1080p_x264_DTSHDMA2.0_SUBFRFORCED.mkv",
+        "expected": {
+            "title": "Banzai",
+            "category": "movie",
+            "resolution": "1080P",
+            "codec": "H264",
+            "audio": "DTS-HD MA",
+            "channels": "2.0",
+            "languages": [
+                "SUBFRFORCED"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "The.Death.of.Robin.Hood.2026.1080p.VOSTFR.CAM.x264-FS.mp4",
+        "expected": {
+            "title": "The Death of Robin Hood",
+            "year": 2026,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "CAM",
+            "codec": "H264",
+            "languages": [
+                "VOSTFR"
+            ],
+            "group": "FS",
+            "container": "MP4"
+        }
+    },
+    {
+        "filename": "Kirikou.Et.Les.Betes.Sauvages.2005.French.1080P.Hdlight.mkv",
+        "expected": {
+            "title": "Kirikou Et Les Betes Sauvages",
+            "year": 2005,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "HDLIGHT",
+            "languages": [
+                "FRENCH"
+            ],
+            "group": null,
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "The.Plague.Dogs.1982.VOSTFR.1080p.HDLight.AC3.x264-Dread-Team.mkv",
+        "expected": {
+            "title": "The Plague Dogs",
+            "year": 1982,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "HDLIGHT",
+            "codec": "H264",
+            "audio": "AC3",
+            "languages": [
+                "VOSTFR"
+            ],
+            "group": "Dread-Team",
+            "container": "MKV"
+        }
+    },
+    {
+        "filename": "Masters_of_the_Universe._2026.1080p.VOSTFR.DCPRiP.x264-FS.mkv",
+        "expected": {
+            "title": "Masters of the Universe",
+            "year": 2026,
+            "category": "movie",
+            "resolution": "1080P",
+            "quality": "DCPRIP",
+            "codec": "H264",
+            "languages": [
+                "VOSTFR"
+            ],
+            "group": "FS",
+            "container": "MKV"
+        }
+    }
+]

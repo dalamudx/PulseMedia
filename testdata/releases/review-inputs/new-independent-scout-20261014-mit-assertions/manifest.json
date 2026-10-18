@@ -1,0 +1,331 @@
+{
+  "schema": "pulse.independent-source-manifest.v1",
+  "accepted": false,
+  "authority": false,
+  "coverage_authority": false,
+  "canonical_unit_authorization": false,
+  "formal_golden_acceptance": false,
+  "reviewed_entries": 0,
+  "review_status": "unreviewed",
+  "upstream_executed": false,
+  "pulse_probed": false,
+  "capacity_is_gold": false,
+  "inventory_sha256": "fd7e979bd16edaf9cff04f72e85c5c3f70836f8e378a50aee90d59cd8291808a",
+  "sources": [
+    {
+      "id": "walker-media-name-parser",
+      "repo": "chad3814/media-name-parser",
+      "commit": "9879051d9bc794da5fd8c07a5f786503c131899c",
+      "kind": "node",
+      "tests": [
+        "test/parse/video.test.ts",
+        "test/parse/leadingGroup.test.ts"
+      ],
+      "other": [
+        "LICENSE",
+        "README.md",
+        "package.json",
+        "scripts/golden-generate.ts",
+        "scripts/generate-xxx-golden.ts",
+        "scripts/prepare-xxx-corpus.ts",
+        "scripts/corpus-report.ts",
+        "test/golden.test.ts"
+      ],
+      "flow": "Only direct literal title equalities in video.test.ts and leadingGroup.test.ts, plus its three literal name/title/group tuples, are extracted. The ok helper only checks success and returns parsed actual fields. golden-generate and generate-xxx-golden serialize parser outputs to fixtures/corpus/*.golden.jsonl; those outputs, raw corpora and golden.test inputs are excluded. corpus-report writes a baseline report; prepare-xxx-corpus only splits raw listings. None writes either selected unit-test file. All five test/generation scripts and the corpus-report dependency were read fully; no upstream code was run.",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "LICENSE",
+          "preserved": "sources/walker-media-name-parser/LICENSE",
+          "sha256": "b75bb24a9e75093a8b39187aee08abf7cce8057e1cbb8243eeb2a430e008578f",
+          "bytes": 1068,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/LICENSE"
+        },
+        {
+          "original_path": "README.md",
+          "preserved": "sources/walker-media-name-parser/README.md.source",
+          "sha256": "18a63035a90c28458fc47738f76216a9c0bac02196433e7569987ce79e4f650e",
+          "bytes": 2384,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/README.md"
+        },
+        {
+          "original_path": "package.json",
+          "preserved": "sources/walker-media-name-parser/package.json.source",
+          "sha256": "93b5c796a33c7ecc164eb3e4b5b9544b72e7904a118aaba438bb2b3b191b06f4",
+          "bytes": 1808,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/package.json"
+        },
+        {
+          "original_path": "scripts/golden-generate.ts",
+          "preserved": "sources/walker-media-name-parser/scripts/golden-generate.ts.source",
+          "sha256": "e0d78c5749345ea209faa56df8ef7ac32b09af876884cdbf86dac39c2ea06d3e",
+          "bytes": 8727,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/scripts/golden-generate.ts"
+        },
+        {
+          "original_path": "scripts/generate-xxx-golden.ts",
+          "preserved": "sources/walker-media-name-parser/scripts/generate-xxx-golden.ts.source",
+          "sha256": "d4648a04cc3a60ce9dd539b78f14d59d0972c76db137e5f58202d4183f189b67",
+          "bytes": 1749,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/scripts/generate-xxx-golden.ts"
+        },
+        {
+          "original_path": "scripts/prepare-xxx-corpus.ts",
+          "preserved": "sources/walker-media-name-parser/scripts/prepare-xxx-corpus.ts.source",
+          "sha256": "746771d7353bb8e578f9b8e6e8cefcd7527c9ddb3ee4bc567ad36ad6259e3bc3",
+          "bytes": 1101,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/scripts/prepare-xxx-corpus.ts"
+        },
+        {
+          "original_path": "scripts/corpus-report.ts",
+          "preserved": "sources/walker-media-name-parser/scripts/corpus-report.ts.source",
+          "sha256": "42bce39ec37eec19c8e8f275beb46992c1c782ff2f2aa060ac75a92e8cc2ef17",
+          "bytes": 11148,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/scripts/corpus-report.ts"
+        },
+        {
+          "original_path": "test/golden.test.ts",
+          "preserved": "sources/walker-media-name-parser/test/golden.test.ts.source",
+          "sha256": "854b4a58a5037557bf2ef3a25d0873c09e06b88b29555bc7985eb734d3da393b",
+          "bytes": 1927,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/test/golden.test.ts"
+        },
+        {
+          "original_path": "test/parse/video.test.ts",
+          "preserved": "sources/walker-media-name-parser/test/parse/video.test.ts.source",
+          "sha256": "bda9aa8082237ff89dfd7e22079f8b99316f2296be7bf2aa7dc05c179662bb21",
+          "bytes": 14429,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/test/parse/video.test.ts"
+        },
+        {
+          "original_path": "test/parse/leadingGroup.test.ts",
+          "preserved": "sources/walker-media-name-parser/test/parse/leadingGroup.test.ts.source",
+          "sha256": "beca47090cf7dd927b272259921ddc3895bbcf6f01d9c0f5298586c64ae6632a",
+          "bytes": 5250,
+          "url": "https://github.com/chad3814/media-name-parser/blob/9879051d9bc794da5fd8c07a5f786503c131899c/test/parse/leadingGroup.test.ts"
+        },
+        {
+          "original_path": "git log --format=%H %s -- test/parse/video.test.ts test/parse/leadingGroup.test.ts",
+          "preserved": "sources/walker-media-name-parser/test-history.source",
+          "sha256": "4fd82e4ab498e40e8340b9f712cefe2451c8bdaf055d073dfd66c236a442e9e9",
+          "bytes": 851,
+          "generated_by_scout": true
+        }
+      ],
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "review_status": "unreviewed"
+    },
+    {
+      "id": "machard-releascenify",
+      "repo": "dmachard/ReleascenIFY",
+      "commit": "933b8d07e682331ae194ccc837719b7afc154dc8",
+      "kind": "json",
+      "tests": [
+        "tests/test_cases_movies.json",
+        "tests/test_cases_series.json"
+      ],
+      "other": [
+        "LICENSE",
+        "README.md",
+        "pyproject.toml",
+        "tests/test_parser.py"
+      ],
+      "flow": "load_test_cases reads literal filename/expected JSON; pytest passes the pair to run_parse_test; each expected field is compared directly with parse_filename output. Expected values never come from that output. Full tracked tree/history searched for fixture writers; no writer/generator was found.",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "LICENSE",
+          "preserved": "sources/machard-releascenify/LICENSE",
+          "sha256": "fab5cadfd8068b65cc0923b6051f542f2bd34d2f51af15116cde609800d7a836",
+          "bytes": 1070,
+          "url": "https://github.com/dmachard/ReleascenIFY/blob/933b8d07e682331ae194ccc837719b7afc154dc8/LICENSE"
+        },
+        {
+          "original_path": "README.md",
+          "preserved": "sources/machard-releascenify/README.md.source",
+          "sha256": "a41762c3ad24768675405279131ba93f513a670487da20c4edcf4692215c0985",
+          "bytes": 5715,
+          "url": "https://github.com/dmachard/ReleascenIFY/blob/933b8d07e682331ae194ccc837719b7afc154dc8/README.md"
+        },
+        {
+          "original_path": "pyproject.toml",
+          "preserved": "sources/machard-releascenify/pyproject.toml.source",
+          "sha256": "4b366c85dc520d0bee125d50957e2775482b9f678c3888e6df2640078cae8a61",
+          "bytes": 698,
+          "url": "https://github.com/dmachard/ReleascenIFY/blob/933b8d07e682331ae194ccc837719b7afc154dc8/pyproject.toml"
+        },
+        {
+          "original_path": "tests/test_parser.py",
+          "preserved": "sources/machard-releascenify/tests/test_parser.py.source",
+          "sha256": "c9186259ada6d2ab658efed125c012837089e0069d9b6892430aa62450e16fae",
+          "bytes": 2485,
+          "url": "https://github.com/dmachard/ReleascenIFY/blob/933b8d07e682331ae194ccc837719b7afc154dc8/tests/test_parser.py"
+        },
+        {
+          "original_path": "tests/test_cases_movies.json",
+          "preserved": "sources/machard-releascenify/tests/test_cases_movies.json.source",
+          "sha256": "20eaadeafbbe65171648f47f0ea6a48d9aea1c9f41518bc5e06efdcd785e1b37",
+          "bytes": 29982,
+          "url": "https://github.com/dmachard/ReleascenIFY/blob/933b8d07e682331ae194ccc837719b7afc154dc8/tests/test_cases_movies.json"
+        },
+        {
+          "original_path": "tests/test_cases_series.json",
+          "preserved": "sources/machard-releascenify/tests/test_cases_series.json.source",
+          "sha256": "02276b4ae9f1e74a36ae241f64ec6345537efc3a4b530e1b327214796d28997b",
+          "bytes": 17334,
+          "url": "https://github.com/dmachard/ReleascenIFY/blob/933b8d07e682331ae194ccc837719b7afc154dc8/tests/test_cases_series.json"
+        },
+        {
+          "original_path": "git log --format=%H %s -- tests/test_cases_movies.json tests/test_cases_series.json",
+          "preserved": "sources/machard-releascenify/test-history.source",
+          "sha256": "e1bead926e5e6b9b9da53157241c332779f81625fcfb015580b5935e373d4f5c",
+          "bytes": 6265,
+          "generated_by_scout": true
+        }
+      ],
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "review_status": "unreviewed"
+    },
+    {
+      "id": "mahler-torrenttitleparser",
+      "repo": "bhmahler/TorrentTitleParser",
+      "commit": "604b716c30c3338fbc1d73157f8000056a3b5132",
+      "kind": "csharp",
+      "tests": [
+        "TorrentTitleParser.Tests/TitleTests.cs"
+      ],
+      "other": [
+        "LICENSE",
+        "README.md",
+        "TorrentTitleParser.Tests/TorrentTitleParser.Tests.csproj"
+      ],
+      "flow": "Each direct new Torrent literal is followed by literal Assert.AreEqual(expected, torrent.Title). Trace.WriteLine(JsonConvert.SerializeObject(...)) only prints actual output; it does not populate expected values or fixtures. Non-title tests are not extracted.",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "LICENSE",
+          "preserved": "sources/mahler-torrenttitleparser/LICENSE",
+          "sha256": "3009a1211aea38b4e08a403c44cea0002fd531cc1906ed448e387c33c00a1475",
+          "bytes": 1079,
+          "url": "https://github.com/bhmahler/TorrentTitleParser/blob/604b716c30c3338fbc1d73157f8000056a3b5132/LICENSE"
+        },
+        {
+          "original_path": "README.md",
+          "preserved": "sources/mahler-torrenttitleparser/README.md.source",
+          "sha256": "1ae7f01c513c88f55597a69e7d3dd6c6c87b5883100af2ffedc0e3747b7beaa6",
+          "bytes": 1501,
+          "url": "https://github.com/bhmahler/TorrentTitleParser/blob/604b716c30c3338fbc1d73157f8000056a3b5132/README.md"
+        },
+        {
+          "original_path": "TorrentTitleParser.Tests/TorrentTitleParser.Tests.csproj",
+          "preserved": "sources/mahler-torrenttitleparser/TorrentTitleParser.Tests/TorrentTitleParser.Tests.csproj.source",
+          "sha256": "47e6a9d068f5adccc4dc75b2253093c2c1eb73fdc2781cd6c6039a19ba9213d7",
+          "bytes": 621,
+          "url": "https://github.com/bhmahler/TorrentTitleParser/blob/604b716c30c3338fbc1d73157f8000056a3b5132/TorrentTitleParser.Tests/TorrentTitleParser.Tests.csproj"
+        },
+        {
+          "original_path": "TorrentTitleParser.Tests/TitleTests.cs",
+          "preserved": "sources/mahler-torrenttitleparser/TorrentTitleParser.Tests/TitleTests.cs.source",
+          "sha256": "ba1eb5502901f0f369995fc9db6df5827e830042fbab9ce616cad348789b65f3",
+          "bytes": 17321,
+          "url": "https://github.com/bhmahler/TorrentTitleParser/blob/604b716c30c3338fbc1d73157f8000056a3b5132/TorrentTitleParser.Tests/TitleTests.cs"
+        },
+        {
+          "original_path": "git log --format=%H %s -- TorrentTitleParser.Tests/TitleTests.cs",
+          "preserved": "sources/mahler-torrenttitleparser/test-history.source",
+          "sha256": "8bce96d7bf8c29f0caf2054e84b18a4a3948a6a50e956204e07791105fea5a82",
+          "bytes": 1730,
+          "generated_by_scout": true
+        }
+      ],
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "review_status": "unreviewed"
+    },
+    {
+      "id": "ngtrio-tnp",
+      "repo": "ngtrio/tnp",
+      "commit": "690b6261095899ba0c72d693b5399755e4902fc0",
+      "kind": "go",
+      "tests": [
+        "parser_test.go"
+      ],
+      "other": [
+        "LICENSE",
+        "README",
+        "go.mod"
+      ],
+      "flow": "TestCommon passes direct literals to Parse in raw/formatted modes and compares info.Name directly with literal strings. The two modes repeat each input; only one copy can contribute capacity. Original range/complete/season-only assertions remain refusal evidence, never coverage authorization.",
+      "license": "MIT",
+      "files": [
+        {
+          "original_path": "LICENSE",
+          "preserved": "sources/ngtrio-tnp/LICENSE",
+          "sha256": "f601a616369f6b2ad36e70f2e7548f1fd11bb0f5250884f8aea22779ba55475b",
+          "bytes": 1063,
+          "url": "https://github.com/ngtrio/tnp/blob/690b6261095899ba0c72d693b5399755e4902fc0/LICENSE"
+        },
+        {
+          "original_path": "README",
+          "preserved": "sources/ngtrio-tnp/README.source",
+          "sha256": "1d7ca465e1a5d3bae5094100e7bbcbded78aefde44e12a1f8c113208092c9379",
+          "bytes": 19,
+          "url": "https://github.com/ngtrio/tnp/blob/690b6261095899ba0c72d693b5399755e4902fc0/README"
+        },
+        {
+          "original_path": "go.mod",
+          "preserved": "sources/ngtrio-tnp/go.mod.source",
+          "sha256": "4d9a8b12a9bc101d2ad052be7e169aaf1ba1162de1a93f55d5ae2936ea0dd1ec",
+          "bytes": 331,
+          "url": "https://github.com/ngtrio/tnp/blob/690b6261095899ba0c72d693b5399755e4902fc0/go.mod"
+        },
+        {
+          "original_path": "parser_test.go",
+          "preserved": "sources/ngtrio-tnp/parser_test.go.source",
+          "sha256": "730676b89bea170d7763738a5a78b70f5149f0f135d1672f85a378b085660dff",
+          "bytes": 3208,
+          "url": "https://github.com/ngtrio/tnp/blob/690b6261095899ba0c72d693b5399755e4902fc0/parser_test.go"
+        },
+        {
+          "original_path": "git log --format=%H %s -- parser_test.go",
+          "preserved": "sources/ngtrio-tnp/test-history.source",
+          "sha256": "763596ced22e6aab2506144d6783410cb4cd70dbd872dff254cb46d799d90e83",
+          "bytes": 46,
+          "generated_by_scout": true
+        }
+      ],
+      "accepted": false,
+      "authority": false,
+      "coverage_authority": false,
+      "canonical_unit_authorization": false,
+      "formal_golden_acceptance": false,
+      "reviewed_entries": 0,
+      "review_status": "unreviewed"
+    }
+  ],
+  "counts": {
+    "direct_positive_title_assertions": 146,
+    "new_unique_pending": 117,
+    "excluded": 29,
+    "by_source": {
+      "walker-media-name-parser": 18,
+      "machard-releascenify": 95,
+      "mahler-torrenttitleparser": 0,
+      "ngtrio-tnp": 4
+    }
+  }
+}

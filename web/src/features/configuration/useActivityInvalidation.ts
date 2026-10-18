@@ -1,0 +1,4 @@
+import {useEffect,useRef,useState} from "react";
+import {useAuth} from "@/features/auth/AuthContext";
+export function useActivityInvalidation(){const {user}=useAuth();const [version,setVersion]=useState(0),[connected,setConnected]=useState(false);const pending=useRef<ReturnType<typeof setTimeout>|null>(null);
+ useEffect(()=>{if(!user)return;const stream=new EventSource("/api/v1/stream");let lost=false;const invalidate=()=>{if(pending.current===null)pending.current=setTimeout(()=>{pending.current=null;setVersion(v=>v+1)},250)};stream.addEventListener("reset",invalidate);stream.onopen=()=>{lost=false;setConnected(true)};stream.onerror=()=>{setConnected(false);if(!lost){lost=true;invalidate()}};return()=>{stream.close();if(pending.current!==null)clearTimeout(pending.current);pending.current=null;setConnected(false)}},[user?.id]);return {version,connected};}

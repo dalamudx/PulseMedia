@@ -1,0 +1,48 @@
+7cb3515c5c7832e879b88bd4c1a5ba54fefc3d4c feat: add support for DCPRip source and improve title validation logic
+b0c651d38711284fed31ea19f964d35ab3716cc9 fix: correctly parse release groups ending in 'TEAM' and add test case
+900dcdf090744dc272d92fad6ad5549b1e3a15d6 feat: add detection support for forced and standard French subtitles to parser and test suite
+0b65d7aa6e81b520b19e0873dc3e8f638761135b feat: add support for HDLight quality classification to parser, comparator, and documentation
+165850c5fd7a6b2a81e078fde754f4f957e5a1e4 feat: add CAM and TS quality detection support to parser and update test cases
+109860ce5e579c9a9372825fb4261902ba487d39 feat: add support for forced and subbed subtitle tags to parser and test suite
+993227daefe1002dfc90df82f454a8290206b644 feat: add support for VFR language tag in parser and update test cases
+6bf9e81ffb2fa4ca02725f0bbb265f44b0f3b31b fix: improve release parsing robustness for years, codecs, and title extraction with expanded test coverage
+c53309185df9566312530b20573bb9a83665b780 feat: add support for film, silent, and fanedit tags and improve release metadata parsing logic
+3f1f87dbfc1f046b866659e752756b0dc1b51bb8 feat: improve DTS-HD and DTS-HD MA audio codec detection and normalization logic
+9824dcc85f77b696d38cb07a7d4d3177d19b8408 fix: simplify group identification logic in parser and update test suite and documentation
+7411da8c0402ec3d1357ae078f293390877c2db6 fix: update parser to correctly identify episode tags and improve group extraction logic for release filenames
+23c366192d5258f5f1fc73feda038b3859fc195a feat: enhance group name parsing logic and add additional test cases
+a3121311ac5541137ef3d0ed641d66bf89e424fa refactor: improve delimiter handling in parser for underscore-separated filenames and update test cases
+91cea8a8d6bd43034f7d219a216899933047744b fix: support 2-character file extensions in parser and update test cases
+15b45f1ec3f06a6e5c5845df0f0b5013ed0b3288 feat: enhance parser regex to support VC-1 codec, ISO containers, and 3.1 audio channels while improving quality normalization.
+6ea7769e9e6302c1d5cc28cc7d9cd7bfc31a6de2 refactor: improve greedy cleanup of glued codec tags in filename parser and add validation test case
+801e263cc98ba631e9998e3e2f555b2c1f11c03c feat: improve group parsing logic to exclude metadata tags and add corresponding regression test case
+1acece4dbe17ba376554f96d180fb9d599708469 feat: standardize DTS-HD MA audio parsing, documentation, and test cases
+e3435746e200c20f793fb9ae4663a8fb69a82c88 feat: add support for multi-part rar containers and update test cases with Unicode normalization
+accc5fcad56126b85024f0a6530862d2e372d992 feat: add support for multi-episode range detection in filenames and update test coverage
+7cfb2a13fa27cbc037dcaed691f39b057d844cc4 feat: add support for 'SxEx' and 'XxY' season-episode formats, improve group detection, and update test suite.
+5c6fe154c9954af4ed67c900131dd96a4ddd1e7e feat: update audio channel regex to support 'c' suffix and add related test case
+14d151dcfcd81aa29ab77351d25f633539eed7ab feat: improve codec/quality parsing for glued tags and expand support for high-fidelity media markers
+8171a48ba402f53ab0a1f3371a45e5fd6fae13d3 feat: add support for AVC codec and improve AC3 audio pattern matching
+b7eea9db21a866df461d624e26fe134903fa916b fix: improve filename parsing robustness by expanding audio tags, standardizing token normalization, and updating test cases
+6d18a2ed6be61fb26c804e339f33d3211b20508d feat: improve suffix token validation and tag stripping logic with added debug testing and test cases
+5ecf2b8858cf15a0ace2cf5bb2528cb87823c111 feat: improve audio tag parsing by stripping leading channel indicators and add test case for complex filenames
+259b3bdcdb9dd4c6047d48599ece3c8a76260456 feat: add HDRIP support to parser, documentation, and test cases
+aa6fa09ac0f8906bf221eea8825bc8e3b27b814e refactor: normalize all Dolby Digital Plus (DDP) audio codecs to EAC3 during parsing and update test cases.
+73be6f49aae6081043e0df2b380aa10bd337aa6e refactor: improve parser group detection for anime/bracketed tags and exclude OST releases
+77c5fdf885d01d2cfa4424ed5cce7b47d8ee2d5d feat: support additional audio codecs, channels, and special tags with improved suffix parsing logic
+5eab31aa5ad767a81e9a46be563f27a9f1270497 feat: update parser to handle bracketed tags and add documentation badges and test cases
+63acdd9e098b38a8df2ed84d5e28128a9cb90da3 fix: adjust filename parsing regex to handle hyphenated group names correctly and add corresponding test case
+8013985e8280be3998ea7446d70872cdde22bc95 feat: add support for compressed archive containers and improve group extraction logic with tag validation
+a6bd6b0619e763618dd4f8278877bf5a010838dd feat: add FASTSUB tag support to language detection and documentation
+347fa371d324db87d67af243b79f6ef24a7890ea feat: enhance release group parsing with fallback heuristics and updated regex patterns
+9cdca750a15be652463454540109907d24bfced8 refactor: normalize resolution to 2160P and quality to WEB-DL labels in parser and test data
+0490284669e4772dbde70b568d8126db82adf54b refactor: normalize codec parsing to H264 and H265 and document metadata tags
+ef5b28d9de5c18e7cb05a1965cc18fe1d7a39505 feat: improve group parsing with distributor tag stripping and expand subtitle tag support
+748abed45ec313f4b7febd3e2c7364a07165a21a feat: add episode name extraction support to parser and update documentation and tests accordingly
+cc2ff79483947930c0afefe5a2ce0afa8ee6a75c fix: update regex to support whitespace before group tags and add corresponding test case
+bd94006c2863052c136b57da903c6f819f11314f feat: support VFF language tagging and improve language extraction by excluding title characters from the search scope
+d2124d23eabbe7eddd119a5a4fe4e7eedd074711 feat: update release group extraction to handle brackets and @-prefixes, add 4KLIGHT resolution support, and improve title cleaning
+08537c46601c622a005cb748023e1718f0146c5e refactor: improve release parsing logic for codecs, networks, and language detection while updating scoring to include REMUX quality.
+a9d039e201132202906bc4e653b791cadcd34a17 code cleanup
+ae0fb93b1619c4facc8bfffb38badcef5b4c6bdf code cleanup
+7e57bf9778579b7169a169698e7dddaac3c09686 feat: first commit

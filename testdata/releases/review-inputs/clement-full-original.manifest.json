@@ -1,0 +1,60 @@
+{
+  "id": "clement-full-original",
+  "repository": "https://github.com/clement-escolano/parse-torrent-title",
+  "commit": "98f7d8386aeadaa44a6d43198a5c6fa501273031",
+  "provenance": [
+    {
+      "path": "LICENSE",
+      "preserved_file": "testdata/releases/review-inputs/clement-full-original.LICENSE",
+      "sha256": "4b204d94be3a7487c902684b4ef5d240d169d367b17de72d54360f8351fa27ac",
+      "bytes": 1074,
+      "lines": 21,
+      "git_blob": "3b7e1ab9a745190917468adc395df2421b60ef3e",
+      "byte_equality": true
+    },
+    {
+      "path": "test/main.js",
+      "preserved_file": "testdata/releases/upstream-mit/clement-full-original.main.js",
+      "sha256": "b8922941a9f9bd0effb7c61cc440e1a1181e5f824993558650820657662f666c",
+      "bytes": 13857,
+      "lines": 433,
+      "git_blob": "27c8afb3740f93cf1ef069314740dc8e0a89b919",
+      "byte_equality": true
+    },
+    {
+      "path": "test/title.js",
+      "preserved_file": "testdata/releases/upstream-mit/clement-full-original.title.js",
+      "sha256": "56a23101d5a19cac27a353b9cfd8bb821d2ad51fd1dc2058bd02dbdf2e89f160",
+      "bytes": 904,
+      "lines": 28,
+      "git_blob": "8e69c94edb6037d7231beba0c2adc0f93bc7b3c2",
+      "byte_equality": true
+    }
+  ],
+  "counts": {
+    "positive_literal_assertions": 31,
+    "positive_unique_inputs": 31,
+    "duplicate_occurrences": 0,
+    "synthetic_literal_occurrences": 4,
+    "synthetic_unique_inputs": 4,
+    "generated_fixtures": 0,
+    "exact_unique_duplicates_gold": 14,
+    "new_unique_vs_gold": 17,
+    "exact_unique_duplicates_prior_original_census": 14,
+    "new_unique_vs_gold_and_prior_original_census": 17
+  },
+  "flags": {
+    "accepted": false,
+    "authority": false,
+    "formal_golden_acceptance": false,
+    "canonical_unit_authorization": false,
+    "coverage_authority": false,
+    "reviewed_entries": 15
+  },
+  "license": "MIT",
+  "review_status": "partially_audited_literal_assertions",
+  "exclusions": [
+    "4 title-only separator literals conservatively classified synthetic."
+  ],
+  "method": "Fetched exact Git commit; all requested original and LICENSE lines read through hashline pi.read; complete blobs preserved; byte equality, SHA256 and Git blob ID verified. Static literal extraction only. No upstream execution, range expansion, expectation generation or output-generated datasets."
+}

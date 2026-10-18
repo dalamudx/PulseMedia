@@ -1,0 +1,14 @@
+{"Time":"2026-10-15T23:37:16.220050198+08:00","Action":"start","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres"}
+{"Time":"2026-10-15T23:37:16.310924864+08:00","Action":"run","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence"}
+{"Time":"2026-10-15T23:37:16.311008564+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence","Output":"=== RUN   TestFileMappingHistoryAtomicRecoveryAndEvidence\n"}
+{"Time":"2026-10-15T23:37:18.650241851+08:00","Action":"run","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence/unit_before_media_matches_metadata_refresh"}
+{"Time":"2026-10-15T23:37:18.650347921+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence/unit_before_media_matches_metadata_refresh","Output":"=== RUN   TestFileMappingHistoryAtomicRecoveryAndEvidence/unit_before_media_matches_metadata_refresh\n"}
+{"Time":"2026-10-15T23:37:18.685428194+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence/unit_before_media_matches_metadata_refresh","Output":"--- PASS: TestFileMappingHistoryAtomicRecoveryAndEvidence/unit_before_media_matches_metadata_refresh (0.04s)\n"}
+{"Time":"2026-10-15T23:37:18.685493157+08:00","Action":"pass","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence/unit_before_media_matches_metadata_refresh","Elapsed":0.04}
+{"Time":"2026-10-15T23:37:20.804006371+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence","Output":"--- PASS: TestFileMappingHistoryAtomicRecoveryAndEvidence (4.49s)\n"}
+{"Time":"2026-10-15T23:37:20.804092155+08:00","Action":"pass","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Test":"TestFileMappingHistoryAtomicRecoveryAndEvidence","Elapsed":4.49}
+{"Time":"2026-10-15T23:37:20.804491344+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Output":"PASS\n"}
+{"Time":"2026-10-15T23:37:21.823047041+08:00","Action":"output","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Output":"ok  \tgithub.com/dalamudx/PulseMedia/internal/store/postgres\t5.602s\n"}
+{"Time":"2026-10-15T23:37:21.823137325+08:00","Action":"pass","Package":"github.com/dalamudx/PulseMedia/internal/store/postgres","Elapsed":5.603}
+OWNED_DATABASE_CLEANUP_VERIFIED
+OWNED_TEMP_CLEANUP_VERIFIED

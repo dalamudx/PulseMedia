@@ -1,0 +1,450 @@
+import { expect, it } from 'vitest';
+
+import { AudioCodec } from '../src/audioCodec.js';
+import {
+  Channels,
+  filenameParse,
+  Language,
+  QualityModifier,
+  Resolution,
+  Source,
+  VideoCodec,
+} from '../src/index.js';
+
+const movieCases: Array<[string, any]> = [
+  [
+    'Backrooms 2026 1080p AMZN WEB-DL DDP5 1 Atmos H 264-BYNDR',
+    {
+      title: 'Backrooms',
+      year: '2026',
+      resolution: Resolution.R1080P,
+      sources: [Source.WEBDL],
+      videoCodec: VideoCodec.H264,
+      audioCodec: AudioCodec.EAC3,
+      audioChannels: Channels.SIX,
+      group: 'BYNDR',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Backrooms.2026.2160p.iT.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-BYNDR',
+    {
+      title: 'Backrooms',
+      year: '2026',
+      resolution: Resolution.R2160P,
+      sources: [Source.WEBDL],
+      videoCodec: VideoCodec.H265,
+      audioCodec: AudioCodec.EAC3,
+      audioChannels: Channels.SIX,
+      group: 'BYNDR',
+      revision: { version: 1, real: 0 },
+      edition: { hdr: true, dolbyVision: true },
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Project.Hail.Mary.2026.DV.2160p.WEB.h265-GRACE',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.WEBDL],
+      title: 'Project Hail Mary',
+      year: '2026',
+      videoCodec: VideoCodec.H265,
+      group: 'GRACE',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { dolbyVision: true },
+    },
+  ],
+  [
+    'Project.Hail.Mary.2026.PROPER.HDR.2160p.WEB.h265-GRACE',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.WEBDL],
+      title: 'Project Hail Mary',
+      year: '2026',
+      videoCodec: VideoCodec.H265,
+      group: 'GRACE',
+      revision: { version: 2, real: 0 },
+      languages: [Language.English],
+      edition: { hdr: true },
+    },
+  ],
+  [
+    'Project.Hail.Mary.2026.HDR.2160P.WEB.H265-POKE',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.WEBDL],
+      title: 'Project Hail Mary',
+      year: '2026',
+      videoCodec: VideoCodec.H265,
+      group: 'POKE',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { hdr: true },
+    },
+  ],
+  [
+    'Project.Hail.Mary.2026.2160P.WEB.H265-POKE',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.WEBDL],
+      title: 'Project Hail Mary',
+      year: '2026',
+      videoCodec: VideoCodec.H265,
+      group: 'POKE',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Speed.Racer.2008.2160p.UHD.BluRay.x265-B0MBARDiERS',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.BLURAY],
+      title: 'Speed Racer',
+      year: '2008',
+      videoCodec: VideoCodec.X265,
+      group: 'B0MBARDiERS',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { uhd: true },
+    },
+  ],
+  [
+    'Speed.Racer.2008.2160p.UHD.BluRay.H265-GAZPROM',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.BLURAY],
+      title: 'Speed Racer',
+      year: '2008',
+      videoCodec: VideoCodec.H265,
+      group: 'GAZPROM',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { uhd: true },
+    },
+  ],
+  [
+    'Avatar.Fire.and.Ash.2025.2160p.UHD.BluRay.x265-SURCODE',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.BLURAY],
+      title: 'Avatar Fire and Ash',
+      year: '2025',
+      videoCodec: VideoCodec.X265,
+      group: 'SURCODE',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { uhd: true },
+    },
+  ],
+  [
+    'Avatar.Fire.and.Ash.2025.2160p.UHD.BluRay.H265-GAZPROM',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.BLURAY],
+      title: 'Avatar Fire and Ash',
+      year: '2025',
+      videoCodec: VideoCodec.H265,
+      group: 'GAZPROM',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { uhd: true },
+    },
+  ],
+  [
+    'Fight.Club.1999.2160p.UHD.BluRay.x265-SURCODE',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.BLURAY],
+      title: 'Fight Club',
+      year: '1999',
+      videoCodec: VideoCodec.X265,
+      group: 'SURCODE',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { uhd: true },
+    },
+  ],
+  [
+    'Fight.Club.1999.2160p.UHD.BluRay.H265-GAZPROM',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.BLURAY],
+      title: 'Fight Club',
+      year: '1999',
+      videoCodec: VideoCodec.H265,
+      group: 'GAZPROM',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      edition: { uhd: true },
+    },
+  ],
+  [
+    'Whats.Eating.Gilbert.Grape.1993.720p.BluRay.x264-SiNNERS',
+    {
+      resolution: Resolution.R720P,
+      sources: [Source.BLURAY],
+      title: 'Whats Eating Gilbert Grape',
+      year: '1993',
+      videoCodec: VideoCodec.X264,
+      group: 'SiNNERS',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Timecop.1994.PROPER.1080p.BluRay.x264-Japhson',
+    {
+      resolution: Resolution.R1080P,
+      sources: [Source.BLURAY],
+      title: 'Timecop',
+      year: '1994',
+      videoCodec: VideoCodec.X264,
+      group: 'Japhson',
+      revision: { version: 2, real: 0 },
+      languages: [Language.English],
+    },
+  ],
+  [
+    'This.is.40.2012.PROPER.UNRATED.720p.BluRay.MULti.x264-Felony',
+    {
+      edition: { unrated: true },
+      resolution: Resolution.R720P,
+      sources: [Source.BLURAY],
+      title: 'This is 40',
+      year: '2012',
+      videoCodec: VideoCodec.X264,
+      group: 'Felony',
+      revision: { version: 2, real: 0 },
+      languages: [Language.English],
+      multi: true,
+    },
+  ],
+  [
+    'Multiplicity (1996) [REPACK] [720p]',
+    {
+      resolution: Resolution.R720P,
+      title: 'Multiplicity',
+      year: '1996',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Multiplicity.1996.1080p.BluRay.X264-AMIABLE',
+    {
+      resolution: Resolution.R1080P,
+      title: 'Multiplicity',
+      year: '1996',
+      group: 'AMIABLE',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Doctor.Strange.in.the.Multiverse.of.Madness.2022.2160p.UHD.BluRay.x265-SURCODE',
+    {
+      resolution: Resolution.R2160P,
+      title: 'Doctor Strange in the Multiverse of Madness',
+      year: '2022',
+      group: 'SURCODE',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Doctor.Strange.in.the.Multiverse.of.Madness.2022.2160p.WEB.H265-SLOT',
+    {
+      resolution: Resolution.R2160P,
+      title: 'Doctor Strange in the Multiverse of Madness',
+      year: '2022',
+      group: 'SLOT',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'The.Bone.Collector.1999.2160p.UHD.BluRay.x265-B0MBARDiERS',
+    {
+      resolution: Resolution.R2160P,
+      title: 'The Bone Collector',
+      year: '1999',
+      group: 'B0MBARDiERS',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'The.Collector.2009.1080p.BluRay.X264-AMIABLE',
+    {
+      resolution: Resolution.R1080P,
+      title: 'The Collector',
+      year: '2009',
+      group: 'AMIABLE',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Uncut.Gems.2019.2160p.UHD.BluRay.x265-B0MBARDiERS',
+    {
+      resolution: Resolution.R2160P,
+      title: 'Uncut Gems',
+      year: '2019',
+      group: 'B0MBARDiERS',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'A.Real.Pain.2024.1080p.WEB.H264-GROUP',
+    {
+      resolution: Resolution.R1080P,
+      title: 'A Real Pain',
+      year: '2024',
+      group: 'GROUP',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Real.Steel.2011.1080p.BluRay.x264-GROUP',
+    {
+      resolution: Resolution.R1080P,
+      title: 'Real Steel',
+      year: '2011',
+      group: 'GROUP',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Reality.2023.1080p.WEB.H264-GROUP',
+    {
+      resolution: Resolution.R1080P,
+      title: 'Reality',
+      year: '2023',
+      group: 'GROUP',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Polish.Wedding.1998.1080p.WEB.H264-GROUP',
+    {
+      resolution: Resolution.R1080P,
+      title: 'Polish Wedding',
+      year: '1998',
+      group: 'GROUP',
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Spider-Man Far from Home.2019.1080p.HDRip.X264.AC3-EVO',
+    {
+      resolution: Resolution.R1080P,
+      sources: [Source.WEBDL],
+      title: 'Spider-Man Far from Home',
+      year: '2019',
+      videoCodec: VideoCodec.X264,
+      audioCodec: AudioCodec.DOLBY,
+      group: 'EVO',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+    },
+  ],
+  [
+    'Togo 2019 2160p HDR DSNP WEBRip DDPAtmos 5 1 X265-TrollUHD',
+    {
+      resolution: Resolution.R2160P,
+      sources: [Source.WEBRIP],
+      title: 'Togo',
+      year: '2019',
+      group: 'TrollUHD',
+    },
+  ],
+  [
+    'Ex Machina 2015 UHD BluRay 2160p DTS-X 7 1 HDR x265 10bit-CHD',
+    {
+      title: 'Ex Machina',
+      year: '2015',
+      group: 'CHD',
+      resolution: Resolution.R2160P,
+    },
+  ],
+  [
+    'Apprentice.2016.COMPLETE.BLURAY-UNRELiABLE',
+    {
+      title: 'Apprentice',
+      year: '2016',
+      group: 'UNRELiABLE',
+      resolution: Resolution.R1080P,
+      complete: true,
+    },
+  ],
+  [
+    'Indiana.Jones.and.the.Temple.of.Doom.1984.Complete.UHD.Bluray-JONES',
+    {
+      title: 'Indiana Jones and the Temple of Doom',
+      year: '1984',
+      group: 'JONES',
+      resolution: Resolution.R1080P,
+      modifier: QualityModifier.BRDISK,
+      complete: true,
+    },
+  ],
+];
+
+for (const [title, result] of movieCases) {
+  it(`parse movie title "${title}"`, () => {
+    expect(filenameParse(title)).toEqual(expect.objectContaining(result));
+  });
+}
+
+const tvCases: Array<[string, any]> = [
+  [
+    'Its Always Sunny in Philadelphia S14E04 720p WEB H264-METCON',
+    {
+      resolution: Resolution.R720P,
+      sources: [Source.WEBDL],
+      title: 'Its Always Sunny in Philadelphia',
+      videoCodec: VideoCodec.H264,
+      group: 'METCON',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      seasons: [14],
+      episodeNumbers: [4],
+      isTv: true,
+    },
+  ],
+  [
+    'The Expanse - S01E02 - The Big Empty',
+    {
+      title: 'The Expanse',
+      seasons: [1],
+      episodeNumbers: [2],
+      remainder: 'The Big Empty',
+      isTv: true,
+    },
+  ],
+];
+for (const [title, result] of tvCases) {
+  it(`parse tv show title "${title}"`, () => {
+    expect(filenameParse(title, true)).toEqual(expect.objectContaining(result));
+  });
+}
+
+const dailyTvCases: Array<[string, any]> = [
+  [
+    'NFL 2019 10 06 Chicago Bears vs Oakland Raiders Highlights 720p HEVC x265-MeGusta',
+    {
+      resolution: Resolution.R720P,
+      sources: [Source.WEBDL],
+      title: 'NFL',
+      videoCodec: VideoCodec.X265,
+      group: 'MeGusta',
+      revision: { version: 1, real: 0 },
+      languages: [Language.English],
+      airDate: new Date(2019, 9, 6),
+      isTv: true,
+    },
+  ],
+];
+for (const [title, result] of dailyTvCases) {
+  it(`parse daily tv show title "${title}"`, () => {
+    expect(filenameParse(title, true)).toEqual(expect.objectContaining(result));
+  });
+}

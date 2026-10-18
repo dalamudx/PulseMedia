@@ -1,0 +1,91 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright-core';
+const base=process.env.PULSE_UNIFIED_BASE;
+let browser;
+for(let i=0;i<50;i++){try{browser=await chromium.connectOverCDP((process.env.PULSE_UI_CDP_URL || 'http://127.0.0.1:9222'));break}catch{await new Promise(r=>setTimeout(r,100))}}
+assert(browser);
+const context=browser.contexts()[0],page=await context.newPage();
+page.setDefaultTimeout(18000);
+page.on('response',response=>{const url=new URL(response.url());if(url.pathname.startsWith('/api/v1/')&&response.status()>=400) console.error('API_FAILURE',JSON.stringify({path:url.pathname,status:response.status()}));});
+page.on('requestfailed',request=>{const url=new URL(request.url());if(url.pathname.startsWith('/api/v1/'))console.error('API_REQUEST_FAILED',JSON.stringify({path:url.pathname,error:request.failure()?.errorText}));});
+const login=async()=>{await page.getByRole('heading',{name:'登录 PulseMedia',exact:true}).waitFor();await page.getByPlaceholder('输入管理员用户名...').fill('pipeline-owner');await page.locator('input[type=password]').fill('unified-login-password');await page.getByRole('button',{name:'进入系统控制台 →',exact:true}).click();await page.waitForURL(base+'/')};
+const open=async()=>{await page.goto(base+'/subscriptions');await page.locator('.sub-poster-card').first().click();return page.getByRole('dialog')};
+try {
+ for(let i=0;i<100;i++){try{if((await page.request.get(base+'/api/v1/auth/status')).ok())break}catch{}await new Promise(r=>setTimeout(r,100))}
+ await page.goto(base+'/settings');
+ await login();
+ const initialSettings=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/settings'&&r.request().method()==='GET');
+ await page.goto(base+'/settings');
+ const settingsResponse=await initialSettings;
+ assert.equal(settingsResponse.status(),200,'initial settings read');
+ assert(Array.isArray((await settingsResponse.json()).items),'initial settings items');
+ await page.getByRole('heading',{name:'系统配置与服务集成',exact:true}).waitFor();
+ await page.locator('#tmdb-secret').fill('unified-metadata-key');await page.getByRole('button',{name:'保存 TMDB 密钥',exact:true}).click();await page.getByText('TMDB 密钥已保存。',{exact:true}).waitFor();
+ await page.goto(base+'/discover');await page.locator('.media-card-wrap').first().click();
+ const detail=page.getByRole('dialog');await detail.getByRole('button',{name:'保存电影订阅',exact:true}).waitFor();
+ await detail.getByRole('combobox',{name:'目标媒体根'}).selectOption(process.env.PULSE_UNIFIED_ROOT);
+ await page.route('**/api/v1/subscriptions',async route=>{if(route.request().method()!=='POST'){await route.continue();return}const body=route.request().postDataJSON();body.title='Forged browser title';body.year=1900;await route.continue({postData:JSON.stringify(body)})});
+ const createdResponse=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions'&&r.request().method()==='POST');
+ await detail.getByRole('button',{name:'保存电影订阅',exact:true}).click();
+ const response=await createdResponse;
+ assert.equal(response.status(),201);
+ const created=await response.json();
+ assert(created.id);
+ console.log('CREATED_WAITING_SUBSCRIPTION');
+ assert.equal(created.root_id,process.env.PULSE_UNIFIED_ROOT);
+ assert.equal(created.scope_type,'all');
+ // The fixture already owns a paused subscription; resubscribing preserves it.
+ assert.equal(created.state,'paused');
+ assert.deepEqual(created.indexer_ids,[]);
+ await page.unroute('**/api/v1/subscriptions');
+ await page.goto(base+'/subscriptions');
+ const listedResponse=await page.request.get(base+'/api/v1/subscriptions');
+ assert.equal(listedResponse.status(),200);
+ const {items:listed}=await listedResponse.json();
+ assert(Array.isArray(listed));
+ const persisted=listed.find(item=>item.id===created.id);
+ assert(persisted,'resubscribed subscription must remain visible to its owner');
+ assert.equal(persisted.state,'paused');
+ await page.locator('.sub-poster-card').first().waitFor();
+ await page.locator('.sub-poster-card').first().hover();
+ await page.getByTitle('恢复订阅',{exact:true}).waitFor();
+ const resumedResponse=page.waitForResponse(r=>new URL(r.url()).pathname===`/api/v1/subscriptions/${created.id}/control`&&r.request().method()==='PUT');
+ await page.getByTitle('恢复订阅',{exact:true}).click();
+ assert.equal((await resumedResponse).status(),200);
+ await page.getByTitle('暂停订阅',{exact:true}).waitFor();
+ console.log('RESUBSCRIBE_PRESERVES_PAUSE_EXPLICIT_RESUME_PASS');
+ let modal=await open();await modal.getByText('未绑定索引器，自动搜索未启用。',{exact:true}).waitFor();
+ const waiting=await page.request.get(base+`/api/v1/subscriptions/${created.id}/status`);assert.equal(waiting.status(),200);assert((await waiting.json()).blockers.includes('no_indexers'));
+ await page.keyboard.press('Escape');
+ let command,key;let lose=true;let lost;const lostReceipt=new Promise(resolve=>{lost=resolve});
+ const controlURL=`**/api/v1/subscriptions/${created.id}/control`;
+ await page.route(controlURL,async route=>{if(lose){lose=false;command=route.request().postData();key=route.request().headers()['idempotency-key'];const r=await route.fetch();assert.equal(r.status(),200);await route.abort();lost()}else{assert.equal(route.request().postData(),command);assert.equal(route.request().headers()['idempotency-key'],key);await route.continue()}});
+ await page.getByTitle('暂停订阅',{exact:true}).click();await lostReceipt;await page.getByRole('button',{name:'重试同一控制命令',exact:true}).waitFor();assert(command&&key);
+ await page.reload();await page.getByRole('button',{name:'重试同一控制命令',exact:true}).waitFor();
+ await context.clearCookies();await page.getByRole('button',{name:'重试同一控制命令',exact:true}).click();await login();
+ await page.goto(base+'/subscriptions');
+ await page.getByRole('button',{name:'重试同一控制命令',exact:true}).waitFor();
+ const replayedResponse=page.waitForResponse(r=>new URL(r.url()).pathname===`/api/v1/subscriptions/${created.id}/control`&&r.request().method()==='PUT'&&r.request().headers()['idempotency-key']===key);
+ await page.getByRole('button',{name:'重试同一控制命令',exact:true}).click();
+ assert.equal((await replayedResponse).status(),200);
+ await page.waitForFunction(()=>Object.keys(sessionStorage).every(k=>!k.startsWith('pulsemedia.subscription-state.')));
+ await page.getByTitle('恢复订阅',{exact:true}).waitFor();
+ await page.unroute(controlURL);
+ console.log('STATE_COMMAND_REFRESH_LOGIN_REPLAY_PASS');assert.deepEqual(await page.evaluate(()=>Object.keys(sessionStorage).filter(k=>k.startsWith('pulsemedia.subscription-state.'))),[]);
+ modal=await open();const binding=modal.getByRole('region',{name:'订阅端点配置'});await binding.getByRole('button',{name:'编辑绑定',exact:true}).click();await binding.getByRole('checkbox',{name:/^Full pipeline · (在线|离线)$/}).check();await binding.getByRole('combobox',{name:'下载器',exact:true}).selectOption(process.env.PULSE_UNIFIED_CLIENT);
+ await binding.getByRole('button',{name:'保存绑定',exact:true}).click();await binding.getByText('端点与策略引用已保存；订阅状态和季集范围未改变。',{exact:true}).waitFor();await page.keyboard.press('Escape');
+ await page.getByTitle('恢复订阅',{exact:true}).click();await page.getByTitle('暂停订阅',{exact:true}).waitFor();
+ await page.goto(base+'/activity');await page.getByRole('button',{name:'全部',exact:true}).click();const inbox=page.getByRole('region',{name:'持久操作列表'});await inbox.locator('li').first().getByRole('button').click();
+ const primary=page.getByRole('region',{name:'操作详情'}).locator('dt').filter({hasText:'当前状态'}).locator('+ dd');
+ for(let i=0;i<100;i++){if(await primary.textContent()==='completed')break;await page.getByRole('button',{name:'查询 / 刷新',exact:true}).click();await new Promise(r=>setTimeout(r,400))}
+ console.log('AUTO_MOVIE_IMPORTED_PASS');assert.equal(await primary.textContent(),'completed');await page.getByText('100%',{exact:true}).waitFor();
+ modal=await open();const status=modal.getByRole('region',{name:'当前目标状态'});await status.getByRole('button',{name:'刷新状态',exact:true}).click();await modal.locator('.episode-tile-card.tile-satisfied').waitFor();const reasons=modal.getByRole('region',{name:'电影候选解释'});await reasons.getByRole('button',{name:'查看候选解释',exact:true}).click();await reasons.getByText('Movie.2020.1080p.BluRay',{exact:true}).waitFor();
+ console.log('CANDIDATE_EXPLANATION_PASS');await page.setViewportSize({width:390,height:844});assert(await status.isVisible());await page.keyboard.press('Escape');await page.goto(base+'/media');await page.getByRole('button',{name:'重新读取媒体库',exact:true}).click();await page.getByRole('heading',{name:'Movie (2020)',exact:true}).waitFor();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
+ if(process.env.PULSE_SUBSCRIPTION_UI_ARTIFACT_DIR){await page.goto(base+'/subscriptions');await page.locator('.sub-poster-card').first().waitFor();await page.screenshot({path:process.env.PULSE_SUBSCRIPTION_UI_ARTIFACT_DIR+'/subscription-list-mobile.png',fullPage:true});}
+ const addSubscription=page.getByRole('button',{name:'添加新订阅',exact:true});assert.equal(await addSubscription.evaluate(button=>getComputedStyle(button).whiteSpace),'nowrap');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
+ console.log('DISCOVERY_SUBSCRIPTION_WAITING_STATE_COOKIE_REPLAY_BINDING_AUTOIMPORT_BROWSER_OK');
+} catch(error) {
+ console.error('SUBSCRIPTION_BROWSER_FAILURE',JSON.stringify(await page.evaluate(()=>({path:location.pathname,headings:Array.from(document.querySelectorAll('h1,h2')).map(node=>node.textContent),cards:document.querySelectorAll('.sub-poster-card').length,buttons:Array.from(document.querySelectorAll('button')).map(button=>({title:button.title,text:button.textContent?.trim()}))}))));
+ if(process.env.PULSE_SUBSCRIPTION_UI_ARTIFACT_DIR) await page.screenshot({path:process.env.PULSE_SUBSCRIPTION_UI_ARTIFACT_DIR+'/subscription-failure.png',fullPage:true});
+ throw error;
+} finally {await browser.close()}

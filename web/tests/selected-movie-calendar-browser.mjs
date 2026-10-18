@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright-core';
+const base=process.env.PULSE_SELECTED_CALENDAR_BASE;
+if(!base||process.env.PULSE_UI_FIXTURE!=='1')throw Error('Explicit disposable movie fixture required');
+const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-gpu']});
+try {
+  const page=await browser.newPage();page.setDefaultTimeout(12000);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  let writes=0;page.on('request',r=>{if(new URL(r.url()).pathname==='/api/v1/acquisitions/selected-movie'&&r.method()==='POST')writes++});
+  await page.goto(base);
+  assert.equal(await page.evaluate(async()=>(await fetch('/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'admin',password:'AdminPass12345!'})})).status),200);
+  const before=await page.evaluate(async()=>(await fetch('/fixture/calendar-counts')).json());
+  await page.goto(base+'/discover');
+  const card=page.locator('.media-card-wrap').filter({has:page.locator('.caption-title',{hasText:'Fight Club'})});
+  await card.waitFor();await card.hover();await card.getByRole('button',{name:'搜种',exact:true}).click();
+  const dialog=page.getByRole('dialog',{name:'「Fight Club」站点资源检索'});
+  await dialog.getByRole('button',{name:'选择获取目标',exact:true}).click();
+  const panel=dialog.locator('section').filter({has:page.getByRole('button',{name:'预览电影获取',exact:true})});
+  await panel.getByRole('combobox',{name:'电影目标根',exact:true}).selectOption(before.root);
+  await panel.getByRole('combobox',{name:'获取下载器',exact:true}).selectOption(before.client);
+  await panel.getByRole('button',{name:'预览电影获取',exact:true}).click();
+  await panel.getByRole('status').filter({hasText:'当前规则允许'}).waitFor();
+  const submit=panel.getByRole('button',{name:'确认创建持久获取',exact:true});
+  await panel.getByRole('checkbox',{name:'已核对作品、候选及电影根，确认创建获取'}).check();
+  assert.equal(await submit.isEnabled(),true);
+  const previewPath='/api/v1/acquisitions/selected-movie/preview';
+  await page.route('**'+previewPath,r=>r.fulfill({status:503,contentType:'application/json',body:'{"code":"UNAVAILABLE"}'}));
+  await panel.getByRole('button',{name:'预览电影获取',exact:true}).click();
+  await panel.getByRole('alert').filter({hasText:'旧预览已清除'}).waitFor();
+  assert.equal(await panel.locator('.mapping-preview').count(),0);assert.equal(await submit.isDisabled(),true);
+  await page.unroute('**'+previewPath);
+  assert.equal(await page.evaluate(async()=>(await fetch('/fixture/calendar-title',{method:'POST'})).status),204);
+  const reply=page.waitForResponse(r=>new URL(r.url()).pathname===previewPath&&r.request().method()==='POST');
+  await panel.getByRole('button',{name:'预览电影获取',exact:true}).click();
+  const response=await reply;
+  if(response.status()===200){assert.notEqual((await response.json()).decision,'accept');await panel.getByRole('status').filter({hasText:'暂不能获取'}).waitFor()}else{assert.ok([400,409].includes(response.status()));await panel.getByRole('alert').filter({hasText:'旧预览已清除'}).waitFor()}
+  assert.equal(await panel.getByRole('status').filter({hasText:'当前规则允许'}).count(),0);
+  assert.equal(await submit.isDisabled(),true);assert.equal(writes,0);
+  const after=await page.evaluate(async()=>(await fetch('/fixture/calendar-counts')).json());
+  assert.deepEqual(after.counts,before.counts);assert.equal(after.quality,before.quality);
+  assert.equal(await panel.getByRole('combobox',{name:'电影目标根',exact:true}).inputValue(),before.root);
+  assert.equal(await panel.getByRole('combobox',{name:'获取下载器',exact:true}).inputValue(),before.client);
+  assert.deepEqual(errors,[]);
+  console.log(JSON.stringify({passed:true,realPGPreview:true,fixtureSourceAndMetadataOnly:true,chosenRootAndDownloaderPreserved:true,read503ClearsOldPermission:true,denyBoundary:process.env.PULSE_SELECTED_BARE_CONTAINER_GROUP_BROWSER==='1'?'bare-container-release-group-policy':process.env.PULSE_SELECTED_GROUP_TAG_DASH_BROWSER==='1'?'hyphenated-tag-release-group-policy':process.env.PULSE_SELECTED_IDENTITY_GROUP_BROWSER==='1'?'release-group-policy':'unit-coverage',coverageDenied:process.env.PULSE_SELECTED_IDENTITY_GROUP_BROWSER==='1'?null:process.env.PULSE_SELECTED_SEASON_SCOPE_BROWSER==='1'?'season-scope-not-single-movie':process.env.PULSE_SELECTED_RIP_TAIL_YEAR_BROWSER==='1'?'technical-rip-tail-not-work-year':process.env.PULSE_SELECTED_NUMERIC_GROUP_YEAR_BROWSER==='1'?'numeric-group-not-work-year':process.env.PULSE_SELECTED_FRENCH_COLLECTION_BROWSER==='1'?'french-compound-collection':process.env.PULSE_SELECTED_LONG_COLLECTION_BROWSER==='1'?'long-numbered-collection':process.env.PULSE_SELECTED_NUMBERED_COLLECTION_BROWSER==='1'?'numbered-collection':process.env.PULSE_SELECTED_COLLECTION_BROWSER==='1'?'collection':process.env.PULSE_SELECTED_TEXT_CALENDAR_BROWSER==='1'?'text-calendar':'calendar',noWriteOrTaskOrReservation:true,qualityUnchanged:true}));
+} finally {await browser.close()}

@@ -1,0 +1,283 @@
+{
+  "schema": "pulse.release-review-input.v1",
+  "source_id": "rank-torrent-name",
+  "provenance": {
+    "repository": "https://github.com/dreulavelle/rank-torrent-name",
+    "commit": "bdb9973109eb489be831af0c39bdf9c27e3378ed",
+    "path": "tests/test_parser.py",
+    "source_sha256": "12ca8d45d18389a1dc7fa5da64be06744b760e6055ddd490b3d29dcbe800c90f",
+    "license_sha256": "48f46d8b1ea2773ad67bad973cd99c413bb90473591f7d1e9ab65910275e270c",
+    "unique_entries": 24
+  },
+  "license": "MIT",
+  "review_status": "unreviewed",
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "label_scope": "Original scalar expected values from test_get_media_type only; movie/show classification is not full coverage, verified canonical identity, confidence, reason, quality or execution authority. No source tests executed. Boolean trash, title alias utilities, episode-list getters and metadata/file IO are excluded.",
+  "entries": [
+    {
+      "release_name": "The Simpsons S01E01 1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole",
+      "observations": [
+        {
+          "source_line": 170,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Simpsons S01E01E02 1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole",
+      "observations": [
+        {
+          "source_line": 171,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Simpsons S01E01-E02 1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole",
+      "observations": [
+        {
+          "source_line": 172,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Simpsons S01E01-E02-E03-E04-E05 1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole",
+      "observations": [
+        {
+          "source_line": 173,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Simpsons S01E01E02E03E04E05 1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole",
+      "observations": [
+        {
+          "source_line": 174,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Simpsons E1-200 1080p BluRay x265 HEVC 10bit AAC 5.1 Tigole",
+      "observations": [
+        {
+          "source_line": 175,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "House MD All Seasons (1-8) 720p Ultra-Compressed",
+      "observations": [
+        {
+          "source_line": 176,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Witches Of Salem - 2Of4 - Road To Hell - Great Mysteries Of The World",
+      "observations": [
+        {
+          "source_line": 177,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Lost.[Perdidos].6x05.HDTV.XviD.[www.DivxTotaL.com]",
+      "observations": [
+        {
+          "source_line": 178,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[F-D] Fairy Tail Season 1 - 6 + Extras [480P][Dual-Audio]",
+      "observations": [
+        {
+          "source_line": 179,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "BoJack Horseman [06x01-08 of 16] (2019-2020) WEB-DLRip 720p",
+      "observations": [
+        {
+          "source_line": 180,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "[HR] Boku no Hero Academia 87 (S4-24) [1080p HEVC Multi-Subs] HR-GZ",
+      "observations": [
+        {
+          "source_line": 181,
+          "original_fields": {
+            "expected": "show"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The Avengers (EMH) - (1080p - BluRay)",
+      "observations": [
+        {
+          "source_line": 184,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Dragon Ball Z Movie - 09 - Bojack Unbound - 1080p BluRay x264 DTS 5.1 -DDR",
+      "observations": [
+        {
+          "source_line": 185,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Joker.2019.PROPER.mHD.10Bits.1080p.BluRay.DD5.1.x265-TMd.mkv",
+      "observations": [
+        {
+          "source_line": 186,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Hercules.2014.EXTENDED.1080p.WEB-DL.DD5.1.H264-RARBG",
+      "observations": [
+        {
+          "source_line": 187,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Brave.2012.R5.DVDRip.XViD.LiNE-UNiQUE",
+      "observations": [
+        {
+          "source_line": 188,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Dawn.Of.The.Planet.of.The.Apes.2014.1080p.WEB-DL.DD51.H264-RARBG",
+      "observations": [
+        {
+          "source_line": 189,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "One Shot [2014] DVDRip XViD-ViCKY",
+      "observations": [
+        {
+          "source_line": 190,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Impractical.Jokers.The.Movie.2020.1080p.WEBRip.x264.AAC5.1",
+      "observations": [
+        {
+          "source_line": 191,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "The.Meg.2018.1080p.HDRip.x264.[ExYu-Subs]",
+      "observations": [
+        {
+          "source_line": 192,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Guardians of the Galaxy (2014) Dual Audio DVDRip AVI",
+      "observations": [
+        {
+          "source_line": 193,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "UFC.179.PPV.HDTV.x264-Ebi[rartv]",
+      "observations": [
+        {
+          "source_line": 194,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    },
+    {
+      "release_name": "Hercules",
+      "observations": [
+        {
+          "source_line": 195,
+          "original_fields": {
+            "expected": "movie"
+          }
+        }
+      ]
+    }
+  ]
+}

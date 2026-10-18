@@ -1,0 +1,3951 @@
+{
+  "schema": "pulse.pending-independent-contracts.v1",
+  "historical_snapshot": true,
+  "current_resolution": "M3-02 locally accepted at episode.v74 with1015 complete independent gold. This646-input snapshot preserves original pending claims; some are now admitted unchanged. See m3-02-v73-review/README.md and reviewed-full.json for actual current membership. Source-wide authority remains false.",
+  "accepted": false,
+  "formal_golden_acceptance": false,
+  "coverage_authority": false,
+  "reviewed_entries": 0,
+  "compared_gold_input_count": 646,
+  "note": "Unchanged pre-probe hand contracts and original evidence. Historical failures are not current validation receipts. Excluded from gold; complete review and proven independent provenance remain required. Duplicate inputs across sources are not new gold capacity.",
+  "pending_evidence_records": 39,
+  "entries": [
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-lucky-star",
+        "source": "beast-full-original",
+        "input": "Lucky☆Star ★Hi10★ [1080p]",
+        "review_note": "MIT2fb0c592 test/title.js:55-56 asserts exact Lucky☆Star. Internal star is title punctuation; trailing Hi10 is technical decoration, not episode10 or season. No year, full canonical numbering, date or collection evidence. Title-only confidence0.6 requires review, zero keys. Only1080p supported; Hi10 does not certify codec/HDR/audio/edition or publisher.",
+        "independent_expected": {
+          "title": "Lucky☆Star",
+          "year": 0,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.6,
+          "requires_review": true,
+          "reason": "title_only_without_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:Lucky☆Star ★Hi10★ [1080p] MediaType:movie Title:Lucky☆Star ★Hi10★ Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.6 Reason:title_only_without_year RequiresReview:true ParserVersion:episode.v63}; want {Title:Lucky☆Star LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0.6 Review:true Reason:title_only_without_year Quality:{Resolution:1080p ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-american-animals",
+        "source": "beast-full-original",
+        "input": "Американские животные / American Animals (Барт Лэйтон / Bart Layton) [2018, Великобритания, США, драма, криминал, BDRip] MVO (СВ Студия)",
+        "review_note": "MIT2fb0c592 test/title.js:105-106 independently asserts American Animals. Slash segments are localized title and director aliases, not paths or episode coverage; one explicit2018 work year, no season/episode/range/date/partial marker. Movie parse confidence0.9. BDRip supports Bluray; MVO is unmeasured audio, cast/studio parentheses do not assert release group. Other six quality fields unknown.",
+        "independent_expected": {
+          "title": "American Animals",
+          "year": 2018,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "",
+            "source": "Bluray",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:Американские животные / American Animals (Барт Лэйтон / Bart Layton) [2018, Великобритания, США, драма, криминал, BDRip] MVO (СВ Студия) MediaType:movie Title:Bart Layton Year:2018 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion:source.tokens.v2 Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:American Animals LiteralTitle: Year:2018 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-fruit-alias1",
+        "source": "beast-full-original",
+        "input": "Греческая смоковница / Griechische Feigen / The Fruit Is Ripe (Зиги Ротемунд / Sigi Rothemund (as Siggi Götz)) [1976, Германия (ФРГ), эротика, комедия, приключения, DVDRip] 2 VO",
+        "review_note": "MIT2fb0c592 test/title.js:110-111 asserts exact Griechische Feigen / The Fruit Is Ripe. Preserve both Latin aliases and slash, exclude director block.1976 is sole work year;2 VO is audio count, not canonical episode2, no season/range/date/partial. Movie confidence0.9. DVD unsupported; no supported resolution/source/codec/HDR or measured audio/edition/group.",
+        "independent_expected": {
+          "title": "Griechische Feigen / The Fruit Is Ripe",
+          "year": 1976,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:Греческая смоковница / Griechische Feigen / The Fruit Is Ripe (Зиги Ротемунд / Sigi Rothemund (as Siggi Götz)) [1976, Германия (ФРГ), эротика, комедия, приключения, DVDRip] 2 VO MediaType:movie Title:Sigi Rothemund (as Siggi Götz Year:1976 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:Griechische Feigen / The Fruit Is Ripe LiteralTitle: Year:1976 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-fruit-alias2",
+        "source": "beast-full-original",
+        "input": "Греческая смоковница / The fruit is ripe / Griechische Feigen (Siggi Götz) [1976, Германия, Эротическая комедия, DVDRip]",
+        "review_note": "MIT2fb0c592 test/title.js:115-116 asserts exact The fruit is ripe / Griechische Feigen, including casing/order. Sole1976 year; aliases/director parentheses contain no season, episode, range, date or partial evidence. Movie confidence0.9. DVDRip unsupported; all seven quality fields unknown, no guessed director release group.",
+        "independent_expected": {
+          "title": "The fruit is ripe / Griechische Feigen",
+          "year": 1976,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:Греческая смоковница / The fruit is ripe / Griechische Feigen (Siggi Götz) [1976, Германия, Эротическая комедия, DVDRip] MediaType:movie Title:Griechische Feigen (Siggi Götz Year:1976 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:The fruit is ripe / Griechische Feigen LiteralTitle: Year:1976 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-buster",
+        "source": "beast-full-original",
+        "input": "Бастер / Buster (Дэвид Грин / David Green) [1988, Великобритания, Комедия, мелодрама, драма, приключения, криминал, биография, DVDRip]",
+        "review_note": "MIT2fb0c592 test/title.js:120-121 asserts exact Buster. Original slash-separated localized title/director names are not file paths. Sole1988 year, no season/episode/range/date/partial; full movie parse confidence0.9. DVDRip unsupported; audio,edition,group,codec,HDR,resolution also unknown.",
+        "independent_expected": {
+          "title": "Buster",
+          "year": 1988,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:Бастер / Buster (Дэвид Грин / David Green) [1988, Великобритания, Комедия, мелодрама, драма, приключения, криминал, биография, DVDRip] MediaType:movie Title:David Green Year:1988 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:Buster LiteralTitle: Year:1988 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution: ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-of-mice",
+        "source": "beast-full-original",
+        "input": "О мышах и людях (Of Mice and Men) 1992 BDRip 1080p.mkv",
+        "review_note": "MIT2fb0c592 test/title.js:220-221 asserts exact Of Mice and Men. Latin parentheses supply title alias, not arbitrary removable metadata. Sole1992 work year, no season/episode/range/date/partial. Movie parse0.9; BDRip and1080p supported lexical facts; codec,HDR,audio,edition,group absent.",
+        "independent_expected": {
+          "title": "Of Mice and Men",
+          "year": 1992,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:О мышах и людях (Of Mice and Men) 1992 BDRip 1080p.mkv MediaType:movie Title:О мышах и людях (Of Mice and Men Year:1992 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:Of Mice and Men LiteralTitle: Year:1992 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:1080p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-fahrenheit-slash",
+        "source": "beast-full-original",
+        "input": "Fahrenheit 9/11 (2004) 1080p",
+        "review_note": "MIT2fb0c592 test/title.js:310-311 asserts exact Fahrenheit 9/11 and2004.9/11 is independently asserted literal title, not path or season/episode/range/calendar date. Sole explicit work year2004 supports movie confidence0.9. Only1080p quality; six other fields unknown. Preserve full title rather than basename11.",
+        "independent_expected": {
+          "title": "Fahrenheit 9/11",
+          "year": 2004,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:Fahrenheit 9/11 (2004) 1080p MediaType:movie Title:11 Year:2004 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:Fahrenheit 9/11 LiteralTitle: Year:2004 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:1080p ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-24-slash7",
+        "source": "beast-full-original",
+        "input": "24/7 2022 WEB-DL",
+        "review_note": "MIT2fb0c592 test/title.js:315-316 asserts exact24/7 and2022.24/7 is title text, not path or canonical numbering; no season, episode, range, calendar or partial marker. Sole work year2022 supports movie0.9. WEB-DL source only; no resolution,codec,HDR,measured audio,edition,group.",
+        "independent_expected": {
+          "title": "24/7",
+          "year": 2022,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "",
+            "source": "WEB-DL",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:24/7 2022 WEB-DL MediaType:movie Title:7 Year:2022 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source:WEB-DL SourceParserVersion:source.tokens.v2 Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:24/7 LiteralTitle: Year:2022 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution: ResolutionParserVersion: Source:WEB-DL SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-penguin-highway",
+        "source": "beast-full-original",
+        "input": "[Seed-Raws] 劇場版 ペンギン・ハイウェイ Penguin Highway The Movie (BD 1280x720 AVC AACx4 [5.1+2.0+2.0+2.0]).mp4",
+        "review_note": "MIT2fb0c592 test/title.js:60-61 asserts exact Penguin Highway The Movie. Original Japanese text is alternate title; Movie is literal title.1280x720 is resolution evidence, not alternate season1280/episode720; AACx4 and channel sums are audio metadata, not coverage. No work year or canonical number/date/partial; title-only0.6 review with no keys. BD/AVC support Bluray/H264; no measured audio,HDR,edition or suffix group.",
+        "independent_expected": {
+          "title": "Penguin Highway The Movie",
+          "year": 0,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.6,
+          "requires_review": true,
+          "reason": "title_only_without_year",
+          "quality": {
+            "resolution": "720p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:[Seed-Raws] 劇場版 ペンギン・ハイウェイ Penguin Highway The Movie (BD 1280x720 AVC AACx4 [5.1+2.0+2.0+2.0]).mp4 MediaType:movie Title:Seed-Raws] 劇場版 ペンギン・ハイウェイ Penguin Highway The Movie (BD 1280x720 AVC AACx4 [5 1+2.0+2.0+2.0 Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion:source.tokens.v2 Codec:H264 CodecParserVersion:codec.tokens.v2 HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.6 Reason:title_only_without_year RequiresReview:true ParserVersion:episode.v63}; want {Title:Penguin Highway The Movie LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0.6 Review:true Reason:title_only_without_year Quality:{Resolution:720p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}",
+          "reviewed_full_corpus_test.go:351: reviewed quality contract mismatch: got {Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:}; want {Resolution:720p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-mutafukaz",
+        "source": "beast-full-original",
+        "input": "[SweetSub][Mutafukaz / MFKZ][Movie][BDRip][1080P][AVC 8bit][简体内嵌]",
+        "review_note": "MIT2fb0c592 test/title.js:65-66 asserts exact Mutafukaz / MFKZ. Slash is a literal title alias separator inside brackets, not filesystem path. Movie does not supply work year. No season/episode/range/date/partial. Title-only0.6 review, no keys. BDRip/1080P/AVC support Bluray/1080p/H264;8bit/subtitle do not certify audio,HDR,edition; no suffix group.",
+        "independent_expected": {
+          "title": "Mutafukaz / MFKZ",
+          "year": 0,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.6,
+          "requires_review": true,
+          "reason": "title_only_without_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:[SweetSub][Mutafukaz / MFKZ][Movie][BDRip][1080P][AVC 8bit][简体内嵌] MediaType:movie Title:MFKZ][Movie Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec:H264 CodecParserVersion:codec.tokens.v2 HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.6 Reason:title_only_without_year RequiresReview:true ParserVersion:episode.v63}; want {Title:Mutafukaz / MFKZ LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0.6 Review:true Reason:title_only_without_year Quality:{Resolution:1080p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec:H264 CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ]
+      }
+    },
+    {
+      "source": "beast-full-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "beast-next-hostel",
+        "source": "beast-full-original",
+        "input": "[BluRay Rip 720p ITA AC3 - ENG AC3 SUB] Hostel[2005]-LIFE[ultimafrontiera]",
+        "review_note": "MIT2fb0c592 test/main.js:301-310 asserts exact Hostel,2005,720p,BRRip,ac3,languages english/italian and group LIFE. Preserve all original fields; bracketed2005 sole work year. No season/episode/range/date/partial; movie0.9. BluRay and720p lexical; original LIFE is exact group, trailing ultimafrontiera distribution tag not part of group. AC3/languages not measured audio; codec/HDR/audio/edition unknown.",
+        "independent_expected": {
+          "title": "Hostel",
+          "year": 2005,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "720p",
+            "source": "Bluray",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "LIFE"
+          }
+        },
+        "failure_evidence": [
+          "reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:[BluRay Rip 720p ITA AC3 - ENG AC3 SUB] Hostel[2005]-LIFE[ultimafrontiera] MediaType:movie Title:BluRay Rip 720p ITA AC3 - ENG AC3 SUB] Hostel Year:2005 Season:0 Episodes:[] UnitKeys:[movie] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:720p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:LIFE[ultimafrontiera]} Confidence:0.9 Reason:clean_movie_with_year RequiresReview:false ParserVersion:episode.v63}; want {Title:Hostel LiteralTitle: Year:2005 MediaType:movie Season:0 Episodes:[] Keys:[movie] Absolute:0 Anime:false Confidence:0.9 Review:false Reason:clean_movie_with_year Quality:{Resolution:720p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:LIFE} Punctuation:<nil>}",
+          "reviewed_full_corpus_test.go:351: reviewed quality contract mismatch: got {Resolution:720p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:LIFE[ultimafrontiera]}; want {Resolution:720p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:LIFE}"
+        ]
+      }
+    },
+    {
+      "source": "atama-metadata-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "atama-next-katanagatari-batch",
+        "source": "atama-metadata-original",
+        "input": "[Coalgirls]_Katanagatari_(1280x720_Blu-Ray_FLAC)",
+        "source_position": "Fixed test/data/metadata-title.json object key at line178",
+        "original_source_object_verbatim": "\"[Coalgirls]_Katanagatari_(1280x720_Blu-Ray_FLAC)\": {\n    \"type\": \"batch\",\n    \"resolution\": \"1280x720\",\n    \"audio\": \"flac\",\n    \"group\": \"Coalgirls\",\n    \"name\": \"Katanagatari\"\n  }",
+        "defect": "Original source type batch has no explicit batch word in raw input. Complete source contract requires zero-confidence collection refusal but production sees movie-shaped0.6 with malformed publisher/dimension title and drops group. Treat original source type as counterevidence, not proof raw-only parser can infer batch.",
+        "expected_contract_authored_before_probe": {
+          "id": "atama-next-katanagatari-batch",
+          "source": "atama-metadata-original",
+          "input": "[Coalgirls]_Katanagatari_(1280x720_Blu-Ray_FLAC)",
+          "review_note": "Fixed test/data/metadata-title.json object key at line178: exact title Katanagatari,type batch,resolution1280x720,audio flac,group Coalgirls. No episode,season or enumerated collection; original batch assertion rebuts single-movie authority. No output units, absolute hint or inferred default season, confidence0/review required multi-unit collection. Original source omitted; raw Blu-Ray separately supports Bluray only, dimension unsupported, FLAC not measured audio. Publisher is independent claim; no codec/HDR/edition evidence.",
+          "expected": {
+            "title": "Katanagatari",
+            "year": 0,
+            "media_type": "movie",
+            "season": 0,
+            "episodes": [],
+            "unit_keys": [],
+            "absolute_episode": 0,
+            "is_anime": false,
+            "confidence": 0,
+            "requires_review": true,
+            "reason": "multi_unit_collection",
+            "quality": {
+              "resolution": "",
+              "source": "Bluray",
+              "codec": "",
+              "hdr": "",
+              "audio": "",
+              "edition": "",
+              "group": "Coalgirls"
+            }
+          }
+        },
+        "strict_failure_messages": [
+          "    reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:[Coalgirls]_Katanagatari_(1280x720_Blu-Ray_FLAC) MediaType:movie Title:Coalgirls] Katanagatari (1280x720 Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion:source.tokens.v2 Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.6 Reason:title_only_without_year RequiresReview:true ParserVersion:episode.v63}; want {Title:Katanagatari LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0 Review:true Reason:multi_unit_collection Quality:{Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:Coalgirls} Punctuation:<nil>}",
+          "    reviewed_full_corpus_test.go:351: reviewed quality contract mismatch: got {Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:}; want {Resolution: ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:Coalgirls}"
+        ],
+        "classification": "source_contract_not_recoverable_from_raw_type_label"
+      }
+    },
+    {
+      "source": "atama-metadata-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "atama-next-log-horizon2-title",
+        "source": "atama-metadata-original",
+        "input": "[SallySubs] Log Horizon 2 [BD 1080p FLAC]",
+        "source_position": "Fixed test/data/metadata-title.json object key at line216",
+        "original_source_object_verbatim": "\"[SallySubs] Log Horizon 2 [BD 1080p FLAC]\": {\n    \"source\": \"bd\",\n    \"resolution\": \"1080p\",\n    \"audio\": \"flac\",\n    \"name\": \"Log Horizon 2\"\n  }",
+        "defect": "No scope/quality mismatch; exact original Log Horizon2 title becomes SallySubs] Log Horizon2 [BD. Confidence0.6 and review requirement remain correct.",
+        "expected_contract_authored_before_probe": {
+          "id": "atama-next-log-horizon2-title",
+          "source": "atama-metadata-original",
+          "input": "[SallySubs] Log Horizon 2 [BD 1080p FLAC]",
+          "review_note": "Fixed test/data/metadata-title.json object key at line216: exact title Log Horizon 2,source bd,resolution1080p,audio flac. No group,ep,season,type or year source fields; title digit2 not canonical season. Title-only movie-shaped fallback remains confidence0.6/review required,no units or absolute hint. BD/1080p lexical evidence only, FLAC not measured audio; source omits publisher so group unknown, no codec,HDR or edition. Exact original title independent, no rewriting.",
+          "expected": {
+            "title": "Log Horizon 2",
+            "year": 0,
+            "media_type": "movie",
+            "season": 0,
+            "episodes": [],
+            "unit_keys": [],
+            "absolute_episode": 0,
+            "is_anime": false,
+            "confidence": 0.6,
+            "requires_review": true,
+            "reason": "title_only_without_year",
+            "quality": {
+              "resolution": "1080p",
+              "source": "Bluray",
+              "codec": "",
+              "hdr": "",
+              "audio": "",
+              "edition": "",
+              "group": ""
+            }
+          }
+        },
+        "strict_failure_messages": [
+          "    reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:[SallySubs] Log Horizon 2 [BD 1080p FLAC] MediaType:movie Title:SallySubs] Log Horizon 2 [BD Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source:Bluray SourceParserVersion:source.tokens.v2 Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Confidence:0.6 Reason:title_only_without_year RequiresReview:true ParserVersion:episode.v63}; want {Title:Log Horizon 2 LiteralTitle: Year:0 MediaType:movie Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0.6 Review:true Reason:title_only_without_year Quality:{Resolution:1080p ResolutionParserVersion: Source:Bluray SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:} Punctuation:<nil>}"
+        ],
+        "classification": "production_vs_hand_contract_mismatch"
+      }
+    },
+    {
+      "source": "atama-metadata-original",
+      "status": "frozen_contract_not_admitted",
+      "record": {
+        "id": "atama-next-jojo-web-collection",
+        "source": "atama-metadata-original",
+        "input": "[inid4c] JoJo's Bizarre Adventure - Stone Ocean WEB 01-12 (1080p)",
+        "source_position": "Fixed test/data/metadata-title.json object key at line301",
+        "original_source_object_verbatim": "\"[inid4c] JoJo's Bizarre Adventure - Stone Ocean WEB 01-12 (1080p)\": {\n    \"name\": \"JoJo's Bizarre Adventure - Stone Ocean\",\n    \"group\": \"inid4c\",\n    \"resolution\": \"1080p\",\n    \"type\": \"collection\",\n    \"collection\": [[1.0],[12.0]],\n    \"source\": \"web\"\n  }",
+        "defect": "Publisher interval title includes source word WEB; exact independent title excludes it. All coverage and seven quality fields otherwise agree; unspecified web is not promoted to WEB-DL or WEBRip.",
+        "expected_contract_authored_before_probe": {
+          "id": "atama-next-jojo-web-collection",
+          "source": "atama-metadata-original",
+          "input": "[inid4c] JoJo's Bizarre Adventure - Stone Ocean WEB 01-12 (1080p)",
+          "review_note": "Fixed test/data/metadata-title.json object key at line301: exact title JoJo's Bizarre Adventure - Stone Ocean,group inid4c,resolution1080p,type collection,collection[[1.0],[12.0]],source web. Original decimal endpoints remain unchanged, no expansion or default season. WEB is source metadata not title; unspecific web cannot choose WEB-DL versus WEBRip. Publisher-bound interval unresolved,confidence0/review required,no canonical or absolute coverage.1080p/publisher supported; no codec,HDR,measured audio or edition facts.",
+          "expected": {
+            "title": "JoJo's Bizarre Adventure - Stone Ocean",
+            "year": 0,
+            "media_type": "tv",
+            "season": 0,
+            "episodes": [],
+            "unit_keys": [],
+            "absolute_episode": 0,
+            "is_anime": false,
+            "confidence": 0,
+            "requires_review": true,
+            "reason": "episode_coverage_unresolved",
+            "quality": {
+              "resolution": "1080p",
+              "source": "",
+              "codec": "",
+              "hdr": "",
+              "audio": "",
+              "edition": "",
+              "group": "inid4c"
+            }
+          }
+        },
+        "strict_failure_messages": [
+          "    reviewed_full_corpus_test.go:341: reviewed identity/coverage contract mismatch: got {RawName:[inid4c] JoJo's Bizarre Adventure - Stone Ocean WEB 01-12 (1080p) MediaType:tv Title:JoJo's Bizarre Adventure - Stone Ocean WEB Year:0 Season:0 Episodes:[] UnitKeys:[] IsAnime:false AbsoluteEpisode:0 Quality:{Resolution:1080p ResolutionParserVersion:resolution.tokens.v1 Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:inid4c} Confidence:0 Reason:episode_coverage_unresolved RequiresReview:true ParserVersion:episode.v63}; want {Title:JoJo's Bizarre Adventure - Stone Ocean LiteralTitle: Year:0 MediaType:tv Season:0 Episodes:[] Keys:[] Absolute:0 Anime:false Confidence:0 Review:true Reason:episode_coverage_unresolved Quality:{Resolution:1080p ResolutionParserVersion: Source: SourceParserVersion: Codec: CodecParserVersion: HDR: HDRParserVersion: Audio: Edition: Group:inid4c} Punctuation:<nil>}"
+        ],
+        "classification": "production_vs_hand_contract_mismatch"
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-matrix-1999",
+        "source": "cehbz-parse-original",
+        "input": "The.Matrix.1999.1080p.BluRay.x264-SPARKS",
+        "review_note": "Original The Matrix/1999 and 1080p/BluRay/H264/SPARKS assertions are exact. One movie only; filename quality is lexical, no measured HDR/audio/edition, ownership or acquisition authorization.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Matrix",
+          "year": 1999,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "The Matrix",
+            "Year": 1999
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie with year and quality",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 14,
+                "end_line": 26,
+                "byte_start": 173,
+                "byte_end": 581
+              },
+              "input": {
+                "line": 16,
+                "end_line": 16,
+                "byte_start": 226,
+                "byte_end": 268
+              },
+              "fields": {
+                "Codec": {
+                  "line": 22,
+                  "end_line": 22,
+                  "byte_start": 426,
+                  "byte_end": 432
+                },
+                "Confidence": {
+                  "line": 24,
+                  "end_line": 24,
+                  "byte_start": 480,
+                  "byte_end": 570
+                },
+                "ReleaseGroup": {
+                  "line": 23,
+                  "end_line": 23,
+                  "byte_start": 452,
+                  "byte_end": 460
+                },
+                "Resolution": {
+                  "line": 20,
+                  "end_line": 20,
+                  "byte_start": 371,
+                  "byte_end": 378
+                },
+                "Source": {
+                  "line": 21,
+                  "end_line": 21,
+                  "byte_start": 398,
+                  "byte_end": 406
+                },
+                "Title": {
+                  "line": 18,
+                  "end_line": 18,
+                  "byte_start": 315,
+                  "byte_end": 327
+                },
+                "Year": {
+                  "line": 19,
+                  "end_line": 19,
+                  "byte_start": 347,
+                  "byte_end": 351
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Matrix\"",
+                "Year": "1999"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            },
+            {
+              "case_name": "title not containing year, release year immediately after title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 232,
+                "end_line": 244,
+                "byte_start": 7338,
+                "byte_end": 7782
+              },
+              "input": {
+                "line": 234,
+                "end_line": 234,
+                "byte_start": 7427,
+                "byte_end": 7469
+              },
+              "fields": {
+                "Codec": {
+                  "line": 240,
+                  "end_line": 240,
+                  "byte_start": 7627,
+                  "byte_end": 7633
+                },
+                "Confidence": {
+                  "line": 242,
+                  "end_line": 242,
+                  "byte_start": 7681,
+                  "byte_end": 7771
+                },
+                "ReleaseGroup": {
+                  "line": 241,
+                  "end_line": 241,
+                  "byte_start": 7653,
+                  "byte_end": 7661
+                },
+                "Resolution": {
+                  "line": 238,
+                  "end_line": 238,
+                  "byte_start": 7572,
+                  "byte_end": 7579
+                },
+                "Source": {
+                  "line": 239,
+                  "end_line": 239,
+                  "byte_start": 7599,
+                  "byte_end": 7607
+                },
+                "Title": {
+                  "line": 236,
+                  "end_line": 236,
+                  "byte_start": 7516,
+                  "byte_end": 7528
+                },
+                "Year": {
+                  "line": 237,
+                  "end_line": 237,
+                  "byte_start": 7548,
+                  "byte_end": 7552
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Matrix\"",
+                "Year": "1999"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-fellowship-extended",
+        "source": "cehbz-parse-original",
+        "input": "The.Lord.of.the.Rings.The.Fellowship.of.the.Ring.2001.EXTENDED.1080p.BluRay.x265-RARBG",
+        "review_note": "Preserve full original Fellowship title, year 2001, 1080p/BluRay/H265/RARBG. EXTENDED is an unmeasured edition declaration retained in source; RARBG is the explicit group. Duplicate assertion at input line 398 is the same input and counts once.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Lord of the Rings The Fellowship of the Ring",
+          "year": 2001,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "HEVC",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "RARBG"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H265",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "Edition": "Extended",
+            "ReleaseGroup": "RARBG",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "The Lord of the Rings The Fellowship of the Ring",
+            "Year": 2001
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie with extended edition",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 27,
+                "end_line": 40,
+                "byte_start": 585,
+                "byte_end": 1125
+              },
+              "input": {
+                "line": 29,
+                "end_line": 29,
+                "byte_start": 638,
+                "byte_end": 726
+              },
+              "fields": {
+                "Codec": {
+                  "line": 36,
+                  "end_line": 36,
+                  "byte_start": 952,
+                  "byte_end": 958
+                },
+                "Confidence": {
+                  "line": 38,
+                  "end_line": 38,
+                  "byte_start": 1005,
+                  "byte_end": 1114
+                },
+                "Edition": {
+                  "line": 33,
+                  "end_line": 33,
+                  "byte_start": 867,
+                  "byte_end": 877
+                },
+                "ReleaseGroup": {
+                  "line": 37,
+                  "end_line": 37,
+                  "byte_start": 978,
+                  "byte_end": 985
+                },
+                "Resolution": {
+                  "line": 34,
+                  "end_line": 34,
+                  "byte_start": 897,
+                  "byte_end": 904
+                },
+                "Source": {
+                  "line": 35,
+                  "end_line": 35,
+                  "byte_start": 924,
+                  "byte_end": 932
+                },
+                "Title": {
+                  "line": 31,
+                  "end_line": 31,
+                  "byte_start": 773,
+                  "byte_end": 823
+                },
+                "Year": {
+                  "line": 32,
+                  "end_line": 32,
+                  "byte_start": 843,
+                  "byte_end": 847
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H265\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "Edition": "\"Extended\"",
+                "ReleaseGroup": "\"RARBG\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Lord of the Rings The Fellowship of the Ring\"",
+                "Year": "2001"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            },
+            {
+              "case_name": "movie with 'Extended' in title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 396,
+                "end_line": 409,
+                "byte_start": 12537,
+                "byte_end": 13080
+              },
+              "input": {
+                "line": 398,
+                "end_line": 398,
+                "byte_start": 12593,
+                "byte_end": 12681
+              },
+              "fields": {
+                "Codec": {
+                  "line": 405,
+                  "end_line": 405,
+                  "byte_start": 12907,
+                  "byte_end": 12913
+                },
+                "Confidence": {
+                  "line": 407,
+                  "end_line": 407,
+                  "byte_start": 12960,
+                  "byte_end": 13069
+                },
+                "Edition": {
+                  "line": 402,
+                  "end_line": 402,
+                  "byte_start": 12822,
+                  "byte_end": 12832
+                },
+                "ReleaseGroup": {
+                  "line": 406,
+                  "end_line": 406,
+                  "byte_start": 12933,
+                  "byte_end": 12940
+                },
+                "Resolution": {
+                  "line": 403,
+                  "end_line": 403,
+                  "byte_start": 12852,
+                  "byte_end": 12859
+                },
+                "Source": {
+                  "line": 404,
+                  "end_line": 404,
+                  "byte_start": 12879,
+                  "byte_end": 12887
+                },
+                "Title": {
+                  "line": 400,
+                  "end_line": 400,
+                  "byte_start": 12728,
+                  "byte_end": 12778
+                },
+                "Year": {
+                  "line": 401,
+                  "end_line": 401,
+                  "byte_start": 12798,
+                  "byte_end": 12802
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H265\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "Edition": "\"Extended\"",
+                "ReleaseGroup": "\"RARBG\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Lord of the Rings The Fellowship of the Ring\"",
+                "Year": "2001"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-thrones-season-eight",
+        "source": "cehbz-parse-original",
+        "input": "Game.of.Thrones.S08.Complete.1080p.BluRay.x264-ROVERS[rartv]",
+        "review_note": "Original Game of Thrones, Season 8 and IsComplete=true remain literal counterevidence. A season pack has no supplied episode set and cannot authorize any unit or default movie; retain original title while withholding season from executable coverage. 1080p/BluRay/H264 and ROVERS are lexical; rartv is a known relay.",
+        "withheld_source_fields": [
+          "season"
+        ],
+        "expected": {
+          "title": "Game of Thrones",
+          "year": 0,
+          "media_type": "tv",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0,
+          "requires_review": true,
+          "reason": "episode_coverage_unresolved",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "ROVERS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "IsComplete": true,
+            "ReleaseGroup": "ROVERS",
+            "Resolution": "1080p",
+            "Season": 8,
+            "Source": "BluRay",
+            "Title": "Game of Thrones"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "complete_season_pack",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 41,
+                "end_line": 54,
+                "byte_start": 1129,
+                "byte_end": 1595
+              },
+              "input": {
+                "line": 43,
+                "end_line": 43,
+                "byte_start": 1175,
+                "byte_end": 1237
+              },
+              "fields": {
+                "Codec": {
+                  "line": 50,
+                  "end_line": 50,
+                  "byte_start": 1421,
+                  "byte_end": 1427
+                },
+                "Confidence": {
+                  "line": 52,
+                  "end_line": 52,
+                  "byte_start": 1475,
+                  "byte_end": 1584
+                },
+                "IsComplete": {
+                  "line": 47,
+                  "end_line": 47,
+                  "byte_start": 1342,
+                  "byte_end": 1346
+                },
+                "ReleaseGroup": {
+                  "line": 51,
+                  "end_line": 51,
+                  "byte_start": 1447,
+                  "byte_end": 1455
+                },
+                "Resolution": {
+                  "line": 48,
+                  "end_line": 48,
+                  "byte_start": 1366,
+                  "byte_end": 1373
+                },
+                "Season": {
+                  "line": 46,
+                  "end_line": 46,
+                  "byte_start": 1321,
+                  "byte_end": 1322
+                },
+                "Source": {
+                  "line": 49,
+                  "end_line": 49,
+                  "byte_start": 1393,
+                  "byte_end": 1401
+                },
+                "Title": {
+                  "line": 45,
+                  "end_line": 45,
+                  "byte_start": 1284,
+                  "byte_end": 1301
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "IsComplete": "true",
+                "ReleaseGroup": "\"ROVERS\"",
+                "Resolution": "\"1080p\"",
+                "Season": "8",
+                "Source": "\"BluRay\"",
+                "Title": "\"Game of Thrones\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-inception-proper",
+        "source": "cehbz-parse-original",
+        "input": "Inception.2010.1080p.BluRay.x264.PROPER-SPARKS",
+        "review_note": "Exact original Inception/2010 identity and 1080p/BluRay/H264/SPARKS preserved. IsProper remains raw release metadata and cannot become a measured edition or upgrade claim. One movie syntax only.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Inception",
+          "year": 2010,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "IsProper": true,
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "Inception",
+            "Year": 2010
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie with proper",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 55,
+                "end_line": 68,
+                "byte_start": 1599,
+                "byte_end": 2045
+              },
+              "input": {
+                "line": 57,
+                "end_line": 57,
+                "byte_start": 1642,
+                "byte_end": 1690
+              },
+              "fields": {
+                "Codec": {
+                  "line": 63,
+                  "end_line": 63,
+                  "byte_start": 1847,
+                  "byte_end": 1853
+                },
+                "Confidence": {
+                  "line": 66,
+                  "end_line": 66,
+                  "byte_start": 1925,
+                  "byte_end": 2034
+                },
+                "IsProper": {
+                  "line": 64,
+                  "end_line": 64,
+                  "byte_start": 1873,
+                  "byte_end": 1877
+                },
+                "ReleaseGroup": {
+                  "line": 65,
+                  "end_line": 65,
+                  "byte_start": 1897,
+                  "byte_end": 1905
+                },
+                "Resolution": {
+                  "line": 61,
+                  "end_line": 61,
+                  "byte_start": 1792,
+                  "byte_end": 1799
+                },
+                "Source": {
+                  "line": 62,
+                  "end_line": 62,
+                  "byte_start": 1819,
+                  "byte_end": 1827
+                },
+                "Title": {
+                  "line": 59,
+                  "end_line": 59,
+                  "byte_start": 1737,
+                  "byte_end": 1748
+                },
+                "Year": {
+                  "line": 60,
+                  "end_line": 60,
+                  "byte_start": 1768,
+                  "byte_end": 1772
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "IsProper": "true",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"Inception\"",
+                "Year": "2010"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-blade-runner-2049",
+        "source": "cehbz-parse-original",
+        "input": "Blade.Runner.2049.2017.2160p.BluRay.HEVC.TrueHD.7.1.Atmos-COASTER",
+        "review_note": "Original full title Blade Runner 2049 and explicit Year 2017 must not be rewritten. The numeric title is independent source evidence; any parser disagreement remains a defect. 2160p/BluRay/HEVC/COASTER lexical only; TrueHD 7.1 Atmos does not establish measured audio and case name 'hdr' supplies no HDR label or token.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Blade Runner 2049",
+          "year": 2017,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "2160p",
+            "source": "Bluray",
+            "codec": "HEVC",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "COASTER"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Audio": "TRUEHD 7.1 ATMOS",
+            "Codec": "H265",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "ReleaseGroup": "COASTER",
+            "Resolution": "2160p",
+            "Source": "BluRay",
+            "Title": "Blade Runner 2049",
+            "Year": 2017
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "4k hdr content",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 69,
+                "end_line": 82,
+                "byte_start": 2049,
+                "byte_end": 2534
+              },
+              "input": {
+                "line": 71,
+                "end_line": 71,
+                "byte_start": 2089,
+                "byte_end": 2156
+              },
+              "fields": {
+                "Audio": {
+                  "line": 78,
+                  "end_line": 78,
+                  "byte_start": 2347,
+                  "byte_end": 2365
+                },
+                "Codec": {
+                  "line": 77,
+                  "end_line": 77,
+                  "byte_start": 2321,
+                  "byte_end": 2327
+                },
+                "Confidence": {
+                  "line": 80,
+                  "end_line": 80,
+                  "byte_start": 2414,
+                  "byte_end": 2523
+                },
+                "ReleaseGroup": {
+                  "line": 79,
+                  "end_line": 79,
+                  "byte_start": 2385,
+                  "byte_end": 2394
+                },
+                "Resolution": {
+                  "line": 75,
+                  "end_line": 75,
+                  "byte_start": 2266,
+                  "byte_end": 2273
+                },
+                "Source": {
+                  "line": 76,
+                  "end_line": 76,
+                  "byte_start": 2293,
+                  "byte_end": 2301
+                },
+                "Title": {
+                  "line": 73,
+                  "end_line": 73,
+                  "byte_start": 2203,
+                  "byte_end": 2222
+                },
+                "Year": {
+                  "line": 74,
+                  "end_line": 74,
+                  "byte_start": 2242,
+                  "byte_end": 2246
+                }
+              },
+              "raw_fields": {
+                "Audio": "\"TRUEHD 7.1 ATMOS\"",
+                "Codec": "\"H265\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"COASTER\"",
+                "Resolution": "\"2160p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"Blade Runner 2049\"",
+                "Year": "2017"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-mandalorian-s02e08",
+        "source": "cehbz-parse-original",
+        "input": "The.Mandalorian.S02E08.1080p.WEBRip.x265-RARBG.mkv",
+        "review_note": "Original title and Season 2/Episode 8 match the single explicit S02E08 token, so retain exactly that canonical syntax key without default year/mapping. 1080p/WEBRip/H265/RARBG and mkv remain lexical/container evidence. No measured audio or acquisition authority.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Mandalorian",
+          "year": 0,
+          "media_type": "tv",
+          "season": 2,
+          "episodes": [
+            8
+          ],
+          "unit_keys": [
+            "S02E08"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.95,
+          "requires_review": false,
+          "reason": "standard_season_episode",
+          "quality": {
+            "resolution": "1080p",
+            "source": "WEBRip",
+            "codec": "HEVC",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "RARBG"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H265",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight + MinorFieldWeight",
+            "Container": "mkv",
+            "Episode": 8,
+            "ReleaseGroup": "RARBG",
+            "Resolution": "1080p",
+            "Season": 2,
+            "Source": "WEBRip",
+            "Title": "The Mandalorian"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "web release with container",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 83,
+                "end_line": 97,
+                "byte_start": 2538,
+                "byte_end": 3040
+              },
+              "input": {
+                "line": 85,
+                "end_line": 85,
+                "byte_start": 2590,
+                "byte_end": 2642
+              },
+              "fields": {
+                "Codec": {
+                  "line": 92,
+                  "end_line": 92,
+                  "byte_start": 2823,
+                  "byte_end": 2829
+                },
+                "Confidence": {
+                  "line": 95,
+                  "end_line": 95,
+                  "byte_start": 2901,
+                  "byte_end": 3029
+                },
+                "Container": {
+                  "line": 93,
+                  "end_line": 93,
+                  "byte_start": 2849,
+                  "byte_end": 2854
+                },
+                "Episode": {
+                  "line": 89,
+                  "end_line": 89,
+                  "byte_start": 2747,
+                  "byte_end": 2748
+                },
+                "ReleaseGroup": {
+                  "line": 94,
+                  "end_line": 94,
+                  "byte_start": 2874,
+                  "byte_end": 2881
+                },
+                "Resolution": {
+                  "line": 90,
+                  "end_line": 90,
+                  "byte_start": 2768,
+                  "byte_end": 2775
+                },
+                "Season": {
+                  "line": 88,
+                  "end_line": 88,
+                  "byte_start": 2726,
+                  "byte_end": 2727
+                },
+                "Source": {
+                  "line": 91,
+                  "end_line": 91,
+                  "byte_start": 2795,
+                  "byte_end": 2803
+                },
+                "Title": {
+                  "line": 87,
+                  "end_line": 87,
+                  "byte_start": 2689,
+                  "byte_end": 2706
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H265\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight + MinorFieldWeight",
+                "Container": "\"mkv\"",
+                "Episode": "8",
+                "ReleaseGroup": "\"RARBG\"",
+                "Resolution": "\"1080p\"",
+                "Season": "2",
+                "Source": "\"WEBRip\"",
+                "Title": "\"The Mandalorian\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-aliens-directors-cut",
+        "source": "cehbz-parse-original",
+        "input": "Aliens.1986.Directors.Cut.1080p.BluRay.x264-SPARKS",
+        "review_note": "Original Aliens/1986 and 1080p/BluRay/H264/SPARKS unchanged. Directors Cut is retained as the original lexical Edition string and does not become a measured profile fact or alter the title.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Aliens",
+          "year": 1986,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "Edition": "Directors Cut",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "Aliens",
+            "Year": 1986
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "directors cut",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 98,
+                "end_line": 111,
+                "byte_start": 3044,
+                "byte_end": 3498
+              },
+              "input": {
+                "line": 100,
+                "end_line": 100,
+                "byte_start": 3083,
+                "byte_end": 3135
+              },
+              "fields": {
+                "Codec": {
+                  "line": 107,
+                  "end_line": 107,
+                  "byte_start": 3324,
+                  "byte_end": 3330
+                },
+                "Confidence": {
+                  "line": 109,
+                  "end_line": 109,
+                  "byte_start": 3378,
+                  "byte_end": 3487
+                },
+                "Edition": {
+                  "line": 104,
+                  "end_line": 104,
+                  "byte_start": 3234,
+                  "byte_end": 3249
+                },
+                "ReleaseGroup": {
+                  "line": 108,
+                  "end_line": 108,
+                  "byte_start": 3350,
+                  "byte_end": 3358
+                },
+                "Resolution": {
+                  "line": 105,
+                  "end_line": 105,
+                  "byte_start": 3269,
+                  "byte_end": 3276
+                },
+                "Source": {
+                  "line": 106,
+                  "end_line": 106,
+                  "byte_start": 3296,
+                  "byte_end": 3304
+                },
+                "Title": {
+                  "line": 102,
+                  "end_line": 102,
+                  "byte_start": 3182,
+                  "byte_end": 3190
+                },
+                "Year": {
+                  "line": 103,
+                  "end_line": 103,
+                  "byte_start": 3210,
+                  "byte_end": 3214
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "Edition": "\"Directors Cut\"",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"Aliens\"",
+                "Year": "1986"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-parasite-korean",
+        "source": "cehbz-parse-original",
+        "input": "Parasite.2019.KOREAN.1080p.BluRay.x264.DTS-FGT",
+        "review_note": "Retain original Parasite/2019 and 1080p/BluRay/H264/FGT. Original Language Korean and Audio DTS are source lexical claims only; they imply no measured audio, edition or alternate unit.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Parasite",
+          "year": 2019,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "FGT"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Audio": "DTS",
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight + MinorFieldWeight",
+            "Language": "Korean",
+            "ReleaseGroup": "FGT",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "Parasite",
+            "Year": 2019
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "foreign movie with subtitles",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 112,
+                "end_line": 126,
+                "byte_start": 3502,
+                "byte_end": 4003
+              },
+              "input": {
+                "line": 114,
+                "end_line": 114,
+                "byte_start": 3556,
+                "byte_end": 3604
+              },
+              "fields": {
+                "Audio": {
+                  "line": 122,
+                  "end_line": 122,
+                  "byte_start": 3814,
+                  "byte_end": 3819
+                },
+                "Codec": {
+                  "line": 121,
+                  "end_line": 121,
+                  "byte_start": 3788,
+                  "byte_end": 3794
+                },
+                "Confidence": {
+                  "line": 124,
+                  "end_line": 124,
+                  "byte_start": 3864,
+                  "byte_end": 3992
+                },
+                "Language": {
+                  "line": 118,
+                  "end_line": 118,
+                  "byte_start": 3705,
+                  "byte_end": 3713
+                },
+                "ReleaseGroup": {
+                  "line": 123,
+                  "end_line": 123,
+                  "byte_start": 3839,
+                  "byte_end": 3844
+                },
+                "Resolution": {
+                  "line": 119,
+                  "end_line": 119,
+                  "byte_start": 3733,
+                  "byte_end": 3740
+                },
+                "Source": {
+                  "line": 120,
+                  "end_line": 120,
+                  "byte_start": 3760,
+                  "byte_end": 3768
+                },
+                "Title": {
+                  "line": 116,
+                  "end_line": 116,
+                  "byte_start": 3651,
+                  "byte_end": 3661
+                },
+                "Year": {
+                  "line": 117,
+                  "end_line": 117,
+                  "byte_start": 3681,
+                  "byte_end": 3685
+                }
+              },
+              "raw_fields": {
+                "Audio": "\"DTS\"",
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight + MinorFieldWeight",
+                "Language": "\"Korean\"",
+                "ReleaseGroup": "\"FGT\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"Parasite\"",
+                "Year": "2019"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-house-alt-pilot",
+        "source": "cehbz-parse-original",
+        "input": "House.1x01.Pilot.720p.HDTV.x264",
+        "review_note": "Exact original House/Season 1/Episode 1 match 1x01. Pilot is original Unparsed episode subtitle, never part of work title or another unit. Original 720p/HDTV/H264 retained; absent group/year remain unknown and cannot imply a mapping.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "House",
+          "year": 0,
+          "media_type": "tv",
+          "season": 1,
+          "episodes": [
+            1
+          ],
+          "unit_keys": [
+            "S01E01"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.95,
+          "requires_review": false,
+          "reason": "alt_season_episode",
+          "quality": {
+            "resolution": "720p",
+            "source": "HDTV",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + MinorFieldWeight + MinorFieldWeight",
+            "Episode": 1,
+            "Resolution": "720p",
+            "Season": 1,
+            "Source": "HDTV",
+            "Title": "House",
+            "Unparsed": "Pilot"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "alternative episode format",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 127,
+                "end_line": 140,
+                "byte_start": 4007,
+                "byte_end": 4396
+              },
+              "input": {
+                "line": 129,
+                "end_line": 129,
+                "byte_start": 4059,
+                "byte_end": 4092
+              },
+              "fields": {
+                "Codec": {
+                  "line": 136,
+                  "end_line": 136,
+                  "byte_start": 4248,
+                  "byte_end": 4254
+                },
+                "Confidence": {
+                  "line": 138,
+                  "end_line": 138,
+                  "byte_start": 4297,
+                  "byte_end": 4385
+                },
+                "Episode": {
+                  "line": 133,
+                  "end_line": 133,
+                  "byte_start": 4181,
+                  "byte_end": 4182
+                },
+                "Resolution": {
+                  "line": 134,
+                  "end_line": 134,
+                  "byte_start": 4200,
+                  "byte_end": 4206
+                },
+                "Season": {
+                  "line": 132,
+                  "end_line": 132,
+                  "byte_start": 4162,
+                  "byte_end": 4163
+                },
+                "Source": {
+                  "line": 135,
+                  "end_line": 135,
+                  "byte_start": 4224,
+                  "byte_end": 4230
+                },
+                "Title": {
+                  "line": 131,
+                  "end_line": 131,
+                  "byte_start": 4137,
+                  "byte_end": 4144
+                },
+                "Unparsed": {
+                  "line": 137,
+                  "end_line": 137,
+                  "byte_start": 4272,
+                  "byte_end": 4279
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + MinorFieldWeight + MinorFieldWeight",
+                "Episode": "1",
+                "Resolution": "\"720p\"",
+                "Season": "1",
+                "Source": "\"HDTV\"",
+                "Title": "\"House\"",
+                "Unparsed": "\"Pilot\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-endgame-cam",
+        "source": "cehbz-parse-original",
+        "input": "Avengers.Endgame.2019.CAM.x264-ETRG",
+        "review_note": "Original Avengers Endgame/2019/H264/ETRG unchanged. CAM is explicit unsupported Source counterevidence and stays unknown, not BluRay/Web; resolution absent stays unknown. Source uncertainty does not change the single movie syntax identity.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Avengers Endgame",
+          "year": 2019,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "",
+            "source": "",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "ETRG"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "ETRG",
+            "Source": "CAM",
+            "Title": "Avengers Endgame",
+            "Year": 2019
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "cam release",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 141,
+                "end_line": 152,
+                "byte_start": 4400,
+                "byte_end": 4742
+              },
+              "input": {
+                "line": 143,
+                "end_line": 143,
+                "byte_start": 4437,
+                "byte_end": 4474
+              },
+              "fields": {
+                "Codec": {
+                  "line": 148,
+                  "end_line": 148,
+                  "byte_start": 4608,
+                  "byte_end": 4614
+                },
+                "Confidence": {
+                  "line": 150,
+                  "end_line": 150,
+                  "byte_start": 4660,
+                  "byte_end": 4731
+                },
+                "ReleaseGroup": {
+                  "line": 149,
+                  "end_line": 149,
+                  "byte_start": 4634,
+                  "byte_end": 4640
+                },
+                "Source": {
+                  "line": 147,
+                  "end_line": 147,
+                  "byte_start": 4583,
+                  "byte_end": 4588
+                },
+                "Title": {
+                  "line": 145,
+                  "end_line": 145,
+                  "byte_start": 4521,
+                  "byte_end": 4539
+                },
+                "Year": {
+                  "line": 146,
+                  "end_line": 146,
+                  "byte_start": 4559,
+                  "byte_end": 4563
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"ETRG\"",
+                "Source": "\"CAM\"",
+                "Title": "\"Avengers Endgame\"",
+                "Year": "2019"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-witcher-repack-web",
+        "source": "cehbz-parse-original",
+        "input": "The.Witcher.S01E01.REPACK.1080p.WEB.H264-METCON",
+        "review_note": "Original The Witcher/Season 1/Episode 1 and 1080p/H264/METCON preserved. Original Source WEBRip is retained, but input only says WEB so subtype remains unknown rather than inventing WEBRip or WEB-DL. REPACK is raw IsRepack evidence, no measured edition. Only S01E01 syntax.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Witcher",
+          "year": 0,
+          "media_type": "tv",
+          "season": 1,
+          "episodes": [
+            1
+          ],
+          "unit_keys": [
+            "S01E01"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.95,
+          "requires_review": false,
+          "reason": "standard_season_episode",
+          "quality": {
+            "resolution": "1080p",
+            "source": "",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "METCON"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight + MinorFieldWeight",
+            "Episode": 1,
+            "IsRepack": true,
+            "ReleaseGroup": "METCON",
+            "Resolution": "1080p",
+            "Season": 1,
+            "Source": "WEBRip",
+            "Title": "The Witcher"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "repack release",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 153,
+                "end_line": 167,
+                "byte_start": 4746,
+                "byte_end": 5229
+              },
+              "input": {
+                "line": 155,
+                "end_line": 155,
+                "byte_start": 4786,
+                "byte_end": 4835
+              },
+              "fields": {
+                "Codec": {
+                  "line": 163,
+                  "end_line": 163,
+                  "byte_start": 5036,
+                  "byte_end": 5042
+                },
+                "Confidence": {
+                  "line": 165,
+                  "end_line": 165,
+                  "byte_start": 5090,
+                  "byte_end": 5218
+                },
+                "Episode": {
+                  "line": 159,
+                  "end_line": 159,
+                  "byte_start": 4936,
+                  "byte_end": 4937
+                },
+                "IsRepack": {
+                  "line": 160,
+                  "end_line": 160,
+                  "byte_start": 4957,
+                  "byte_end": 4961
+                },
+                "ReleaseGroup": {
+                  "line": 164,
+                  "end_line": 164,
+                  "byte_start": 5062,
+                  "byte_end": 5070
+                },
+                "Resolution": {
+                  "line": 161,
+                  "end_line": 161,
+                  "byte_start": 4981,
+                  "byte_end": 4988
+                },
+                "Season": {
+                  "line": 158,
+                  "end_line": 158,
+                  "byte_start": 4915,
+                  "byte_end": 4916
+                },
+                "Source": {
+                  "line": 162,
+                  "end_line": 162,
+                  "byte_start": 5008,
+                  "byte_end": 5016
+                },
+                "Title": {
+                  "line": 157,
+                  "end_line": 157,
+                  "byte_start": 4882,
+                  "byte_end": 4895
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight + MinorFieldWeight",
+                "Episode": "1",
+                "IsRepack": "true",
+                "ReleaseGroup": "\"METCON\"",
+                "Resolution": "\"1080p\"",
+                "Season": "1",
+                "Source": "\"WEBRip\"",
+                "Title": "\"The Witcher\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-odyssey-1968",
+        "source": "cehbz-parse-original",
+        "input": "2001.A.Space.Odyssey.1968.1080p.BluRay.x264-SPARKS",
+        "review_note": "Original 2001 A Space Odyssey and Year 1968 remain exact, including leading numeric title. Repeated assertion input line 247 counts once. Any ambiguity refusal is recorded against this unchanged contract. Lexical 1080p/BluRay/H264/SPARKS only.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "2001 A Space Odyssey",
+          "year": 1968,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "2001 A Space Odyssey",
+            "Year": 1968
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie with year in title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 168,
+                "end_line": 180,
+                "byte_start": 5233,
+                "byte_end": 5658
+              },
+              "input": {
+                "line": 170,
+                "end_line": 170,
+                "byte_start": 5283,
+                "byte_end": 5335
+              },
+              "fields": {
+                "Codec": {
+                  "line": 176,
+                  "end_line": 176,
+                  "byte_start": 5503,
+                  "byte_end": 5509
+                },
+                "Confidence": {
+                  "line": 178,
+                  "end_line": 178,
+                  "byte_start": 5557,
+                  "byte_end": 5647
+                },
+                "ReleaseGroup": {
+                  "line": 177,
+                  "end_line": 177,
+                  "byte_start": 5529,
+                  "byte_end": 5537
+                },
+                "Resolution": {
+                  "line": 174,
+                  "end_line": 174,
+                  "byte_start": 5448,
+                  "byte_end": 5455
+                },
+                "Source": {
+                  "line": 175,
+                  "end_line": 175,
+                  "byte_start": 5475,
+                  "byte_end": 5483
+                },
+                "Title": {
+                  "line": 172,
+                  "end_line": 172,
+                  "byte_start": 5382,
+                  "byte_end": 5404
+                },
+                "Year": {
+                  "line": 173,
+                  "end_line": 173,
+                  "byte_start": 5424,
+                  "byte_end": 5428
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"2001 A Space Odyssey\"",
+                "Year": "1968"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            },
+            {
+              "case_name": "title containing but not ending in year, release year immediately after title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 245,
+                "end_line": 257,
+                "byte_start": 7786,
+                "byte_end": 8264
+              },
+              "input": {
+                "line": 247,
+                "end_line": 247,
+                "byte_start": 7889,
+                "byte_end": 7941
+              },
+              "fields": {
+                "Codec": {
+                  "line": 253,
+                  "end_line": 253,
+                  "byte_start": 8109,
+                  "byte_end": 8115
+                },
+                "Confidence": {
+                  "line": 255,
+                  "end_line": 255,
+                  "byte_start": 8163,
+                  "byte_end": 8253
+                },
+                "ReleaseGroup": {
+                  "line": 254,
+                  "end_line": 254,
+                  "byte_start": 8135,
+                  "byte_end": 8143
+                },
+                "Resolution": {
+                  "line": 251,
+                  "end_line": 251,
+                  "byte_start": 8054,
+                  "byte_end": 8061
+                },
+                "Source": {
+                  "line": 252,
+                  "end_line": 252,
+                  "byte_start": 8081,
+                  "byte_end": 8089
+                },
+                "Title": {
+                  "line": 249,
+                  "end_line": 249,
+                  "byte_start": 7988,
+                  "byte_end": 8010
+                },
+                "Year": {
+                  "line": 250,
+                  "end_line": 250,
+                  "byte_start": 8030,
+                  "byte_end": 8034
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"2001 A Space Odyssey\"",
+                "Year": "1968"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-1941-1979",
+        "source": "cehbz-parse-original",
+        "input": "1941.1979.1080p.BluRay.x264-SPARKS",
+        "review_note": "Original title 1941 and Year 1979 are independently explicit. Do not remove numeric title or swap the two years to make parsing pass; disagreement is a defect. 1080p/BluRay/H264/SPARKS are lexical only.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "1941",
+          "year": 1979,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "1941",
+            "Year": 1979
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie titled 1941 released in 1979",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 181,
+                "end_line": 193,
+                "byte_start": 5662,
+                "byte_end": 6065
+              },
+              "input": {
+                "line": 183,
+                "end_line": 183,
+                "byte_start": 5722,
+                "byte_end": 5758
+              },
+              "fields": {
+                "Codec": {
+                  "line": 189,
+                  "end_line": 189,
+                  "byte_start": 5910,
+                  "byte_end": 5916
+                },
+                "Confidence": {
+                  "line": 191,
+                  "end_line": 191,
+                  "byte_start": 5964,
+                  "byte_end": 6054
+                },
+                "ReleaseGroup": {
+                  "line": 190,
+                  "end_line": 190,
+                  "byte_start": 5936,
+                  "byte_end": 5944
+                },
+                "Resolution": {
+                  "line": 187,
+                  "end_line": 187,
+                  "byte_start": 5855,
+                  "byte_end": 5862
+                },
+                "Source": {
+                  "line": 188,
+                  "end_line": 188,
+                  "byte_start": 5882,
+                  "byte_end": 5890
+                },
+                "Title": {
+                  "line": 185,
+                  "end_line": 185,
+                  "byte_start": 5805,
+                  "byte_end": 5811
+                },
+                "Year": {
+                  "line": 186,
+                  "end_line": 186,
+                  "byte_start": 5831,
+                  "byte_end": 5835
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"1941\"",
+                "Year": "1979"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-1984-without-release-year",
+        "source": "cehbz-parse-original",
+        "input": "1984.1080p.BluRay.x264-SPARKS",
+        "review_note": "Original title 1984 is a numeric title claim, with no Year field. Missing Year is not a negative assertion, but cannot itself supply a work year; manual contract retains the asserted title and leaves year unknown/review required. 1080p/BluRay/H264/SPARKS remain lexical.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "1984",
+          "year": 0,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.6,
+          "requires_review": true,
+          "reason": "title_only_without_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "1984"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie titled 1984 with no release year",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 194,
+                "end_line": 205,
+                "byte_start": 6069,
+                "byte_end": 6428
+              },
+              "input": {
+                "line": 196,
+                "end_line": 196,
+                "byte_start": 6133,
+                "byte_end": 6164
+              },
+              "fields": {
+                "Codec": {
+                  "line": 201,
+                  "end_line": 201,
+                  "byte_start": 6292,
+                  "byte_end": 6298
+                },
+                "Confidence": {
+                  "line": 203,
+                  "end_line": 203,
+                  "byte_start": 6346,
+                  "byte_end": 6417
+                },
+                "ReleaseGroup": {
+                  "line": 202,
+                  "end_line": 202,
+                  "byte_start": 6318,
+                  "byte_end": 6326
+                },
+                "Resolution": {
+                  "line": 199,
+                  "end_line": 199,
+                  "byte_start": 6237,
+                  "byte_end": 6244
+                },
+                "Source": {
+                  "line": 200,
+                  "end_line": 200,
+                  "byte_start": 6264,
+                  "byte_end": 6272
+                },
+                "Title": {
+                  "line": 198,
+                  "end_line": 198,
+                  "byte_start": 6211,
+                  "byte_end": 6217
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"1984\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-matrix-year-after-metadata",
+        "source": "cehbz-parse-original",
+        "input": "The.Matrix.1080p.BluRay.1999.x264-SPARKS",
+        "review_note": "Original The Matrix/1999 supplied after the technical boundary is still independent work-year counterevidence. Preserve it without copying the upstream scanner. 1080p/BluRay/H264/SPARKS explicit, single movie syntax.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Matrix",
+          "year": 1999,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "The Matrix",
+            "Year": 1999
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "title not containing year, release year after metadata start",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 206,
+                "end_line": 218,
+                "byte_start": 6432,
+                "byte_end": 6873
+              },
+              "input": {
+                "line": 208,
+                "end_line": 208,
+                "byte_start": 6518,
+                "byte_end": 6560
+              },
+              "fields": {
+                "Codec": {
+                  "line": 214,
+                  "end_line": 214,
+                  "byte_start": 6718,
+                  "byte_end": 6724
+                },
+                "Confidence": {
+                  "line": 216,
+                  "end_line": 216,
+                  "byte_start": 6772,
+                  "byte_end": 6862
+                },
+                "ReleaseGroup": {
+                  "line": 215,
+                  "end_line": 215,
+                  "byte_start": 6744,
+                  "byte_end": 6752
+                },
+                "Resolution": {
+                  "line": 212,
+                  "end_line": 212,
+                  "byte_start": 6663,
+                  "byte_end": 6670
+                },
+                "Source": {
+                  "line": 213,
+                  "end_line": 213,
+                  "byte_start": 6690,
+                  "byte_end": 6698
+                },
+                "Title": {
+                  "line": 210,
+                  "end_line": 210,
+                  "byte_start": 6607,
+                  "byte_end": 6619
+                },
+                "Year": {
+                  "line": 211,
+                  "end_line": 211,
+                  "byte_start": 6639,
+                  "byte_end": 6643
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Matrix\"",
+                "Year": "1999"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-odyssey-year-after-metadata",
+        "source": "cehbz-parse-original",
+        "input": "2001.A.Space.Odyssey.1080p.BluRay.1968.x264-SPARKS",
+        "review_note": "Distinct original input retains 2001 A Space Odyssey and supplied Year 1968 after metadata. Leading title number remains part of title; no parser-produced rewrite or post-failure withholding. Explicit 1080p/BluRay/H264/SPARKS only.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "2001 A Space Odyssey",
+          "year": 1968,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "2001 A Space Odyssey",
+            "Year": 1968
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "title containing year, release year after metadata start",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 219,
+                "end_line": 231,
+                "byte_start": 6877,
+                "byte_end": 7334
+              },
+              "input": {
+                "line": 221,
+                "end_line": 221,
+                "byte_start": 6959,
+                "byte_end": 7011
+              },
+              "fields": {
+                "Codec": {
+                  "line": 227,
+                  "end_line": 227,
+                  "byte_start": 7179,
+                  "byte_end": 7185
+                },
+                "Confidence": {
+                  "line": 229,
+                  "end_line": 229,
+                  "byte_start": 7233,
+                  "byte_end": 7323
+                },
+                "ReleaseGroup": {
+                  "line": 228,
+                  "end_line": 228,
+                  "byte_start": 7205,
+                  "byte_end": 7213
+                },
+                "Resolution": {
+                  "line": 225,
+                  "end_line": 225,
+                  "byte_start": 7124,
+                  "byte_end": 7131
+                },
+                "Source": {
+                  "line": 226,
+                  "end_line": 226,
+                  "byte_start": 7151,
+                  "byte_end": 7159
+                },
+                "Title": {
+                  "line": 223,
+                  "end_line": 223,
+                  "byte_start": 7058,
+                  "byte_end": 7080
+                },
+                "Year": {
+                  "line": 224,
+                  "end_line": 224,
+                  "byte_start": 7100,
+                  "byte_end": 7104
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"2001 A Space Odyssey\"",
+                "Year": "1968"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-squid-game-hardcoded",
+        "source": "cehbz-parse-original",
+        "input": "Squid.Game.S01E01.HC.1080p.WEBRip",
+        "review_note": "Original Squid Game/Season 1/Episode 1 and 1080p/WEBRip retained. HC is raw hardcoded-subtitle declaration, not audio/edition/group or another episode. Single S01E01 token only; source supplies no year or mapping.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Squid Game",
+          "year": 0,
+          "media_type": "tv",
+          "season": 1,
+          "episodes": [
+            1
+          ],
+          "unit_keys": [
+            "S01E01"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.95,
+          "requires_review": false,
+          "reason": "standard_season_episode",
+          "quality": {
+            "resolution": "1080p",
+            "source": "WEBRip",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + MinorFieldWeight + MinorFieldWeight",
+            "Episode": 1,
+            "IsHardcoded": true,
+            "Resolution": "1080p",
+            "Season": 1,
+            "Source": "WEBRip",
+            "Title": "Squid Game"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "hardcoded subtitles",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 306,
+                "end_line": 318,
+                "byte_start": 9873,
+                "byte_end": 10245
+              },
+              "input": {
+                "line": 308,
+                "end_line": 308,
+                "byte_start": 9918,
+                "byte_end": 9953
+              },
+              "fields": {
+                "Confidence": {
+                  "line": 316,
+                  "end_line": 316,
+                  "byte_start": 10146,
+                  "byte_end": 10234
+                },
+                "Episode": {
+                  "line": 312,
+                  "end_line": 312,
+                  "byte_start": 10050,
+                  "byte_end": 10051
+                },
+                "IsHardcoded": {
+                  "line": 313,
+                  "end_line": 313,
+                  "byte_start": 10070,
+                  "byte_end": 10074
+                },
+                "Resolution": {
+                  "line": 314,
+                  "end_line": 314,
+                  "byte_start": 10093,
+                  "byte_end": 10100
+                },
+                "Season": {
+                  "line": 311,
+                  "end_line": 311,
+                  "byte_start": 10030,
+                  "byte_end": 10031
+                },
+                "Source": {
+                  "line": 315,
+                  "end_line": 315,
+                  "byte_start": 10119,
+                  "byte_end": 10127
+                },
+                "Title": {
+                  "line": 310,
+                  "end_line": 310,
+                  "byte_start": 9999,
+                  "byte_end": 10011
+                }
+              },
+              "raw_fields": {
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + MinorFieldWeight + MinorFieldWeight",
+                "Episode": "1",
+                "IsHardcoded": "true",
+                "Resolution": "\"1080p\"",
+                "Season": "1",
+                "Source": "\"WEBRip\"",
+                "Title": "\"Squid Game\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-daily-show-calendar",
+        "source": "cehbz-parse-original",
+        "input": "The.Daily.Show.2023.10.15.1080p.WEB",
+        "review_note": "Original The Daily Show, Year 2023, Date 2023.10.15 and WEBRip source remain immutable. Date is broadcast coverage and cannot establish a work year or canonical season/episode; manual safe contract has year zero and zero authority. This known source-year tension must remain a defect, not be hidden by relabeling. Bare WEB supplies no subtype, original 1080p retained; duplicate at line 386 counts once.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Daily Show",
+          "year": 0,
+          "media_type": "tv",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0,
+          "requires_review": true,
+          "reason": "calendar_coverage_unresolved",
+          "quality": {
+            "resolution": "1080p",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight",
+            "Date": "2023.10.15",
+            "Resolution": "1080p",
+            "Source": "WEBRip",
+            "Title": "The Daily Show",
+            "Year": 2023
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "daily show format",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 319,
+                "end_line": 330,
+                "byte_start": 10249,
+                "byte_end": 10572
+              },
+              "input": {
+                "line": 321,
+                "end_line": 321,
+                "byte_start": 10292,
+                "byte_end": 10329
+              },
+              "fields": {
+                "Confidence": {
+                  "line": 328,
+                  "end_line": 328,
+                  "byte_start": 10511,
+                  "byte_end": 10561
+                },
+                "Date": {
+                  "line": 325,
+                  "end_line": 325,
+                  "byte_start": 10430,
+                  "byte_end": 10442
+                },
+                "Resolution": {
+                  "line": 326,
+                  "end_line": 326,
+                  "byte_start": 10460,
+                  "byte_end": 10467
+                },
+                "Source": {
+                  "line": 327,
+                  "end_line": 327,
+                  "byte_start": 10485,
+                  "byte_end": 10493
+                },
+                "Title": {
+                  "line": 323,
+                  "end_line": 323,
+                  "byte_start": 10374,
+                  "byte_end": 10390
+                },
+                "Year": {
+                  "line": 324,
+                  "end_line": 324,
+                  "byte_start": 10408,
+                  "byte_end": 10412
+                }
+              },
+              "raw_fields": {
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight",
+                "Date": "\"2023.10.15\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"WEBRip\"",
+                "Title": "\"The Daily Show\"",
+                "Year": "2023"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            },
+            {
+              "case_name": "movie with 'Show' in title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 384,
+                "end_line": 395,
+                "byte_start": 12201,
+                "byte_end": 12533
+              },
+              "input": {
+                "line": 386,
+                "end_line": 386,
+                "byte_start": 12253,
+                "byte_end": 12290
+              },
+              "fields": {
+                "Confidence": {
+                  "line": 393,
+                  "end_line": 393,
+                  "byte_start": 12472,
+                  "byte_end": 12522
+                },
+                "Date": {
+                  "line": 390,
+                  "end_line": 390,
+                  "byte_start": 12391,
+                  "byte_end": 12403
+                },
+                "Resolution": {
+                  "line": 391,
+                  "end_line": 391,
+                  "byte_start": 12421,
+                  "byte_end": 12428
+                },
+                "Source": {
+                  "line": 392,
+                  "end_line": 392,
+                  "byte_start": 12446,
+                  "byte_end": 12454
+                },
+                "Title": {
+                  "line": 388,
+                  "end_line": 388,
+                  "byte_start": 12335,
+                  "byte_end": 12351
+                },
+                "Year": {
+                  "line": 389,
+                  "end_line": 389,
+                  "byte_start": 12369,
+                  "byte_end": 12373
+                }
+              },
+              "raw_fields": {
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight",
+                "Date": "\"2023.10.15\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"WEBRip\"",
+                "Title": "\"The Daily Show\"",
+                "Year": "2023"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-endgame-mp4",
+        "source": "cehbz-parse-original",
+        "input": "Avengers.Endgame.2019.1080p.BluRay.x264-SPARKS.mp4",
+        "review_note": "Distinct non-synthetic Endgame release retains original title/year 2019, 1080p/BluRay/H264/SPARKS. MP4 is a container suffix, neither measured quality nor coverage. No HDR/audio/edition asserted.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Avengers Endgame",
+          "year": 2019,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "Container": "mp4",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "Avengers Endgame",
+            "Year": 2019
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "mp4 container",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 357,
+                "end_line": 370,
+                "byte_start": 11373,
+                "byte_end": 11827
+              },
+              "input": {
+                "line": 359,
+                "end_line": 359,
+                "byte_start": 11412,
+                "byte_end": 11464
+              },
+              "fields": {
+                "Codec": {
+                  "line": 365,
+                  "end_line": 365,
+                  "byte_start": 11628,
+                  "byte_end": 11634
+                },
+                "Confidence": {
+                  "line": 368,
+                  "end_line": 368,
+                  "byte_start": 11707,
+                  "byte_end": 11816
+                },
+                "Container": {
+                  "line": 366,
+                  "end_line": 366,
+                  "byte_start": 11654,
+                  "byte_end": 11659
+                },
+                "ReleaseGroup": {
+                  "line": 367,
+                  "end_line": 367,
+                  "byte_start": 11679,
+                  "byte_end": 11687
+                },
+                "Resolution": {
+                  "line": 363,
+                  "end_line": 363,
+                  "byte_start": 11573,
+                  "byte_end": 11580
+                },
+                "Source": {
+                  "line": 364,
+                  "end_line": 364,
+                  "byte_start": 11600,
+                  "byte_end": 11608
+                },
+                "Title": {
+                  "line": 361,
+                  "end_line": 361,
+                  "byte_start": 11511,
+                  "byte_end": 11529
+                },
+                "Year": {
+                  "line": 362,
+                  "end_line": 362,
+                  "byte_start": 11549,
+                  "byte_end": 11553
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "Container": "\"mp4\"",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"Avengers Endgame\"",
+                "Year": "2019"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-complete-works-shakespeare",
+        "source": "cehbz-parse-original",
+        "input": "The.Complete.Works.of.Shakespeare.1995.1080p.BluRay.x264-SPARKS",
+        "review_note": "Preserve the entire independent title The Complete Works of Shakespeare and Year 1995. Complete is inside the asserted work title, not a proved season set or collection mapping. Exact lexical 1080p/BluRay/H264/SPARKS. If parser disagrees, retain original assertion and contract.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Complete Works of Shakespeare",
+          "year": 1995,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "The Complete Works of Shakespeare",
+            "Year": 1995
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie with 'Complete' in title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 410,
+                "end_line": 422,
+                "byte_start": 13084,
+                "byte_end": 13541
+              },
+              "input": {
+                "line": 412,
+                "end_line": 412,
+                "byte_start": 13140,
+                "byte_end": 13205
+              },
+              "fields": {
+                "Codec": {
+                  "line": 418,
+                  "end_line": 418,
+                  "byte_start": 13386,
+                  "byte_end": 13392
+                },
+                "Confidence": {
+                  "line": 420,
+                  "end_line": 420,
+                  "byte_start": 13440,
+                  "byte_end": 13530
+                },
+                "ReleaseGroup": {
+                  "line": 419,
+                  "end_line": 419,
+                  "byte_start": 13412,
+                  "byte_end": 13420
+                },
+                "Resolution": {
+                  "line": 416,
+                  "end_line": 416,
+                  "byte_start": 13331,
+                  "byte_end": 13338
+                },
+                "Source": {
+                  "line": 417,
+                  "end_line": 417,
+                  "byte_start": 13358,
+                  "byte_end": 13366
+                },
+                "Title": {
+                  "line": 414,
+                  "end_line": 414,
+                  "byte_start": 13252,
+                  "byte_end": 13287
+                },
+                "Year": {
+                  "line": 415,
+                  "end_line": 415,
+                  "byte_start": 13307,
+                  "byte_end": 13311
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Complete Works of Shakespeare\"",
+                "Year": "1995"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-final-countdown",
+        "source": "cehbz-parse-original",
+        "input": "The.Final.Countdown.1980.1080p.BluRay.x264-SPARKS",
+        "review_note": "Original The Final Countdown/1980 and 1080p/BluRay/H264/SPARKS unchanged. Final is part of the full asserted title and supplies no measured edition or scope restriction; one movie syntax only.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Final Countdown",
+          "year": 1980,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "SPARKS"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+            "ReleaseGroup": "SPARKS",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "The Final Countdown",
+            "Year": 1980
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "movie with 'Final' in title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 501,
+                "end_line": 513,
+                "byte_start": 16142,
+                "byte_end": 16568
+              },
+              "input": {
+                "line": 503,
+                "end_line": 503,
+                "byte_start": 16195,
+                "byte_end": 16246
+              },
+              "fields": {
+                "Codec": {
+                  "line": 509,
+                  "end_line": 509,
+                  "byte_start": 16413,
+                  "byte_end": 16419
+                },
+                "Confidence": {
+                  "line": 511,
+                  "end_line": 511,
+                  "byte_start": 16467,
+                  "byte_end": 16557
+                },
+                "ReleaseGroup": {
+                  "line": 510,
+                  "end_line": 510,
+                  "byte_start": 16439,
+                  "byte_end": 16447
+                },
+                "Resolution": {
+                  "line": 507,
+                  "end_line": 507,
+                  "byte_start": 16358,
+                  "byte_end": 16365
+                },
+                "Source": {
+                  "line": 508,
+                  "end_line": 508,
+                  "byte_start": 16385,
+                  "byte_end": 16393
+                },
+                "Title": {
+                  "line": 505,
+                  "end_line": 505,
+                  "byte_start": 16293,
+                  "byte_end": 16314
+                },
+                "Year": {
+                  "line": 506,
+                  "end_line": 506,
+                  "byte_start": 16334,
+                  "byte_end": 16338
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"SPARKS\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Final Countdown\"",
+                "Year": "1980"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-avatar-resolution-only",
+        "source": "cehbz-parse-original",
+        "input": "Avatar.2009.1080p",
+        "review_note": "Independent Avatar/2009 and 1080p are the complete supplied positive fields. Source/codec/HDR/audio/edition/group cannot be filled from absent labels or a configured policy; one movie syntax does not establish quality approval.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Avatar",
+          "year": 2009,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Confidence": "YearSeasonWeight + ResolutionWeight",
+            "Resolution": "1080p",
+            "Title": "Avatar",
+            "Year": 2009
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "medium info medium confidence",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 522,
+                "end_line": 531,
+                "byte_start": 16728,
+                "byte_end": 16966
+              },
+              "input": {
+                "line": 524,
+                "end_line": 524,
+                "byte_start": 16783,
+                "byte_end": 16802
+              },
+              "fields": {
+                "Confidence": {
+                  "line": 529,
+                  "end_line": 529,
+                  "byte_start": 16920,
+                  "byte_end": 16955
+                },
+                "Resolution": {
+                  "line": 528,
+                  "end_line": 528,
+                  "byte_start": 16895,
+                  "byte_end": 16902
+                },
+                "Title": {
+                  "line": 526,
+                  "end_line": 526,
+                  "byte_start": 16847,
+                  "byte_end": 16855
+                },
+                "Year": {
+                  "line": 527,
+                  "end_line": 527,
+                  "byte_start": 16873,
+                  "byte_end": 16877
+                }
+              },
+              "raw_fields": {
+                "Confidence": "YearSeasonWeight + ResolutionWeight",
+                "Resolution": "\"1080p\"",
+                "Title": "\"Avatar\"",
+                "Year": "2009"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-breaking-bad-season-one",
+        "source": "cehbz-parse-original",
+        "input": "Breaking.Bad.S01.Complete.720p.BluRay.x264-DEMAND",
+        "review_note": "Original Breaking Bad, Season 1 and IsComplete=true retained. A complete season declaration lacks episode membership/file-list evidence: zero season/episode/canonical/absolute coverage with review, while retaining independently asserted title. 720p/BluRay/H264/DEMAND lexical only. No default movie or mapping.",
+        "withheld_source_fields": [
+          "season"
+        ],
+        "expected": {
+          "title": "Breaking Bad",
+          "year": 0,
+          "media_type": "tv",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0,
+          "requires_review": true,
+          "reason": "episode_coverage_unresolved",
+          "quality": {
+            "resolution": "720p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "DEMAND"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "IsComplete": true,
+            "ReleaseGroup": "DEMAND",
+            "Resolution": "720p",
+            "Season": 1,
+            "Source": "BluRay",
+            "Title": "Breaking Bad"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "BTN season pack format",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 532,
+                "end_line": 545,
+                "byte_start": 16970,
+                "byte_end": 17423
+              },
+              "input": {
+                "line": 534,
+                "end_line": 534,
+                "byte_start": 17018,
+                "byte_end": 17069
+              },
+              "fields": {
+                "Codec": {
+                  "line": 541,
+                  "end_line": 541,
+                  "byte_start": 17249,
+                  "byte_end": 17255
+                },
+                "Confidence": {
+                  "line": 543,
+                  "end_line": 543,
+                  "byte_start": 17303,
+                  "byte_end": 17412
+                },
+                "IsComplete": {
+                  "line": 538,
+                  "end_line": 538,
+                  "byte_start": 17171,
+                  "byte_end": 17175
+                },
+                "ReleaseGroup": {
+                  "line": 542,
+                  "end_line": 542,
+                  "byte_start": 17275,
+                  "byte_end": 17283
+                },
+                "Resolution": {
+                  "line": 539,
+                  "end_line": 539,
+                  "byte_start": 17195,
+                  "byte_end": 17201
+                },
+                "Season": {
+                  "line": 537,
+                  "end_line": 537,
+                  "byte_start": 17150,
+                  "byte_end": 17151
+                },
+                "Source": {
+                  "line": 540,
+                  "end_line": 540,
+                  "byte_start": 17221,
+                  "byte_end": 17229
+                },
+                "Title": {
+                  "line": 536,
+                  "end_line": 536,
+                  "byte_start": 17116,
+                  "byte_end": 17130
+                }
+              },
+              "raw_fields": {
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "IsComplete": "true",
+                "ReleaseGroup": "\"DEMAND\"",
+                "Resolution": "\"720p\"",
+                "Season": "1",
+                "Source": "\"BluRay\"",
+                "Title": "\"Breaking Bad\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-dark-knight-dts",
+        "source": "cehbz-parse-original",
+        "input": "The.Dark.Knight.2008.1080p.BluRay.DTS.x264-ESiR",
+        "review_note": "Original The Dark Knight/2008 and 1080p/BluRay/H264/ESiR preserved with exact group case. DTS is original raw Audio declaration and not a measured audio fact, no HDR or edition inferred. Single movie syntax only.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "The Dark Knight",
+          "year": 2008,
+          "media_type": "movie",
+          "season": 0,
+          "episodes": [],
+          "unit_keys": [
+            "movie"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.9,
+          "requires_review": false,
+          "reason": "clean_movie_with_year",
+          "quality": {
+            "resolution": "1080p",
+            "source": "Bluray",
+            "codec": "H264",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": "ESiR"
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Audio": "DTS",
+            "Codec": "H264",
+            "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+            "ReleaseGroup": "ESiR",
+            "Resolution": "1080p",
+            "Source": "BluRay",
+            "Title": "The Dark Knight",
+            "Year": 2008
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "HDBits format",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 546,
+                "end_line": 559,
+                "byte_start": 17427,
+                "byte_end": 17875
+              },
+              "input": {
+                "line": 548,
+                "end_line": 548,
+                "byte_start": 17466,
+                "byte_end": 17515
+              },
+              "fields": {
+                "Audio": {
+                  "line": 554,
+                  "end_line": 554,
+                  "byte_start": 17678,
+                  "byte_end": 17683
+                },
+                "Codec": {
+                  "line": 555,
+                  "end_line": 555,
+                  "byte_start": 17703,
+                  "byte_end": 17709
+                },
+                "Confidence": {
+                  "line": 557,
+                  "end_line": 557,
+                  "byte_start": 17755,
+                  "byte_end": 17864
+                },
+                "ReleaseGroup": {
+                  "line": 556,
+                  "end_line": 556,
+                  "byte_start": 17729,
+                  "byte_end": 17735
+                },
+                "Resolution": {
+                  "line": 552,
+                  "end_line": 552,
+                  "byte_start": 17623,
+                  "byte_end": 17630
+                },
+                "Source": {
+                  "line": 553,
+                  "end_line": 553,
+                  "byte_start": 17650,
+                  "byte_end": 17658
+                },
+                "Title": {
+                  "line": 550,
+                  "end_line": 550,
+                  "byte_start": 17562,
+                  "byte_end": 17579
+                },
+                "Year": {
+                  "line": 551,
+                  "end_line": 551,
+                  "byte_start": 17599,
+                  "byte_end": 17603
+                }
+              },
+              "raw_fields": {
+                "Audio": "\"DTS\"",
+                "Codec": "\"H264\"",
+                "Confidence": "YearSeasonWeight + ResolutionWeight + SourceWeight + ReleaseGroupWeight + MinorFieldWeight + MinorFieldWeight",
+                "ReleaseGroup": "\"ESiR\"",
+                "Resolution": "\"1080p\"",
+                "Source": "\"BluRay\"",
+                "Title": "\"The Dark Knight\"",
+                "Year": "2008"
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    },
+    {
+      "source": "cehbz-parse-original",
+      "status": "provenance_or_contract_unresolved",
+      "record": {
+        "id": "cehbz-original-breaking-bad-s01e01-pilot",
+        "source": "cehbz-parse-original",
+        "input": "Breaking Bad S01E01 Pilot 1080p",
+        "review_note": "Original Breaking Bad, Season 1, Episode 1 and 1080p retained exactly. Pilot is the original unparsed episode subtitle, not another identity. Only explicit S01E01 is a canonical syntax key; missing year/quality fields do not establish negative evidence or authorize mappings.",
+        "withheld_source_fields": [],
+        "expected": {
+          "title": "Breaking Bad",
+          "year": 0,
+          "media_type": "tv",
+          "season": 1,
+          "episodes": [
+            1
+          ],
+          "unit_keys": [
+            "S01E01"
+          ],
+          "absolute_episode": 0,
+          "is_anime": false,
+          "confidence": 0.95,
+          "requires_review": false,
+          "reason": "standard_season_episode",
+          "quality": {
+            "resolution": "1080p",
+            "source": "",
+            "codec": "",
+            "hdr": "",
+            "audio": "",
+            "edition": "",
+            "group": ""
+          }
+        },
+        "source_record": {
+          "labels": {
+            "Confidence": "YearSeasonWeight + ResolutionWeight + MinorFieldWeight",
+            "Episode": 1,
+            "Resolution": "1080p",
+            "Season": 1,
+            "Title": "Breaking Bad",
+            "Unparsed": "Pilot"
+          },
+          "fixture_kind": "release_literal_unverified_independence",
+          "occurrences": [
+            {
+              "case_name": "tv episode with unparsed title",
+              "path": "testdata/releases/upstream-mit/cehbz-parse-original.parse_test.go.source",
+              "block": {
+                "line": 626,
+                "end_line": 637,
+                "byte_start": 20141,
+                "byte_end": 20460
+              },
+              "input": {
+                "line": 628,
+                "end_line": 628,
+                "byte_start": 20197,
+                "byte_end": 20230
+              },
+              "fields": {
+                "Confidence": {
+                  "line": 635,
+                  "end_line": 635,
+                  "byte_start": 20395,
+                  "byte_end": 20449
+                },
+                "Episode": {
+                  "line": 632,
+                  "end_line": 632,
+                  "byte_start": 20326,
+                  "byte_end": 20327
+                },
+                "Resolution": {
+                  "line": 633,
+                  "end_line": 633,
+                  "byte_start": 20345,
+                  "byte_end": 20352
+                },
+                "Season": {
+                  "line": 631,
+                  "end_line": 631,
+                  "byte_start": 20307,
+                  "byte_end": 20308
+                },
+                "Title": {
+                  "line": 630,
+                  "end_line": 630,
+                  "byte_start": 20275,
+                  "byte_end": 20289
+                },
+                "Unparsed": {
+                  "line": 634,
+                  "end_line": 634,
+                  "byte_start": 20370,
+                  "byte_end": 20377
+                }
+              },
+              "raw_fields": {
+                "Confidence": "YearSeasonWeight + ResolutionWeight + MinorFieldWeight",
+                "Episode": "1",
+                "Resolution": "\"1080p\"",
+                "Season": "1",
+                "Title": "\"Breaking Bad\"",
+                "Unparsed": "\"Pilot\""
+              },
+              "assertion_call_line": 679,
+              "title_comparator_line": 693
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "unverifiable_source_records": [
+    {
+      "input": "The.Rookie.S04E11.PROPER.1080p.WEB.h264-GOSSIP[eztv.re].mkv",
+      "source_position": {
+        "path": "testdata/releases/upstream-mit/clement-full-original.main.js",
+        "line": 308,
+        "end_line": 323,
+        "assertion_line": 311
+      },
+      "original_labels": {
+        "title": "The Rookie",
+        "season": 4,
+        "episode": 11,
+        "proper": true,
+        "resolution": "1080p",
+        "source": "web-dl",
+        "codec": "h264",
+        "encoder": "GOSSIP",
+        "group": "eztv.re",
+        "container": "mkv"
+      },
+      "reason": "Source labels bare WEB as web-dl and relay eztv.re as group while declaring encoder GOSSIP; unverifiable and contradictory group/source semantics. Preserve source, exclude without relabeling."
+    },
+    {
+      "input": "American Wedding 2003 Unrated + Extras 1080p BluRay H.265 10bit AAC 5.1-FreetheFish",
+      "source_position": {
+        "path": "testdata/releases/upstream-mit/clement-full-original.main.js",
+        "line": 384,
+        "end_line": 400,
+        "assertion_line": 387
+      },
+      "original_labels": {
+        "title": "American Wedding",
+        "year": 2003,
+        "unrated": true,
+        "extras": true,
+        "resolution": "1080p",
+        "source": "bluray",
+        "codec": "h265",
+        "bitdepth": 10,
+        "audio": "aac",
+        "channels": 5.1,
+        "group": "FreetheFish"
+      },
+      "reason": "Unrated + Extras does not establish a complete single movie file; no original exact extras file-list/coverage evidence. Exclude as unverifiable rather than invent an executable movie or relabel source."
+    }
+  ]
+}

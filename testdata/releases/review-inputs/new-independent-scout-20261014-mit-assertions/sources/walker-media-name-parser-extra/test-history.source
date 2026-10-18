@@ -1,0 +1,9 @@
+36583a800faf094719fe6c692d494cd1b2dfbc20 Let a broadcast standard say what size the picture is
+f6efbbc0dbed02959566589d17f31deb74fc4ade Report a frame size as a resolution, not a medium
+9b658f4be2de98530be8565945dfefac763c3033 Merge fix/dotted-group-names
+55d1712904b9fd1e5e393ffab217609782de8c0b Let a release group have more than one word
+71200dbb1a46f798e04d6c4f7aa890305e919241 Read an open matte transfer as the tag it is
+70802b3207fa71bbb579d7ec3d94bb76dd4672f3 Let a re-release keep its title and its year
+6aeecb7b99a7e1fa6c93d1213a83d2bf32632de5 Make the file extension optional
+e4ce33d700de3cb876443d865df8a17413f463de Quote the extension in a refusal, so a stray byte is visible
+a9011dd8d9215573f3b712d02b1c4d5670d518ad Assemble the tv/movies parser
