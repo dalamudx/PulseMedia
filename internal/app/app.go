@@ -423,6 +423,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		reuseSvc = transfer.NewLibraryReuseService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem()))
 		serverHandler.SetLibraryReuseService(reuseSvc)
 		serverHandler.SetRootSelectionService(subscription.NewRootSelectionService(postgres.NewLibraryRootSelectionStore(a.dbPool)))
+		serverHandler.SetSubscriptionCreationService(subscription.NewSubscriptionCreationService(postgres.NewSubscriptionCreationStore(a.dbPool, a.idgen), metaProvider, metaProvider, crypto.NewSecretProtector(masterKey)))
 		serverHandler.SetCandidateExplanationService(usecaseSearch.NewCandidateExplanationService(postgres.NewCandidateExplanationStore(a.dbPool)))
 		serverHandler.SetControlService(subscription.NewControlService(postgres.NewSubscriptionControlStore(a.dbPool, a.idgen)))
 		serverHandler.SetTVRefreshService(subscription.NewTVRefreshService(postgres.NewTVRefreshStore(a.dbPool, a.idgen), metaProvider))

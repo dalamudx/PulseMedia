@@ -595,8 +595,31 @@ export interface paths {
         /** List subscriptions for current user or all if admin */
         get: operations["listSubscriptions"];
         put?: never;
-        /** Create a new subscription */
+        /**
+         * Create a new subscription
+         * @description Persists a versioned subscription command and its original result atomically. Retry the original key after an uncertain response; no provider lookup occurs for an existing receipt.
+         */
         post: operations["createSubscription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscription-commands/{idempotency_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the original subscription creation result
+         * @description Current-account and object-authorized pure read. No metadata calls, subscription mutation, or new jobs. A missing receipt does not confirm that an earlier request was never sent.
+         */
+        get: operations["getSubscriptionCreationReceipt"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2279,6 +2302,12 @@ export interface components {
             results: components["schemas"]["MovieSearchResult"][];
         };
         CreateSubscriptionRequest: {
+            /**
+             * Format: int64
+             * @description Required when changing an existing intent; omission can only ensure an equivalent subscription.
+             */
+            expected_intent_version?: number;
+            selected_unit_ids?: string[];
             /** @description Explicit search endpoints for automatic single-movie fulfillment. Empty disables automatic search; omitted preserves existing bindings on reconfiguration. */
             indexer_ids?: string[];
             /** Format: uuid */
@@ -2288,10 +2317,10 @@ export interface components {
             /** Format: int64 */
             tmdb_id?: number;
             /**
-             * @default movie
+             * @description Defaults to movie only for tmdb_id; media_id uses the stored type.
              * @enum {string}
              */
-            media_type: "movie" | "tv";
+            media_type?: "movie" | "tv";
             title?: string;
             year?: number;
             /**
@@ -5296,7 +5325,9 @@ export interface operations {
     createSubscription: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5345,6 +5376,24 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Media, root, or current subscription object not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Key, intent, root or metadata version changed; reread before changing the original command */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Metadata or subscription storage unavailable */
             503: {
                 headers: {
@@ -5353,6 +5402,73 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                     "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getSubscriptionCreationReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idempotency_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original persisted subscription creation result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionDetails"];
+                };
+            };
+            /** @description Invalid key */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current account cannot read this command */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No readable original command receipt */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Receipt could not be verified */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

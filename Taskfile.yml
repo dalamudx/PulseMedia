@@ -189,6 +189,11 @@ tasks:
     cmds:
       - bash scripts/verify_m5_interactive_search.sh {{.CLI_ARGS}}
 
+  test-subscription-creation:
+    desc: Verify subscription creation and receipt recovery with native TMDB, Cookie, PG18 and isolated Chrome
+    cmds:
+      - bash scripts/verify_m5_subscription_creation.sh {{.CLI_ARGS}}
+
   test-endpoint-ui:
     desc: Verify safe endpoint URL edits with private PostgreSQL and Chrome
     cmds:

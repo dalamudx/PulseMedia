@@ -186,7 +186,7 @@ docs/architecture.md      本文
 
 ### 4.1 媒体身份与单元
 
-外部身份始终为 `(namespace, external_id)`，例如 tmdb.movie:550、tmdb.tv:1399、imdb:tt0137523。禁止裸数字 ID 或标题作为跨来源身份；每个外部身份只能对应一个内部 media，身份合并是显式管理命令。公开电影订阅创建须先读取并核对原生TMDB详情的ID/media_type，浏览器标题/年份不建立身份依据。详情网络在事务外；事务内先锁定并校验当前用户，再沿现有policy/root/媒体边界创建或取得媒体、movie单元、订阅、Wanted和审计/事件，任一尾部失败一起回滚。直接选择既有media UUID仍复核该对象与根范围；不在HTTP先提交半成品媒体。
+外部身份始终为 `(namespace, external_id)`，例如 tmdb.movie:550、tmdb.tv:1399、imdb:tt0137523。禁止裸数字 ID 或标题作为跨来源身份；每个外部身份只能对应一个内部 media，身份合并是显式管理命令。公开订阅创建使用原生 TMDB 详情核对 ID 与类型，浏览器标题/年份只作显示提示；movie/tv 的同一数字分别建档。POST `/subscriptions` 必须携带原幂等键，短事务先复核当前账号、实际对象/媒体类型、根与已有回执，再进行事务外元数据读取；GET `/subscription-commands/{key}` 为当前账号和对象授权的纯读历史回执，不启动元数据读取或新工作。未传根时仅从同类型在线根中唯一推导，离线根不造成歧义，多在线根必须明确选择，数据库故障不得伪装成没有根。TV 初建及既有 TMDB TV 增量使用完整真实季集记录，保持稀疏集号、provider episode ID、nullable 日期/绝对号；零集预告季不合成单元或完整季证明。逐季读取最多4路并发，统一55秒预算，取消后等待全部物理调用返回。发布窄事务按当前账号、policy/subscription/root/单元及媒体锁序重新核对原观察，原子提交媒体与身份、真实单元、按各用户范围展开的 Wanted、成功审计/事件和稳定原回执；仅完整非空季可退休缺失逻辑单元，历史引用、文件事实、用户跳过及 paused/archived 保持。等价重订阅保持意图与策略版本，实际重配置必须带匹配的 expected_intent_version；任一尾部失败整体回滚。直接选择既有 media UUID 按实际类型复核对象与根，不在 HTTP 提交半成品媒体。Wanted 提交后立即到期只提供持久评估需求；TV 自动搜索、候选决策与下载须另经独立的版本化自动授权边界，不能借用管理员手工 review 或绕过电影 guard。
 
 media_unit 在同一作品内以 unit_key 唯一：电影为 movie，剧集为 S01E03；特别季为 S00，动漫可附绝对集号。新增集追加，消失的元数据单元标记 retired，保留历史引用。默认排除 retired 与特别季，用户可显式选入特别季；未知播出日期/未播出目标保守等待，不立即补缺。
 
@@ -213,7 +213,7 @@ TMDB season真实响应现在要求positive/unique ID；组窄provider先GET作�
 
 **原冻结 TV 硬链接计划的显式恢复**：GET/POST `/transfer-plans/{id}/recovery` 限原真实管理员用户（拒 Token scope 提权）。先获取原根和源物理槽位，事务外用 FD 观察原 source/target 完整 identity 必须一致及根 marker；缺链接、源替换、目标冲突、根/版本变化、活跃 job 或有效旧租约均 hold，不写新文件。短 UoW 锁内再核原 authority/manifest/媒体与单元/意图/品质/来源/客户端/根及原步骤摘要；仅原计划转 approved、原 task queued、新组织 job、requested 事件、审计与 nonce 同事务，owner/token/旧租约与冻结证据不清除、不重签、不重复 Add。202 仅排队，不能显示入库成功；真正事实/导入事件/通知仍由原执行围栏与入库事务产生。八路 samekey 只一组织 job，缓存未命中后拿物理槽位再读回执；末 nonce 故障全回滚，source inode 替换及目标冲突不覆盖。真实 HTTP admin/member、strict未知路径字段、no-store 与 PG/race/nonroot FD 验证通过；浏览器失202→reload/只读保原key/503清旧许可/同key重试、键盘390px后实际原 FD 入库通过。实际 App.Run 先失败退出并 join，再新连接、真实等待旧2分钟租约到期、确认原链接、排恢复 job并新 App 消费，仍一次query/Add/原plan/完整bytes同inode及独立送达回执，race通过（已退出 worker 的人工复核终态由测试明确模拟，不宣称自动复核全部失败）。最终 Go 全量/关键race、gen、前端type/build通过。审查另修 transfer plan claim/guard/finish/review 使用 MATERIALIZED 行锁后 clock_timestamp 校验；真实PG证明有效租约时开始但行锁等待到过期后不得续租/完成/转复核，原状态/租约保持。只支持可确认原硬链接的受控 TV 单单元；电影/升级、多步骤、不明后置状态与跨设备动作不借此开放。
 
-下一依赖为多单元覆盖解释与完整样本、自动TV与整包的完整覆盖/需求演进；这些自动执行链尚未接通，不启用自动TV/整包。完整1000独立oracle与实际NAS/授权外网仍待，M3阶段不放行。
+自动 TV 补缺使用独立的标准单集身份规则、持久来源查询证明与不可变自动执行授权。已有管理员单集/整包确认、编号映射及相应整理/入库路径继续复核各自 authority；元数据到期、交互搜索结果和身份建议分别作为观察材料。阶段进度、样本与环境验收以开发计划的当前证据为准。
 
 ### 4.2 意图、事实、投影
 

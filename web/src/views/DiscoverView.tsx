@@ -7,6 +7,8 @@ import { MediaCard, type MediaItem } from "@/components/cards/MediaCard";
 import { MediaDetailModal } from "@/components/dialog/MediaDetailModal";
 import { TorrentSearchModal } from "@/components/dialog/TorrentSearchModal";
 import {useInteractiveReleaseSearch} from "@/features/configuration/useInteractiveReleaseSearch";
+import { useSubscriptionCreation } from "@/features/configuration/useSubscriptionCreation";
+import { subscriptionScope } from "@/features/configuration/subscriptionCreationRecovery";
 
 
 
@@ -24,7 +26,12 @@ export const DiscoverView: React.FC = () => {
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [movies, setMovies] = useState<MediaItem[]>([]);
-  const [subscribingId, setSubscribingId] = useState<number | null>(null);
+  const subscriptionCreation = useSubscriptionCreation({ onSuccess: (result) => {
+    setShowDetailModal(false);
+    toast.success(result.title ? `《${result.title}》订阅成功` : "订阅成功", "订阅意图已确认，可在订阅页查看季集范围与获取状态。");
+    navigate("/subscriptions");
+  } });
+  const subscribingId = subscriptionCreation.busy ? subscriptionCreation.recovery?.body.tmdb_id ?? null : null;
 
   // Dynamic Discover Feed (TMDB API 20+ items)
   const [feedItems, setFeedItems] = useState<MediaItem[]>([]);
@@ -139,55 +146,28 @@ export const DiscoverView: React.FC = () => {
     setShowDetailModal(true);
   };
 
-  const subscribeMedia = async (
+  const subscribeMedia = (
     m: MediaItem,
     scope: "all" | "selected" = "all",
     seasons: number[] = [],
     episodes: string[] = [],
     includeSpecials = false,
     downloaderId?: string,
-    indexerIds: string[] = [],
+    indexerIds?: string[],
     policyId = "default",
-    rootId?:string
+    rootId?: string
   ) => {
-    setSubscribingId(m.tmdb_id);
-    try {
-      const scopeType = scope === "selected" && (seasons.length > 0 || episodes.length > 0) ? "selected" : "all";
-      const seasonsToSend = scope === "selected" && seasons.length > 0 ? seasons : undefined;
-      const episodesToSend = scope === "selected" && episodes.length > 0 ? episodes : undefined;
-      const { data, error } = await api.POST("/api/v1/subscriptions", {
-        body: {
-          tmdb_id: m.tmdb_id,
-          media_type: (m.media_type as any) || "movie",
-          title: m.title,
-          year: m.year,
-          scope_type: scopeType as any,
-          quality_policy_id: policyId,
-root_id:rootId,
-          seasons: seasonsToSend,
-          episodes: episodesToSend,
-          include_specials: includeSpecials,
-          downloader_id: downloaderId,
-          indexer_ids: indexerIds,
-        },
-      });
-      if (error) {
-        toast.error("订阅失败", error.message || "未知错误");
-        return;
-      }
-      if (data) {
-        setShowDetailModal(false);
-        const subMsg = scope === "selected" && seasons.length > 0
-          ? `已成功订阅《${m.title}》指定第 ${seasons.join("、")} 季！`
-          : `《${m.title}》全剧订阅成功！`;
-        toast.success(subMsg, m.media_type === "tv" ? "季集范围已保存；剧集自动获取尚未启用。" : indexerIds.length ? "端点配置已保存；自动补缺仍须通过目标根、匹配和质量核验。" : "未绑定索引器，自动搜索未启用；可在订阅详情中编辑绑定。");
-        setTimeout(() => {
-          navigate("/subscriptions");
-        }, 1000);
-      }
-    } finally {
-      setSubscribingId(null);
+    if (m.media_type !== undefined && m.media_type !== "movie" && m.media_type !== "tv") {
+      toast.error("订阅失败", "媒体类型无效，请重新读取影视详情。");
+      return;
     }
+    void subscriptionCreation.start({
+      tmdb_id: m.tmdb_id, media_type: m.media_type,
+      ...subscriptionScope(scope, seasons, episodes),
+      quality_policy_id: policyId, root_id: rootId,
+      include_specials: includeSpecials, downloader_id: downloaderId, indexer_ids: indexerIds,
+    });
+    setShowDetailModal(false);
   };
 
   const openReleaseSearch = async (m: MediaItem) => {
@@ -200,6 +180,13 @@ root_id:rootId,
 
   return (
     <div className="discover-container">
+      {subscriptionCreation.message && (
+        <div className="empty-hint" role="status">
+          <p>{subscriptionCreation.message}</p>
+          {subscriptionCreation.canRecover && <button type="button" className="btn-secondary btn-sm" onClick={() => void subscriptionCreation.recover()}>读取原订阅结果</button>}
+          {subscriptionCreation.canRetryOriginal && <button type="button" className="btn-secondary btn-sm" onClick={() => void subscriptionCreation.retryOriginal()}>重试原订阅请求</button>}
+        </div>
+      )}
       {/* Top Header */}
       <div className="page-header">
         <div>

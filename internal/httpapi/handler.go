@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
-	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -77,6 +76,7 @@ type ServerHandler struct {
 	metaProvider           ports.MetadataProvider
 	localMediaReader       ports.LocalMediaSearchReader
 	subSvc                 *subscription.Service
+	subCreationSvc         subscriptionCreationApplication
 	subscriptionListSvc    *subscription.ListService
 	controlSvc             *subscription.ControlService
 	tvRefreshSvc           *subscription.TVRefreshService
@@ -706,200 +706,6 @@ func (s *ServerHandler) ListSubscriptions(ctx context.Context, request ListSubsc
 		}
 	}
 	return ListSubscriptions200JSONResponse{Items: items}, nil
-}
-
-// CreateSubscription handles POST /api/v1/subscriptions
-func (s *ServerHandler) CreateSubscription(ctx context.Context, request CreateSubscriptionRequestObject) (CreateSubscriptionResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil {
-		return CreateSubscription401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
-	}
-	if actor.Type != ports.ActorTypeUser || actor.Scopes != nil || (actor.Role != ports.RoleMember && actor.Role != ports.RoleAdmin) {
-		return CreateSubscription403JSONResponse{Code: "FORBIDDEN", Message: "user session required", RequestId: reqID}, nil
-	}
-
-	if s.subSvc == nil {
-		return CreateSubscription400JSONResponse{Code: "SERVICE_UNAVAILABLE", Message: "subscription service unavailable", RequestId: reqID}, nil
-	}
-
-	mediaID := uuid.Nil
-	if request.Body.MediaId != nil {
-		mediaID = *request.Body.MediaId
-	}
-
-	mediaType := "movie"
-	if request.Body.MediaType != nil {
-		mediaType = string(*request.Body.MediaType)
-	}
-
-	var mediaInput *subscription.SubscriptionMediaInput
-	if request.Body.TmdbId != nil {
-		id := *request.Body.TmdbId
-		if id <= 0 || mediaID != uuid.Nil || (mediaType != "movie" && mediaType != "tv") {
-			return CreateSubscription400JSONResponse{Code: "BAD_REQUEST", Message: "select one valid media identity", RequestId: reqID}, nil
-		}
-		if s.metaProvider == nil {
-			return CreateSubscription503JSONResponse{Code: "SERVICE_UNAVAILABLE", Message: "metadata service unavailable", RequestId: reqID}, nil
-		}
-		var title string
-		var year int
-		var seasons []subscription.SeasonEpisodes
-		if mediaType == "movie" {
-			m, err := s.metaProvider.GetMovieDetails(ctx, int64(id), "zh-CN")
-			if err != nil {
-				return CreateSubscription503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "metadata could not be verified", RequestId: reqID}, nil
-			}
-			if m == nil || m.TMDBID != int64(id) || m.MediaType != "movie" {
-				return CreateSubscription400JSONResponse{Code: "BAD_METADATA", Message: "movie identity could not be verified", RequestId: reqID}, nil
-			}
-			title, year = m.Title, m.Year
-			if title == "" {
-				title = m.OriginalTitle
-			}
-		} else {
-			m, err := s.metaProvider.GetTVDetails(ctx, int64(id), "zh-CN")
-			if err != nil {
-				return CreateSubscription503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "metadata could not be verified", RequestId: reqID}, nil
-			}
-			if m == nil || m.TMDBID != int64(id) {
-				return CreateSubscription400JSONResponse{Code: "BAD_METADATA", Message: "TV identity could not be verified", RequestId: reqID}, nil
-			}
-			title, year = m.Title, m.Year
-			for _, season := range m.Seasons {
-				seasons = append(seasons, subscription.SeasonEpisodes{Season: season.SeasonNumber, Count: season.EpisodeCount})
-			}
-		}
-		if title == "" || year < 0 || year > 9999 {
-			return CreateSubscription400JSONResponse{Code: "BAD_METADATA", Message: "media details could not be verified", RequestId: reqID}, nil
-		}
-		mediaInput = &subscription.SubscriptionMediaInput{Namespace: "tmdb." + mediaType, ExternalID: strconv.FormatInt(id, 10), Title: title, MediaType: mediaType, Seasons: seasons}
-		if year > 0 {
-			y := int32(year)
-			mediaInput.Year = &y
-		}
-	}
-
-	if mediaID == uuid.Nil && mediaInput == nil {
-		return CreateSubscription400JSONResponse{Code: "BAD_REQUEST", Message: "either media_id or tmdb_id must be provided", RequestId: reqID}, nil
-	}
-
-	// 2. Resolve Root ID: if not provided, auto-select first online root for this media type!
-	var rootID uuid.UUID
-	if request.Body.RootId != nil && *request.Body.RootId != uuid.Nil {
-		rootID = *request.Body.RootId
-	} else {
-		rootID = s.soleConfiguredRoot(ctx, mediaType)
-	}
-
-	if rootID == uuid.Nil {
-		return CreateSubscription400JSONResponse{Code: "NO_ROOT_AVAILABLE", Message: fmt.Sprintf("select an explicitly configured online library root for %s", mediaType), RequestId: reqID}, nil
-	}
-
-	scope := "all"
-	if request.Body.ScopeType != nil {
-		scope = string(*request.Body.ScopeType)
-	}
-	policyID := "default"
-	if request.Body.QualityPolicyId != nil {
-		policyID = *request.Body.QualityPolicyId
-	}
-
-	var seasons []int
-	if request.Body.Seasons != nil {
-		seasons = *request.Body.Seasons
-	}
-	includeSpecials := false
-	if request.Body.IncludeSpecials != nil {
-		includeSpecials = *request.Body.IncludeSpecials
-	}
-
-	var episodes []string
-	if request.Body.Episodes != nil {
-		episodes = *request.Body.Episodes
-	}
-
-	if len(episodes) > 0 {
-		scope = "selected"
-	}
-	var indexers []uuid.UUID
-	if request.Body.IndexerIds != nil {
-		indexers = *request.Body.IndexerIds
-	}
-
-	sub, _, err := s.subSvc.CreateSubscription(ctx, actor, subscription.CreateSubscriptionCommand{
-		MediaInput: mediaInput, EpisodeKeys: episodes,
-		MediaID:         mediaID,
-		RootID:          rootID,
-		ScopeType:       scope,
-		QualityPolicyID: policyID,
-		Seasons:         seasons,
-		IncludeSpecials: includeSpecials,
-		SelectedUnitIDs: nil,
-		IndexerIDs:      indexers, DownloaderID: request.Body.DownloaderId,
-	})
-	if err != nil {
-		if errors.Is(err, ports.ErrForbidden) || errors.Is(err, ports.ErrUnauthorized) {
-			return CreateSubscription403JSONResponse{Code: "FORBIDDEN", Message: "current account cannot create subscription", RequestId: reqID}, nil
-		}
-		if errors.Is(err, subscription.ErrInvalidScope) {
-			return CreateSubscription400JSONResponse{Code: "INVALID_SCOPE", Message: "select a valid media scope and online root", RequestId: reqID}, nil
-		}
-		return CreateSubscription503JSONResponse{Code: "CREATE_UNAVAILABLE", Message: "subscription could not be saved", RequestId: reqID}, nil
-	}
-
-	// HTTP only saves intent. Owned persistent workers perform automatic search.
-
-	wantedItems, err := s.app.Queries().ListWantedItemsWithUnitDetails(ctx, sub.ID)
-	if err != nil {
-		return nil, ports.ErrUnavailable
-	}
-	wantedDetails := make([]WantedItemDetails, len(wantedItems))
-	for i, wi := range wantedItems {
-		wantedDetails[i] = WantedItemDetails{
-			Id:          wi.ID,
-			UnitId:      wi.UnitID,
-			IsSkipped:   wi.IsSkipped,
-			IsSatisfied: wi.IsSatisfied,
-		}
-	}
-
-	boundIndexers := append([]uuid.UUID{}, sub.IndexerIDs...)
-	boundDownloader := sub.DownloaderID
-	return CreateSubscription201JSONResponse{
-		IndexerIds: &boundIndexers, DownloaderId: boundDownloader,
-		Id:                    sub.ID,
-		UserId:                sub.UserID,
-		MediaId:               sub.MediaID,
-		RootId:                sub.RootID,
-		State:                 sub.State,
-		IntentVersion:         int(sub.IntentVersion),
-		ScopeType:             sub.ScopeType,
-		QualityPolicyId:       sub.QualityPolicyID,
-		QualityPolicyRevision: int(sub.QualityPolicyRevision),
-		WantedItems:           &wantedDetails,
-	}, nil
-}
-
-func (s *ServerHandler) soleConfiguredRoot(ctx context.Context, mediaType string) uuid.UUID {
-	if s.rootSelectionSvc == nil {
-		return uuid.Nil
-	}
-	roots, e := s.rootSelectionSvc.List(ctx, GetActor(ctx))
-	if e != nil {
-		return uuid.Nil
-	}
-	id := uuid.Nil
-	for _, root := range roots {
-		if root.MediaType != mediaType {
-			continue
-		}
-		if id != uuid.Nil {
-			return uuid.Nil
-		}
-		id = root.ID
-	}
-	return id
 }
 
 // GetSubscription handles GET /api/v1/subscriptions/{id}

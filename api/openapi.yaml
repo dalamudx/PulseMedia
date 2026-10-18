@@ -1305,6 +1305,12 @@ paths:
     post:
       summary: Create a new subscription
       operationId: createSubscription
+      description: Persists a versioned subscription command and its original result atomically. Retry the original key after an uncertain response; no provider lookup occurs for an existing receipt.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: {type: string, minLength: 1, maxLength: 160}
       requestBody:
         required: true
         content:
@@ -1345,6 +1351,16 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Media, root, or current subscription object not found
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Key, intent, root or metadata version changed; reread before changing the original command
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
         '503':
           description: Metadata or subscription storage unavailable
           content:
@@ -1354,6 +1370,48 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/subscription-commands/{idempotency_key}:
+    get:
+      operationId: getSubscriptionCreationReceipt
+      summary: Read the original subscription creation result
+      description: Current-account and object-authorized pure read. No metadata calls, subscription mutation, or new jobs. A missing receipt does not confirm that an earlier request was never sent.
+      parameters:
+        - name: idempotency_key
+          in: path
+          required: true
+          schema: {type: string, minLength: 1, maxLength: 160}
+      responses:
+        '200':
+          description: Original persisted subscription creation result
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SubscriptionDetails'}
+        '400':
+          description: Invalid key
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current account cannot read this command
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: No readable original command receipt
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Receipt could not be verified
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
 
   /api/v1/subscriptions/{id}/status:
     get:
@@ -4758,6 +4816,16 @@ components:
     CreateSubscriptionRequest:
       type: object
       properties:
+        expected_intent_version:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Required when changing an existing intent; omission can only ensure an equivalent subscription.
+        selected_unit_ids:
+          type: array
+          maxItems: 20000
+          uniqueItems: true
+          items: {type: string, format: uuid}
         indexer_ids:
           type: array
           description: Explicit search endpoints for automatic single-movie fulfillment. Empty disables automatic search; omitted preserves existing bindings on reconfiguration.
@@ -4776,7 +4844,7 @@ components:
         media_type:
           type: string
           enum: [movie, tv]
-          default: movie
+          description: Defaults to movie only for tmdb_id; media_id uses the stored type.
         title:
           type: string
         year:

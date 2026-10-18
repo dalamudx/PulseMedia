@@ -2080,23 +2080,29 @@ type CreateSubscriptionRequest struct {
 	DownloaderId *openapi_types.UUID `json:"downloader_id,omitempty"`
 
 	// Episodes Example: ["S01E01","S01E02","S01E03"]
-	Episodes        *[]string `json:"episodes,omitempty"`
-	IncludeSpecials *bool     `json:"include_specials,omitempty"`
+	Episodes *[]string `json:"episodes,omitempty"`
+
+	// ExpectedIntentVersion Required when changing an existing intent; omission can only ensure an equivalent subscription.
+	ExpectedIntentVersion *int64 `json:"expected_intent_version,omitempty"`
+	IncludeSpecials       *bool  `json:"include_specials,omitempty"`
 
 	// IndexerIds Explicit search endpoints for automatic single-movie fulfillment. Empty disables automatic search; omitted preserves existing bindings on reconfiguration.
-	IndexerIds      *[]openapi_types.UUID               `json:"indexer_ids,omitempty"`
-	MediaId         *openapi_types.UUID                 `json:"media_id,omitempty"`
+	IndexerIds *[]openapi_types.UUID `json:"indexer_ids,omitempty"`
+	MediaId    *openapi_types.UUID   `json:"media_id,omitempty"`
+
+	// MediaType Defaults to movie only for tmdb_id; media_id uses the stored type.
 	MediaType       *CreateSubscriptionRequestMediaType `json:"media_type,omitempty"`
 	QualityPolicyId *string                             `json:"quality_policy_id,omitempty"`
 	RootId          *openapi_types.UUID                 `json:"root_id,omitempty"`
 	ScopeType       *CreateSubscriptionRequestScopeType `json:"scope_type,omitempty"`
 	Seasons         *[]int                              `json:"seasons,omitempty"`
+	SelectedUnitIds *[]openapi_types.UUID               `json:"selected_unit_ids,omitempty"`
 	Title           *string                             `json:"title,omitempty"`
 	TmdbId          *int64                              `json:"tmdb_id,omitempty"`
 	Year            *int                                `json:"year,omitempty"`
 }
 
-// CreateSubscriptionRequestMediaType defines model for CreateSubscriptionRequest.MediaType.
+// CreateSubscriptionRequestMediaType Defaults to movie only for tmdb_id; media_id uses the stored type.
 type CreateSubscriptionRequestMediaType string
 
 // CreateSubscriptionRequestScopeType defines model for CreateSubscriptionRequest.ScopeType.
@@ -4036,6 +4042,11 @@ type GetActivityStreamParams struct {
 	LastEventID *string `json:"Last-Event-ID,omitempty"`
 }
 
+// CreateSubscriptionParams defines parameters for CreateSubscription.
+type CreateSubscriptionParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
 // ConfigureSubscriptionBindingsParams defines parameters for ConfigureSubscriptionBindings.
 type ConfigureSubscriptionBindingsParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
@@ -4778,12 +4789,15 @@ type ServerInterface interface {
 	// GetActivityStream Observe neutral activity invalidations and requery scoped state
 	// (GET /api/v1/stream)
 	GetActivityStream(w http.ResponseWriter, r *http.Request, params GetActivityStreamParams)
+	// GetSubscriptionCreationReceipt Read the original subscription creation result
+	// (GET /api/v1/subscription-commands/{idempotency_key})
+	GetSubscriptionCreationReceipt(w http.ResponseWriter, r *http.Request, idempotencyKey string)
 	// ListSubscriptions List subscriptions for current user or all if admin
 	// (GET /api/v1/subscriptions)
 	ListSubscriptions(w http.ResponseWriter, r *http.Request)
 	// CreateSubscription Create a new subscription
 	// (POST /api/v1/subscriptions)
-	CreateSubscription(w http.ResponseWriter, r *http.Request)
+	CreateSubscription(w http.ResponseWriter, r *http.Request, params CreateSubscriptionParams)
 	// DeleteSubscription Disabled versionless deletion; use versioned control state archived
 	// (DELETE /api/v1/subscriptions/{id})
 	//
@@ -7418,6 +7432,32 @@ func (siw *ServerInterfaceWrapper) GetActivityStream(w http.ResponseWriter, r *h
 	handler.ServeHTTP(w, r)
 }
 
+// GetSubscriptionCreationReceipt operation middleware
+func (siw *ServerInterfaceWrapper) GetSubscriptionCreationReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "idempotency_key" -------------
+	var idempotencyKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "idempotency_key", r.PathValue("idempotency_key"), &idempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "idempotency_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSubscriptionCreationReceipt(w, r, idempotencyKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListSubscriptions operation middleware
 func (siw *ServerInterfaceWrapper) ListSubscriptions(w http.ResponseWriter, r *http.Request) {
 
@@ -7435,8 +7475,39 @@ func (siw *ServerInterfaceWrapper) ListSubscriptions(w http.ResponseWriter, r *h
 // CreateSubscription operation middleware
 func (siw *ServerInterfaceWrapper) CreateSubscription(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateSubscriptionParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.CreateSubscription(w, r)
+		siw.Handler.CreateSubscription(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9240,6 +9311,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/search/movies", wrapper.SearchMovieReleases)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscriptions", wrapper.ListSubscriptions)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/subscriptions", wrapper.CreateSubscription)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscription-commands/{idempotency_key}", wrapper.GetSubscriptionCreationReceipt)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscriptions/{id}/status", wrapper.GetSubscriptionStatus)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/subscriptions/{id}/bindings", wrapper.ConfigureSubscriptionBindings)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/mapping-options", wrapper.GetFileMappingOptions)
@@ -16393,6 +16465,98 @@ func (response GetActivityStream503JSONResponse) VisitGetActivityStreamResponse(
 	return err
 }
 
+type GetSubscriptionCreationReceiptRequestObject struct {
+	IdempotencyKey string `json:"idempotency_key"`
+}
+
+type GetSubscriptionCreationReceiptResponseObject interface {
+	VisitGetSubscriptionCreationReceiptResponse(w http.ResponseWriter) error
+}
+
+type GetSubscriptionCreationReceipt200JSONResponse SubscriptionDetails
+
+func (response GetSubscriptionCreationReceipt200JSONResponse) VisitGetSubscriptionCreationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionCreationReceipt400JSONResponse ErrorResponse
+
+func (response GetSubscriptionCreationReceipt400JSONResponse) VisitGetSubscriptionCreationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionCreationReceipt401JSONResponse ErrorResponse
+
+func (response GetSubscriptionCreationReceipt401JSONResponse) VisitGetSubscriptionCreationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionCreationReceipt403JSONResponse ErrorResponse
+
+func (response GetSubscriptionCreationReceipt403JSONResponse) VisitGetSubscriptionCreationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionCreationReceipt404JSONResponse ErrorResponse
+
+func (response GetSubscriptionCreationReceipt404JSONResponse) VisitGetSubscriptionCreationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionCreationReceipt503JSONResponse ErrorResponse
+
+func (response GetSubscriptionCreationReceipt503JSONResponse) VisitGetSubscriptionCreationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListSubscriptionsRequestObject struct {
 }
 
@@ -16443,7 +16607,8 @@ func (response ListSubscriptions401ApplicationProblemPlusJSONResponse) VisitList
 }
 
 type CreateSubscriptionRequestObject struct {
-	Body *CreateSubscriptionJSONRequestBody
+	Params CreateSubscriptionParams
+	Body   *CreateSubscriptionJSONRequestBody
 }
 
 type CreateSubscriptionResponseObject interface {
@@ -16544,6 +16709,34 @@ func (response CreateSubscription403ApplicationProblemPlusJSONResponse) VisitCre
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateSubscription404JSONResponse ErrorResponse
+
+func (response CreateSubscription404JSONResponse) VisitCreateSubscriptionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateSubscription409JSONResponse ErrorResponse
+
+func (response CreateSubscription409JSONResponse) VisitCreateSubscriptionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -21163,6 +21356,9 @@ type StrictServerInterface interface {
 	// GetActivityStream Observe neutral activity invalidations and requery scoped state
 	// (GET /api/v1/stream)
 	GetActivityStream(ctx context.Context, request GetActivityStreamRequestObject) (GetActivityStreamResponseObject, error)
+	// GetSubscriptionCreationReceipt Read the original subscription creation result
+	// (GET /api/v1/subscription-commands/{idempotency_key})
+	GetSubscriptionCreationReceipt(ctx context.Context, request GetSubscriptionCreationReceiptRequestObject) (GetSubscriptionCreationReceiptResponseObject, error)
 	// ListSubscriptions List subscriptions for current user or all if admin
 	// (GET /api/v1/subscriptions)
 	ListSubscriptions(ctx context.Context, request ListSubscriptionsRequestObject) (ListSubscriptionsResponseObject, error)
@@ -23518,6 +23714,32 @@ func (sh *strictHandler) GetActivityStream(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// GetSubscriptionCreationReceipt operation middleware
+func (sh *strictHandler) GetSubscriptionCreationReceipt(w http.ResponseWriter, r *http.Request, idempotencyKey string) {
+	var request GetSubscriptionCreationReceiptRequestObject
+
+	request.IdempotencyKey = idempotencyKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetSubscriptionCreationReceipt(ctx, request.(GetSubscriptionCreationReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetSubscriptionCreationReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetSubscriptionCreationReceiptResponseObject); ok {
+		if err := validResponse.VisitGetSubscriptionCreationReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // ListSubscriptions operation middleware
 func (sh *strictHandler) ListSubscriptions(w http.ResponseWriter, r *http.Request) {
 	var request ListSubscriptionsRequestObject
@@ -23543,8 +23765,10 @@ func (sh *strictHandler) ListSubscriptions(w http.ResponseWriter, r *http.Reques
 }
 
 // CreateSubscription operation middleware
-func (sh *strictHandler) CreateSubscription(w http.ResponseWriter, r *http.Request) {
+func (sh *strictHandler) CreateSubscription(w http.ResponseWriter, r *http.Request, params CreateSubscriptionParams) {
 	var request CreateSubscriptionRequestObject
+
+	request.Params = params
 
 	var body CreateSubscriptionJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
