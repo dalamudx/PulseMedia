@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
+import {useInteractiveReleaseSearch} from "./useInteractiveReleaseSearch";
 import { api, type paths } from "@/api/client";
 import { useAuth } from "@/features/auth/AuthContext";
 import { useActivityInvalidation } from "./useActivityInvalidation";
@@ -39,6 +40,10 @@ function UpgradePanel({subscription,wantedId,onUpdated,userId}:{subscription:Sub
   const [fileId,setFileId]=useState(""),[candidateId,setCandidateId]=useState(""),[query,setQuery]=useState(subscription.title??""),[preview,setPreview]=useState<Preview|null>(null);
   const [mode,setMode]=useState<Mode|"">(""),[ack,setAck]=useState<Kind|null>(null),[verified,setVerified]=useState<Set<string>>(()=>new Set());
   const activity=useActivityInvalidation();
+  const searcher=useInteractiveReleaseSearch({scope:`upgrade:${subscription.id}`,subscriptionId:subscription.id});
+  const visibleCandidates=searcher.recovery?searcher.results:candidates;
+  const searchUnsafe=!!searcher.recovery&&!searcher.canAcquire;
+  useEffect(()=>{if(searcher.phase==="stale"||searcher.phase==="auth"){setPreview(null);setAck(null)}},[searcher.phase]);
   function adopt(value:Journal){memory.current=value;setJournal({...value});}
   function loadSaved(){
     if(repairRef.current)return;
@@ -71,13 +76,11 @@ function UpgradePanel({subscription,wantedId,onUpdated,userId}:{subscription:Sub
     finally{if(reader.current===c)reader.current=null;if(!c.signal.aborted)setLoading(false);}
   }
   async function search(){
-    if(reader.current||locked||reservation||!query.trim())return;const c=new AbortController();reader.current=c;setLoading(true);setCandidates([]);setCandidateId("");setPreview(null);setAck(null);setError("");
-    try{const r=await api.GET("/api/v1/releases/search",{signal:c.signal,cache:"no-store",params:{query:{query:query.trim(),media_type:"movie"}}});if(c.signal.aborted)return;
-      if(r.error||!r.data)throw Error("search");setCandidates(r.data.results);setNotice(r.data.partial?"部分站点检索未完成，仅展示已返回的资源。":"站点检索已返回。是否允许升级仍需读取比较。");
-    }catch{if(!c.signal.aborted)setError("站点检索失败，不能当作没有资源。请重试。");}finally{if(reader.current===c)reader.current=null;if(!c.signal.aborted)setLoading(false);}
+    if(reader.current||locked||reservation||!query.trim()||searcher.busy)return;
+    setCandidateId("");setPreview(null);setAck(null);setError("");await searcher.start(query);
   }
   async function compare(){
-    if(reader.current||locked||reservation||!fileId||!candidateId)return;const c=new AbortController();reader.current=c;setLoading(true);setPreview(null);setAck(null);setError("");
+    if(reader.current||locked||reservation||searchUnsafe||!fileId||!candidateId)return;const c=new AbortController();reader.current=c;setLoading(true);setPreview(null);setAck(null);setError("");
     try{const r=await api.POST("/api/v1/subscriptions/{id}/upgrade-previews",{signal:c.signal,cache:"no-store",params:{path:{id:subscription.id}},body:{current_file_id:fileId,candidate_id:candidateId}});if(c.signal.aborted)return;
       if(r.error||!r.data||r.data.current_file_id!==fileId||r.data.candidate_id!==candidateId||r.data.version.actor_id!==userId||r.data.version.subscription_id!==subscription.id)throw Error("preview");setPreview(r.data);
     }catch{if(!c.signal.aborted)setError("比较读取失败，请刷新订阅后重新比较。旧结论已清除。");}finally{if(reader.current===c)reader.current=null;if(!c.signal.aborted)setLoading(false);}
@@ -107,8 +110,9 @@ function UpgradePanel({subscription,wantedId,onUpdated,userId}:{subscription:Sub
   function fresh<K extends Kind>(kind:K,body:Bodies[K]){if(ack!==kind||pending||locked)return;void execute({kind,key:crypto.randomUUID(),body,phase:"pending"} as Entry);}
   async function repairRecord(){if(write.current||!repair)return;setBusy(true);try{adopt(await persistJournal(localStorage,navigator.locks,memory.current,userId,subscription.id));repairRef.current=false;setRepair(false);setError("");setNotice("本地回执已修复，未重新提交。");}catch{setError("本地回执仍无法保存，请恢复浏览器存储后重试修复。");}finally{setBusy(false);}}
   function recover(entry:Entry){void execute({kind:entry.kind,key:entry.key,body:entry.body,phase:"pending"} as Entry,entry.phase==="closed");}
-  const selectedFile=files.find(f=>f.id===fileId),selectedCandidate=candidates.find(c=>c.id===candidateId);
-  const canReserve=enabled&&preview?.current_file_id===fileId&&preview.candidate_id===candidateId&&preview.comparable&&preview.improvement&&!!preview.expected_client_digest&&preview.version.intent_version===current?.intent_version;
+  const selectedFile=files.find(f=>f.id===fileId),selectedCandidate=visibleCandidates.find(c=>c.id===candidateId);
+  const canReserve=!searchUnsafe&&enabled&&preview?.current_file_id===fileId&&preview.candidate_id===candidateId&&preview.comparable&&preview.improvement&&!!preview.expected_client_digest&&preview.version.intent_version===current?.intent_version;
+  if(searcher.phase==="auth")return <section className="config-editor"><p role="alert">{searcher.message}</p></section>;
   return <section className="config-editor" aria-label="电影品质升级">
     <div className="config-heading"><h3>电影品质升级</h3><button type="button" className="btn-secondary" aria-expanded={open} onClick={()=>{setOpen(!open);if(!open)void readResources();}}>{open?"收起升级":"管理品质升级"}</button></div>
     {open&&<>
@@ -129,9 +133,11 @@ function UpgradePanel({subscription,wantedId,onUpdated,userId}:{subscription:Sub
         {mode==="replace_if_better"&&<p className="config-description">达到停止升级阈值后仍可继续升级。仅接受严格更优的版本，同级优化保持关闭。</p>}
         {mode&&<><label><input type="checkbox" checked={ack==="mode"} disabled={locked||!!pending} onChange={e=>setAck(e.target.checked?"mode":null)}/>我确认设置此升级模式</label><button type="button" className="btn-secondary" disabled={locked||loading||!!pending||ack!=="mode"||!current} onClick={()=>current&&fresh("mode",{expected_intent:current.intent_version,mode,confirmed:true})}>确认升级模式</button></>}
         <div className="config-field"><label htmlFor={`${uid}-file`}>当前媒体库文件</label><select id={`${uid}-file`} value={fileId} disabled={locked||!!pending} onChange={e=>{reader.current?.abort();reader.current=null;setLoading(false);setFileId(e.target.value);setPreview(null);setAck(null);}}><option value="">选择当前文件</option>{files.map(f=><option key={f.id} value={f.id}>{f.root_name} · {f.rel_path}</option>)}</select></div>
-        <div className="config-field"><label htmlFor={`${uid}-query`}>电影资源检索词</label><input id={`${uid}-query`} value={query} disabled={locked||!!pending} onChange={e=>setQuery(e.target.value)}/><button type="button" className="btn-secondary" disabled={locked||loading||!!pending||!query.trim()} onClick={()=>void search()}>检索站点</button></div>
-        <div className="config-field"><label htmlFor={`${uid}-candidate`}>候选资源</label><select id={`${uid}-candidate`} value={candidateId} disabled={locked||!!pending} onChange={e=>{reader.current?.abort();reader.current=null;setLoading(false);setCandidateId(e.target.value);setPreview(null);setAck(null);}}><option value="">选择候选资源</option>{candidates.map(c=><option key={c.id} value={c.id}>{c.title}{c.indexer_name?` · ${c.indexer_name}`:""}</option>)}</select></div>
-        <button type="button" className="btn-secondary" disabled={locked||loading||!!pending||!fileId||!candidateId} onClick={()=>void compare()}>读取升级比较</button>
+        <div className="config-field"><label htmlFor={`${uid}-query`}>电影资源检索词</label><input id={`${uid}-query`} value={query} disabled={locked||!!pending} onChange={e=>setQuery(e.target.value)}/><button type="button" className="btn-secondary" disabled={locked||loading||!!pending||searcher.busy||!query.trim()} onClick={()=>void search()}>检索站点</button></div>
+        <p role="status">{searcher.message}</p><p className="config-description">{searcher.sourceSummary}</p><p className="config-description">{searcher.policySummary}</p>
+        {searcher.recovery&&<div className="config-actions"><button type="button" className="btn-secondary" disabled={locked||!!pending||searcher.busy} onClick={searcher.refresh}>刷新搜索观察</button><button type="button" className="btn-secondary" disabled={locked||!!pending||searcher.busy} onClick={()=>void searcher.cancel()}>取消原搜索需求</button>{searcher.canRetryOriginal&&<button type="button" disabled={locked||!!pending||searcher.busy} onClick={()=>void searcher.retryOriginal()}>明确重试原键命令</button>}</div>}
+        <div className="config-field"><label htmlFor={`${uid}-candidate`}>候选资源</label><select id={`${uid}-candidate`} value={candidateId} disabled={locked||!!pending} onChange={e=>{reader.current?.abort();reader.current=null;setLoading(false);setCandidateId(e.target.value);setPreview(null);setAck(null);}}><option value="">选择候选资源</option>{visibleCandidates.map(c=><option key={c.id} value={c.id}>{c.title}{c.indexer_name?` · ${c.indexer_name}`:""}</option>)}</select></div>
+        <button type="button" className="btn-secondary" disabled={locked||loading||!!pending||searchUnsafe||!fileId||!candidateId} onClick={()=>void compare()}>读取升级比较</button>
         {preview&&<div aria-label="升级比较"><p>{preview.comparable&&preview.improvement?"候选品质严格优于当前文件。":knownReason(preview.reason)}</p><p>当前文件分数 {preview.current_score??"未知"} · 候选分数 {preview.candidate_score??"未知"}。比较结果不代表已授权下载。</p><p>{selectedFile?.rel_path} → {selectedCandidate?.title}</p>
           {!enabled&&<p>请先确认启用一种升级模式，再刷新资源与比较。</p>}
           {canReserve&&<><label><input type="checkbox" checked={ack==="reservation"} disabled={locked||!!pending} onChange={e=>setAck(e.target.checked?"reservation":null)}/>我确认冻结此次文件和候选，保留原文件保护</label><button type="button" className="btn-secondary" disabled={locked||loading||!!pending||ack!=="reservation"} onClick={()=>fresh("reservation",{current_file_id:fileId,candidate_id:candidateId,expected:preview.version,expected_client_digest:preview.expected_client_digest!,confirmed:true})}>确认冻结预留</button></>}

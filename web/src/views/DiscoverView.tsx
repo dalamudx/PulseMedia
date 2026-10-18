@@ -6,9 +6,9 @@ import { useToast } from "@/features/toast/ToastContext";
 import { MediaCard, type MediaItem } from "@/components/cards/MediaCard";
 import { MediaDetailModal } from "@/components/dialog/MediaDetailModal";
 import { TorrentSearchModal } from "@/components/dialog/TorrentSearchModal";
-import type { paths } from "@/api/client";
+import {useInteractiveReleaseSearch} from "@/features/configuration/useInteractiveReleaseSearch";
 
-type ReleaseItem = paths["/api/v1/releases/search"]["get"]["responses"]["200"]["content"]["application/json"]["results"][number];
+
 
 export const DiscoverView: React.FC = () => {
   const navigate = useNavigate();
@@ -36,11 +36,8 @@ export const DiscoverView: React.FC = () => {
 
   // Release Search Modal
   const [showReleaseModal, setShowReleaseModal] = useState(false);
-  const [loadingReleases, setLoadingReleases] = useState(false);
   const [currentMedia, setCurrentMedia] = useState<MediaItem | null>(null);
-  const [releases, setReleases] = useState<ReleaseItem[]>([]);
-const [releaseError,setReleaseError]=useState("");const[releasePartial,setReleasePartial]=useState(false);const releaseOwner=useRef<AbortController|null>(null);useEffect(()=>()=>releaseOwner.current?.abort(),[]);
-  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const releaseSearch=useInteractiveReleaseSearch({scope:"discover"});
 
   const [feedError, setFeedError] = useState("");
   const feedRequest = useRef<AbortController | null>(null);
@@ -194,49 +191,12 @@ root_id:rootId,
   };
 
   const openReleaseSearch = async (m: MediaItem) => {
-    setShowDetailModal(false);
-    setCurrentMedia(m);
-    setShowReleaseModal(true);
-    setLoadingReleases(true);
-    setReleases([]);setReleaseError("");setReleasePartial(false);releaseOwner.current?.abort();const c=new AbortController();releaseOwner.current=c;
-    try {
-      const { data,error } = await api.GET("/api/v1/releases/search", {signal:c.signal,cache:"no-store",
-        params: {
-          query: {
-            query: m.title,
-            media_type: m.media_type as "movie" | "tv",
-          },
-        },
-      });
-      if(c.signal.aborted||releaseOwner.current!==c)return;if(error||!data){setReleaseError("站点资源检索失败，不能判定没有资源。请关闭后重新检索。");return}setReleasePartial(data.partial);setReleases(data.results);
-    }catch{if(!c.signal.aborted&&releaseOwner.current===c){setReleases([]);setReleasePartial(false);setReleaseError("资源检索连接失败，未沿用旧结果。")}} finally {
-      if(releaseOwner.current===c){releaseOwner.current=null;setLoadingReleases(false)}
-    }
+    setShowDetailModal(false);setCurrentMedia(null);setShowReleaseModal(true);
+    // Discovery IDs belong to TMDB; global title search carries no local media UUID.
+    if(await releaseSearch.start(m.title))setCurrentMedia(m);
   };
 
-  const downloadRelease = async (rel: ReleaseItem, clientId?: string) => {
-    if (!currentMedia) return;
-    setDownloadingId(rel.id);
-    try {
-      const { data, error } = await api.POST("/api/v1/releases/download", {
-        body: {
-          candidate_id: rel.id,
-          client_id: clientId as any,
-        },
-      });
-      if (error) {
-        toast.error("下载提交失败", error.message || "请稍后重试");
-        return;
-      }
-      if (data) {
-        setShowReleaseModal(false);
-        toast.success("下载任务已提交", `持久获取已创建，尚不是下载器回执。操作 ID: ${data.operation_id}`);
-        navigate("/activity");
-      }
-    } finally {
-      setDownloadingId(null);
-    }
-  };
+
 
   return (
     <div className="discover-container">
@@ -493,19 +453,17 @@ root_id:rootId,
         />
       )}
 
+      {releaseSearch.recovery&&!showReleaseModal&&<button type="button" className="btn-secondary" onClick={()=>{setCurrentMedia(null);setShowReleaseModal(true);releaseSearch.refresh();}}>恢复资源搜索观察</button>}
       {/* Torrent Releases Modal */}
       {showReleaseModal && (
         <TorrentSearchModal
           mediaTitle={currentMedia?.title || ""}
           movieId={currentMedia?.tmdb_id}
           mediaType={currentMedia?.media_type??"movie"}
-          releases={releases}
-          error={releaseError}
-          partial={releasePartial}
-          loading={loadingReleases}
-          downloadingId={downloadingId}
-          onClose={() => {releaseOwner.current?.abort();releaseOwner.current=null;setShowReleaseModal(false);setLoadingReleases(false)}}
-          onDownload={downloadRelease}
+          releases={releaseSearch.results}
+          search={releaseSearch}
+          loading={releaseSearch.loading}
+          onClose={() => {releaseSearch.pause();void releaseSearch.cancel();setShowReleaseModal(false);}}
         />
       )}
     </div>

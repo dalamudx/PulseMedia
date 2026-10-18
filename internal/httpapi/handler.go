@@ -89,6 +89,7 @@ type ServerHandler struct {
 	rootSelectionSvc       *subscription.RootSelectionService
 	polSvc                 *policy.Service
 	searchSvc              *usecaseSearch.Service
+	interactiveSearchSvc   *usecaseSearch.InteractiveSearchService
 	indexerManagementSvc   *usecaseSearch.IndexerManagementService
 	indexerReceiptSvc      *usecaseSearch.IndexerManagementReceiptService
 	candidateSvc           *usecaseSearch.CandidateExplanationService
@@ -1070,51 +1071,13 @@ func (s *ServerHandler) PreviewPolicy(ctx context.Context, request PreviewPolicy
 	}, nil
 }
 
-// SearchReleases handles GET /api/v1/releases/search
+// SearchReleases keeps the legacy path non-mutating. New observations require
+// an explicit, actor-owned creation command followed by pure progress reads.
 func (s *ServerHandler) SearchReleases(ctx context.Context, request SearchReleasesRequestObject) (SearchReleasesResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil {
-		return SearchReleases401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
+	if GetActor(ctx) == nil {
+		return SearchReleases401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: GetRequestID(ctx)}, nil
 	}
-
-	if s.searchSvc == nil {
-		return SearchReleases503JSONResponse{Code: "SEARCH_UNAVAILABLE", Message: "search is not configured", RequestId: reqID}, nil
-	}
-
-	candidates, partial, err := s.searchSvc.AggregateSearchDetailed(ctx, request.Params.Query)
-	if err != nil {
-		return SearchReleases503JSONResponse{Code: "SEARCH_FAILED", Message: "candidate search failed; retry after restoring the search service", RequestId: reqID}, nil
-	}
-
-	results := make([]ReleaseItemResult, len(candidates))
-	for i, c := range candidates {
-		rec := domainMedia.Recognize(c.Title)
-		idx, _ := s.app.Queries().GetIndexerByID(ctx, c.IndexerID)
-		idxName := idx.Name
-		if idxName == "" {
-			idxName = "Tracker"
-		}
-
-		resStr := string(rec.Quality.Resolution)
-		srcStr := string(rec.Quality.Source)
-		codecStr := string(rec.Quality.Codec)
-		scoreVal := quality.DefaultPolicy().Score(rec.Quality)
-
-		results[i] = ReleaseItemResult{
-			Id:          c.ID,
-			Title:       c.Title,
-			SizeBytes:   c.SizeBytes,
-			Seeders:     int(c.Seeders),
-			Leechers:    int(c.Leechers),
-			IndexerName: idxName,
-			Resolution:  &resStr,
-			Source:      &srcStr,
-			Codec:       &codecStr,
-			Score:       &scoreVal,
-		}
-	}
-	return SearchReleases200JSONResponse{Results: results, Partial: partial}, nil
+	return SearchReleases400JSONResponse{Code: "EXPLICIT_SEARCH_REQUIRED", Message: "create an explicit search before reading candidates", RequestId: GetRequestID(ctx)}, nil
 }
 
 // DownloadRelease handles POST /api/v1/releases/download

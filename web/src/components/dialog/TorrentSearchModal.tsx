@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useId } from "react";
-import { X, ArrowUp, HardDrive, Download, Loader2, Sliders } from "lucide-react";
-import { api } from "@/api/client";
+import {useAuth} from "@/features/auth/AuthContext";
+import type {useInteractiveReleaseSearch} from "@/features/configuration/useInteractiveReleaseSearch";
+import { X, ArrowUp, HardDrive, Download, Loader2 } from "lucide-react";
 import type { paths } from "@/api/client";
 import {MovieAcquisitionPanel} from "@/features/configuration/MovieAcquisitionPanel";
 import {useDialogFocus} from "@/features/configuration/useDialogFocus";
@@ -12,39 +13,26 @@ interface TorrentSearchModalProps {
   movieId?: number;
   mediaType?: string;
   releases: ReleaseItem[];
-  error?: string;
-  partial?: boolean;
+  search: ReturnType<typeof useInteractiveReleaseSearch>;
   loading: boolean;
-  downloadingId: string | null;
   onClose: () => void;
-  onDownload: (rel: ReleaseItem, clientId?: string) => void;
 }
 
 export const TorrentSearchModal: React.FC<TorrentSearchModalProps> = ({
   mediaTitle,
   movieId, mediaType,
-  releases, error, partial,
+  releases, search,
   loading,
-  downloadingId,
   onClose,
-  onDownload,
 }) => {
-  const [chosen,setChosen]=useState<ReleaseItem|null>(null);
+  const {user}=useAuth();
+  const [selection,setChosen]=useState<{userId:string;searchId:string;item:ReleaseItem}|null>(null);
+  const chosen=selection?.userId===user?.id&&selection?.searchId===search.recovery?.searchId?selection?.item:null;
+  useEffect(()=>{setChosen(null)},[user?.id,search.recovery?.searchId]);
   const [pending,setPending]=useState(false);
+  useEffect(()=>{setPending(false)},[user?.id]);
   const dialog=useRef<HTMLDivElement>(null),titleId=useId();
   const close=()=>{if(!pending)onClose()};useDialogFocus(dialog,close);
-  const [downloadClients, setDownloadClients] = useState<any[]>([]);
-  const [selectedClientId, setSelectedClientId] = useState<string>("");
-
-  useEffect(() => {
-    api.GET("/api/v1/download-clients").then(({ data }) => {
-      if (data?.items && data.items.length > 0) {
-        setDownloadClients(data.items);
-        setSelectedClientId(data.items[0].id);
-      }
-    });
-  }, []);
-
   const formatSize = (bytes: number) => {
     if (bytes < 1024 * 1024 * 1024) {
       return (bytes / (1024 * 1024)).toFixed(1) + " MB";
@@ -56,47 +44,21 @@ export const TorrentSearchModal: React.FC<TorrentSearchModalProps> = ({
     <div className="modal-overlay" onClick={close}>
       <div ref={dialog} role="dialog" aria-modal="true" aria-labelledby={titleId} className="modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3 id={titleId}>「{mediaTitle}」站点资源检索</h3>
+          <h3 id={titleId}>{mediaTitle?`「${mediaTitle}」站点资源检索`: "恢复站点资源检索"}</h3>
           <button aria-label="关闭资源检索" disabled={pending} className="close-btn" onClick={close}>
             <X size={18} />
           </button>
         </div>
 
-        {/* Downloader Target Selector Bar */}
-        {!movieId && downloadClients.length > 0 && (
-          <div className="modal-downloader-select-bar">
-            <span className="dl-select-lbl">
-              <Sliders size={13} />
-              <span>目标下载器:</span>
-            </span>
-            <select
-              value={selectedClientId}
-              onChange={(e) => setSelectedClientId(e.target.value)}
-              className="dl-select-input"
-            >
-              {downloadClients.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} ({c.client_type}) · {c.url}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {movieId&&mediaType!=="movie"&&<p className="config-description">剧集与整包获取尚未放行；检索结果不构成覆盖授权。</p>}
-        {chosen&&movieId&&mediaType==="movie"&&<MovieAcquisitionPanel movieId={movieId} candidateId={chosen.id} candidateTitle={chosen.title} onPending={setPending}/>}
-        {partial&&!error&&<p role="status" className="config-description">当前结果不完整；只显示已返回资源，不能据此判断没有其它候选。</p>}
-        {error ? <p role="alert" className="config-error">{error}</p> : loading ? (
-          <div className="modal-loading">
-            <Loader2 className="spinner-icon" size={32} />
-            <p>正在向所有已配置站点检索种子候选...</p>
-          </div>
-        ) : releases.length === 0 ? (
-          <div className="modal-empty">
-            <HardDrive size={36} color="#64748b" />
-            <p>{partial ? '当前结果不完整，尚不能判断是否有匹配资源。' : '未在已配置站点找到匹配的种子资源。'}</p>
-            <span className="modal-tip">{partial ? '可稍后重新检索，或检查站点状态。' : '可在「站点管理」中添加更多 PT/Torznab 站点以扩充检索源。'}</span>
-          </div>
+        {mediaType!=="movie"&&<p className="config-description">剧集获取请前往原订阅，完成单集或完整覆盖审核与确认。</p>}{!movieId&&<p className="config-description">恢复的搜索可继续观察。请选择原电影重新发起搜索后，再确认获取目标。</p>}
+        {user&&chosen&&movieId&&mediaType==="movie"&&search.phase!=="auth"&&<fieldset className="config-fieldset" disabled={!search.canAcquire&&!pending}><MovieAcquisitionPanel key={user.id} movieId={movieId} candidateId={chosen.id} candidateTitle={chosen.title} onPending={setPending}/></fieldset>}
+        {search.message&&<p role={search.phase==="stale"||search.phase==="auth"?"alert":"status"} className="config-description">{search.message}</p>}
+        {search.sourceSummary&&<p className="config-description">{search.sourceSummary}</p>}
+        {search.policySummary&&<p className="config-description">{search.policySummary}</p>}
+        <div className="config-actions"><button type="button" className="btn-secondary" disabled={search.busy||pending} onClick={search.refresh}>刷新搜索观察</button>{search.recovery&&<button type="button" className="btn-secondary" disabled={search.busy||pending} onClick={()=>void search.cancel()}>取消原搜索需求</button>}{search.canRetryOriginal&&<button type="button" className="btn-secondary" disabled={search.busy||pending} onClick={()=>void search.retryOriginal()}>明确重试原键命令</button>}</div>
+        {loading&&<div className="modal-loading" role="status"><Loader2 className="spinner-icon" size={24}/><p>正在等待其余站点资源…</p></div>}
+        {releases.length === 0 ? (
+          <div className="modal-empty"><HardDrive size={36} color="#64748b"/><p>{search.message||"请选择搜索命令或恢复原搜索。"}</p></div>
         ) : (
           <div className="release-list">
             {releases.map((rel) => (
@@ -119,20 +81,10 @@ export const TorrentSearchModal: React.FC<TorrentSearchModalProps> = ({
                 <div className="rel-action">
                   <button
                     className="btn-sm btn-primary"
-                    disabled={pending || downloadingId === rel.id || (movieId!==undefined && mediaType!=="movie")}
-                    onClick={() => movieId ? setChosen(rel) : onDownload(rel, selectedClientId)}
+                    disabled={pending || !search.canAcquire || !movieId || mediaType!=="movie"}
+                    onClick={() => user&&search.recovery?.searchId&&setChosen({userId:user.id,searchId:search.recovery.searchId,item:rel})}
                   >
-                    {downloadingId === rel.id ? (
-                      <>
-                        <Loader2 className="spinner-icon" size={13} />
-                        <span>提交中...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Download size={13} />
-                        <span>{movieId?"选择获取目标":"选择下载"}</span>
-                      </>
-                    )}
+                    <Download size={13} /><span>选择获取目标</span>
                   </button>
                 </div>
               </div>

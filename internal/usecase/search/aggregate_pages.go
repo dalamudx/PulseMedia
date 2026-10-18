@@ -50,10 +50,27 @@ func (c *pageChain) accepts(p *ports.IndexerPage) bool {
 	}
 	return true
 }
-func (s *Service) aggregateEndpointPages(ctx context.Context, indexer uuid.UUID, version int64, keyword string) []uuid.UUID {
-	result, e := s.execute(ctx, indexer, keyword, 0, uuid.Nil, version, nil, false, nil)
+func (s *Service) aggregateEndpointPages(ctx context.Context, indexer uuid.UUID, version int64, keyword string, interactive ...*ports.InteractiveSearchSourceLease) []uuid.UUID {
+	ids, _ := s.aggregateEndpointPagesResult(ctx, indexer, version, keyword, interactive...)
+	return ids
+}
+func (s *Service) aggregateEndpointPagesResult(ctx context.Context, indexer uuid.UUID, version int64, keyword string, interactive ...*ports.InteractiveSearchSourceLease) ([]uuid.UUID, error) {
+	var lease *ports.InteractiveSearchSourceLease
+	if len(interactive) > 0 {
+		lease = interactive[0]
+	}
+	executePage := func(call context.Context, page int32, chain *pageChain) (*SearchResult, error) {
+		if lease == nil {
+			return s.execute(call, indexer, keyword, page, uuid.Nil, version, nil, false, chain)
+		}
+		return s.executeWithInteractive(call, indexer, keyword, page, uuid.Nil, version, nil, false, chain, lease)
+	}
+	result, e := executePage(ctx, 0, nil)
 	if e != nil || result == nil || result.State != "succeeded" {
-		return nil
+		if e != nil {
+			return nil, e
+		}
+		return nil, ports.ErrUnavailable
 	}
 	ids := []uuid.UUID{result.QueryID}
 	callCtx, cancel := context.WithTimeout(ctx, aggregateContinuationTimeout)
@@ -83,7 +100,16 @@ func (s *Service) aggregateEndpointPages(ctx context.Context, indexer uuid.UUID,
 		if duplicate {
 			break
 		}
-		delay, e := s.repo.ContinuationDelay(callCtx, indexer, version)
+		var delay time.Duration
+		if lease != nil {
+			reader, ok := s.repo.(ports.InteractiveSearchContinuationReader)
+			if !ok {
+				break
+			}
+			delay, e = reader.InteractiveSearchContinuationDelay(callCtx, indexer, version)
+		} else {
+			delay, e = s.repo.ContinuationDelay(callCtx, indexer, version)
+		}
 		if e != nil || delay > aggregateContinuationTimeout {
 			break
 		}
@@ -92,13 +118,16 @@ func (s *Service) aggregateEndpointPages(ctx context.Context, indexer uuid.UUID,
 			select {
 			case <-callCtx.Done():
 				timer.Stop()
-				return ids
+				return ids, callCtx.Err()
 			case <-timer.C:
 			}
 		}
-		next, e := s.execute(callCtx, indexer, keyword, page, uuid.Nil, version, nil, false, &chain)
+		next, e := executePage(callCtx, page, &chain)
 		if e != nil || next == nil || next.State != "succeeded" {
-			break
+			if e != nil {
+				return ids, e
+			}
+			return ids, ports.ErrUnavailable
 		}
 		// A shared query can have been written outside this chain. Check its immutable
 		// candidate associations before admitting it to this browsing response.
@@ -122,5 +151,5 @@ func (s *Service) aggregateEndpointPages(ctx context.Context, indexer uuid.UUID,
 		ids = append(ids, next.QueryID)
 		result = next
 	}
-	return ids
+	return ids, nil
 }

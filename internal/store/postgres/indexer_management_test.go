@@ -34,9 +34,7 @@ const managementOtherHash = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 func managementFixture(t *testing.T) (*pgxpool.Pool, string, *configurationSecrets, *ports.Actor, *postgres.IndexerManagementStore) {
 	t.Helper()
 	p, dsn, secrets := configurationFixture(t)
-	if version, err := postgres.Migrate(t.Context(), dsn, "../../../migrations"); err != nil || version != 85 {
-		t.Fatal("schema85 management fixture migration failed")
-	}
+	m5IndexerSchemaVersion(t, dsn, 85)
 	var version string
 	if err := p.QueryRow(t.Context(), `SHOW server_version`).Scan(&version); err != nil || !strings.HasPrefix(version, "18.6") {
 		t.Fatalf("requires PostgreSQL 18.6: %s %v", version, err)

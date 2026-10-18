@@ -59,7 +59,8 @@ type SearchQuerySpec struct {
 	ConfigVersion   int64
 	RSSJobID        uuid.UUID
 	HealthJob       *IndexerHealthJob
-	Actor           *Actor `json:"-"`
+	Actor           *Actor                        `json:"-"`
+	Interactive     *InteractiveSearchSourceLease `json:"-"`
 	ProbeOnly       bool
 	MinimumInterval time.Duration
 }

@@ -276,6 +276,8 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var subSvc *subscription.Service
 	var polSvc *policy.Service
 	var searchSvc *usecaseSearch.Service
+	var interactiveSearchRepo ports.InteractiveSearchRepository
+	var interactiveSearchSvc *usecaseSearch.InteractiveSearchService
 	var feedSvc *usecaseSearch.FeedService
 	var healthSvc *usecaseSearch.HealthService
 	var scheduler *usecaseScheduler.AutoFulfillScheduler
@@ -379,6 +381,8 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		searchSvc.SetEndpointRepository(postgres.NewSearchEndpointStore(a.dbPool))
 		searchSvc.SetClientFactory(newIndexerClient)
 		searchSvc.SetConfiguredClientFactory(newConfiguredIndexerClient)
+		interactiveSearchRepo = postgres.NewInteractiveSearchStore(a.dbPool, a.idgen)
+		interactiveSearchSvc = usecaseSearch.NewInteractiveSearchService(interactiveSearchRepo, crypto.NewSecretProtector(masterKey))
 		searchSvc.SetFeedClientFactory(func(kind, baseURL, apiKey string) ports.IndexerClient {
 			if kind == "rss" {
 				return universal_rss.NewFeedClient(baseURL, nil)
@@ -408,6 +412,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	serverHandler.SetBatchQueryService(notify.NewBatchQueryService(postgres.NewNotificationBatchQueryStore(a.dbPool)))
 	serverHandler.SetDeliverySkipService(notify.NewDeliverySkipService(postgres.NewDeliveryManagementStore(a.dbPool, a.idgen)))
 	serverHandler.SetFeedService(feedSvc)
+	serverHandler.SetInteractiveSearchService(interactiveSearchSvc)
 	if a.dbPool != nil {
 		indexerManagementStore := postgres.NewIndexerManagementStore(a.dbPool, a.idgen, a.indexerDecoder)
 		serverHandler.SetIndexerManagementServices(usecaseSearch.NewIndexerManagementService(indexerManagementStore, crypto.NewSecretProtector(masterKey)), usecaseSearch.NewIndexerManagementReceiptService(indexerManagementStore))
@@ -510,7 +515,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		go func() { defer close(outboxDone); a.runOutboxWorkers(workerCtx, ob, syncSvc, notifySvc) }()
 		go func() {
 			defer close(searchDone)
-			a.runSearchWorkers(workerCtx, queue, scheduler, searchSvc, feedSvc, healthSvc)
+			a.runAllSearchWorkers(workerCtx, queue, scheduler, searchSvc, feedSvc, healthSvc, interactiveSearchRepo)
 		}()
 		go func() { defer close(libraryDone); a.runLibraryWorkers(workerCtx, queue, metaProvider) }()
 	} else {

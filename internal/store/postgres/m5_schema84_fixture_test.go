@@ -1,6 +1,7 @@
 package postgres_test
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,7 +12,9 @@ import (
 
 // Keep the original encrypted-storage and frozen-history contract at schema84.
 // Lifecycle/management coverage independently applies schema85 in its own tests.
-func m5IndexerSchema84(t *testing.T, dsn string) {
+func m5IndexerSchema84(t *testing.T, dsn string) { m5IndexerSchemaVersion(t, dsn, 84) }
+
+func m5IndexerSchemaVersion(t *testing.T, dsn string, version int64) {
 	t.Helper()
 	root := filepath.Join("..", "..", "..", "migrations")
 	dir := t.TempDir()
@@ -21,7 +24,7 @@ func m5IndexerSchema84(t *testing.T, dsn string) {
 	}
 	for _, entry := range entries {
 		name := entry.Name()
-		if entry.IsDir() || !strings.HasSuffix(name, ".sql") || len(name) < 6 || name[:5] > "00084" {
+		if entry.IsDir() || !strings.HasSuffix(name, ".sql") || len(name) < 6 || name[:5] > fmt.Sprintf("%05d", version) {
 			continue
 		}
 		data, e := os.ReadFile(filepath.Join(root, name))
@@ -32,7 +35,7 @@ func m5IndexerSchema84(t *testing.T, dsn string) {
 			t.Fatal("copy migration failed")
 		}
 	}
-	if version, e := postgres.Migrate(t.Context(), dsn, dir); e != nil || version != 84 {
-		t.Fatal("schema84 fixture migration failed")
+	if applied, e := postgres.Migrate(t.Context(), dsn, dir); e != nil || applied != version {
+		t.Fatalf("schema%d fixture migration failed", version)
 	}
 }

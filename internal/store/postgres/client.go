@@ -17,7 +17,7 @@ const (
 	MigrationAdvisoryLockID = 0x50756c73654d // "PulseM"
 	ExpectedM0Version       = 1
 	ExpectedM1Version       = 2
-	CurrentMigrationVersion = 85
+	CurrentMigrationVersion = 86
 )
 
 var (

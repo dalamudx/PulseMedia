@@ -3071,10 +3071,220 @@ paths:
           description: Search service unavailable
           content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
 
+  /api/v1/release-searches:
+    post:
+      summary: Create an owned interactive release search
+      operationId: createReleaseSearch
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: {type: string, minLength: 8, maxLength: 130}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InteractiveReleaseSearchRequest'
+      responses:
+        '201':
+          description: Stable original command receipt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractiveReleaseSearchReceipt'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current account or object scope denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Command changed or search unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Search service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/release-searches/{id}:
+    get:
+      summary: Read committed search progress without executing network requests
+      operationId: getReleaseSearch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+      responses:
+        '200':
+          description: Authorized read-only progressive snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractiveReleaseSearchSnapshot'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current account or object scope denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Search or original command not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Search service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/release-searches/{id}/cancel:
+    post:
+      summary: Cancel this search demand while retaining physical exclusion
+      operationId: cancelReleaseSearch
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: {type: string, minLength: 8, maxLength: 130}
+      responses:
+        '200':
+          description: Stable original command receipt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractiveReleaseSearchReceipt'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current account or object scope denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Search or original command not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Command changed or search unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Search service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/release-search-commands/{key}:
+    get:
+      summary: Recover the original owned search command receipt
+      operationId: getReleaseSearchReceipt
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: {type: string, minLength: 8, maxLength: 130}
+        - name: action
+          in: query
+          required: true
+          schema: {type: string, enum: [create, cancel]}
+      responses:
+        '200':
+          description: Stable original command receipt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractiveReleaseSearchReceipt'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current account or object scope denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Search or original command not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Search service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /api/v1/releases/search:
     get:
       summary: Aggregate search releases across all online indexers
       operationId: searchReleases
+      deprecated: true
+      description: Explicit searches must be created with POST /api/v1/release-searches; this legacy GET never executes network requests.
       parameters:
         - name: query
           in: query
@@ -3104,6 +3314,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReleaseSearchResponse'
+        '400':
+          description: Explicit search creation required; no search was executed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized
           content:
@@ -5697,6 +5913,62 @@ components:
           type: integer
         message:
           type: string
+
+    InteractiveReleaseSearchRequest:
+      type: object
+      additionalProperties: false
+      required: [query]
+      properties:
+        query: {type: string, minLength: 1, maxLength: 256}
+        media_id: {type: string, format: uuid}
+        subscription_id: {type: string, format: uuid}
+    InteractiveReleaseSearchReceipt:
+      type: object
+      required: [id, query, created_at, deadline, source_count, ranking_policy_id, ranking_policy_revision]
+      properties:
+        id: {type: string, format: uuid}
+        query: {type: string}
+        media_id: {type: string, format: uuid}
+        subscription_id: {type: string, format: uuid}
+        created_at: {type: string, format: date-time}
+        deadline: {type: string, format: date-time}
+        cancelled_at: {type: string, format: date-time}
+        source_count: {type: integer}
+        ranking_policy_id: {type: string}
+        ranking_policy_revision: {type: integer, format: int64}
+    InteractiveReleaseSearchSource:
+      type: object
+      required: [indexer_id, name, config_version, state, reason, query_ids, partial]
+      properties:
+        indexer_id: {type: string, format: uuid}
+        name: {type: string}
+        config_version: {type: integer, format: int64}
+        state: {type: string}
+        reason: {type: string}
+        query_ids:
+          type: array
+          items: {type: string, format: uuid}
+        partial: {type: boolean}
+    InteractiveReleaseSearchSnapshot:
+      type: object
+      required: [search, state, sources, results, partial, truncated, total_candidates, statistics_mode, sort_order]
+      properties:
+        search:
+          $ref: '#/components/schemas/InteractiveReleaseSearchReceipt'
+        state: {type: string}
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/InteractiveReleaseSearchSource'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReleaseItemResult'
+        partial: {type: boolean}
+        truncated: {type: boolean}
+        total_candidates: {type: integer}
+        statistics_mode: {type: string, enum: [latest_persisted]}
+        sort_order: {type: string, enum: [quality_desc_seeders_desc_id_asc]}
 
     ReleaseItemResult:
       type: object

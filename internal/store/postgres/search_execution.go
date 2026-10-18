@@ -81,6 +81,9 @@ type searchExecutionPermit struct {
 }
 
 func searchQueryType(spec ports.SearchQuerySpec) string {
+	if spec.Interactive != nil {
+		return "interactive"
+	}
 	if spec.RSSJobID != uuid.Nil {
 		return "rss"
 	}
@@ -96,6 +99,13 @@ func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.Search
 			frozen.Scopes = append(make([]string, 0, len(spec.Actor.Scopes)), spec.Actor.Scopes...)
 		}
 		spec.Actor = &frozen
+	}
+	if spec.Interactive != nil {
+		frozen := *spec.Interactive
+		spec.Interactive = &frozen
+		if !validInteractiveQuerySpec(spec) {
+			return ports.SearchQueryAdmission{}, nil, ports.ErrBadResponse
+		}
 	}
 	var out ports.SearchQueryAdmission
 	if spec.ID == uuid.Nil || spec.IndexerID == uuid.Nil || spec.ConfigVersion < 1 || spec.Page < 0 || spec.Page > 2147483647/50 || spec.MinimumInterval < 0 {
@@ -125,12 +135,18 @@ func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.Search
 			return out, nil, e
 		}
 	}
-	active, e := s.queries.GetActiveQuery(ctx, db.GetActiveQueryParams{QueryType: searchQueryType(spec), IndexerID: spec.IndexerID, Keyword: spec.Keyword, Page: spec.Page, ConfigVersion: spec.ConfigVersion})
-	if e != nil && !errors.Is(e, pgx.ErrNoRows) {
-		return out, nil, e
+	var active db.IndexerQuery
+	if spec.Interactive == nil {
+		active, e = s.queries.GetActiveQuery(ctx, db.GetActiveQueryParams{QueryType: searchQueryType(spec), IndexerID: spec.IndexerID, Keyword: spec.Keyword, Page: spec.Page, ConfigVersion: spec.ConfigVersion})
+		if e != nil && !errors.Is(e, pgx.ErrNoRows) {
+			return out, nil, e
+		}
 	}
 	release, e := AcquireIndexerPermit(ctx, s.pool, spec.IndexerID)
 	if e != nil {
+		if spec.Interactive != nil && errors.Is(e, ports.ErrUnavailable) {
+			return out, nil, ports.ErrInteractiveSearchDeferred
+		}
 		if errors.Is(e, ports.ErrUnavailable) && active.ID != uuid.Nil {
 			out.Shared = searchShared(active)
 			return out, nil, nil
@@ -177,8 +193,16 @@ func (p *searchExecutionPermit) reserve(ctx context.Context, second bool) (db.In
 			return db.Indexer{}, e
 		}
 	}
+	if spec.Interactive != nil {
+		if !validInteractiveQuerySpec(spec) {
+			return db.Indexer{}, ports.ErrBadResponse
+		}
+		if e = AuthorizeInteractiveSearchSource(ctx, q, *spec.Interactive); e != nil {
+			return db.Indexer{}, e
+		}
+	}
 	fresh, e := q.LockRSSIndexer(ctx, spec.IndexerID)
-	if e != nil || fresh.ConfigVersion != spec.ConfigVersion || (!spec.ProbeOnly && (fresh.Health != "online" || (spec.RSSJobID != uuid.Nil && !fresh.RssEnabled))) {
+	if e != nil || fresh.ConfigVersion != spec.ConfigVersion || (!spec.ProbeOnly && spec.Interactive == nil && (fresh.Health != "online" || (spec.RSSJobID != uuid.Nil && !fresh.RssEnabled))) {
 		return db.Indexer{}, ports.ErrUnavailable
 	}
 	var guard db.GetAuthorizedSearchJobParams
@@ -201,6 +225,9 @@ func (p *searchExecutionPermit) reserve(ctx context.Context, second bool) (db.In
 	}
 	row, e := q.ReserveIndexerBudget(ctx, db.ReserveIndexerBudgetParams{ID: spec.IndexerID, IntervalMs: spec.MinimumInterval.Milliseconds()})
 	if e != nil {
+		if spec.Interactive != nil && errors.Is(e, pgx.ErrNoRows) {
+			return db.Indexer{}, ports.ErrInteractiveSearchDeferred
+		}
 		return db.Indexer{}, ports.ErrUnavailable
 	}
 	if spec.HealthJob != nil {
@@ -225,6 +252,9 @@ func (p *searchExecutionPermit) BeginQuery(ctx context.Context) (*ports.IndexerQ
 		return nil, ports.ErrUnavailable
 	}
 	s := p.spec
+	if s.Interactive != nil {
+		return p.beginInteractiveQuery(ctx)
+	}
 	q := p.store.queries
 	if e := q.RetireInterruptedIndexerQueries(ctx, s.IndexerID); e != nil {
 		return nil, e
@@ -266,6 +296,14 @@ func (p *searchExecutionPermit) CommitQuery(ctx context.Context, commit ports.Se
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
 	q := p.store.queries.WithTx(tx)
+	if s.Interactive != nil {
+		if !validInteractiveQuerySpec(s) {
+			return nil, ports.ErrBadResponse
+		}
+		if e = AuthorizeInteractiveSearchSource(ctx, q, *s.Interactive); e != nil {
+			return nil, e
+		}
+	}
 	fresh, e := q.LockRSSIndexer(ctx, s.IndexerID)
 	if e != nil {
 		return nil, ports.ErrUnavailable
@@ -274,7 +312,7 @@ func (p *searchExecutionPermit) CommitQuery(ctx context.Context, commit ports.Se
 	if e != nil || current.State != "running" {
 		return nil, ports.ErrUnavailable
 	}
-	if fresh.ConfigVersion != s.ConfigVersion || (!s.ProbeOnly && (fresh.Health != "online" || (s.RSSJobID != uuid.Nil && !fresh.RssEnabled))) || current.ConfigVersion != s.ConfigVersion || current.IndexerID != s.IndexerID || current.Page != s.Page || current.Keyword != s.Keyword || current.QueryType != searchQueryType(s) || current.RssJobID.Valid != (s.RSSJobID != uuid.Nil) || (current.RssJobID.Valid && uuid.UUID(current.RssJobID.Bytes) != s.RSSJobID) {
+	if fresh.ConfigVersion != s.ConfigVersion || (!s.ProbeOnly && s.Interactive == nil && (fresh.Health != "online" || (s.RSSJobID != uuid.Nil && !fresh.RssEnabled))) || current.ConfigVersion != s.ConfigVersion || current.IndexerID != s.IndexerID || current.Page != s.Page || current.Keyword != s.Keyword || current.QueryType != searchQueryType(s) || current.RssJobID.Valid != (s.RSSJobID != uuid.Nil) || (current.RssJobID.Valid && uuid.UUID(current.RssJobID.Bytes) != s.RSSJobID) {
 		if _, e = q.FinishQueryFailed(ctx, db.FinishQueryFailedParams{ID: s.ID, Error: pgtype.Text{String: "indexer configuration changed", Valid: true}}); e != nil {
 			return nil, e
 		}
@@ -317,6 +355,11 @@ func (p *searchExecutionPermit) CommitQuery(ctx context.Context, commit ports.Se
 	}
 	if _, e = q.FinishQuerySuccess(ctx, db.FinishQuerySuccessParams{ID: s.ID, ResultsCount: int32(len(commit.Candidates))}); e != nil {
 		return nil, e
+	}
+	if s.Interactive != nil {
+		if e = AuthorizeInteractiveSearchSource(ctx, q, *s.Interactive); e != nil {
+			return nil, e
+		}
 	}
 	if e = tx.Commit(ctx); e != nil {
 		return nil, e

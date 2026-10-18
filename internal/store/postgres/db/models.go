@@ -318,6 +318,39 @@ type IndexerQueryPage struct {
 	Total          pgtype.Int8
 }
 
+type InteractiveSearch struct {
+	ID             uuid.UUID
+	ActorID        uuid.UUID
+	ActorRole      string
+	Query          string
+	MediaID        pgtype.UUID
+	SubscriptionID pgtype.UUID
+	RankingPolicy  []byte
+	SourceCount    int32
+	CreatedAt      pgtype.Timestamptz
+	Deadline       pgtype.Timestamptz
+	CancelledAt    pgtype.Timestamptz
+	State          string
+}
+
+type InteractiveSearchQuery struct {
+	SearchID    uuid.UUID
+	IndexerID   uuid.UUID
+	Page        int32
+	QueryID     uuid.UUID
+	SourceJobID uuid.UUID
+	SourceToken int64
+}
+
+type InteractiveSearchSource struct {
+	SearchID      uuid.UUID
+	IndexerID     uuid.UUID
+	ConfigVersion int64
+	JobID         uuid.UUID
+	State         string
+	Reason        string
+}
+
 type Job struct {
 	ID          uuid.UUID
 	Kind        string

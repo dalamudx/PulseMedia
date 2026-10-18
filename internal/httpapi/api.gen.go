@@ -337,6 +337,36 @@ func (e IndexerRSSRequestKind) Valid() bool {
 	}
 }
 
+// Defines values for InteractiveReleaseSearchSnapshotSortOrder.
+const (
+	QualityDescSeedersDescIdAsc InteractiveReleaseSearchSnapshotSortOrder = "quality_desc_seeders_desc_id_asc"
+)
+
+// Valid indicates whether the value is a known member of the InteractiveReleaseSearchSnapshotSortOrder enum.
+func (e InteractiveReleaseSearchSnapshotSortOrder) Valid() bool {
+	switch e {
+	case QualityDescSeedersDescIdAsc:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for InteractiveReleaseSearchSnapshotStatisticsMode.
+const (
+	LatestPersisted InteractiveReleaseSearchSnapshotStatisticsMode = "latest_persisted"
+)
+
+// Valid indicates whether the value is a known member of the InteractiveReleaseSearchSnapshotStatisticsMode enum.
+func (e InteractiveReleaseSearchSnapshotStatisticsMode) Valid() bool {
+	switch e {
+	case LatestPersisted:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LibraryCatalogEntryMediaType.
 const (
 	LibraryCatalogEntryMediaTypeMovie LibraryCatalogEntryMediaType = "movie"
@@ -1609,6 +1639,24 @@ func (e CommitSubmissionRetryJSONBodyAcknowledged) Valid() bool {
 	}
 }
 
+// Defines values for GetReleaseSearchReceiptParamsAction.
+const (
+	GetReleaseSearchReceiptParamsActionCancel GetReleaseSearchReceiptParamsAction = "cancel"
+	GetReleaseSearchReceiptParamsActionCreate GetReleaseSearchReceiptParamsAction = "create"
+)
+
+// Valid indicates whether the value is a known member of the GetReleaseSearchReceiptParamsAction enum.
+func (e GetReleaseSearchReceiptParamsAction) Valid() bool {
+	switch e {
+	case GetReleaseSearchReceiptParamsActionCancel:
+		return true
+	case GetReleaseSearchReceiptParamsActionCreate:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SearchReleasesParamsMediaType.
 const (
 	SearchReleasesParamsMediaTypeMovie SearchReleasesParamsMediaType = "movie"
@@ -2367,6 +2415,57 @@ type IndexerRSSRequest struct {
 
 // IndexerRSSRequestKind defines model for IndexerRSSRequest.Kind.
 type IndexerRSSRequestKind string
+
+// InteractiveReleaseSearchReceipt defines model for InteractiveReleaseSearchReceipt.
+type InteractiveReleaseSearchReceipt struct {
+	CancelledAt           *time.Time          `json:"cancelled_at,omitempty"`
+	CreatedAt             time.Time           `json:"created_at"`
+	Deadline              time.Time           `json:"deadline"`
+	Id                    openapi_types.UUID  `json:"id"`
+	MediaId               *openapi_types.UUID `json:"media_id,omitempty"`
+	Query                 string              `json:"query"`
+	RankingPolicyId       string              `json:"ranking_policy_id"`
+	RankingPolicyRevision int64               `json:"ranking_policy_revision"`
+	SourceCount           int                 `json:"source_count"`
+	SubscriptionId        *openapi_types.UUID `json:"subscription_id,omitempty"`
+}
+
+// InteractiveReleaseSearchRequest defines model for InteractiveReleaseSearchRequest.
+type InteractiveReleaseSearchRequest struct {
+	MediaId        *openapi_types.UUID `json:"media_id,omitempty"`
+	Query          string              `json:"query"`
+	SubscriptionId *openapi_types.UUID `json:"subscription_id,omitempty"`
+}
+
+// InteractiveReleaseSearchSnapshot defines model for InteractiveReleaseSearchSnapshot.
+type InteractiveReleaseSearchSnapshot struct {
+	Partial         bool                                           `json:"partial"`
+	Results         []ReleaseItemResult                            `json:"results"`
+	Search          InteractiveReleaseSearchReceipt                `json:"search"`
+	SortOrder       InteractiveReleaseSearchSnapshotSortOrder      `json:"sort_order"`
+	Sources         []InteractiveReleaseSearchSource               `json:"sources"`
+	State           string                                         `json:"state"`
+	StatisticsMode  InteractiveReleaseSearchSnapshotStatisticsMode `json:"statistics_mode"`
+	TotalCandidates int                                            `json:"total_candidates"`
+	Truncated       bool                                           `json:"truncated"`
+}
+
+// InteractiveReleaseSearchSnapshotSortOrder defines model for InteractiveReleaseSearchSnapshot.SortOrder.
+type InteractiveReleaseSearchSnapshotSortOrder string
+
+// InteractiveReleaseSearchSnapshotStatisticsMode defines model for InteractiveReleaseSearchSnapshot.StatisticsMode.
+type InteractiveReleaseSearchSnapshotStatisticsMode string
+
+// InteractiveReleaseSearchSource defines model for InteractiveReleaseSearchSource.
+type InteractiveReleaseSearchSource struct {
+	ConfigVersion int64                `json:"config_version"`
+	IndexerId     openapi_types.UUID   `json:"indexer_id"`
+	Name          string               `json:"name"`
+	Partial       bool                 `json:"partial"`
+	QueryIds      []openapi_types.UUID `json:"query_ids"`
+	Reason        string               `json:"reason"`
+	State         string               `json:"state"`
+}
 
 // LibraryCatalogEntry defines model for LibraryCatalogEntry.
 type LibraryCatalogEntry struct {
@@ -3893,6 +3992,24 @@ type PublishPolicyRevisionParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
 
+// GetReleaseSearchReceiptParams defines parameters for GetReleaseSearchReceipt.
+type GetReleaseSearchReceiptParams struct {
+	Action GetReleaseSearchReceiptParamsAction `form:"action" json:"action"`
+}
+
+// GetReleaseSearchReceiptParamsAction defines parameters for GetReleaseSearchReceipt.
+type GetReleaseSearchReceiptParamsAction string
+
+// CreateReleaseSearchParams defines parameters for CreateReleaseSearch.
+type CreateReleaseSearchParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// CancelReleaseSearchParams defines parameters for CancelReleaseSearch.
+type CancelReleaseSearchParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
 // SearchReleasesParams defines parameters for SearchReleases.
 type SearchReleasesParams struct {
 	Query     string                         `form:"query" json:"query"`
@@ -4220,6 +4337,9 @@ type PreviewPolicyJSONRequestBody = PolicyPreviewRequest
 
 // PublishPolicyRevisionJSONRequestBody defines body for PublishPolicyRevision for application/json ContentType.
 type PublishPolicyRevisionJSONRequestBody = PublishPolicyRequest
+
+// CreateReleaseSearchJSONRequestBody defines body for CreateReleaseSearch for application/json ContentType.
+type CreateReleaseSearchJSONRequestBody = InteractiveReleaseSearchRequest
 
 // DownloadReleaseJSONRequestBody defines body for DownloadRelease for application/json ContentType.
 type DownloadReleaseJSONRequestBody = DownloadReleaseRequest
@@ -4623,11 +4743,25 @@ type ServerInterface interface {
 
 	// (GET /api/v1/policies/{id}/revisions/{revision})
 	GetPolicyRevision(w http.ResponseWriter, r *http.Request, id string, revision int64)
+	// GetReleaseSearchReceipt Recover the original owned search command receipt
+	// (GET /api/v1/release-search-commands/{key})
+	GetReleaseSearchReceipt(w http.ResponseWriter, r *http.Request, key string, params GetReleaseSearchReceiptParams)
+	// CreateReleaseSearch Create an owned interactive release search
+	// (POST /api/v1/release-searches)
+	CreateReleaseSearch(w http.ResponseWriter, r *http.Request, params CreateReleaseSearchParams)
+	// GetReleaseSearch Read committed search progress without executing network requests
+	// (GET /api/v1/release-searches/{id})
+	GetReleaseSearch(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	// CancelReleaseSearch Cancel this search demand while retaining physical exclusion
+	// (POST /api/v1/release-searches/{id}/cancel)
+	CancelReleaseSearch(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params CancelReleaseSearchParams)
 	// DownloadRelease Download a selected release candidate
 	// (POST /api/v1/releases/download)
 	DownloadRelease(w http.ResponseWriter, r *http.Request)
 	// SearchReleases Aggregate search releases across all online indexers
 	// (GET /api/v1/releases/search)
+	//
+	// Deprecated: this operation has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	SearchReleases(w http.ResponseWriter, r *http.Request, params SearchReleasesParams)
 	// SearchMovieReleases Search movie and TV metadata
 	// (GET /api/v1/search/movies)
@@ -6856,6 +6990,173 @@ func (siw *ServerInterfaceWrapper) GetPolicyRevision(w http.ResponseWriter, r *h
 	handler.ServeHTTP(w, r)
 }
 
+// GetReleaseSearchReceipt operation middleware
+func (siw *ServerInterfaceWrapper) GetReleaseSearchReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "key" -------------
+	var key string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "key", r.PathValue("key"), &key, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "key", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetReleaseSearchReceiptParams
+
+	// ------------- Required query parameter "action" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "action", r.URL.Query(), &params.Action, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "action"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "action", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetReleaseSearchReceipt(w, r, key, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateReleaseSearch operation middleware
+func (siw *ServerInterfaceWrapper) CreateReleaseSearch(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateReleaseSearchParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateReleaseSearch(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetReleaseSearch operation middleware
+func (siw *ServerInterfaceWrapper) GetReleaseSearch(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetReleaseSearch(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CancelReleaseSearch operation middleware
+func (siw *ServerInterfaceWrapper) CancelReleaseSearch(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CancelReleaseSearchParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CancelReleaseSearch(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // DownloadRelease operation middleware
 func (siw *ServerInterfaceWrapper) DownloadRelease(w http.ResponseWriter, r *http.Request) {
 
@@ -8994,6 +9295,10 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{id}/rss", wrapper.GetIndexerRSS)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/indexers/{id}/rss", wrapper.ConfigureIndexerRSS)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/indexers/{id}/test", wrapper.TestIndexer)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/release-searches", wrapper.CreateReleaseSearch)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/release-searches/{id}", wrapper.GetReleaseSearch)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/release-searches/{id}/cancel", wrapper.CancelReleaseSearch)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/release-search-commands/{key}", wrapper.GetReleaseSearchReceipt)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/releases/search", wrapper.SearchReleases)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/releases/download", wrapper.DownloadRelease)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/download-clients", wrapper.ListDownloadClients)
@@ -14791,6 +15096,391 @@ func (response GetPolicyRevision503JSONResponse) VisitGetPolicyRevisionResponse(
 	return err
 }
 
+type GetReleaseSearchReceiptRequestObject struct {
+	Key    string `json:"key"`
+	Params GetReleaseSearchReceiptParams
+}
+
+type GetReleaseSearchReceiptResponseObject interface {
+	VisitGetReleaseSearchReceiptResponse(w http.ResponseWriter) error
+}
+
+type GetReleaseSearchReceipt200JSONResponse InteractiveReleaseSearchReceipt
+
+func (response GetReleaseSearchReceipt200JSONResponse) VisitGetReleaseSearchReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearchReceipt400JSONResponse ErrorResponse
+
+func (response GetReleaseSearchReceipt400JSONResponse) VisitGetReleaseSearchReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearchReceipt401JSONResponse ErrorResponse
+
+func (response GetReleaseSearchReceipt401JSONResponse) VisitGetReleaseSearchReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearchReceipt403JSONResponse ErrorResponse
+
+func (response GetReleaseSearchReceipt403JSONResponse) VisitGetReleaseSearchReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearchReceipt404JSONResponse ErrorResponse
+
+func (response GetReleaseSearchReceipt404JSONResponse) VisitGetReleaseSearchReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearchReceipt503JSONResponse ErrorResponse
+
+func (response GetReleaseSearchReceipt503JSONResponse) VisitGetReleaseSearchReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateReleaseSearchRequestObject struct {
+	Params CreateReleaseSearchParams
+	Body   *CreateReleaseSearchJSONRequestBody
+}
+
+type CreateReleaseSearchResponseObject interface {
+	VisitCreateReleaseSearchResponse(w http.ResponseWriter) error
+}
+
+type CreateReleaseSearch201JSONResponse InteractiveReleaseSearchReceipt
+
+func (response CreateReleaseSearch201JSONResponse) VisitCreateReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateReleaseSearch400JSONResponse ErrorResponse
+
+func (response CreateReleaseSearch400JSONResponse) VisitCreateReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateReleaseSearch401JSONResponse ErrorResponse
+
+func (response CreateReleaseSearch401JSONResponse) VisitCreateReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateReleaseSearch403JSONResponse ErrorResponse
+
+func (response CreateReleaseSearch403JSONResponse) VisitCreateReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateReleaseSearch409JSONResponse ErrorResponse
+
+func (response CreateReleaseSearch409JSONResponse) VisitCreateReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateReleaseSearch503JSONResponse ErrorResponse
+
+func (response CreateReleaseSearch503JSONResponse) VisitCreateReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearchRequestObject struct {
+	Id openapi_types.UUID `json:"id"`
+}
+
+type GetReleaseSearchResponseObject interface {
+	VisitGetReleaseSearchResponse(w http.ResponseWriter) error
+}
+
+type GetReleaseSearch200JSONResponse InteractiveReleaseSearchSnapshot
+
+func (response GetReleaseSearch200JSONResponse) VisitGetReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearch400JSONResponse ErrorResponse
+
+func (response GetReleaseSearch400JSONResponse) VisitGetReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearch401JSONResponse ErrorResponse
+
+func (response GetReleaseSearch401JSONResponse) VisitGetReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearch403JSONResponse ErrorResponse
+
+func (response GetReleaseSearch403JSONResponse) VisitGetReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearch404JSONResponse ErrorResponse
+
+func (response GetReleaseSearch404JSONResponse) VisitGetReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetReleaseSearch503JSONResponse ErrorResponse
+
+func (response GetReleaseSearch503JSONResponse) VisitGetReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CancelReleaseSearchRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params CancelReleaseSearchParams
+}
+
+type CancelReleaseSearchResponseObject interface {
+	VisitCancelReleaseSearchResponse(w http.ResponseWriter) error
+}
+
+type CancelReleaseSearch200JSONResponse InteractiveReleaseSearchReceipt
+
+func (response CancelReleaseSearch200JSONResponse) VisitCancelReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CancelReleaseSearch400JSONResponse ErrorResponse
+
+func (response CancelReleaseSearch400JSONResponse) VisitCancelReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CancelReleaseSearch401JSONResponse ErrorResponse
+
+func (response CancelReleaseSearch401JSONResponse) VisitCancelReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CancelReleaseSearch403JSONResponse ErrorResponse
+
+func (response CancelReleaseSearch403JSONResponse) VisitCancelReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CancelReleaseSearch404JSONResponse ErrorResponse
+
+func (response CancelReleaseSearch404JSONResponse) VisitCancelReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CancelReleaseSearch409JSONResponse ErrorResponse
+
+func (response CancelReleaseSearch409JSONResponse) VisitCancelReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CancelReleaseSearch503JSONResponse ErrorResponse
+
+func (response CancelReleaseSearch503JSONResponse) VisitCancelReleaseSearchResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type DownloadReleaseRequestObject struct {
 	Body *DownloadReleaseJSONRequestBody
 }
@@ -14971,6 +15661,20 @@ func (response SearchReleases200JSONResponse) VisitSearchReleasesResponse(w http
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SearchReleases400JSONResponse ErrorResponse
+
+func (response SearchReleases400JSONResponse) VisitSearchReleasesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -20424,11 +21128,25 @@ type StrictServerInterface interface {
 
 	// (GET /api/v1/policies/{id}/revisions/{revision})
 	GetPolicyRevision(ctx context.Context, request GetPolicyRevisionRequestObject) (GetPolicyRevisionResponseObject, error)
+	// GetReleaseSearchReceipt Recover the original owned search command receipt
+	// (GET /api/v1/release-search-commands/{key})
+	GetReleaseSearchReceipt(ctx context.Context, request GetReleaseSearchReceiptRequestObject) (GetReleaseSearchReceiptResponseObject, error)
+	// CreateReleaseSearch Create an owned interactive release search
+	// (POST /api/v1/release-searches)
+	CreateReleaseSearch(ctx context.Context, request CreateReleaseSearchRequestObject) (CreateReleaseSearchResponseObject, error)
+	// GetReleaseSearch Read committed search progress without executing network requests
+	// (GET /api/v1/release-searches/{id})
+	GetReleaseSearch(ctx context.Context, request GetReleaseSearchRequestObject) (GetReleaseSearchResponseObject, error)
+	// CancelReleaseSearch Cancel this search demand while retaining physical exclusion
+	// (POST /api/v1/release-searches/{id}/cancel)
+	CancelReleaseSearch(ctx context.Context, request CancelReleaseSearchRequestObject) (CancelReleaseSearchResponseObject, error)
 	// DownloadRelease Download a selected release candidate
 	// (POST /api/v1/releases/download)
 	DownloadRelease(ctx context.Context, request DownloadReleaseRequestObject) (DownloadReleaseResponseObject, error)
 	// SearchReleases Aggregate search releases across all online indexers
 	// (GET /api/v1/releases/search)
+	//
+	// Deprecated: this operation has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	SearchReleases(ctx context.Context, request SearchReleasesRequestObject) (SearchReleasesResponseObject, error)
 	// SearchMovieReleases Search movie and TV metadata
 	// (GET /api/v1/search/movies)
@@ -22487,6 +23205,119 @@ func (sh *strictHandler) GetPolicyRevision(w http.ResponseWriter, r *http.Reques
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetPolicyRevisionResponseObject); ok {
 		if err := validResponse.VisitGetPolicyRevisionResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetReleaseSearchReceipt operation middleware
+func (sh *strictHandler) GetReleaseSearchReceipt(w http.ResponseWriter, r *http.Request, key string, params GetReleaseSearchReceiptParams) {
+	var request GetReleaseSearchReceiptRequestObject
+
+	request.Key = key
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetReleaseSearchReceipt(ctx, request.(GetReleaseSearchReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetReleaseSearchReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetReleaseSearchReceiptResponseObject); ok {
+		if err := validResponse.VisitGetReleaseSearchReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateReleaseSearch operation middleware
+func (sh *strictHandler) CreateReleaseSearch(w http.ResponseWriter, r *http.Request, params CreateReleaseSearchParams) {
+	var request CreateReleaseSearchRequestObject
+
+	request.Params = params
+
+	var body CreateReleaseSearchJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateReleaseSearch(ctx, request.(CreateReleaseSearchRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateReleaseSearch")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(CreateReleaseSearchResponseObject); ok {
+		if err := validResponse.VisitCreateReleaseSearchResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetReleaseSearch operation middleware
+func (sh *strictHandler) GetReleaseSearch(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+	var request GetReleaseSearchRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetReleaseSearch(ctx, request.(GetReleaseSearchRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetReleaseSearch")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetReleaseSearchResponseObject); ok {
+		if err := validResponse.VisitGetReleaseSearchResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CancelReleaseSearch operation middleware
+func (sh *strictHandler) CancelReleaseSearch(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params CancelReleaseSearchParams) {
+	var request CancelReleaseSearchRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.CancelReleaseSearch(ctx, request.(CancelReleaseSearchRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CancelReleaseSearch")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(CancelReleaseSearchResponseObject); ok {
+		if err := validResponse.VisitCancelReleaseSearchResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

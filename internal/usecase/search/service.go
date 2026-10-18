@@ -107,6 +107,9 @@ func (s *Service) ExecuteRSS(ctx context.Context, indexerID, jobID uuid.UUID, ve
 }
 
 func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword string, page int32, rssJob uuid.UUID, expected int64, healthJob *ports.IndexerHealthJob, probeOnly bool, chain *pageChain, actors ...*ports.Actor) (*SearchResult, error) {
+	return s.executeWithInteractive(ctx, indexerID, keyword, page, rssJob, expected, healthJob, probeOnly, chain, nil, actors...)
+}
+func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUID, keyword string, page int32, rssJob uuid.UUID, expected int64, healthJob *ports.IndexerHealthJob, probeOnly bool, chain *pageChain, interactive *ports.InteractiveSearchSourceLease, actors ...*ports.Actor) (*SearchResult, error) {
 	if page < 0 || page > math.MaxInt32/50 {
 		return nil, ports.ErrBadResponse
 	}
@@ -124,7 +127,7 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 	if len(actors) > 0 {
 		actor = actors[0]
 	}
-	admission, permit, err := s.repo.AdmitQuery(ctx, ports.SearchQuerySpec{ID: s.idgen.NewUUID(), IndexerID: indexerID, Keyword: keyword, Page: page, ConfigVersion: expected, RSSJobID: rssJob, HealthJob: healthJob, Actor: actor, ProbeOnly: probeOnly, MinimumInterval: s.minimumInterval})
+	admission, permit, err := s.repo.AdmitQuery(ctx, ports.SearchQuerySpec{ID: s.idgen.NewUUID(), IndexerID: indexerID, Keyword: keyword, Page: page, ConfigVersion: expected, RSSJobID: rssJob, HealthJob: healthJob, Actor: actor, Interactive: interactive, ProbeOnly: probeOnly, MinimumInterval: s.minimumInterval})
 	if err != nil {
 		return nil, err
 	}
@@ -189,11 +192,17 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 		fail(ports.SearchFailureBadResponse, 0)
 		return nil, ports.ErrBadResponse
 	}
+	networkCtx := ctx
+	networkCancel := func() {}
+	if interactive != nil {
+		networkCtx, networkCancel = context.WithTimeout(ctx, 2*time.Second)
+	}
+	defer networkCancel()
 	var releases []*ports.ReleaseItem
 	var pageProof *ports.IndexerPage
 	if probe, ok := client.(ports.IndexerCapabilitiesProvider); probeOnly && ok {
 		var caps ports.IndexerCapabilities
-		caps, err = probe.Capabilities(ctx)
+		caps, err = probe.Capabilities(networkCtx)
 		if err == nil && (!caps.MovieSearch.Available || !slices.Contains(caps.MovieSearch.SupportedParams, "q")) {
 			err = ports.ErrRejected
 		}
@@ -201,12 +210,12 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 			err = s.reserveHealthSearch(ctx, permit)
 		}
 		if err == nil {
-			_, err = client.Search(ctx, "", categories, 0, 1)
+			_, err = client.Search(networkCtx, "", categories, 0, 1)
 		}
 	} else if probeOnly {
-		_, err = client.Search(ctx, "", categories, 0, 1)
+		_, err = client.Search(networkCtx, "", categories, 0, 1)
 	} else if pager, ok := client.(ports.IndexerPageClient); ok {
-		pageProof, err = pager.SearchPage(ctx, keyword, categories, page*50, 50)
+		pageProof, err = pager.SearchPage(networkCtx, keyword, categories, page*50, 50)
 		if err == nil {
 			if !validPageProof(pageProof, page*50, 50) || (chain != nil && !chain.accepts(pageProof)) {
 				err = ports.ErrBadResponse
@@ -215,8 +224,12 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 			}
 		}
 	} else {
-		releases, err = client.Search(ctx, keyword, categories, page*50, 50)
+		releases, err = client.Search(networkCtx, keyword, categories, page*50, 50)
 	}
+	if err == nil {
+		err = networkCtx.Err()
+	}
+	networkCancel()
 	if err != nil {
 		failure := ports.SearchFailureUnavailable
 		if probeOnly {
@@ -231,6 +244,9 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 				failure = ports.SearchFailureUnsupported
 			}
 		}
+		if interactive != nil && (errors.Is(err, ports.ErrTimeout) || errors.Is(err, context.DeadlineExceeded)) {
+			failure = ports.SearchFailureTimeout
+		}
 		var retry time.Duration
 		if rate, ok := ports.IsRateLimited(err); ok {
 			failure = ports.SearchFailureRateLimited
@@ -239,6 +255,9 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 		fail(failure, retry)
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
+		}
+		if interactive != nil && (errors.Is(err, ports.ErrTimeout) || errors.Is(err, context.DeadlineExceeded)) {
+			return &SearchResult{QueryID: queryID, State: "failed"}, ports.ErrTimeout
 		}
 		return &SearchResult{QueryID: queryID, State: "failed"}, ports.ErrUnavailable
 	}
