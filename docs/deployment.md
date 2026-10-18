@@ -169,6 +169,15 @@ PULSE_BUILD_VERSION=0.1.0-beta.1 mise exec -- task build-container -- localhost/
 PULSE_BUILD_VERSION=0.1.0-beta.1 mise exec -- task build-container -- localhost/pulsemedia:0.1.0-beta.1-arm64 arm64
 ```
 
+本地 Beta 验收已完成，版本为 `0.1.0-beta.1`。最终产物均绑定干净源码提交 `5b085978922e0d267e5c744ed9e62ce00ab575d9`；后续纯文档收口提交不改变这些产物的 revision。
+
+| 本地镜像 | 镜像 ID | 已验证环境 |
+|---|---|---|
+| `localhost/pulsemedia:0.1.0-beta.1-amd64` | `e46c2a5de2e61bda72d5ca249f49b2b9cee88e601c5ce928527bc42695459d8a` | Linux amd64 原生 |
+| `localhost/pulsemedia:0.1.0-beta.1-arm64` | `f627c3c47bd16a460907b9116d0545777c7a84e8cbe34599e34522d45bf5fb00` | Linux arm64 QEMU |
+
+两个实际产物均通过非 root 初始化、登录、只读根目录、无 capabilities、优雅退出、空库安装、带恢复点的 schema82→83 升级及 PG18 持久卷重建。HTTP 常规 race 为 282 项通过、30 项门控跳过，PG 为 284 项通过、1 项门控跳过；浏览器和真实服务故障证据另列在开发计划中。
+
 仓库内的 Git 提交、镜像构建和本地验收不会自动推送源码、镜像或创建发布。托管 CI 必须有实际远程执行回执；本地同等命令的成功记录分别登记。正式阶段是否放行，以 `docs/development-plan.md` 为准。
 
 已验证 Linux amd64 原生与 arm64 QEMU 的启动、初始化、登录、离线安装升级、隔离恢复、只读根目录和 PG18 持久卷。原生 arm64 的硬件性能尚未量测。性能证据分为暂停电影订阅/小本地文件规模、十个合成活动端点，以及真实 NFS 故障，不能据此推算真实追更混合流量的容量；Go 堆内存尚未单独量测。
