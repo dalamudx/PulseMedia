@@ -18,25 +18,50 @@ import (
 type SearchExecutionStore struct {
 	pool    *pgxpool.Pool
 	queries *db.Queries
+	decoder ports.CredentialDecoder
 }
 
-func NewSearchExecutionStore(pool *pgxpool.Pool) *SearchExecutionStore {
-	return &SearchExecutionStore{pool, Queries(pool)}
+func NewSearchExecutionStore(pool *pgxpool.Pool, decoders ...ports.CredentialDecoder) *SearchExecutionStore {
+	s := &SearchExecutionStore{pool: pool, queries: Queries(pool)}
+	if len(decoders) > 0 {
+		s.decoder = decoders[0]
+	}
+	return s
 }
 
 var _ ports.SearchRepository = (*SearchExecutionStore)(nil)
 
 func (s *SearchExecutionStore) GetIndexer(ctx context.Context, id uuid.UUID) (ports.SearchIndexer, error) {
 	v, e := s.queries.GetIndexerByID(ctx, id)
-	return searchIndexerDTO(v), e
+	if errors.Is(e, pgx.ErrNoRows) {
+		return ports.SearchIndexer{}, ports.ErrNotFound
+	}
+	if e != nil {
+		return ports.SearchIndexer{}, e
+	}
+	return s.executionIndexer(ctx, s.queries, v)
 }
 func (s *SearchExecutionStore) ListIndexers(ctx context.Context) ([]ports.SearchIndexer, error) {
 	rows, e := s.queries.ListIndexers(ctx)
 	out := make([]ports.SearchIndexer, 0, len(rows))
-	for _, v := range rows {
-		out = append(out, searchIndexerDTO(v))
+	if e != nil {
+		return nil, e
 	}
-	return out, e
+	for _, v := range rows {
+		available, err := IndexerAvailableForExecution(ctx, s.queries, v.ID)
+		if err != nil {
+			return nil, err
+		}
+		if !available {
+			continue
+		}
+		entry, err := s.executionIndexer(ctx, s.queries, v)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, entry)
+	}
+	return out, nil
 }
 func (s *SearchExecutionStore) CreateIndexer(ctx context.Context, v ports.SearchIndexer) (ports.SearchIndexer, error) {
 	row, e := s.queries.CreateIndexer(ctx, db.CreateIndexerParams{ID: v.ID, Name: v.Name, Url: v.Url, ApiKeyEncrypted: v.ApiKeyEncrypted, Categories: v.Categories})
@@ -52,6 +77,7 @@ type searchExecutionPermit struct {
 	release                 func()
 	mu                      sync.Mutex
 	closed, begun, terminal bool
+	indexer                 ports.SearchIndexer
 }
 
 func searchQueryType(spec ports.SearchQuerySpec) string {
@@ -64,6 +90,13 @@ func searchShared(v db.IndexerQuery) *ports.IndexerQueryResult {
 	return &ports.IndexerQueryResult{QueryID: v.ID, State: v.State, ResultsCount: int(v.ResultsCount), FromShared: true}
 }
 func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.SearchQuerySpec) (ports.SearchQueryAdmission, ports.SearchExecutionPermit, error) {
+	if spec.Actor != nil {
+		frozen := *spec.Actor
+		if spec.Actor.Scopes != nil {
+			frozen.Scopes = append(make([]string, 0, len(spec.Actor.Scopes)), spec.Actor.Scopes...)
+		}
+		spec.Actor = &frozen
+	}
 	var out ports.SearchQueryAdmission
 	if spec.ID == uuid.Nil || spec.IndexerID == uuid.Nil || spec.ConfigVersion < 1 || spec.Page < 0 || spec.Page > 2147483647/50 || spec.MinimumInterval < 0 {
 		return out, nil, ports.ErrBadResponse
@@ -75,7 +108,10 @@ func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.Search
 	if idx.ConfigVersion != spec.ConfigVersion {
 		return out, nil, ports.ErrUnavailable
 	}
-	out.Indexer = searchIndexerDTO(idx)
+	out.Indexer, e = s.executionIndexer(ctx, s.queries, idx)
+	if e != nil {
+		return out, nil, e
+	}
 	if spec.RSSJobID != uuid.Nil {
 		if !idx.RssEnabled {
 			return out, nil, ports.ErrRSSConfigConflict
@@ -106,12 +142,12 @@ func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.Search
 		spec.HealthJob = &copyJob
 	}
 	p := &searchExecutionPermit{store: s, spec: spec, release: release}
-	idx, e = p.reserve(ctx, false)
+	_, e = p.reserve(ctx, false)
 	if e != nil {
 		p.Close()
 		return out, nil, e
 	}
-	out.Indexer = searchIndexerDTO(idx)
+	out.Indexer = p.indexer
 	return out, p, nil
 }
 func (p *searchExecutionPermit) Close() {
@@ -130,6 +166,17 @@ func (p *searchExecutionPermit) reserve(ctx context.Context, second bool) (db.In
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
 	q := p.store.queries.WithTx(tx)
+	if spec.Actor != nil {
+		if e = managementActor(spec.Actor); e != nil {
+			return db.Indexer{}, e
+		}
+		if !spec.ProbeOnly {
+			return db.Indexer{}, ports.ErrRejected
+		}
+		if e = lockAcquisitionUser(ctx, q, spec.Actor); e != nil {
+			return db.Indexer{}, e
+		}
+	}
 	fresh, e := q.LockRSSIndexer(ctx, spec.IndexerID)
 	if e != nil || fresh.ConfigVersion != spec.ConfigVersion || (!spec.ProbeOnly && (fresh.Health != "online" || (spec.RSSJobID != uuid.Nil && !fresh.RssEnabled))) {
 		return db.Indexer{}, ports.ErrUnavailable
@@ -161,9 +208,14 @@ func (p *searchExecutionPermit) reserve(ctx context.Context, second bool) (db.In
 			return db.Indexer{}, ports.ErrUnavailable
 		}
 	}
+	resolved, e := p.store.executionIndexer(ctx, q, row)
+	if e != nil {
+		return db.Indexer{}, e
+	}
 	if e = tx.Commit(ctx); e != nil {
 		return db.Indexer{}, e
 	}
+	p.indexer = resolved
 	return row, nil
 }
 func (p *searchExecutionPermit) BeginQuery(ctx context.Context) (*ports.IndexerQueryResult, error) {

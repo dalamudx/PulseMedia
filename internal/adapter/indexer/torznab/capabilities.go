@@ -31,7 +31,11 @@ type capsResponse struct {
 func (c *Client) Capabilities(ctx context.Context) (ports.IndexerCapabilities, error) {
 	var out ports.IndexerCapabilities
 	params := url.Values{"t": {"caps"}, "apikey": {c.apiKey}}
-	body, e := c.get(ctx, c.baseURL+"/api?"+params.Encode(), 5<<20)
+	requestURL, e := c.apiURL(params)
+	if e != nil {
+		return out, e
+	}
+	body, e := c.get(ctx, requestURL, 5<<20)
 	if e != nil {
 		return out, e
 	}

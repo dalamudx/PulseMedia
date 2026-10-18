@@ -111,6 +111,10 @@ func (s *UpgradePreparationStore) LoadMovieUpgradePreparationWork(ctx context.Co
 	if err != nil {
 		return nil, preparationRequiredRow(err)
 	}
+	out.EndpointURL, err = resolveUpgradeSourceURL(ctx, tx, b, out.EndpointURL)
+	if err != nil {
+		return nil, err
+	}
 	verify := func() error {
 		if _, _, e := s.authorizePreparation(ctx, tx, a, c.OperationID); e != nil {
 			return e

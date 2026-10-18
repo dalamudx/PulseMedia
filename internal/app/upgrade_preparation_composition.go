@@ -9,7 +9,7 @@ import (
 )
 
 func (a *App) publicUpgradePreparationService(masterKey []byte) (*acquisition.PublicUpgradePreparationService, error) {
-	repo, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{})
+	repo, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
 	if err != nil {
 		return nil, err
 	}

@@ -33,7 +33,7 @@ func NewRouter(a AppContext, server StrictServerInterface, authSvc *auth.Service
 			WriteJSONError(w, http.StatusInternalServerError, "INTERNAL_ERROR", "request could not be completed", GetRequestID(r.Context()))
 		},
 	})
-	HandlerWithOptions(strictHandler, StdHTTPServerOptions{BaseRouter: mux, ErrorHandlerFunc: badRequest, Middlewares: []MiddlewareFunc{strictLibraryReuseJSON, strictUpgradeOrganizationJSON, strictUpgradeCommandsJSON, strictUpgradePreviewJSON, strictCompleteTVOrganizationJSON, strictTVSelectionJSON, strictCompleteTVAcquisitionJSON, strictEpisodeAcquisitionJSON, strictTVCoverageReviewJSON, strictTransferRecoveryJSON, strictTransferRevisionJSON}})
+	HandlerWithOptions(strictHandler, StdHTTPServerOptions{BaseRouter: mux, ErrorHandlerFunc: badRequest, Middlewares: []MiddlewareFunc{strictIndexerManagementJSON, strictLibraryReuseJSON, strictUpgradeOrganizationJSON, strictUpgradeCommandsJSON, strictUpgradePreviewJSON, strictCompleteTVOrganizationJSON, strictTVSelectionJSON, strictCompleteTVAcquisitionJSON, strictEpisodeAcquisitionJSON, strictTVCoverageReviewJSON, strictTransferRecoveryJSON, strictTransferRevisionJSON}})
 
 	// 2. Mount Server-Sent Events endpoint
 	if sseHub != nil {

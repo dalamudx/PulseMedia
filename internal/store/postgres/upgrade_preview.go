@@ -17,10 +17,17 @@ import (
 
 // UpgradePreviewStore has no writer, filesystem or network dependency.
 // Shared row locks require a writable transaction; the body issues SELECT only.
-type UpgradePreviewStore struct{ pool *pgxpool.Pool }
+type UpgradePreviewStore struct {
+	pool           *pgxpool.Pool
+	indexerDecoder ports.CredentialDecoder
+}
 
-func NewUpgradePreviewStore(pool *pgxpool.Pool) *UpgradePreviewStore {
-	return &UpgradePreviewStore{pool}
+func NewUpgradePreviewStore(pool *pgxpool.Pool, decoders ...ports.CredentialDecoder) *UpgradePreviewStore {
+	s := &UpgradePreviewStore{pool: pool}
+	if len(decoders) > 0 {
+		s.indexerDecoder = decoders[0]
+	}
+	return s
 }
 
 var _ ports.UpgradePreviewRepository = (*UpgradePreviewStore)(nil)
@@ -53,7 +60,7 @@ func (s *UpgradePreviewStore) ReadUpgradePreview(ctx context.Context, a *ports.A
 			err = rollbackErr
 		}
 	}()
-	out, e = readUpgradePreview(ctx, db.New(tx), a, r)
+	out, e = readUpgradePreview(ctx, db.New(tx), a, r, s.indexerDecoder)
 	if e != nil {
 		return nil, e
 	}
@@ -65,7 +72,7 @@ func (s *UpgradePreviewStore) ReadUpgradePreview(ctx context.Context, a *ports.A
 
 // readUpgradePreview reads trusted evidence inside the caller's transaction.
 // It neither commits nor turns the observation into execution authority.
-func readUpgradePreview(ctx context.Context, q *db.Queries, a *ports.Actor, r ports.UpgradePreviewRequest) (out *ports.UpgradePreviewSnapshot, err error) {
+func readUpgradePreview(ctx context.Context, q *db.Queries, a *ports.Actor, r ports.UpgradePreviewRequest, decoders ...ports.CredentialDecoder) (out *ports.UpgradePreviewSnapshot, err error) {
 	if e := lockAcquisitionUser(ctx, q, a); e != nil {
 		return nil, e
 	}
@@ -218,6 +225,17 @@ func readUpgradePreview(ctx context.Context, q *db.Queries, a *ports.Actor, r po
 	indexer, e := q.GetIndexerByID(ctx, candidate.IndexerID)
 	if e != nil {
 		return nil, e
+	}
+	var indexerDecoder ports.CredentialDecoder
+	if len(decoders) > 0 {
+		indexerDecoder = decoders[0]
+	}
+	indexer, modes, e := ResolveIndexerConfiguration(ctx, q, indexerDecoder, indexer)
+	if e != nil {
+		return nil, e
+	}
+	if !modes.LegacyV1 && modes.Protocol != ports.IndexerProtocolTorznab {
+		hold("source_protocol_unsupported")
 	}
 	blocked, e := q.ListSubscriptionBlockedCandidates(ctx, sub.ID)
 	if e != nil {

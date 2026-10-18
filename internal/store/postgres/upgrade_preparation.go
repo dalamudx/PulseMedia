@@ -16,6 +16,7 @@ type UpgradePreparationStore struct {
 	pool              *pgxpool.Pool
 	ids               ports.IDGen
 	verifier          ports.MovieUpgradeMetainfoVerifier
+	indexerDecoder    ports.CredentialDecoder
 	subscriptionScope uuid.UUID // Optional public route scope; zero preserves internal callers.
 }
 
@@ -23,13 +24,16 @@ func NewUpgradePreparationStore(
 	pool *pgxpool.Pool,
 	ids ports.IDGen,
 	verifier ports.MovieUpgradeMetainfoVerifier,
+	decoders ...ports.CredentialDecoder,
 ) (*UpgradePreparationStore, error) {
 	if pool == nil || ids == nil || verifier == nil {
 		return nil, errors.New("missing upgrade preparation dependency")
 	}
-	return &UpgradePreparationStore{
-		pool: pool, ids: ids, verifier: verifier,
-	}, nil
+	s := &UpgradePreparationStore{pool: pool, ids: ids, verifier: verifier}
+	if len(decoders) > 0 {
+		s.indexerDecoder = decoders[0]
+	}
+	return s, nil
 }
 
 var _ ports.MovieUpgradePreparationRepository = (*UpgradePreparationStore)(nil)

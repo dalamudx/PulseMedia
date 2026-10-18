@@ -17,12 +17,17 @@ import (
 )
 
 type UpgradeReservationStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool           *pgxpool.Pool
+	ids            ports.IDGen
+	indexerDecoder ports.CredentialDecoder
 }
 
-func NewUpgradeReservationStore(p *pgxpool.Pool, ids ports.IDGen) *UpgradeReservationStore {
-	return &UpgradeReservationStore{p, ids}
+func NewUpgradeReservationStore(p *pgxpool.Pool, ids ports.IDGen, decoders ...ports.CredentialDecoder) *UpgradeReservationStore {
+	s := &UpgradeReservationStore{pool: p, ids: ids}
+	if len(decoders) > 0 {
+		s.indexerDecoder = decoders[0]
+	}
+	return s
 }
 
 var _ ports.UpgradeReservationRepository = (*UpgradeReservationStore)(nil)
@@ -242,7 +247,7 @@ func (s *UpgradeReservationStore) ReserveUpgrade(ctx context.Context, a *ports.A
 	if client.ClientType != "qbittorrent" || strings.TrimSpace(client.Url) == "" || len(client.PasswordEncrypted) == 0 {
 		return nil, conflict
 	}
-	v, e := readUpgradePreview(ctx, q, a, ports.UpgradePreviewRequest{SubscriptionID: sub.ID, CurrentFileID: c.CurrentFileID, CandidateID: c.CandidateID})
+	v, e := readUpgradePreview(ctx, q, a, ports.UpgradePreviewRequest{SubscriptionID: sub.ID, CurrentFileID: c.CurrentFileID, CandidateID: c.CandidateID}, s.indexerDecoder)
 	if e != nil {
 		return nil, e
 	}
@@ -261,7 +266,7 @@ func (s *UpgradeReservationStore) ReserveUpgrade(ctx context.Context, a *ports.A
 	if occupied {
 		return nil, ports.ErrAcquisitionUnitAlreadyReserved
 	}
-	baseline, now, until, e := upgradeEvidence(ctx, tx, a, v, op, 0)
+	baseline, now, until, e := upgradeEvidence(ctx, tx, a, v, op, 0, s.indexerDecoder)
 	if e != nil {
 		return nil, e
 	}
@@ -278,7 +283,7 @@ func (s *UpgradeReservationStore) ReserveUpgrade(ctx context.Context, a *ports.A
 		if physical != 0 || lanes != len(own["acquisition_reservation"]) || reservations != len(own["unit_reservation"]) || requirements != len(own["download_requirement"]) {
 			return conflict
 		}
-		fresh, _, _, e := upgradeEvidence(ctx, tx, a, v, op, bumps)
+		fresh, _, _, e := upgradeEvidence(ctx, tx, a, v, op, bumps, s.indexerDecoder)
 		if e != nil {
 			return e
 		}

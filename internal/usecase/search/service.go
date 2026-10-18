@@ -18,17 +18,18 @@ import (
 type SearchResult = ports.IndexerQueryResult
 
 type Service struct {
-	repo            ports.SearchRepository
-	idgen           ports.IDGen
-	secrets         ports.SearchSecrets
-	mu              sync.RWMutex
-	clients         map[uuid.UUID]ports.IndexerClient
-	factory         IndexerClientFactory
-	feedFactory     FeedClientFactory
-	versions        map[uuid.UUID]int64
-	minimumInterval time.Duration
-	healthStore     ports.IndexerHealthRepository
-	endpointStore   ports.SearchEndpointRepository
+	repo              ports.SearchRepository
+	idgen             ports.IDGen
+	secrets           ports.SearchSecrets
+	mu                sync.RWMutex
+	clients           map[uuid.UUID]ports.IndexerClient
+	factory           IndexerClientFactory
+	configuredFactory ConfiguredIndexerClientFactory
+	feedFactory       FeedClientFactory
+	versions          map[uuid.UUID]int64
+	minimumInterval   time.Duration
+	healthStore       ports.IndexerHealthRepository
+	endpointStore     ports.SearchEndpointRepository
 }
 
 func NewService(repo ports.SearchRepository, idgen ports.IDGen, secrets ports.SearchSecrets, minimum ...time.Duration) *Service {
@@ -70,16 +71,21 @@ func (s *Service) ensureClient(idx ports.SearchIndexer) error {
 		return nil
 	}
 	s.mu.RLock()
-	factory := s.factory
+	factory, configured := s.factory, s.configuredFactory
 	s.mu.RUnlock()
-	if factory == nil {
+	if factory == nil && configured == nil {
 		return ports.ErrUnavailable
 	}
 	key, err := s.secrets.DecryptSecret(idx.ApiKeyEncrypted)
 	if err != nil {
 		return ports.ErrUnavailable
 	}
-	client := factory(idx.Url, string(key))
+	var client ports.IndexerClient
+	if configured != nil && idx.Protocol != "" {
+		client = configured(idx.Protocol, idx.Url, string(key))
+	} else if factory != nil {
+		client = factory(idx.Url, string(key))
+	}
 	if client == nil {
 		return ports.ErrUnavailable
 	}
@@ -100,7 +106,7 @@ func (s *Service) ExecuteRSS(ctx context.Context, indexerID, jobID uuid.UUID, ve
 	return s.execute(ctx, indexerID, "", 0, jobID, version, nil, false, nil)
 }
 
-func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword string, page int32, rssJob uuid.UUID, expected int64, healthJob *ports.IndexerHealthJob, probeOnly bool, chain *pageChain) (*SearchResult, error) {
+func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword string, page int32, rssJob uuid.UUID, expected int64, healthJob *ports.IndexerHealthJob, probeOnly bool, chain *pageChain, actors ...*ports.Actor) (*SearchResult, error) {
 	if page < 0 || page > math.MaxInt32/50 {
 		return nil, ports.ErrBadResponse
 	}
@@ -114,7 +120,11 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 	if expected == 0 {
 		expected = indexer.ConfigVersion
 	}
-	admission, permit, err := s.repo.AdmitQuery(ctx, ports.SearchQuerySpec{ID: s.idgen.NewUUID(), IndexerID: indexerID, Keyword: keyword, Page: page, ConfigVersion: expected, RSSJobID: rssJob, HealthJob: healthJob, ProbeOnly: probeOnly, MinimumInterval: s.minimumInterval})
+	var actor *ports.Actor
+	if len(actors) > 0 {
+		actor = actors[0]
+	}
+	admission, permit, err := s.repo.AdmitQuery(ctx, ports.SearchQuerySpec{ID: s.idgen.NewUUID(), IndexerID: indexerID, Keyword: keyword, Page: page, ConfigVersion: expected, RSSJobID: rssJob, HealthJob: healthJob, Actor: actor, ProbeOnly: probeOnly, MinimumInterval: s.minimumInterval})
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +161,11 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 				}
 				feedURL = string(plain)
 			}
-			client = factory(indexer.RssKind, feedURL, string(key))
+			kind, e := configuredRSSKind(indexer)
+			if e != nil {
+				return nil, e
+			}
+			client = factory(kind, feedURL, string(key))
 		}
 		if client == nil {
 			return nil, ports.ErrUnavailable
@@ -245,6 +259,15 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 
 type IndexerClientFactory func(baseURL, apiKey string) ports.IndexerClient
 
+// ConfiguredIndexerClientFactory receives a stored protocol, never a guessed credential kind.
+type ConfiguredIndexerClientFactory func(ports.IndexerProtocol, string, string) ports.IndexerClient
+
+func (s *Service) SetConfiguredClientFactory(f ConfiguredIndexerClientFactory) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.configuredFactory = f
+}
+
 func (s *Service) SetClientFactory(f IndexerClientFactory) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -279,7 +302,25 @@ func (s *Service) CreateIndexer(ctx context.Context, name, urlStr, apiKey string
 }
 
 // TestIndexer decrypts key and executes probe query measuring latency.
+// TestIndexer is retained for trusted internal probes and historical callers.
 func (s *Service) TestIndexer(ctx context.Context, indexerID uuid.UUID) (bool, int64, string, error) {
+	return s.testIndexer(ctx, indexerID, nil)
+}
+
+// TestIndexerForActor carries current administrator authority into each permit
+// transaction, including the second budget admission after capabilities I/O.
+func (s *Service) TestIndexerForActor(ctx context.Context, actor *ports.Actor, indexerID uuid.UUID) (bool, int64, string, error) {
+	if e := authorizeIndexerManagement(actor); e != nil {
+		return false, 0, "probe not authorized", e
+	}
+	frozen := *actor
+	if actor.Scopes != nil {
+		frozen.Scopes = append(make([]string, 0, len(actor.Scopes)), actor.Scopes...)
+	}
+	return s.testIndexer(ctx, indexerID, &frozen)
+}
+
+func (s *Service) testIndexer(ctx context.Context, indexerID uuid.UUID, actor *ports.Actor) (bool, int64, string, error) {
 	idx, err := s.repo.GetIndexer(ctx, indexerID)
 	if err != nil {
 		return false, 0, "", fmt.Errorf("indexer not found: %w", err)
@@ -294,8 +335,11 @@ func (s *Service) TestIndexer(ctx context.Context, indexerID uuid.UUID) (bool, i
 	}
 
 	start := time.Now()
-	result, probeErr := s.execute(ctx, indexerID, "", 0, uuid.Nil, idx.ConfigVersion, nil, true, nil)
+	result, probeErr := s.execute(ctx, indexerID, "", 0, uuid.Nil, idx.ConfigVersion, nil, true, nil, actor)
 	err = probeErr
+	if errors.Is(err, ports.ErrForbidden) || errors.Is(err, ports.ErrUnauthorized) || errors.Is(err, ports.ErrUserDisabled) {
+		return false, 0, "probe not authorized", err
+	}
 	if err == nil && result.State != "succeeded" {
 		err = ports.ErrUnavailable
 	}

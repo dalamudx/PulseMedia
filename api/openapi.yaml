@@ -2823,150 +2823,147 @@ paths:
 
   /api/v1/indexers:
     get:
-      summary: List all configured indexers
+      summary: List safe current indexer configurations
       operationId: listIndexers
       responses:
         '200':
-          description: Indexers list
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IndexerListResponse'
-        '503':
-          description: Indexer state unavailable; no empty success or old healthy observations assumed
-          content:
-            application/json:
-              schema: {$ref: '#/components/schemas/ErrorResponse'}
+          description: Active configurations with persisted health
+          content: {application/json: {schema: {$ref: '#/components/schemas/IndexerListResponse'}}}
         '401':
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '403':
+          description: Current administrator session required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '503':
+          description: State unavailable
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
     post:
-      summary: Add a new Torznab indexer
+      summary: Create an explicit encrypted indexer configuration
       operationId: createIndexer
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateIndexerRequest'
+        content: {application/json: {schema: {$ref: '#/components/schemas/CreateIndexerRequest'}}}
       responses:
         '201':
-          description: Indexer created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IndexerDetails'
+          description: Original safe creation receipt
+          content: {application/json: {schema: {$ref: '#/components/schemas/IndexerDetails'}}}
         '400':
-          description: Bad request
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid configuration
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
         '401':
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '403':
+          description: Current administrator session required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '409':
+          description: Command key belongs to a different intent
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '503':
+          description: State unavailable
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
 
   /api/v1/indexers/{id}:
-    delete:
-      summary: Delete an indexer
-      operationId: deleteIndexer
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '204':
-          description: Indexer deleted
-        '401':
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Indexer not found
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: {type: string, format: uuid}
     put:
-      summary: Update an indexer
+      summary: Update an indexer with an observed configuration version
       operationId: updateIndexer
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateIndexerRequest'
+        content: {application/json: {schema: {$ref: '#/components/schemas/UpdateIndexerRequest'}}}
       responses:
         '200':
-          description: Indexer updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IndexerDetails'
+          description: Original safe update receipt
+          content: {application/json: {schema: {$ref: '#/components/schemas/IndexerDetails'}}}
         '400':
-          description: Invalid or changed redacted endpoint URL
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Endpoint revision changed or preservation revision missing
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid configuration
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
         '401':
-          description: Unauthorized
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '403':
+          description: Current administrator session required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
         '404':
           description: Indexer not found
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '409':
+          description: Configuration changed or command key conflict; reread before a new command
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '503':
+          description: State unavailable
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+    delete:
+      summary: Disable an indexer while preserving its source and command history
+      operationId: deleteIndexer
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+        - name: expected_version
+          in: query
+          required: true
+          schema: {type: integer, format: int64, minimum: 1}
+      responses:
+        '204': {description: Original deletion receipt}
+        '400':
+          description: Invalid command
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '401':
+          description: Authentication required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '403':
+          description: Current administrator session required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '404':
+          description: Indexer not found
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '409':
+          description: Configuration changed or command key conflict
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '503':
+          description: State unavailable
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+
+  /api/v1/indexer-commands/{key}:
+    get:
+      summary: Recover an actor-bound safe receipt without resubmitting secret configuration
+      operationId: getIndexerCommandReceipt
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema: {type: string, minLength: 1, maxLength: 160}
+        - name: action
+          in: query
+          required: true
+          schema: {type: string, enum: [create, update, delete]}
+      responses:
+        '200':
+          description: Safe original result; this read does not replay any mutation
+          content: {application/json: {schema: {$ref: '#/components/schemas/IndexerCommandReceipt'}}}
+        '400':
+          description: Invalid key or action
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '401':
+          description: Authentication required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '403':
+          description: Current administrator session required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '404':
+          description: No original receipt for this actor, action and key
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '503':
+          description: State unavailable; absence cannot be assumed
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
 
   /api/v1/indexers/{id}/rss:
     parameters:
@@ -3067,6 +3064,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current administrator session required
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
+        '503':
+          description: Search service unavailable
+          content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}
 
   /api/v1/releases/search:
     get:
@@ -5597,39 +5600,67 @@ components:
         last_success_at: {type: string, format: date-time}
         last_candidate_count: {type: integer, format: int64}
 
+    IndexerProtocol:
+      type: string
+      enum: [torznab, nexusphp, rss]
+
+    IndexerCategories:
+      type: array
+      maxItems: 100
+      uniqueItems: true
+      items: {type: integer, minimum: 1, maximum: 2147483647}
+
     CreateIndexerRequest:
       type: object
-      required: [name, url, api_key]
+      additionalProperties: false
+      required: [name, protocol, url, categories]
       properties:
-        expected_version:
-          type: integer
-          format: int64
-          minimum: 1
-          description: On update, the observed config_version. Required to preserve a redacted URL; stale versions return 409.
-        name:
-          type: string
-          example: "M-Team"
+        name: {type: string, minLength: 1, maxLength: 256}
+        protocol: {$ref: '#/components/schemas/IndexerProtocol'}
+        url: {type: string, minLength: 1, maxLength: 8192, writeOnly: true}
+        api_key: {type: string, maxLength: 8192, writeOnly: true, description: Empty credentials are valid for public sources}
+        categories: {$ref: '#/components/schemas/IndexerCategories'}
+
+    UpdateIndexerRequest:
+      type: object
+      additionalProperties: false
+      required: [name, protocol, expected_version, categories]
+      properties:
+        name: {type: string, minLength: 1, maxLength: 256}
+        protocol: {$ref: '#/components/schemas/IndexerProtocol'}
+        expected_version: {type: integer, format: int64, minimum: 1}
         url:
           type: string
-          example: "http://prowlarr:9696/1/api"
+          minLength: 1
+          maxLength: 8192
+          writeOnly: true
+          description: Omit to preserve the complete original encrypted URL; otherwise provide a complete replacement
         api_key:
           type: string
-          description: "Write-only credential. On indexer update, an empty string atomically preserves the existing encrypted credential."
-          example: "passkey123"
-        categories:
-          type: array
-          items:
-            type: integer
+          maxLength: 8192
+          writeOnly: true
+          description: Omit to preserve original ciphertext; an explicit empty string deliberately clears the credential
+        categories: {$ref: '#/components/schemas/IndexerCategories'}
 
+    IndexerCommandReceipt:
+      type: object
+      required: [action, indexer, deleted]
+      properties:
+        action: {type: string, enum: [create, update, delete]}
+        indexer: {$ref: '#/components/schemas/IndexerDetails'}
+        deleted: {type: boolean}
     IndexerDetails:
       type: object
-      required: [id, name, url, health, config_version]
+      required: [id, name, url, protocol, legacy_v1, categories, health, config_version]
       properties:
         id:
           type: string
           format: uuid
         name:
           type: string
+        protocol: {$ref: '#/components/schemas/IndexerProtocol'}
+        legacy_v1: {type: boolean, description: Existing configuration awaiting explicit protocol confirmation}
+        categories: {$ref: '#/components/schemas/IndexerCategories'}
         url:
           type: string
         health:

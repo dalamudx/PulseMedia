@@ -121,7 +121,7 @@ SELECT
 	// download_task INSERT. Cardinality and complete task-row equality above
 	// establish ownership before normalizing that single additional effect.
 	fresh, now, _, err := upgradeEvidence(
-		ctx, tx, b.actor, &b.snapshot.Target, b.operation, 2+b.taskCount)
+		ctx, tx, b.actor, &b.snapshot.Target, b.operation, 2+b.taskCount, b.indexerDecoder)
 	if err != nil {
 		return err
 	}

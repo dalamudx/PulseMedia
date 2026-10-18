@@ -30,7 +30,7 @@ SELECT jsonb_build_object(
  'wanted',(SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM wanted_item x WHERE subscription_id=$2),
  'blocks',(SELECT jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text) FROM release_block x WHERE subscription_id=$2),
  'candidate',(SELECT to_jsonb(x) FROM release_candidate x WHERE id=$9),
- 'indexer',(SELECT to_jsonb(x) FROM indexer x WHERE id=(SELECT indexer_id FROM release_candidate WHERE id=$9)),
+ 'indexer',(SELECT jsonb_set(to_jsonb(x),'{url}',to_jsonb($12::text)) FROM indexer x WHERE id=(SELECT indexer_id FROM release_candidate WHERE id=$9)),
  'queries',(SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM indexer_query x WHERE id IN (SELECT query_id FROM indexer_query_candidate WHERE candidate_id=$9)),
  'query_candidates',(SELECT jsonb_agg(to_jsonb(x) ORDER BY to_jsonb(x)::text) FROM indexer_query_candidate x WHERE candidate_id=$9),
  'client',(SELECT to_jsonb(x) FROM download_client x WHERE id=(SELECT downloader_id FROM subscription WHERE id=$2)),
@@ -68,12 +68,25 @@ type upgradeFrozenSnapshot struct {
 	ValidUntil       time.Time                    `json:"valid_until"`
 }
 
-func upgradeEvidence(ctx context.Context, tx pgx.Tx, a *ports.Actor, v *ports.UpgradePreviewSnapshot, op uuid.UUID, bumps int) (string, time.Time, time.Time, error) {
+func upgradeEvidence(ctx context.Context, tx pgx.Tx, a *ports.Actor, v *ports.UpgradePreviewSnapshot, op uuid.UUID, bumps int, decoders ...ports.CredentialDecoder) (string, time.Time, time.Time, error) {
+	var decoder ports.CredentialDecoder
+	if len(decoders) > 0 {
+		decoder = decoders[0]
+	}
+	q := db.New(tx)
+	source, e := q.GetIndexerByID(ctx, v.SourceID)
+	if e != nil {
+		return "", time.Time{}, time.Time{}, e
+	}
+	source, _, e = ResolveIndexerConfiguration(ctx, q, decoder, source)
+	if e != nil {
+		return "", time.Time{}, time.Time{}, e
+	}
 	var raw json.RawMessage
 	var now time.Time
 	var until *time.Time
 	x := v.Version
-	e := tx.QueryRow(ctx, upgradeEvidenceSQL, uuid.MustParse(a.ID), x.SubscriptionID, x.PolicyID, x.PolicyRevision, x.RootID, x.MediaID, x.UnitID, v.CurrentFileID, v.CandidateID, bumps, op).Scan(&raw, &now, &until)
+	e = tx.QueryRow(ctx, upgradeEvidenceSQL, uuid.MustParse(a.ID), x.SubscriptionID, x.PolicyID, x.PolicyRevision, x.RootID, x.MediaID, x.UnitID, v.CurrentFileID, v.CandidateID, bumps, op, source.Url).Scan(&raw, &now, &until)
 	if e != nil {
 		return "", now, time.Time{}, e
 	}

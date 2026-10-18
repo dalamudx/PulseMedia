@@ -42,6 +42,7 @@ type Manager struct {
 	submissionStore ports.DownloadSubmissionRepository
 	sourceFactory   ports.DownloadTorrentSourceFactory
 	inspector       ports.TorrentMetainfoInspector
+	indexerDecoder  ports.CredentialDecoder
 	completeTV      *completeTVServices
 }
 

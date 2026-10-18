@@ -26,7 +26,7 @@ type movieUpgradeOrganizationWorker struct {
 }
 
 func (a *App) movieUpgradeOrganizationServices() (*movieUpgradeOrganizationWorker, error) {
-	store, e := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{})
+	store, e := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
 	if e != nil {
 		return nil, e
 	}

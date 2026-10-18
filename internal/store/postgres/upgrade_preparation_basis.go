@@ -15,6 +15,7 @@ type preparationBasis struct {
 	operation            uuid.UUID
 	actor                *ports.Actor
 	snapshot             upgradeFrozenSnapshot
+	indexerDecoder       ports.CredentialDecoder
 	authority            json.RawMessage
 	lane                 json.RawMessage
 	reserved             json.RawMessage
@@ -43,7 +44,8 @@ func (s *UpgradePreparationStore) loadMovieUpgradeBasis(
 	}
 	b := &preparationBasis{
 		operation: op, actor: a, own: ownedUpgradeRows{},
-		rows: make(map[string]json.RawMessage),
+		indexerDecoder: s.indexerDecoder,
+		rows:           make(map[string]json.RawMessage),
 	}
 	var snapshot json.RawMessage
 	err := tx.QueryRow(ctx, `

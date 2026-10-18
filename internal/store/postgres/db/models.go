@@ -274,6 +274,21 @@ type Indexer struct {
 	HealthReason       string
 }
 
+type IndexerConfiguration struct {
+	IndexerID            uuid.UUID
+	Protocol             string
+	UrlEncrypted         []byte
+	BehaviorVersion      string
+	ConfigurationVersion int64
+	CreatedAt            pgtype.Timestamptz
+}
+
+type IndexerLifecycle struct {
+	IndexerID uuid.UUID
+	Enabled   bool
+	DeletedAt pgtype.Timestamptz
+}
+
 type IndexerQuery struct {
 	ID            uuid.UUID
 	IndexerID     uuid.UUID

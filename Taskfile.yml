@@ -179,6 +179,11 @@ tasks:
     cmds:
       - bash scripts/verify_subscription_list_browser.sh
 
+  test-sites-ui:
+    desc: Verify managed indexers with native Torznab, Cookie, PG18 and Chrome
+    cmds:
+      - bash scripts/verify_m5_indexer_browser.sh {{.CLI_ARGS}}
+
   test-endpoint-ui:
     desc: Verify safe endpoint URL edits with private PostgreSQL and Chrome
     cmds:

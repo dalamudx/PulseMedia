@@ -1406,10 +1406,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List all configured indexers */
+        /** List safe current indexer configurations */
         get: operations["listIndexers"];
         put?: never;
-        /** Add a new Torznab indexer */
+        /** Create an explicit encrypted indexer configuration */
         post: operations["createIndexer"];
         delete?: never;
         options?: never;
@@ -1421,15 +1421,34 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                id: string;
+            };
             cookie?: never;
         };
         get?: never;
-        /** Update an indexer */
+        /** Update an indexer with an observed configuration version */
         put: operations["updateIndexer"];
         post?: never;
-        /** Delete an indexer */
+        /** Disable an indexer while preserving its source and command history */
         delete: operations["deleteIndexer"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/indexer-commands/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recover an actor-bound safe receipt without resubmitting secret configuration */
+        get: operations["getIndexerCommandReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3204,27 +3223,42 @@ export interface components {
             /** Format: int64 */
             last_candidate_count?: number;
         };
+        /** @enum {string} */
+        IndexerProtocol: "torznab" | "nexusphp" | "rss";
+        IndexerCategories: number[];
         CreateIndexerRequest: {
-            /**
-             * Format: int64
-             * @description On update, the observed config_version. Required to preserve a redacted URL; stale versions return 409.
-             */
-            expected_version?: number;
-            /** @example M-Team */
             name: string;
-            /** @example http://prowlarr:9696/1/api */
+            protocol: components["schemas"]["IndexerProtocol"];
             url: string;
-            /**
-             * @description Write-only credential. On indexer update, an empty string atomically preserves the existing encrypted credential.
-             * @example passkey123
-             */
-            api_key: string;
-            categories?: number[];
+            /** @description Empty credentials are valid for public sources */
+            api_key?: string;
+            categories: components["schemas"]["IndexerCategories"];
+        };
+        UpdateIndexerRequest: {
+            name: string;
+            protocol: components["schemas"]["IndexerProtocol"];
+            /** Format: int64 */
+            expected_version: number;
+            /** @description Omit to preserve the complete original encrypted URL; otherwise provide a complete replacement */
+            url?: string;
+            /** @description Omit to preserve original ciphertext; an explicit empty string deliberately clears the credential */
+            api_key?: string;
+            categories: components["schemas"]["IndexerCategories"];
+        };
+        IndexerCommandReceipt: {
+            /** @enum {string} */
+            action: "create" | "update" | "delete";
+            indexer: components["schemas"]["IndexerDetails"];
+            deleted: boolean;
         };
         IndexerDetails: {
             /** Format: uuid */
             id: string;
             name: string;
+            protocol: components["schemas"]["IndexerProtocol"];
+            /** @description Existing configuration awaiting explicit protocol confirmation */
+            legacy_v1: boolean;
+            categories: components["schemas"]["IndexerCategories"];
             url: string;
             /** @example online */
             health: string;
@@ -7045,7 +7079,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Indexers list */
+            /** @description Active configurations with persisted health */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7054,17 +7088,25 @@ export interface operations {
                     "application/json": components["schemas"]["IndexerListResponse"];
                 };
             };
-            /** @description Unauthorized */
+            /** @description Authentication required */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Indexer state unavailable; no empty success or old healthy observations assumed */
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description State unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;
@@ -7078,7 +7120,9 @@ export interface operations {
     createIndexer: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
             path?: never;
             cookie?: never;
         };
@@ -7088,7 +7132,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Indexer created */
+            /** @description Original safe creation receipt */
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -7097,23 +7141,48 @@ export interface operations {
                     "application/json": components["schemas"]["IndexerDetails"];
                 };
             };
-            /** @description Bad request */
+            /** @description Invalid configuration */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unauthorized */
+            /** @description Authentication required */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Command key belongs to a different intent */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description State unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -7122,7 +7191,9 @@ export interface operations {
     updateIndexer: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
             path: {
                 id: string;
             };
@@ -7130,11 +7201,11 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateIndexerRequest"];
+                "application/json": components["schemas"]["UpdateIndexerRequest"];
             };
         };
         responses: {
-            /** @description Indexer updated */
+            /** @description Original safe update receipt */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -7143,7 +7214,7 @@ export interface operations {
                     "application/json": components["schemas"]["IndexerDetails"];
                 };
             };
-            /** @description Invalid or changed redacted endpoint URL */
+            /** @description Invalid configuration */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -7152,13 +7223,21 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Unauthorized */
+            /** @description Authentication required */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -7168,12 +7247,20 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Endpoint revision changed or preservation revision missing */
+            /** @description Configuration changed or command key conflict; reread before a new command */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description State unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7185,8 +7272,12 @@ export interface operations {
     };
     deleteIndexer: {
         parameters: {
-            query?: never;
-            header?: never;
+            query: {
+                expected_version: number;
+            };
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
             path: {
                 id: string;
             };
@@ -7194,20 +7285,37 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Indexer deleted */
+            /** @description Original deletion receipt */
             204: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description Unauthorized */
+            /** @description Invalid command */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -7217,7 +7325,93 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration changed or command key conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description State unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getIndexerCommandReceipt: {
+        parameters: {
+            query: {
+                action: "create" | "update" | "delete";
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Safe original result; this read does not replay any mutation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndexerCommandReceipt"];
+                };
+            };
+            /** @description Invalid key or action */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No original receipt for this actor, action and key */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description State unavailable; absence cannot be assumed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -7375,6 +7569,15 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Indexer not found */
             404: {
                 headers: {
@@ -7382,6 +7585,15 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Search service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };

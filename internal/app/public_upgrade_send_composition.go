@@ -7,7 +7,7 @@ import (
 )
 
 func (a *App) publicUpgradeSendService() (*acquisition.PublicUpgradeSendService, error) {
-	preparation, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{})
+	preparation, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
 	if err != nil {
 		return nil, err
 	}

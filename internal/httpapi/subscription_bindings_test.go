@@ -4,9 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/dalamudx/PulseMedia/internal/app"
 	"github.com/dalamudx/PulseMedia/internal/httpapi"
 	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
+	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
+	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
+	"github.com/dalamudx/PulseMedia/internal/usecase/search"
 	"github.com/google/uuid"
 	"net/http"
 	"net/http/httptest"
@@ -14,7 +18,11 @@ import (
 )
 
 func TestSubscriptionBindingsPersistAndReconfigureAtomically(t *testing.T) {
-	a, adminToken, memberToken, root, _, _, router, _ := setupOperationHTTP(t)
+	codec := crypto.NewSecretProtector(make([]byte, 32))
+	a, adminToken, memberToken, root, _, _, router, _ := setupOperationHTTP(t, func(h *httpapi.ServerHandler, a *app.App) {
+		commands := search.NewIndexerManagementService(postgres.NewIndexerManagementStore(a.DBPool(), idgen.New(), codec), codec)
+		h.SetIndexerManagementServices(commands, nil)
+	})
 	ctx := context.Background()
 	q := a.Queries()
 	pool := a.DBPool()
@@ -29,19 +37,30 @@ func TestSubscriptionBindingsPersistAndReconfigureAtomically(t *testing.T) {
 	if _, err := q.CreateIndexer(ctx, db.CreateIndexerParams{ID: idx, Name: "Public Indexer", Url: "https://fixture.invalid", ApiKeyEncrypted: enc, Categories: []byte(`[]`)}); err != nil {
 		t.Fatal(err)
 	}
+	urlCipher, err := codec.EncryptSecret([]byte("https://fixture.invalid"))
+	if err != nil {
+		t.Fatal("encrypt source fixture failed")
+	}
+	if _, err = pool.Exec(ctx, `INSERT INTO indexer_configuration(indexer_id,protocol,url_encrypted,behavior_version,configuration_version) VALUES($1,'torznab',$2,'explicit-v1',1)`, idx, urlCipher); err != nil {
+		t.Fatal("configure source fixture failed")
+	}
+	if _, err = pool.Exec(ctx, `INSERT INTO indexer_lifecycle(indexer_id) VALUES($1)`, idx); err != nil {
+		t.Fatal("configure source lifecycle failed")
+	}
 	if _, err := q.CreateDownloadClient(ctx, db.CreateDownloadClientParams{ID: dl, Name: "Public Downloader", ClientType: "qbittorrent", Url: "https://fixture.invalid", PasswordEncrypted: enc, RemotePathMap: []byte(`[]`)}); err != nil {
 		t.Fatal(err)
 	}
 	// Non-credential edits must preserve the current sealed value in one SQL write.
-	edit, _ := json.Marshal(httpapi.CreateIndexerRequest{Name: "Public Indexer", Url: "https://fixture.invalid", ApiKey: ""})
+	edit, _ := json.Marshal(httpapi.UpdateIndexerRequest{Name: "Public Indexer", Protocol: "torznab", Categories: []int{}, ExpectedVersion: 1})
 	ereq := httptest.NewRequest(http.MethodPut, "/api/v1/indexers/"+idx.String(), bytes.NewReader(edit))
 	ereq.Header.Set("Authorization", "Bearer "+adminToken)
 	ereq.Header.Set("Content-Type", "application/json")
+	ereq.Header.Set("Idempotency-Key", uuid.NewString())
 	ered := httptest.NewRecorder()
 	router.ServeHTTP(ered, ereq)
 	sealed, err := q.GetIndexerByID(ctx, idx)
 	if ered.Code != 200 || err != nil || !bytes.Equal(sealed.ApiKeyEncrypted, enc) || string(sealed.Categories) != "[]" {
-		t.Fatal("blank edit destroyed encrypted credentials/categories", ered.Code, err)
+		t.Fatal("omitted credential edit destroyed encrypted credentials/categories", ered.Code, err)
 	}
 	ids := []uuid.UUID{idx}
 	body := httpapi.CreateSubscriptionRequest{MediaId: &movie, RootId: &root, IndexerIds: &ids, DownloaderId: &dl}

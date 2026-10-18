@@ -8,7 +8,7 @@ import (
 )
 
 func (a *App) movieUpgradeObservationServices(downloads *downloadstore.Repository) (ports.MovieUpgradeObservationRuntime, ports.MovieUpgradeNativeJobObservationRepository, error) {
-	preparation, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{})
+	preparation, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
 	if err != nil {
 		return nil, nil, err
 	}

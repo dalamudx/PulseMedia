@@ -8,6 +8,7 @@ import (
 
 	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
 	"github.com/dalamudx/PulseMedia/internal/ports"
+	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 )
 
@@ -34,12 +35,16 @@ func (m *Manager) submissionPayload(ctx context.Context, candidate db.ReleaseCan
 		p.InfoHash, p.DownloadURL = hash, link
 	} else {
 		m.mu.RLock()
-		factory, inspector := m.sourceFactory, m.inspector
+		factory, inspector, decoder := m.sourceFactory, m.inspector, m.indexerDecoder
 		m.mu.RUnlock()
 		if factory == nil || inspector == nil {
 			return p, ports.ErrUnavailable
 		}
 		endpoint, err := m.queries.GetIndexerByID(ctx, candidate.IndexerID)
+		if err != nil {
+			return p, ports.ErrUnavailable
+		}
+		endpoint, modes, err := postgres.ResolveExecutableIndexerConfiguration(ctx, m.queries, decoder, endpoint)
 		if err != nil {
 			return p, ports.ErrUnavailable
 		}
@@ -50,7 +55,7 @@ func (m *Manager) submissionPayload(ctx context.Context, candidate db.ReleaseCan
 		if err != nil {
 			return p, ports.ErrUnavailable
 		}
-		source := factory(endpoint.RssKind, endpoint.Url, string(credential))
+		source := factory(torrentSourceProtocol(endpoint, modes), endpoint.Url, string(credential))
 		if source == nil {
 			return p, ports.ErrUnavailable
 		}

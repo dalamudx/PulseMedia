@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -21,9 +20,10 @@ var _ ports.IndexerClient = (*Client)(nil)
 var _ ports.IndexerPageClient = (*Client)(nil)
 
 type Client struct {
-	httpClient *http.Client
-	baseURL    string
-	apiKey     string
+	httpClient     *http.Client
+	baseURL        string
+	apiKey         string
+	configuredUser *url.Userinfo
 }
 
 func NewClient(baseURL, apiKey string, httpClient *http.Client) *Client {
@@ -32,10 +32,17 @@ func NewClient(baseURL, apiKey string, httpClient *http.Client) *Client {
 	}
 	clone := *httpClient
 	clone.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	var configuredUser *url.Userinfo
+	if configured, err := url.Parse(baseURL); err == nil {
+		configuredUser = configured.User
+		configured.User = nil
+		baseURL = configured.String()
+	}
 	return &Client{
-		httpClient: &clone,
-		baseURL:    strings.TrimRight(baseURL, "/"),
-		apiKey:     apiKey,
+		httpClient:     &clone,
+		baseURL:        baseURL,
+		configuredUser: configuredUser,
+		apiKey:         apiKey,
 	}
 }
 
@@ -102,7 +109,10 @@ func (c *Client) SearchPage(ctx context.Context, query string, categories []int3
 		params.Set("cat", strings.Join(catStrs, ","))
 	}
 
-	reqURL := fmt.Sprintf("%s/api?%s", c.baseURL, params.Encode())
+	reqURL, err := c.apiURL(params)
+	if err != nil {
+		return nil, err
+	}
 	body, err := c.get(ctx, reqURL, 5<<20)
 	if err != nil {
 		return nil, err
@@ -189,6 +199,10 @@ func (c *Client) get(ctx context.Context, requestURL string, maxBytes int64) ([]
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, requestURL, nil)
 	if err != nil {
 		return nil, ports.ErrBadResponse
+	}
+	if c.configuredUser != nil {
+		authValue, _ := c.configuredUser.Password()
+		req.SetBasicAuth(c.configuredUser.Username(), authValue)
 	}
 	resp, err := c.httpClient.Do(req)
 	if err != nil {

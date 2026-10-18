@@ -20,7 +20,7 @@ func (s *UpgradeReservationStore) ReadFrozenUpgradeObservation(ctx context.Conte
 	}
 	defer upgradeRollback(ctx, tx)
 	q := db.New(tx)
-	first, e := readUpgradePreview(ctx, q, a, r)
+	first, e := readUpgradePreview(ctx, q, a, r, s.indexerDecoder)
 	if e != nil {
 		return nil, e
 	}
@@ -39,7 +39,7 @@ func (s *UpgradeReservationStore) ReadFrozenUpgradeObservation(ctx context.Conte
 	if e != nil {
 		return nil, e
 	}
-	last, e := readUpgradePreview(ctx, q, a, r)
+	last, e := readUpgradePreview(ctx, q, a, r, s.indexerDecoder)
 	if e != nil {
 		return nil, e
 	}

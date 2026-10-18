@@ -8,7 +8,7 @@ import (
 )
 
 func (a *App) publicUpgradeOrganizationService() (*acquisition.PublicUpgradeOrganizationService, error) {
-	store, e := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{})
+	store, e := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
 	if e != nil {
 		return nil, e
 	}

@@ -11,6 +11,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
 	"github.com/dalamudx/PulseMedia/internal/ports"
+	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -236,6 +237,14 @@ func (m *Manager) readCompleteTVSendWork(ctx context.Context, lease ports.JobLea
 	}
 	if w.indexer.ConfigVersion != w.candidate.SourceConfigVersion {
 		return nil, ports.ErrCompleteTVSubmissionReview
+	}
+	resolvedIndexer, modes, e := postgres.ResolveExecutableIndexerConfiguration(ctx, q, m.sourceConfigurationDecoder(), w.indexer)
+	w.indexer = resolvedIndexer
+	if e != nil {
+		return nil, ports.ErrUnavailable
+	}
+	if !dedicatedTorrentSourceSupported(modes) {
+		return nil, ports.ErrRejected
 	}
 	if e = tx.Commit(ctx); e != nil {
 		return nil, e

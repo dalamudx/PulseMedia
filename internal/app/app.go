@@ -60,6 +60,7 @@ type App struct {
 	logger             *slog.Logger
 	clock              ports.Clock
 	idgen              ports.IDGen
+	indexerDecoder     ports.CredentialDecoder
 	lock               *lockfile.DataDirLock
 	version            string
 	dbPool             *pgxpool.Pool
@@ -267,6 +268,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	}
 	a.SetCheck("master_key", true, "master key unavailable")
 
+	a.indexerDecoder = crypto.NewSecretProtector(masterKey)
 	var authSvc *auth.Service
 	var settingsSvc *settings.Service
 	var acqSvc *acquisition.Service
@@ -294,6 +296,12 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		if err := postgres.RequireRestoreReconciled(ctx, a.dbPool); err != nil {
 			return err
 		}
+		if err := postgres.CheckSchemaVersion(ctx, a.dbPool, postgres.CurrentMigrationVersion); err != nil {
+			return errors.New("database schema upgrade required")
+		}
+		if err := postgres.EncryptLegacyIndexerConfigurations(ctx, a.dbPool, crypto.NewSecretProtector(masterKey), usecaseSearch.ClassifyLegacyIndexerProtocol); err != nil {
+			return errors.New("indexer configuration migration unavailable")
+		}
 		if err := ensureDefaultLibraryRoots(ctx, a.dbPool, a.idgen, a.cfg.DataDir); err != nil {
 			a.SetCheck("library_roots", false, "library roots unavailable")
 			return fmt.Errorf("failed to initialize library roots: %w", err)
@@ -313,12 +321,13 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		polSvc = policy.NewService(postgres.NewPolicyStore(a.dbPool, a.idgen))
 
 		downloadRepo := downloadstore.NewRepository(a.dbPool, a.idgen, masterKey)
+		downloadRepo.SetIndexerConfigurationDecoder(a.indexerDecoder)
 		downloadRepo.SetTorrentSource(func(kind, baseURL, credential string) ports.IndexerClient {
 			switch kind {
 			case "rss":
 				return universal_rss.NewFeedClient(baseURL, nil)
-			case "torznab":
-				return newIndexerClient(baseURL, credential)
+			case "torznab", "nexusphp":
+				return newConfiguredIndexerClient(ports.IndexerProtocol(kind), baseURL, credential)
 			default:
 				return nil
 			}
@@ -366,9 +375,10 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 			return jellyfin.NewClient(baseURL, apiKey, nil), nil
 		})
 
-		searchSvc = usecaseSearch.NewService(postgres.NewSearchExecutionStore(a.dbPool), a.idgen, crypto.NewSecretProtector(masterKey))
+		searchSvc = usecaseSearch.NewService(postgres.NewSearchExecutionStore(a.dbPool, a.indexerDecoder), a.idgen, crypto.NewSecretProtector(masterKey))
 		searchSvc.SetEndpointRepository(postgres.NewSearchEndpointStore(a.dbPool))
 		searchSvc.SetClientFactory(newIndexerClient)
+		searchSvc.SetConfiguredClientFactory(newConfiguredIndexerClient)
 		searchSvc.SetFeedClientFactory(func(kind, baseURL, apiKey string) ports.IndexerClient {
 			if kind == "rss" {
 				return universal_rss.NewFeedClient(baseURL, nil)
@@ -399,6 +409,8 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	serverHandler.SetDeliverySkipService(notify.NewDeliverySkipService(postgres.NewDeliveryManagementStore(a.dbPool, a.idgen)))
 	serverHandler.SetFeedService(feedSvc)
 	if a.dbPool != nil {
+		indexerManagementStore := postgres.NewIndexerManagementStore(a.dbPool, a.idgen, a.indexerDecoder)
+		serverHandler.SetIndexerManagementServices(usecaseSearch.NewIndexerManagementService(indexerManagementStore, crypto.NewSecretProtector(masterKey)), usecaseSearch.NewIndexerManagementReceiptService(indexerManagementStore))
 		serverHandler.SetWithdrawalService(acquisition.NewWithdrawalService(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen)))
 		serverHandler.SetTransferRecoveryService(transfer.NewRecoveryService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem())))
 		serverHandler.SetCompleteTVOrganizationPreviewService(transfer.NewCompleteTVOrganizationPreviewService(transferstore.NewRepository(a.dbPool, a.idgen, nil, nil)))
@@ -417,8 +429,8 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		serverHandler.SetTVCoverageCandidateReviewService(subscription.NewTVCoverageCandidateReviewService(postgres.NewTVCoverageCandidateReviewStore(postgres.NewEpisodeMappingStore(sourceRepo, a.idgen))))
 		serverHandler.SetCompleteTVAcquisitionService(acquisition.NewCompleteTVService(postgres.NewCompleteTVAcquisitionStore(a.dbPool, a.idgen)))
 		serverHandler.SetTVSelectionService(acquisition.NewTVSelectionService(postgres.NewTVSelectionStore(postgres.NewEpisodeMappingStore(sourceRepo, a.idgen))))
-		serverHandler.SetUpgradePreviewService(acquisition.NewUpgradePreviewService(postgres.NewUpgradePreviewStore(a.dbPool)))
-		serverHandler.SetUpgradeReservationService(acquisition.NewUpgradeReservationService(postgres.NewUpgradeReservationStore(a.dbPool, a.idgen)))
+		serverHandler.SetUpgradePreviewService(acquisition.NewUpgradePreviewService(postgres.NewUpgradePreviewStore(a.dbPool, a.indexerDecoder)))
+		serverHandler.SetUpgradeReservationService(acquisition.NewUpgradeReservationService(postgres.NewUpgradeReservationStore(a.dbPool, a.idgen, a.indexerDecoder)))
 		upgradePreparation, err := a.publicUpgradePreparationService(masterKey)
 		if err != nil {
 			return fmt.Errorf("create public upgrade preparation: %w", err)

@@ -114,6 +114,10 @@ func basisSource(ctx context.Context, tx pgx.Tx, b *preparationBasis) (upgradeSe
 	if err != nil {
 		return out, err
 	}
+	out.endpoint, err = resolveUpgradeSourceURL(ctx, tx, b, out.endpoint)
+	if err != nil {
+		return out, err
+	}
 	if len(out.digest) != 32 {
 		return out, preparationConflict()
 	}

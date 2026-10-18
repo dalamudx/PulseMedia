@@ -235,6 +235,27 @@ func (e EpisodeMappingDraftMode) Valid() bool {
 	}
 }
 
+// Defines values for IndexerCommandReceiptAction.
+const (
+	IndexerCommandReceiptActionCreate IndexerCommandReceiptAction = "create"
+	IndexerCommandReceiptActionDelete IndexerCommandReceiptAction = "delete"
+	IndexerCommandReceiptActionUpdate IndexerCommandReceiptAction = "update"
+)
+
+// Valid indicates whether the value is a known member of the IndexerCommandReceiptAction enum.
+func (e IndexerCommandReceiptAction) Valid() bool {
+	switch e {
+	case IndexerCommandReceiptActionCreate:
+		return true
+	case IndexerCommandReceiptActionDelete:
+		return true
+	case IndexerCommandReceiptActionUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for IndexerDetailsHealthReason.
 const (
 	IndexerDetailsHealthReasonNotChecked  IndexerDetailsHealthReason = "not_checked"
@@ -253,6 +274,27 @@ func (e IndexerDetailsHealthReason) Valid() bool {
 	case IndexerDetailsHealthReasonRateLimited:
 		return true
 	case IndexerDetailsHealthReasonUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IndexerProtocol.
+const (
+	IndexerProtocolNexusphp IndexerProtocol = "nexusphp"
+	IndexerProtocolRss      IndexerProtocol = "rss"
+	IndexerProtocolTorznab  IndexerProtocol = "torznab"
+)
+
+// Valid indicates whether the value is a known member of the IndexerProtocol enum.
+func (e IndexerProtocol) Valid() bool {
+	switch e {
+	case IndexerProtocolNexusphp:
+		return true
+	case IndexerProtocolRss:
+		return true
+	case IndexerProtocolTorznab:
 		return true
 	default:
 		return false
@@ -1474,6 +1516,27 @@ func (e GetDiscoverFeedParamsCategory) Valid() bool {
 	}
 }
 
+// Defines values for GetIndexerCommandReceiptParamsAction.
+const (
+	GetIndexerCommandReceiptParamsActionCreate GetIndexerCommandReceiptParamsAction = "create"
+	GetIndexerCommandReceiptParamsActionDelete GetIndexerCommandReceiptParamsAction = "delete"
+	GetIndexerCommandReceiptParamsActionUpdate GetIndexerCommandReceiptParamsAction = "update"
+)
+
+// Valid indicates whether the value is a known member of the GetIndexerCommandReceiptParamsAction enum.
+func (e GetIndexerCommandReceiptParamsAction) Valid() bool {
+	switch e {
+	case GetIndexerCommandReceiptParamsActionCreate:
+		return true
+	case GetIndexerCommandReceiptParamsActionDelete:
+		return true
+	case GetIndexerCommandReceiptParamsActionUpdate:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SkipIntegrationDeliveryJSONBodyReason.
 const (
 	EventObsolete    SkipIntegrationDeliveryJSONBodyReason = "event_obsolete"
@@ -1906,20 +1969,12 @@ type CreateDownloadClientRequestClientType string
 
 // CreateIndexerRequest defines model for CreateIndexerRequest.
 type CreateIndexerRequest struct {
-	// ApiKey Write-only credential. On indexer update, an empty string atomically preserves the existing encrypted credential.
-	//
-	// Example: passkey123
-	ApiKey     string `json:"api_key"`
-	Categories *[]int `json:"categories,omitempty"`
-
-	// ExpectedVersion On update, the observed config_version. Required to preserve a redacted URL; stale versions return 409.
-	ExpectedVersion *int64 `json:"expected_version,omitempty"`
-
-	// Name Example: M-Team
-	Name string `json:"name"`
-
-	// Url Example: http://prowlarr:9696/1/api
-	Url string `json:"url"`
+	// ApiKey Empty credentials are valid for public sources
+	ApiKey     *string           `json:"api_key,omitempty"`
+	Categories IndexerCategories `json:"categories"`
+	Name       string            `json:"name"`
+	Protocol   IndexerProtocol   `json:"protocol"`
+	Url        *string           `json:"url,omitempty"`
 }
 
 // CreateMediaServerRequest defines model for CreateMediaServerRequest.
@@ -2235,8 +2290,23 @@ type HealthStatus struct {
 	Version string `json:"version"`
 }
 
+// IndexerCategories defines model for IndexerCategories.
+type IndexerCategories = []int
+
+// IndexerCommandReceipt defines model for IndexerCommandReceipt.
+type IndexerCommandReceipt struct {
+	Action  IndexerCommandReceiptAction `json:"action"`
+	Deleted bool                        `json:"deleted"`
+	Indexer IndexerDetails              `json:"indexer"`
+}
+
+// IndexerCommandReceiptAction defines model for IndexerCommandReceipt.Action.
+type IndexerCommandReceiptAction string
+
 // IndexerDetails defines model for IndexerDetails.
 type IndexerDetails struct {
+	Categories IndexerCategories `json:"categories"`
+
 	// ConfigVersion Example: 1
 	ConfigVersion int        `json:"config_version"`
 	CreatedAt     *time.Time `json:"created_at,omitempty"`
@@ -2249,8 +2319,12 @@ type IndexerDetails struct {
 	HealthObservedAt  *time.Time                  `json:"health_observed_at,omitempty"`
 	HealthReason      *IndexerDetailsHealthReason `json:"health_reason,omitempty"`
 	Id                openapi_types.UUID          `json:"id"`
-	Name              string                      `json:"name"`
-	Url               string                      `json:"url"`
+
+	// LegacyV1 Existing configuration awaiting explicit protocol confirmation
+	LegacyV1 bool            `json:"legacy_v1"`
+	Name     string          `json:"name"`
+	Protocol IndexerProtocol `json:"protocol"`
+	Url      string          `json:"url"`
 }
 
 // IndexerDetailsHealthReason defines model for IndexerDetails.HealthReason.
@@ -2260,6 +2334,9 @@ type IndexerDetailsHealthReason string
 type IndexerListResponse struct {
 	Items []IndexerDetails `json:"items"`
 }
+
+// IndexerProtocol defines model for IndexerProtocol.
+type IndexerProtocol string
 
 // IndexerRSSDetails defines model for IndexerRSSDetails.
 type IndexerRSSDetails struct {
@@ -3191,6 +3268,19 @@ type TransferRevisionReceipt struct {
 // TransferRevisionReceiptState defines model for TransferRevisionReceipt.State.
 type TransferRevisionReceiptState string
 
+// UpdateIndexerRequest defines model for UpdateIndexerRequest.
+type UpdateIndexerRequest struct {
+	// ApiKey Omit to preserve original ciphertext; an explicit empty string deliberately clears the credential
+	ApiKey          *string           `json:"api_key,omitempty"`
+	Categories      IndexerCategories `json:"categories"`
+	ExpectedVersion int64             `json:"expected_version"`
+	Name            string            `json:"name"`
+	Protocol        IndexerProtocol   `json:"protocol"`
+
+	// Url Omit to preserve the complete original encrypted URL; otherwise provide a complete replacement
+	Url *string `json:"url,omitempty"`
+}
+
 // UpdateSettingRequest defines model for UpdateSettingRequest.
 type UpdateSettingRequest struct {
 	ExpectedVersion int                    `json:"expected_version"`
@@ -3629,6 +3719,30 @@ type ConfirmCompleteTVOrganizationParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
+// GetIndexerCommandReceiptParams defines parameters for GetIndexerCommandReceipt.
+type GetIndexerCommandReceiptParams struct {
+	Action GetIndexerCommandReceiptParamsAction `form:"action" json:"action"`
+}
+
+// GetIndexerCommandReceiptParamsAction defines parameters for GetIndexerCommandReceipt.
+type GetIndexerCommandReceiptParamsAction string
+
+// CreateIndexerParams defines parameters for CreateIndexer.
+type CreateIndexerParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DeleteIndexerParams defines parameters for DeleteIndexer.
+type DeleteIndexerParams struct {
+	ExpectedVersion int64          `form:"expected_version" json:"expected_version"`
+	IdempotencyKey  IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// UpdateIndexerParams defines parameters for UpdateIndexer.
+type UpdateIndexerParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
 // ConfigureIndexerRSSParams defines parameters for ConfigureIndexerRSS.
 type ConfigureIndexerRSSParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
@@ -4051,7 +4165,7 @@ type ConfirmCompleteTVOrganizationJSONRequestBody ConfirmCompleteTVOrganizationJ
 type CreateIndexerJSONRequestBody = CreateIndexerRequest
 
 // UpdateIndexerJSONRequestBody defines body for UpdateIndexer for application/json ContentType.
-type UpdateIndexerJSONRequestBody = CreateIndexerRequest
+type UpdateIndexerJSONRequestBody = UpdateIndexerRequest
 
 // ConfigureIndexerRSSJSONRequestBody defines body for ConfigureIndexerRSS for application/json ContentType.
 type ConfigureIndexerRSSJSONRequestBody = IndexerRSSRequest
@@ -4363,18 +4477,21 @@ type ServerInterface interface {
 	// ConfirmCompleteTVOrganization Administrator explicitly confirms frozen complete-TV hardlink organization
 	// (POST /api/v1/download-tasks/{id}/complete-tv-organizations)
 	ConfirmCompleteTVOrganization(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ConfirmCompleteTVOrganizationParams)
-	// ListIndexers List all configured indexers
+	// GetIndexerCommandReceipt Recover an actor-bound safe receipt without resubmitting secret configuration
+	// (GET /api/v1/indexer-commands/{key})
+	GetIndexerCommandReceipt(w http.ResponseWriter, r *http.Request, key string, params GetIndexerCommandReceiptParams)
+	// ListIndexers List safe current indexer configurations
 	// (GET /api/v1/indexers)
 	ListIndexers(w http.ResponseWriter, r *http.Request)
-	// CreateIndexer Add a new Torznab indexer
+	// CreateIndexer Create an explicit encrypted indexer configuration
 	// (POST /api/v1/indexers)
-	CreateIndexer(w http.ResponseWriter, r *http.Request)
-	// DeleteIndexer Delete an indexer
+	CreateIndexer(w http.ResponseWriter, r *http.Request, params CreateIndexerParams)
+	// DeleteIndexer Disable an indexer while preserving its source and command history
 	// (DELETE /api/v1/indexers/{id})
-	DeleteIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
-	// UpdateIndexer Update an indexer
+	DeleteIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params DeleteIndexerParams)
+	// UpdateIndexer Update an indexer with an observed configuration version
 	// (PUT /api/v1/indexers/{id})
-	UpdateIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	UpdateIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params UpdateIndexerParams)
 	// CheckinIndexer Perform automated check-in on PT site
 	// (POST /api/v1/indexers/{id}/checkin)
 	CheckinIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
@@ -5132,6 +5249,48 @@ func (siw *ServerInterfaceWrapper) ConfirmCompleteTVOrganization(w http.Response
 	handler.ServeHTTP(w, r)
 }
 
+// GetIndexerCommandReceipt operation middleware
+func (siw *ServerInterfaceWrapper) GetIndexerCommandReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "key" -------------
+	var key string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "key", r.PathValue("key"), &key, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "key", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetIndexerCommandReceiptParams
+
+	// ------------- Required query parameter "action" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "action", r.URL.Query(), &params.Action, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "action"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "action", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetIndexerCommandReceipt(w, r, key, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListIndexers operation middleware
 func (siw *ServerInterfaceWrapper) ListIndexers(w http.ResponseWriter, r *http.Request) {
 
@@ -5149,8 +5308,39 @@ func (siw *ServerInterfaceWrapper) ListIndexers(w http.ResponseWriter, r *http.R
 // CreateIndexer operation middleware
 func (siw *ServerInterfaceWrapper) CreateIndexer(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateIndexerParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.CreateIndexer(w, r)
+		siw.Handler.CreateIndexer(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -5175,8 +5365,49 @@ func (siw *ServerInterfaceWrapper) DeleteIndexer(w http.ResponseWriter, r *http.
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteIndexerParams
+
+	// ------------- Required query parameter "expected_version" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "expected_version", r.URL.Query(), &params.ExpectedVersion, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "expected_version"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "expected_version", Err: err})
+		}
+		return
+	}
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.DeleteIndexer(w, r, id)
+		siw.Handler.DeleteIndexer(w, r, id, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -5201,8 +5432,36 @@ func (siw *ServerInterfaceWrapper) UpdateIndexer(w http.ResponseWriter, r *http.
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateIndexerParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.UpdateIndexer(w, r, id)
+		siw.Handler.UpdateIndexer(w, r, id, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -8731,6 +8990,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/indexers", wrapper.CreateIndexer)
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/api/v1/indexers/{id}", wrapper.DeleteIndexer)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/indexers/{id}", wrapper.UpdateIndexer)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexer-commands/{key}", wrapper.GetIndexerCommandReceipt)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{id}/rss", wrapper.GetIndexerRSS)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/indexers/{id}/rss", wrapper.ConfigureIndexerRSS)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/indexers/{id}/test", wrapper.TestIndexer)
@@ -10162,6 +10422,99 @@ func (response ConfirmCompleteTVOrganization503JSONResponse) VisitConfirmComplet
 	return err
 }
 
+type GetIndexerCommandReceiptRequestObject struct {
+	Key    string `json:"key"`
+	Params GetIndexerCommandReceiptParams
+}
+
+type GetIndexerCommandReceiptResponseObject interface {
+	VisitGetIndexerCommandReceiptResponse(w http.ResponseWriter) error
+}
+
+type GetIndexerCommandReceipt200JSONResponse IndexerCommandReceipt
+
+func (response GetIndexerCommandReceipt200JSONResponse) VisitGetIndexerCommandReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetIndexerCommandReceipt400JSONResponse ErrorResponse
+
+func (response GetIndexerCommandReceipt400JSONResponse) VisitGetIndexerCommandReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetIndexerCommandReceipt401JSONResponse ErrorResponse
+
+func (response GetIndexerCommandReceipt401JSONResponse) VisitGetIndexerCommandReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetIndexerCommandReceipt403JSONResponse ErrorResponse
+
+func (response GetIndexerCommandReceipt403JSONResponse) VisitGetIndexerCommandReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetIndexerCommandReceipt404JSONResponse ErrorResponse
+
+func (response GetIndexerCommandReceipt404JSONResponse) VisitGetIndexerCommandReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetIndexerCommandReceipt503JSONResponse ErrorResponse
+
+func (response GetIndexerCommandReceipt503JSONResponse) VisitGetIndexerCommandReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListIndexersRequestObject struct {
 }
 
@@ -10197,16 +10550,16 @@ func (response ListIndexers401JSONResponse) VisitListIndexersResponse(w http.Res
 	return err
 }
 
-type ListIndexers401ApplicationProblemPlusJSONResponse ErrorResponse
+type ListIndexers403JSONResponse ErrorResponse
 
-func (response ListIndexers401ApplicationProblemPlusJSONResponse) VisitListIndexersResponse(w http.ResponseWriter) error {
+func (response ListIndexers403JSONResponse) VisitListIndexersResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
 		return err
 	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(401)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -10226,7 +10579,8 @@ func (response ListIndexers503JSONResponse) VisitListIndexersResponse(w http.Res
 }
 
 type CreateIndexerRequestObject struct {
-	Body *CreateIndexerJSONRequestBody
+	Params CreateIndexerParams
+	Body   *CreateIndexerJSONRequestBody
 }
 
 type CreateIndexerResponseObject interface {
@@ -10261,20 +10615,6 @@ func (response CreateIndexer400JSONResponse) VisitCreateIndexerResponse(w http.R
 	return err
 }
 
-type CreateIndexer400ApplicationProblemPlusJSONResponse ErrorResponse
-
-func (response CreateIndexer400ApplicationProblemPlusJSONResponse) VisitCreateIndexerResponse(w http.ResponseWriter) error {
-
-	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(response); err != nil {
-		return err
-	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(400)
-	_, err := buf.WriteTo(w)
-	return err
-}
-
 type CreateIndexer401JSONResponse ErrorResponse
 
 func (response CreateIndexer401JSONResponse) VisitCreateIndexerResponse(w http.ResponseWriter) error {
@@ -10289,22 +10629,51 @@ func (response CreateIndexer401JSONResponse) VisitCreateIndexerResponse(w http.R
 	return err
 }
 
-type CreateIndexer401ApplicationProblemPlusJSONResponse ErrorResponse
+type CreateIndexer403JSONResponse ErrorResponse
 
-func (response CreateIndexer401ApplicationProblemPlusJSONResponse) VisitCreateIndexerResponse(w http.ResponseWriter) error {
+func (response CreateIndexer403JSONResponse) VisitCreateIndexerResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
 		return err
 	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(401)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateIndexer409JSONResponse ErrorResponse
+
+func (response CreateIndexer409JSONResponse) VisitCreateIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateIndexer503JSONResponse ErrorResponse
+
+func (response CreateIndexer503JSONResponse) VisitCreateIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
 
 type DeleteIndexerRequestObject struct {
-	Id openapi_types.UUID `json:"id"`
+	Id     openapi_types.UUID `json:"id"`
+	Params DeleteIndexerParams
 }
 
 type DeleteIndexerResponseObject interface {
@@ -10317,6 +10686,20 @@ type DeleteIndexer204Response struct {
 func (response DeleteIndexer204Response) VisitDeleteIndexerResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
+}
+
+type DeleteIndexer400JSONResponse ErrorResponse
+
+func (response DeleteIndexer400JSONResponse) VisitDeleteIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
 }
 
 type DeleteIndexer401JSONResponse ErrorResponse
@@ -10333,16 +10716,16 @@ func (response DeleteIndexer401JSONResponse) VisitDeleteIndexerResponse(w http.R
 	return err
 }
 
-type DeleteIndexer401ApplicationProblemPlusJSONResponse ErrorResponse
+type DeleteIndexer403JSONResponse ErrorResponse
 
-func (response DeleteIndexer401ApplicationProblemPlusJSONResponse) VisitDeleteIndexerResponse(w http.ResponseWriter) error {
+func (response DeleteIndexer403JSONResponse) VisitDeleteIndexerResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
 		return err
 	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(401)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -10361,23 +10744,38 @@ func (response DeleteIndexer404JSONResponse) VisitDeleteIndexerResponse(w http.R
 	return err
 }
 
-type DeleteIndexer404ApplicationProblemPlusJSONResponse ErrorResponse
+type DeleteIndexer409JSONResponse ErrorResponse
 
-func (response DeleteIndexer404ApplicationProblemPlusJSONResponse) VisitDeleteIndexerResponse(w http.ResponseWriter) error {
+func (response DeleteIndexer409JSONResponse) VisitDeleteIndexerResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
 		return err
 	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(404)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteIndexer503JSONResponse ErrorResponse
+
+func (response DeleteIndexer503JSONResponse) VisitDeleteIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
 
 type UpdateIndexerRequestObject struct {
-	Id   openapi_types.UUID `json:"id"`
-	Body *UpdateIndexerJSONRequestBody
+	Id     openapi_types.UUID `json:"id"`
+	Params UpdateIndexerParams
+	Body   *UpdateIndexerJSONRequestBody
 }
 
 type UpdateIndexerResponseObject interface {
@@ -10426,16 +10824,16 @@ func (response UpdateIndexer401JSONResponse) VisitUpdateIndexerResponse(w http.R
 	return err
 }
 
-type UpdateIndexer401ApplicationProblemPlusJSONResponse ErrorResponse
+type UpdateIndexer403JSONResponse ErrorResponse
 
-func (response UpdateIndexer401ApplicationProblemPlusJSONResponse) VisitUpdateIndexerResponse(w http.ResponseWriter) error {
+func (response UpdateIndexer403JSONResponse) VisitUpdateIndexerResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
 		return err
 	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(401)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -10454,20 +10852,6 @@ func (response UpdateIndexer404JSONResponse) VisitUpdateIndexerResponse(w http.R
 	return err
 }
 
-type UpdateIndexer404ApplicationProblemPlusJSONResponse ErrorResponse
-
-func (response UpdateIndexer404ApplicationProblemPlusJSONResponse) VisitUpdateIndexerResponse(w http.ResponseWriter) error {
-
-	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(response); err != nil {
-		return err
-	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(404)
-	_, err := buf.WriteTo(w)
-	return err
-}
-
 type UpdateIndexer409JSONResponse ErrorResponse
 
 func (response UpdateIndexer409JSONResponse) VisitUpdateIndexerResponse(w http.ResponseWriter) error {
@@ -10478,6 +10862,20 @@ func (response UpdateIndexer409JSONResponse) VisitUpdateIndexerResponse(w http.R
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateIndexer503JSONResponse ErrorResponse
+
+func (response UpdateIndexer503JSONResponse) VisitUpdateIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -10768,6 +11166,20 @@ func (response TestIndexer401ApplicationProblemPlusJSONResponse) VisitTestIndexe
 	return err
 }
 
+type TestIndexer403JSONResponse ErrorResponse
+
+func (response TestIndexer403JSONResponse) VisitTestIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type TestIndexer404JSONResponse ErrorResponse
 
 func (response TestIndexer404JSONResponse) VisitTestIndexerResponse(w http.ResponseWriter) error {
@@ -10792,6 +11204,20 @@ func (response TestIndexer404ApplicationProblemPlusJSONResponse) VisitTestIndexe
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestIndexer503JSONResponse ErrorResponse
+
+func (response TestIndexer503JSONResponse) VisitTestIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -19852,16 +20278,19 @@ type StrictServerInterface interface {
 	// ConfirmCompleteTVOrganization Administrator explicitly confirms frozen complete-TV hardlink organization
 	// (POST /api/v1/download-tasks/{id}/complete-tv-organizations)
 	ConfirmCompleteTVOrganization(ctx context.Context, request ConfirmCompleteTVOrganizationRequestObject) (ConfirmCompleteTVOrganizationResponseObject, error)
-	// ListIndexers List all configured indexers
+	// GetIndexerCommandReceipt Recover an actor-bound safe receipt without resubmitting secret configuration
+	// (GET /api/v1/indexer-commands/{key})
+	GetIndexerCommandReceipt(ctx context.Context, request GetIndexerCommandReceiptRequestObject) (GetIndexerCommandReceiptResponseObject, error)
+	// ListIndexers List safe current indexer configurations
 	// (GET /api/v1/indexers)
 	ListIndexers(ctx context.Context, request ListIndexersRequestObject) (ListIndexersResponseObject, error)
-	// CreateIndexer Add a new Torznab indexer
+	// CreateIndexer Create an explicit encrypted indexer configuration
 	// (POST /api/v1/indexers)
 	CreateIndexer(ctx context.Context, request CreateIndexerRequestObject) (CreateIndexerResponseObject, error)
-	// DeleteIndexer Delete an indexer
+	// DeleteIndexer Disable an indexer while preserving its source and command history
 	// (DELETE /api/v1/indexers/{id})
 	DeleteIndexer(ctx context.Context, request DeleteIndexerRequestObject) (DeleteIndexerResponseObject, error)
-	// UpdateIndexer Update an indexer
+	// UpdateIndexer Update an indexer with an observed configuration version
 	// (PUT /api/v1/indexers/{id})
 	UpdateIndexer(ctx context.Context, request UpdateIndexerRequestObject) (UpdateIndexerResponseObject, error)
 	// CheckinIndexer Perform automated check-in on PT site
@@ -20685,6 +21114,33 @@ func (sh *strictHandler) ConfirmCompleteTVOrganization(w http.ResponseWriter, r 
 	}
 }
 
+// GetIndexerCommandReceipt operation middleware
+func (sh *strictHandler) GetIndexerCommandReceipt(w http.ResponseWriter, r *http.Request, key string, params GetIndexerCommandReceiptParams) {
+	var request GetIndexerCommandReceiptRequestObject
+
+	request.Key = key
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetIndexerCommandReceipt(ctx, request.(GetIndexerCommandReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetIndexerCommandReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetIndexerCommandReceiptResponseObject); ok {
+		if err := validResponse.VisitGetIndexerCommandReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // ListIndexers operation middleware
 func (sh *strictHandler) ListIndexers(w http.ResponseWriter, r *http.Request) {
 	var request ListIndexersRequestObject
@@ -20710,8 +21166,10 @@ func (sh *strictHandler) ListIndexers(w http.ResponseWriter, r *http.Request) {
 }
 
 // CreateIndexer operation middleware
-func (sh *strictHandler) CreateIndexer(w http.ResponseWriter, r *http.Request) {
+func (sh *strictHandler) CreateIndexer(w http.ResponseWriter, r *http.Request, params CreateIndexerParams) {
 	var request CreateIndexerRequestObject
+
+	request.Params = params
 
 	var body CreateIndexerJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -20741,10 +21199,11 @@ func (sh *strictHandler) CreateIndexer(w http.ResponseWriter, r *http.Request) {
 }
 
 // DeleteIndexer operation middleware
-func (sh *strictHandler) DeleteIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+func (sh *strictHandler) DeleteIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params DeleteIndexerParams) {
 	var request DeleteIndexerRequestObject
 
 	request.Id = id
+	request.Params = params
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
 		return sh.ssi.DeleteIndexer(ctx, request.(DeleteIndexerRequestObject))
@@ -20767,10 +21226,11 @@ func (sh *strictHandler) DeleteIndexer(w http.ResponseWriter, r *http.Request, i
 }
 
 // UpdateIndexer operation middleware
-func (sh *strictHandler) UpdateIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+func (sh *strictHandler) UpdateIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params UpdateIndexerParams) {
 	var request UpdateIndexerRequestObject
 
 	request.Id = id
+	request.Params = params
 
 	var body UpdateIndexerJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {

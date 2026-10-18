@@ -9,7 +9,7 @@ import (
 )
 
 func (a *App) movieUpgradeSendServices(downloads *downloadstore.Repository) (ports.MovieUpgradeSendJobExecutor, error) {
-	preparation, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{})
+	preparation, err := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
 	if err != nil {
 		return nil, err
 	}

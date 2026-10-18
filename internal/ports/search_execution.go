@@ -14,7 +14,10 @@ type SearchSecrets interface {
 
 type SearchIndexer struct {
 	ID                                                  uuid.UUID
-	Name, Url                                           string
+	Name                                                string
+	Url                                                 string `json:"-"`
+	Protocol                                            IndexerProtocol
+	LegacyV1                                            bool
 	ApiKeyEncrypted                                     []byte `json:"-"`
 	Categories                                          []byte
 	ConfigVersion                                       int64
@@ -56,6 +59,7 @@ type SearchQuerySpec struct {
 	ConfigVersion   int64
 	RSSJobID        uuid.UUID
 	HealthJob       *IndexerHealthJob
+	Actor           *Actor `json:"-"`
 	ProbeOnly       bool
 	MinimumInterval time.Duration
 }

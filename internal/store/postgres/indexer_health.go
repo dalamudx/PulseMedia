@@ -57,6 +57,13 @@ func (s *IndexerHealthStore) QueueHealth(ctx context.Context, limit int32) (int,
 	}
 	n := 0
 	for _, row := range rows {
+		available, e := IndexerAvailableForExecution(ctx, q, row.ID)
+		if e != nil {
+			return 0, e
+		}
+		if !available {
+			continue
+		}
 		count, e := q.QueueIndexerHealth(ctx, db.QueueIndexerHealthParams{ID: s.ids.NewUUID(), ID_2: row.ID})
 		if e != nil {
 			return 0, e
