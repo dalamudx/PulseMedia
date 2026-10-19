@@ -150,8 +150,11 @@ func (a *movieUpgradeTrackingAttempt) QueryMovieUpgradeTracking(ctx context.Cont
 	if err = ctx.Err(); err != nil {
 		return nil, err
 	}
-	outcome, reason, evidence := a.observe(ctx)
-	p := &movieUpgradeTrackingReturn{issuer: a, value: ports.MovieUpgradeVerifiedTracking{Binding: binding, Outcome: outcome, Reason: reason, ReturnedAt: a.driver.clock.Now().UTC().Truncate(time.Microsecond), Evidence: evidence}}
+	value := ports.MovieUpgradeVerifiedTracking{Binding: binding}
+	outcome, reason, evidence := a.observe(ctx, &value)
+	value.Outcome, value.Reason, value.Evidence = outcome, reason, evidence
+	value.ReturnedAt = a.driver.clock.Now().UTC().Truncate(time.Microsecond)
+	p := &movieUpgradeTrackingReturn{issuer: a, value: value}
 	a.mu.Lock()
 	a.returned = p
 	a.mu.Unlock()
@@ -222,7 +225,7 @@ func movieTrackingInventory(files []ports.TorrentFile, expected []media.TVTorren
 	}
 	return len(names) == 0
 }
-func (a *movieUpgradeTrackingAttempt) observe(ctx context.Context) (string, string, json.RawMessage) {
+func (a *movieUpgradeTrackingAttempt) observe(ctx context.Context, telemetry *ports.MovieUpgradeVerifiedTracking) (string, string, json.RawMessage) {
 	manual := func(reason string) (string, string, json.RawMessage) {
 		return "manual_review", reason, json.RawMessage(`{"version":"movie-upgrade.tracking.v1"}`)
 	}
@@ -272,6 +275,14 @@ func (a *movieUpgradeTrackingAttempt) observe(ctx context.Context) (string, stri
 		return manual("progress_regressed")
 	}
 	if !complete {
+		if telemetry != nil {
+			progress := float64(after.Progress)
+			telemetry.NativeProgress = &progress
+			if after.DownloadRateBytesPerSecond != nil {
+				rate := *after.DownloadRateBytesPerSecond
+				telemetry.DownloadRateBytesPerSecond = &rate
+			}
+		}
 		return "tracking", "download_in_progress", json.RawMessage(`{"version":"movie-upgrade.tracking.v1"}`)
 	}
 	if !movieTrackingComplete(after) {
@@ -301,6 +312,14 @@ func (a *movieUpgradeTrackingAttempt) VerifyMovieUpgradeTracking(ctx context.Con
 	}
 	out := p.value
 	out.Evidence = slices.Clone(out.Evidence)
+	if out.NativeProgress != nil {
+		value := *out.NativeProgress
+		out.NativeProgress = &value
+	}
+	if out.DownloadRateBytesPerSecond != nil {
+		value := *out.DownloadRateBytesPerSecond
+		out.DownloadRateBytesPerSecond = &value
+	}
 	return out, nil
 }
 func (a *movieUpgradeTrackingAttempt) Close(context.Context) error {

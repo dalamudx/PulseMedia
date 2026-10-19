@@ -14,11 +14,11 @@ try{
  assert.deepEqual(await panel().locator('li strong').allTextContents(),['S01E01','S01E02']);
  assert.equal(await panel().locator('dd').count(),4);assert.equal(await panel().getByRole('button',{name:'确认完整季整理',exact:true}).isDisabled(),true);
  await page.screenshot({path:process.env.PULSE_TEST_TEMP_ROOT+'/organization-desktop.png',fullPage:true});
- const posts=[];let droppedResolve;const dropped=new Promise(r=>{droppedResolve=r;});let drop=true,failReceiptStorage=false;
+ const posts=[],statuses=[];let droppedResolve;const dropped=new Promise(r=>{droppedResolve=r;});let drop=true,failReceiptStorage=false;
  await page.route('**/api/v1/download-tasks/*/complete-tv-organizations',async route=>{
   const req=route.request();posts.push({key:req.headers()['idempotency-key'],body:req.postDataJSON(),url:req.url()});
   assert.deepEqual(Object.keys(req.postDataJSON()).sort(),['operation_id','tracking_job_id']);
-  const response=await route.fetch();
+  const response=await route.fetch();statuses.push(response.status());
   if(drop){drop=false;assert.equal(response.status(),202);await route.abort('failed');droppedResolve(true);return;}
   if(response.status()===202){failReceiptStorage=true;await page.evaluate(()=>{window.originalSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k.startsWith('pulse.complete-tv-organization.v1:')&&JSON.parse(v).receipt)throw new Error('controlled storage failure');return window.originalSetItem.call(this,k,v);};});}
   await route.fulfill({response});
@@ -28,7 +28,10 @@ try{
  const recovery=()=>panel().getByRole('button',{name:'用原键恢复整理确认',exact:true});await recovery().waitFor();
  async function role(action){const r=await page.request.post(control+'/'+action,{headers:{Origin:new URL(control).origin}});assert.equal(r.status(),204);}
  await role('demote');const denied=page.waitForResponse(r=>r.url().includes('/complete-tv-organizations')&&r.request().method()==='POST'&&r.status()===403);await recovery().click();await denied;await recovery().waitFor();
- await role('restore');await open();await recovery().click();await panel().getByText(/原确认回执：已排队/).waitFor();await panel().getByText(/本地回执保存失败/).waitFor();assert.equal(failReceiptStorage,true);
+ await role('restore');await open();await recovery().click();
+ try{await panel().getByText(/原确认回执：已排队/).waitFor();await panel().getByText(/本地回执保存失败/).waitFor();}
+ catch(error){console.log(JSON.stringify({organizationRecovery:{statuses,storageFailureArmed:failReceiptStorage,pendingVisible:await recovery().isVisible(),alerts:await panel().getByRole('alert').allTextContents()}}));throw error;}
+ assert.equal(failReceiptStorage,true);
  assert.equal(posts.length,3);assert.deepEqual(posts,[posts[0],posts[0],posts[0]]);
  const journalKey=await page.evaluate(()=>Object.keys(localStorage).find(k=>k.startsWith('pulse.complete-tv-organization.v1:')));assert.ok(journalKey);
  const other=await context.newPage();await other.goto(base+'/activity');

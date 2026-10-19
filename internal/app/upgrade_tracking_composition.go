@@ -8,7 +8,7 @@ import (
 )
 
 func (a *App) movieUpgradeTrackingServices(downloads *downloadstore.Repository) (ports.MovieUpgradeTrackingRuntime, ports.MovieUpgradeNativeJobTrackingRepository, error) {
-	preparation, e := postgres.NewUpgradePreparationStore(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
+	preparation, e := postgres.NewUpgradePreparationStoreWithDownloadRates(a.dbPool, a.idgen, torrent.Inspector{}, a.indexerDecoder)
 	if e != nil {
 		return nil, nil, e
 	}

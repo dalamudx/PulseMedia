@@ -24,8 +24,9 @@ import (
 func automaticTVObservationText(s string) pgtype.Text { return pgtype.Text{String: s, Valid: true} }
 
 type AutomaticTVObservationStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool        *pgxpool.Pool
+	ids         ports.IDGen
+	recordRates bool
 }
 
 func NewAutomaticTVObservationStore(pool *pgxpool.Pool, ids ports.IDGen) *AutomaticTVObservationStore {
@@ -419,6 +420,11 @@ func (s *AutomaticTVObservationStore) CommitAutomaticTVObservation(ctx context.C
 	}
 	if tag.RowsAffected() != 1 {
 		return nil, ports.ErrAutomaticTVObservationStale
+	}
+	if s.recordRates {
+		if e = s.recordNativeRate(ctx, tx, *actual, remote, known, state); e != nil {
+			return nil, e
+		}
 	}
 	if complete && eligible {
 		payload := mustAutomaticTVJSON(map[string]any{"operation_id": actual.Request.OperationID, "task_id": actual.Request.TaskID, "automatic_tv_authority": actual.Request.OperationID, "observation_job_id": actual.Request.Lease.ID, "inventory_stamp": evidence})

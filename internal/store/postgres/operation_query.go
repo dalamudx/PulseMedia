@@ -10,12 +10,18 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type OperationQueryStore struct{ pool *pgxpool.Pool }
+type OperationQueryStore struct {
+	pool     *pgxpool.Pool
+	activity ports.OperationQuery
+}
 
 func NewOperationQueryStore(pool *pgxpool.Pool) *OperationQueryStore {
 	return &OperationQueryStore{pool: pool}
 }
 func (s *OperationQueryStore) ReadOperation(ctx context.Context, a *ports.Actor, id uuid.UUID) (*ports.OperationSnapshot, error) {
+	if s != nil && s.activity != nil {
+		return s.activity.ReadOperation(ctx, a, id)
+	}
 	if a == nil || a.Type != ports.ActorTypeUser {
 		return nil, ports.ErrForbidden
 	}

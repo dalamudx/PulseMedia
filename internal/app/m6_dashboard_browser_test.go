@@ -59,7 +59,7 @@ func runM6DashboardBrowser(t *testing.T, mode string) {
 	if err := f.pool.QueryRow(ctx, "SELECT current_setting('server_version_num')::int").Scan(&version); err != nil || version != 180006 {
 		t.Fatal("PostgreSQL 18.6 required")
 	}
-	if err := postgres.CheckSchemaVersion(ctx, f.pool, 92); err != nil {
+	if err := postgres.CheckSchemaVersion(ctx, f.pool, postgres.CurrentMigrationVersion); err != nil {
 		t.Fatal(err)
 	}
 	cfg := config.NewDefault()
@@ -207,7 +207,7 @@ func runM6DashboardBrowser(t *testing.T, mode string) {
 	if mode == "states" && fixtureChanges != 0 {
 		t.Fatal("unexpected fixture transition")
 	}
-	t.Logf("M6_DASHBOARD_APP_COOKIE_PG_PASS %s schema=92 actual_Chrome=true business_writes=0 fixture_transitions=%d source=SQL_prepared_observations ingestion_and_sampler_not_claimed=true", mode, fixtureChanges)
+	t.Logf("M6_DASHBOARD_APP_COOKIE_PG_PASS %s schema=%d actual_Chrome=true business_writes=0 fixture_transitions=%d source=SQL_prepared_observations ingestion_and_sampler_not_claimed=true", mode, postgres.CurrentMigrationVersion, fixtureChanges)
 }
 
 func m6DashboardExec(t *testing.T, f *organizationFixture, query string, args ...any) {

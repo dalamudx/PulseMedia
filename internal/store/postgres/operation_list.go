@@ -53,6 +53,9 @@ func operationReadPermission(ctx context.Context, q *db.Queries, a *ports.Actor)
 	return nil
 }
 func (s *OperationQueryStore) ListOperations(ctx context.Context, a *ports.Actor, request ports.OperationListRequest) (*ports.OperationPage, error) {
+	if s != nil && s.activity != nil {
+		return s.activity.ListOperations(ctx, a, request)
+	}
 	if a == nil {
 		return nil, ports.ErrForbidden
 	}

@@ -111,15 +111,16 @@ func (r *automaticTVReader) tasks(ctx context.Context, query url.Values) ([]port
 		return nil, ports.ErrUnavailable
 	}
 	var rows []struct {
-		Hash        *string         `json:"hash"`
-		SavePath    *string         `json:"save_path"`
-		Tags        *string         `json:"tags"`
-		State       *string         `json:"state"`
-		Total       *int64          `json:"total_size"`
-		Completed   *int64          `json:"completed"`
-		Progress    json.RawMessage `json:"progress"`
-		Name        json.RawMessage `json:"name"`
-		ContentPath json.RawMessage `json:"content_path"`
+		Hash         *string         `json:"hash"`
+		SavePath     *string         `json:"save_path"`
+		Tags         *string         `json:"tags"`
+		State        *string         `json:"state"`
+		Total        *int64          `json:"total_size"`
+		Completed    *int64          `json:"completed"`
+		Progress     json.RawMessage `json:"progress"`
+		Name         json.RawMessage `json:"name"`
+		ContentPath  json.RawMessage `json:"content_path"`
+		DownloadRate json.RawMessage `json:"dlspeed"`
 	}
 	if json.Unmarshal(body, &rows) != nil || rows == nil || len(rows) > 64 {
 		return nil, ports.ErrUnavailable
@@ -155,7 +156,7 @@ func (r *automaticTVReader) tasks(ctx context.Context, query url.Values) ([]port
 				tags = append(tags, tag)
 			}
 		}
-		out = append(out, ports.AutomaticTVRemoteTask{InfoHash: hash, SavePath: *row.SavePath, ContentPath: content, State: *row.State, Tags: tags, TotalBytes: *row.Total, VerifiedBytes: *row.Completed, Complete: completeState && *row.Total == *row.Completed})
+		out = append(out, ports.AutomaticTVRemoteTask{InfoHash: hash, SavePath: *row.SavePath, ContentPath: content, State: *row.State, Tags: tags, TotalBytes: *row.Total, VerifiedBytes: *row.Completed, Complete: completeState && *row.Total == *row.Completed, DownloadRateBytesPerSecond: nativeDownloadRate(row.DownloadRate)})
 	}
 	return out, nil
 }

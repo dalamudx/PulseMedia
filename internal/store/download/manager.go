@@ -45,6 +45,7 @@ type Manager struct {
 	indexerDecoder  ports.CredentialDecoder
 	completeTV      *completeTVServices
 	automaticTV     *automaticTVServices
+	recordRates     bool
 }
 
 func NewManager(pool *pgxpool.Pool, idgen ports.IDGen, masterKey []byte) *Manager {
@@ -427,7 +428,12 @@ func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.Download
 	if err != nil {
 		return nil, ports.ErrUnavailable
 	}
-	client, err := m.clientFor(ctx, task.ClientID)
+	var client ports.DownloadClient
+	if m.recordRates {
+		client, err = m.clientForRateSnapshot(ctx, configSnapshot)
+	} else {
+		client, err = m.clientFor(ctx, task.ClientID)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -440,6 +446,11 @@ func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.Download
 		return nil, ErrReconcilePending
 	}
 	if err != nil {
+		if m.recordRates && ctx.Err() == nil {
+			if rateErr := m.recordUnknownRate(ctx, task, configSnapshot); rateErr != nil {
+				return nil, rateErr
+			}
+		}
 		return nil, err
 	}
 	if info == nil || task.InfoHash == "" || !strings.EqualFold(info.InfoHash, task.InfoHash) ||
@@ -464,6 +475,9 @@ func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.Download
 			}
 		}
 		return m.completeForOrganization(ctx, task, info, inventory)
+	}
+	if m.recordRates {
+		return m.updateProgressWithRate(ctx, task, configSnapshot, info)
 	}
 	observed, err := m.queries.UpdateDownloadTaskProgress(ctx, db.UpdateDownloadTaskProgressParams{
 		ID: task.ID, State: "tracking", Progress: info.Progress,

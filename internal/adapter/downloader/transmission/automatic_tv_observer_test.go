@@ -69,7 +69,7 @@ func TestAutomaticTVNativeRequestsSessionAndAuthority(t *testing.T) {
 		if json.Unmarshal(req.Arguments["fields"], &fields) != nil {
 			t.Error("missing fields")
 		}
-		want := []string{"hashString", "downloadDir", "labels", "status", "totalSize", "haveValid", "error"}
+		want := []string{"hashString", "downloadDir", "labels", "status", "totalSize", "haveValid", "error", "rateDownload"}
 		if raw, ok := req.Arguments["ids"]; ok {
 			var ids []string
 			if json.Unmarshal(raw, &ids) != nil || !reflect.DeepEqual(ids, []string{automaticTVTestHash}) {

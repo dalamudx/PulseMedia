@@ -370,6 +370,18 @@ type DownloadFileInventory struct {
 	ObservedAt  pgtype.Timestamptz
 }
 
+type DownloadRateObservation struct {
+	TaskID                     uuid.UUID
+	ClientID                   uuid.UUID
+	TaskStamp                  string
+	TaskUpdatedAt              pgtype.Timestamptz
+	ClientStamp                string
+	Source                     string
+	DownloadRateBytesPerSecond pgtype.Int8
+	ObservedProgress           pgtype.Float8
+	ObservedAt                 pgtype.Timestamptz
+}
+
 type DownloadRequirement struct {
 	ID              uuid.UUID
 	OperationID     uuid.UUID

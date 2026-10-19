@@ -195,7 +195,7 @@ func (c *Client) AddTorrent(ctx context.Context, p ports.AddTorrentParam) error 
 
 func (c *Client) GetTorrent(ctx context.Context, infoHash string) (*ports.TorrentInfo, error) {
 	infoHash = strings.ToLower(infoHash)
-	args := map[string]any{"fields": []string{"hashString", "name", "downloadDir", "percentDone", "totalSize", "status", "haveValid", "labels"}, "ids": []string{infoHash}}
+	args := map[string]any{"fields": []string{"hashString", "name", "downloadDir", "percentDone", "totalSize", "status", "haveValid", "labels", "rateDownload"}, "ids": []string{infoHash}}
 	var res struct {
 		Torrents []torrentObservation `json:"torrents"`
 	}
@@ -215,7 +215,7 @@ func (c *Client) GetTorrent(ctx context.Context, infoHash string) (*ports.Torren
 }
 
 func (c *Client) ListTorrents(ctx context.Context, tag string) ([]*ports.TorrentInfo, error) {
-	args := map[string]any{"fields": []string{"hashString", "name", "downloadDir", "percentDone", "totalSize", "status", "haveValid", "labels"}}
+	args := map[string]any{"fields": []string{"hashString", "name", "downloadDir", "percentDone", "totalSize", "status", "haveValid", "labels", "rateDownload"}}
 	var res struct {
 		Torrents []torrentObservation `json:"torrents"`
 	}

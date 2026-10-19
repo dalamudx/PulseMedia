@@ -37,7 +37,7 @@ func (s *ServerHandler) ListOperations(ctx context.Context, request ListOperatio
 	}
 	out := OperationPage{Items: make([]OperationSummary, 0, len(page.Items))}
 	for _, entry := range page.Items {
-		out.Items = append(out.Items, OperationSummary{OperationId: entry.OperationID, Status: entry.Status, DownloadStatus: entry.DownloadStatus, Progress: entry.Progress, PlanStatus: entry.PlanStatus, PlanId: entry.PlanID, Title: entry.Title, CreatedAt: entry.CreatedAt})
+		out.Items = append(out.Items, OperationSummary{OperationId: entry.OperationID, Status: entry.Status, DownloadStatus: entry.DownloadStatus, Progress: entry.Progress, PlanStatus: entry.PlanStatus, PlanId: entry.PlanID, Title: entry.Title, CreatedAt: entry.CreatedAt, Telemetry: operationTelemetryResponse(entry.Telemetry)})
 	}
 	if page.NextCursor != "" {
 		out.NextCursor = &page.NextCursor

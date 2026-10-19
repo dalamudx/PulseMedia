@@ -1,19 +1,21 @@
 package transmission
 
 import (
+	"encoding/json"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"strings"
 )
 
 type torrentObservation struct {
-	HashString  string   `json:"hashString"`
-	Name        string   `json:"name"`
-	DownloadDir string   `json:"downloadDir"`
-	PercentDone float32  `json:"percentDone"`
-	TotalSize   int64    `json:"totalSize"`
-	HaveValid   *int64   `json:"haveValid"`
-	Status      int      `json:"status"`
-	Labels      []string `json:"labels"`
+	HashString   string          `json:"hashString"`
+	Name         string          `json:"name"`
+	DownloadDir  string          `json:"downloadDir"`
+	PercentDone  float32         `json:"percentDone"`
+	TotalSize    int64           `json:"totalSize"`
+	HaveValid    *int64          `json:"haveValid"`
+	Status       int             `json:"status"`
+	Labels       []string        `json:"labels"`
+	DownloadRate json.RawMessage `json:"rateDownload"`
 }
 
 func (t torrentObservation) hasLabel(wanted string) bool {
@@ -42,5 +44,5 @@ func (t torrentObservation) info() (*ports.TorrentInfo, error) {
 	case 0:
 		state = "pausedUP"
 	}
-	return &ports.TorrentInfo{InfoHash: strings.ToLower(t.HashString), Name: t.Name, SavePath: t.DownloadDir, Progress: t.PercentDone, TotalBytes: t.TotalSize, DownloadedBytes: downloaded, State: state, Tags: strings.Join(t.Labels, ",")}, nil
+	return &ports.TorrentInfo{InfoHash: strings.ToLower(t.HashString), Name: t.Name, SavePath: t.DownloadDir, Progress: t.PercentDone, TotalBytes: t.TotalSize, DownloadedBytes: downloaded, State: state, Tags: strings.Join(t.Labels, ","), DownloadRateBytesPerSecond: nativeDownloadRate(t.DownloadRate)}, nil
 }

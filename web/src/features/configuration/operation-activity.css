@@ -1,0 +1,48 @@
+.operation-live {
+  min-width: 0;
+  margin-block: 1rem;
+  color: var(--text);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.operation-live h3 { margin: 0 0 .5rem; font-size: 1rem; }
+.operation-live p { margin: .5rem 0; }
+.operation-live .operation-live-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+  min-width: 0;
+}
+.operation-live .operation-live-heading > * { min-width: 0; max-width: 100%; }
+.operation-live .operation-live-meta { color: var(--text-secondary); font-size: .875rem; font-variant-numeric: tabular-nums; }
+.operation-live progress { display: block; width: 100%; max-width: 100%; height: .75rem; margin-block: .5rem; accent-color: var(--primary); }
+.operation-live .operation-live-steps { margin: 1rem 0; padding-inline-start: 2rem; }
+.operation-live .operation-live-steps li { padding: .5rem 0 1rem .5rem; border-bottom: 1px solid var(--border); }
+.operation-live .operation-live-steps li + li { padding-top: 1rem; }
+.operation-live .operation-live-error { color: var(--text); }
+.operation-live button { min-height: 44px; min-width: 44px; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.operation-live button:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.operation-live button:disabled { cursor: default; opacity: .65; }
+@media (max-width: 400px) {
+  .operation-live .operation-live-heading { flex-direction: column; gap: .5rem; }
+  .operation-live button { width: 100%; }
+}
+
+.operation-activity { min-width: 0; }
+.operation-activity .op-card h3, .operation-activity .op-card dd { overflow-wrap: anywhere; min-width: 0; }
+.operation-activity-actions { border: 0; padding: 0; margin: 0; min-width: 0; }
+.operation-inbox .operation-inbox-list { padding: 0; list-style: none; }
+.operation-inbox .operation-inbox-list > li { padding: 1rem 0; border-bottom: 1px solid var(--border); min-width: 0; overflow-wrap: anywhere; }
+.operation-inbox .operation-inbox-select { max-width: 100%; text-align: start; white-space: normal; overflow-wrap: anywhere; }
+.operation-inbox .operation-inbox-progress { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; min-width: 0; }
+.operation-inbox .operation-inbox-progress progress { flex: 1 1 12rem; max-width: 100%; height: .75rem; accent-color: var(--primary); }
+.operation-inbox .operation-live-meta { color: var(--text-secondary); font-size: .875rem; font-variant-numeric: tabular-nums; }
+.operation-activity button, .operation-inbox button, .operation-activity input { min-height: 44px; }
+.operation-inbox button { min-width: 44px; }
+@media (max-width: 400px) {
+  .operation-inbox .config-actions { flex-wrap: wrap; }
+  .operation-inbox .operation-inbox-progress { align-items: stretch; }
+  .operation-activity .media-control-bar > * { min-width: 0; max-width: 100%; }
+}

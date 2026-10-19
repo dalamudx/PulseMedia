@@ -14,6 +14,7 @@ type OperationSnapshot struct {
 	Progress       *float32
 	PlanStatus     *string
 	PlanID         *uuid.UUID
+	Telemetry      *OperationTelemetry
 }
 
 type OperationListRequest struct {

@@ -7,7 +7,7 @@ import (
 
 // OperationReader assembles the readonly status boundary for HTTP and other readers.
 func (a *App) OperationReader() ports.OperationQuery {
-	return postgres.NewOperationQueryStore(a.dbPool)
+	return postgres.NewActivityOperationQueryStore(a.dbPool)
 }
 
 // SubmissionRetryRepository assembles the original-job command boundary.

@@ -153,16 +153,16 @@ func (e CreateSubscriptionRequestScopeType) Valid() bool {
 
 // Defines values for DashboardActivityProgressSource.
 const (
-	NativePercent DashboardActivityProgressSource = "native_percent"
-	VerifiedBytes DashboardActivityProgressSource = "verified_bytes"
+	DashboardActivityProgressSourceNativePercent DashboardActivityProgressSource = "native_percent"
+	DashboardActivityProgressSourceVerifiedBytes DashboardActivityProgressSource = "verified_bytes"
 )
 
 // Valid indicates whether the value is a known member of the DashboardActivityProgressSource enum.
 func (e DashboardActivityProgressSource) Valid() bool {
 	switch e {
-	case NativePercent:
+	case DashboardActivityProgressSourceNativePercent:
 		return true
-	case VerifiedBytes:
+	case DashboardActivityProgressSourceVerifiedBytes:
 		return true
 	default:
 		return false
@@ -703,6 +703,45 @@ func (e NotificationBatchSummaryState) Valid() bool {
 	case NotificationBatchSummaryStateSkipped:
 		return true
 	case NotificationBatchSummaryStateUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OperationTelemetryProgressSource.
+const (
+	OperationTelemetryProgressSourceNativePercent OperationTelemetryProgressSource = "native_percent"
+	OperationTelemetryProgressSourceVerifiedBytes OperationTelemetryProgressSource = "verified_bytes"
+)
+
+// Valid indicates whether the value is a known member of the OperationTelemetryProgressSource enum.
+func (e OperationTelemetryProgressSource) Valid() bool {
+	switch e {
+	case OperationTelemetryProgressSourceNativePercent:
+		return true
+	case OperationTelemetryProgressSourceVerifiedBytes:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OperationTelemetryRateStatus.
+const (
+	OperationTelemetryRateStatusCurrent OperationTelemetryRateStatus = "current"
+	OperationTelemetryRateStatusStale   OperationTelemetryRateStatus = "stale"
+	OperationTelemetryRateStatusUnknown OperationTelemetryRateStatus = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the OperationTelemetryRateStatus enum.
+func (e OperationTelemetryRateStatus) Valid() bool {
+	switch e {
+	case OperationTelemetryRateStatusCurrent:
+		return true
+	case OperationTelemetryRateStatusStale:
+		return true
+	case OperationTelemetryRateStatusUnknown:
 		return true
 	default:
 		return false
@@ -3037,6 +3076,9 @@ type OperationDetails struct {
 	//
 	// Example: tracking
 	Status string `json:"status"`
+
+	// Telemetry Persisted display observations. No field proves library ownership, ingestion or execution authority.
+	Telemetry *OperationTelemetry `json:"telemetry,omitempty"`
 }
 
 // OperationPage defines model for OperationPage.
@@ -3067,7 +3109,52 @@ type OperationSummary struct {
 	//
 	// Example: tracking
 	Status string `json:"status"`
-	Title  string `json:"title"`
+
+	// Telemetry Persisted display observations. No field proves library ownership, ingestion or execution authority.
+	Telemetry *OperationTelemetry `json:"telemetry,omitempty"`
+	Title     string              `json:"title"`
+}
+
+// OperationTelemetry Persisted display observations. No field proves library ownership, ingestion or execution authority.
+type OperationTelemetry struct {
+	// DownloadRateBytesPerSecond Exact native bytes per second; absent means unknown, never inferred from cumulative transfer counters.
+	DownloadRateBytesPerSecond *string                           `json:"download_rate_bytes_per_second,omitempty"`
+	Progress                   *float64                          `json:"progress,omitempty"`
+	ProgressObservedAt         *time.Time                        `json:"progress_observed_at,omitempty"`
+	ProgressSource             *OperationTelemetryProgressSource `json:"progress_source,omitempty"`
+	RateObservedAt             *time.Time                        `json:"rate_observed_at,omitempty"`
+
+	// RateStatus Samples older than 45 seconds are stale; a changed task or source makes the rate unknown.
+	RateStatus OperationTelemetryRateStatus `json:"rate_status"`
+}
+
+// OperationTelemetryProgressSource defines model for OperationTelemetry.ProgressSource.
+type OperationTelemetryProgressSource string
+
+// OperationTelemetryRateStatus Samples older than 45 seconds are stale; a changed task or source makes the rate unknown.
+type OperationTelemetryRateStatus string
+
+// OperationTimelineEntry defines model for OperationTimelineEntry.
+type OperationTimelineEntry struct {
+	Action string `json:"action"`
+
+	// FileName Safe file label only. Absolute paths, credentials and execution evidence are never returned.
+	FileName   string             `json:"file_name"`
+	FinishedAt *time.Time         `json:"finished_at,omitempty"`
+	Order      int32              `json:"order"`
+	State      string             `json:"state"`
+	StepId     openapi_types.UUID `json:"step_id"`
+	UpdatedAt  time.Time          `json:"updated_at"`
+}
+
+// OperationTimelinePage defines model for OperationTimelinePage.
+type OperationTimelinePage struct {
+	Items       []OperationTimelineEntry `json:"items"`
+	NextCursor  *string                  `json:"next_cursor,omitempty"`
+	ObservedAt  time.Time                `json:"observed_at"`
+	OperationId openapi_types.UUID       `json:"operation_id"`
+	PlanId      *openapi_types.UUID      `json:"plan_id,omitempty"`
+	PlanStatus  *string                  `json:"plan_status,omitempty"`
 }
 
 // PolicyDocument defines model for PolicyDocument.
@@ -4324,6 +4411,12 @@ type CommitSubmissionRetryParams struct {
 // CommitSubmissionRetryJSONBodyAcknowledged defines parameters for CommitSubmissionRetry.
 type CommitSubmissionRetryJSONBodyAcknowledged bool
 
+// GetOperationTimelineParams defines parameters for GetOperationTimeline.
+type GetOperationTimelineParams struct {
+	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
+	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+}
+
 // CreatePolicyParams defines parameters for CreatePolicy.
 type CreatePolicyParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
@@ -5087,6 +5180,9 @@ type ServerInterface interface {
 	// CommitSubmissionRetry Requeue only original dead unsent job, preserving its frozen scope
 	// (POST /api/v1/operations/{id}/submission-retry)
 	CommitSubmissionRetry(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params CommitSubmissionRetryParams)
+	// GetOperationTimeline Read the current persisted organization steps without executing work
+	// (GET /api/v1/operations/{id}/timeline)
+	GetOperationTimeline(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params GetOperationTimelineParams)
 	// ListPolicies Read current immutable policy rules
 	// (GET /api/v1/policies)
 	ListPolicies(w http.ResponseWriter, r *http.Request)
@@ -7317,6 +7413,61 @@ func (siw *ServerInterfaceWrapper) CommitSubmissionRetry(w http.ResponseWriter, 
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.CommitSubmissionRetry(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetOperationTimeline operation middleware
+func (siw *ServerInterfaceWrapper) GetOperationTimeline(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetOperationTimelineParams
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOperationTimeline(w, r, id, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9776,6 +9927,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/catalog", wrapper.ListLibraryCatalog)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/stream", wrapper.GetActivityStream)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/operations", wrapper.ListOperations)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/operations/{id}/timeline", wrapper.GetOperationTimeline)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/operations/{id}", wrapper.GetOperation)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/operations/{id}/complete-tv-organizations", wrapper.ListCompleteTVOrganizations)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/operations/{id}/cancel", wrapper.CancelOperation)
@@ -16326,6 +16478,169 @@ func (response CommitSubmissionRetry503JSONResponse) VisitCommitSubmissionRetryR
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimelineRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params GetOperationTimelineParams
+}
+
+type GetOperationTimelineResponseObject interface {
+	VisitGetOperationTimelineResponse(w http.ResponseWriter) error
+}
+
+type GetOperationTimeline200JSONResponse OperationTimelinePage
+
+func (response GetOperationTimeline200JSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline400JSONResponse ErrorResponse
+
+func (response GetOperationTimeline400JSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationTimeline400ApplicationProblemPlusJSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline401JSONResponse ErrorResponse
+
+func (response GetOperationTimeline401JSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationTimeline401ApplicationProblemPlusJSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline403JSONResponse ErrorResponse
+
+func (response GetOperationTimeline403JSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationTimeline403ApplicationProblemPlusJSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline404JSONResponse ErrorResponse
+
+func (response GetOperationTimeline404JSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationTimeline404ApplicationProblemPlusJSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline503JSONResponse ErrorResponse
+
+func (response GetOperationTimeline503JSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationTimeline503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationTimeline503ApplicationProblemPlusJSONResponse) VisitGetOperationTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -22904,6 +23219,9 @@ type StrictServerInterface interface {
 	// CommitSubmissionRetry Requeue only original dead unsent job, preserving its frozen scope
 	// (POST /api/v1/operations/{id}/submission-retry)
 	CommitSubmissionRetry(ctx context.Context, request CommitSubmissionRetryRequestObject) (CommitSubmissionRetryResponseObject, error)
+	// GetOperationTimeline Read the current persisted organization steps without executing work
+	// (GET /api/v1/operations/{id}/timeline)
+	GetOperationTimeline(ctx context.Context, request GetOperationTimelineRequestObject) (GetOperationTimelineResponseObject, error)
 	// ListPolicies Read current immutable policy rules
 	// (GET /api/v1/policies)
 	ListPolicies(ctx context.Context, request ListPoliciesRequestObject) (ListPoliciesResponseObject, error)
@@ -24956,6 +25274,33 @@ func (sh *strictHandler) CommitSubmissionRetry(w http.ResponseWriter, r *http.Re
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(CommitSubmissionRetryResponseObject); ok {
 		if err := validResponse.VisitCommitSubmissionRetryResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetOperationTimeline operation middleware
+func (sh *strictHandler) GetOperationTimeline(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params GetOperationTimelineParams) {
+	var request GetOperationTimelineRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetOperationTimeline(ctx, request.(GetOperationTimelineRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetOperationTimeline")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetOperationTimelineResponseObject); ok {
+		if err := validResponse.VisitGetOperationTimelineResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

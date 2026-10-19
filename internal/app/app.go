@@ -324,7 +324,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		subSvc = subscription.NewService(subSvcStore, subSvcStore, postgres.NewSubscriptionControlStore(a.dbPool, a.idgen), subSvcStore)
 		polSvc = policy.NewService(postgres.NewPolicyStore(a.dbPool, a.idgen))
 
-		downloadRepo := downloadstore.NewRepository(a.dbPool, a.idgen, masterKey)
+		downloadRepo := downloadstore.NewRepositoryWithDownloadRates(a.dbPool, a.idgen, masterKey)
 		downloadRepo.SetIndexerConfigurationDecoder(a.indexerDecoder)
 		downloadRepo.SetTorrentSource(func(kind, baseURL, credential string) ports.IndexerClient {
 			switch kind {
@@ -341,7 +341,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		automaticSubmission := postgres.NewAutomaticTVSubmissionStore(a.dbPool, a.idgen, a.indexerDecoder)
 		downloadRepo.SetAutomaticTVServices(automaticSubmission, torznab.NewAutomaticTVTorrentFetcher(nil), torrent.Inspector{})
 		automaticTVSender, automaticTVRecovery = downloadRepo, automaticSubmission
-		automaticTVObservationRepo = postgres.NewAutomaticTVObservationStore(a.dbPool, a.idgen)
+		automaticTVObservationRepo = postgres.NewAutomaticTVObservationStoreWithDownloadRates(a.dbPool, a.idgen)
 		automaticTVObserver = downloadRepo
 		completeTV = downloadRepo
 		dlMgr = download.NewManager(downloadRepo)
@@ -507,7 +507,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		}()
 		go func() {
 			defer close(completeTVDone)
-			a.runCompleteTVWorker(workerCtx, queue, completeTV, postgres.NewCompleteTVObservationStore(a.dbPool, a.idgen), postgres.NewCompleteTVRuntimeStore(a.dbPool, a.idgen), postgres.NewCompleteTVTrackingStore(a.dbPool, a.idgen), torrent.Inspector{}, postgres.NewCompleteTVTrackingRuntimeStore(a.dbPool, a.idgen))
+			a.runCompleteTVWorker(workerCtx, queue, completeTV, postgres.NewCompleteTVObservationStore(a.dbPool, a.idgen), postgres.NewCompleteTVRuntimeStore(a.dbPool, a.idgen), postgres.NewCompleteTVTrackingStoreWithDownloadRates(a.dbPool, a.idgen), torrent.Inspector{}, postgres.NewCompleteTVTrackingRuntimeStore(a.dbPool, a.idgen))
 		}()
 		go func() {
 			defer close(workerDone)

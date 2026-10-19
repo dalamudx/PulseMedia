@@ -48,6 +48,8 @@ type AutomaticTVRemoteTask struct {
 	TotalBytes    int64
 	VerifiedBytes int64
 	Complete      bool
+	// Display telemetry never changes sealed task or completion evidence.
+	DownloadRateBytesPerSecond *int64 `json:"-"`
 }
 
 // The complete inventory includes unwanted files and zero-byte attachments.

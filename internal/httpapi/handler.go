@@ -53,6 +53,7 @@ type AppContext interface {
 type ServerHandler struct {
 	app                      AppContext
 	operationSvc             *operation.Service
+	operationTimelineSvc     *operation.TimelineService
 	libraryCatalogSvc        *media_library.Service
 	libraryOverviewSvc       *media_library.OverviewService
 	dashboardActivitySvc     *operation.ActivityService
@@ -135,6 +136,12 @@ func NewServerHandler(
 	if provider, ok := a.(interface{ OperationReader() ports.OperationQuery }); ok {
 		operationSvc = operation.NewService(provider.OperationReader())
 	}
+	var operationTimelineSvc *operation.TimelineService
+	if provider, ok := a.(interface {
+		OperationTimelineReader() ports.OperationTimelineReader
+	}); ok {
+		operationTimelineSvc = operation.NewTimelineService(provider.OperationTimelineReader())
+	}
 	var submissionRetrySvc *operation.SubmissionRetryService
 	if provider, ok := a.(interface {
 		SubmissionRetryRepository() ports.SubmissionRetryRepository
@@ -192,6 +199,7 @@ func NewServerHandler(
 		dashboardActivitySvc:     dashboardActivitySvc,
 		submissionRetrySvc:       submissionRetrySvc,
 		operationSvc:             operationSvc,
+		operationTimelineSvc:     operationTimelineSvc,
 		app:                      a,
 		authSvc:                  authSvc,
 		settingsSvc:              settingsSvc,
@@ -582,7 +590,7 @@ func (s *ServerHandler) GetOperation(ctx context.Context, request GetOperationRe
 			return GetOperation503JSONResponse{Code: "UNAVAILABLE", Message: "operation status temporarily unavailable", RequestId: reqID}, nil
 		}
 	}
-	return GetOperation200JSONResponse(OperationDetails{OperationId: value.OperationID, Status: value.Status, DownloadStatus: value.DownloadStatus, Progress: value.Progress, PlanStatus: value.PlanStatus, PlanId: value.PlanID}), nil
+	return GetOperation200JSONResponse(OperationDetails{OperationId: value.OperationID, Status: value.Status, DownloadStatus: value.DownloadStatus, Progress: value.Progress, PlanStatus: value.PlanStatus, PlanId: value.PlanID, Telemetry: operationTelemetryResponse(value.Telemetry)}), nil
 }
 
 // CancelOperation handles POST /api/v1/operations/{id}/cancel

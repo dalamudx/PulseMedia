@@ -20,8 +20,9 @@ import (
 // CompleteTVTrackingStore records original physical facts only. It has no
 // acquisition, native client, sender or organization dependency.
 type CompleteTVTrackingStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool        *pgxpool.Pool
+	ids         ports.IDGen
+	recordRates bool
 }
 
 func NewCompleteTVTrackingStore(pool *pgxpool.Pool, ids ports.IDGen) *CompleteTVTrackingStore {
@@ -123,6 +124,11 @@ func (s *CompleteTVTrackingStore) CommitCompleteTVTracking(ctx context.Context, 
 	})
 	if err != nil {
 		return nil, err
+	}
+	if s.recordRates {
+		if err = s.recordNativeRate(ctx, tx, snapshot, remote, state); err != nil {
+			return nil, err
+		}
 	}
 	out = &ports.CompleteTVTrackingReceipt{TaskID: task, State: state, ReviewRequired: state != "tracking", EvidenceStamp: trackingEvidenceStamp(remote)}
 	if state == "completed" {

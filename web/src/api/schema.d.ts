@@ -343,6 +343,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/operations/{id}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the current persisted organization steps without executing work */
+        get: operations["getOperationTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/operations/{id}": {
         parameters: {
             query?: never;
@@ -2342,7 +2359,51 @@ export interface components {
             plan_id?: string;
             /** @example approved */
             plan_status?: string;
+            telemetry?: components["schemas"]["OperationTelemetry"];
             facts?: string[];
+        };
+        /** @description Persisted display observations. No field proves library ownership, ingestion or execution authority. */
+        OperationTelemetry: {
+            /** Format: double */
+            progress?: number;
+            /** @enum {string} */
+            progress_source?: "native_percent" | "verified_bytes";
+            /** Format: date-time */
+            progress_observed_at?: string;
+            /** @description Exact native bytes per second; absent means unknown, never inferred from cumulative transfer counters. */
+            download_rate_bytes_per_second?: string;
+            /** Format: date-time */
+            rate_observed_at?: string;
+            /**
+             * @description Samples older than 45 seconds are stale; a changed task or source makes the rate unknown.
+             * @enum {string}
+             */
+            rate_status: "current" | "stale" | "unknown";
+        };
+        OperationTimelineEntry: {
+            /** Format: uuid */
+            step_id: string;
+            /** Format: int32 */
+            order: number;
+            action: string;
+            state: string;
+            /** @description Safe file label only. Absolute paths, credentials and execution evidence are never returned. */
+            file_name: string;
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: date-time */
+            finished_at?: string;
+        };
+        OperationTimelinePage: {
+            /** Format: uuid */
+            operation_id: string;
+            /** Format: uuid */
+            plan_id?: string;
+            plan_status?: string;
+            items: components["schemas"]["OperationTimelineEntry"][];
+            next_cursor?: string;
+            /** Format: date-time */
+            observed_at: string;
         };
         TransferPlanDetails: {
             /** Format: uuid */
@@ -4853,6 +4914,81 @@ export interface operations {
                 };
             };
             /** @description Persistent operation query unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getOperationTimeline: {
+        parameters: {
+            query?: {
+                limit?: number;
+                cursor?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current plan and ordered persisted steps; no plan is an empty list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationTimelinePage"];
+                };
+            };
+            /** @description Invalid page or cursor scope */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current account or private operation access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Operation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Persisted timeline temporarily unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;

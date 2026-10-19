@@ -18,6 +18,7 @@ type UpgradePreparationStore struct {
 	verifier          ports.MovieUpgradeMetainfoVerifier
 	indexerDecoder    ports.CredentialDecoder
 	subscriptionScope uuid.UUID // Optional public route scope; zero preserves internal callers.
+	recordRates       bool
 }
 
 func NewUpgradePreparationStore(

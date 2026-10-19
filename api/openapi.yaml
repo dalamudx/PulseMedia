@@ -739,6 +739,82 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /api/v1/operations/{id}/timeline:
+    get:
+      summary: Read the current persisted organization steps without executing work
+      operationId: getOperationTimeline
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          schema:
+            type: string
+            maxLength: 1024
+      responses:
+        '200':
+          description: Current plan and ordered persisted steps; no plan is an empty list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationTimelinePage'
+        '400':
+          description: Invalid page or cursor scope
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current account or private operation access denied
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Operation not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Persisted timeline temporarily unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /api/v1/operations/{id}:
     get:
       summary: Get operation status and lifecycle details
@@ -5205,10 +5281,88 @@ components:
         plan_status:
           type: string
           example: "approved"
+        telemetry:
+          $ref: '#/components/schemas/OperationTelemetry'
         facts:
           type: array
           items:
             type: string
+
+    OperationTelemetry:
+      type: object
+      required: [rate_status]
+      description: Persisted display observations. No field proves library ownership, ingestion or execution authority.
+      properties:
+        progress:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+        progress_source:
+          type: string
+          enum: [native_percent, verified_bytes]
+        progress_observed_at:
+          type: string
+          format: date-time
+        download_rate_bytes_per_second:
+          type: string
+          pattern: '^(0|[1-9][0-9]*)$'
+          maxLength: 19
+          description: Exact native bytes per second; absent means unknown, never inferred from cumulative transfer counters.
+        rate_observed_at:
+          type: string
+          format: date-time
+        rate_status:
+          type: string
+          enum: [current, stale, unknown]
+          description: Samples older than 45 seconds are stale; a changed task or source makes the rate unknown.
+
+    OperationTimelineEntry:
+      type: object
+      required: [step_id, order, action, state, file_name, updated_at]
+      properties:
+        step_id:
+          type: string
+          format: uuid
+        order:
+          type: integer
+          format: int32
+        action:
+          type: string
+        state:
+          type: string
+        file_name:
+          type: string
+          description: Safe file label only. Absolute paths, credentials and execution evidence are never returned.
+        updated_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+
+    OperationTimelinePage:
+      type: object
+      required: [operation_id, items, observed_at]
+      properties:
+        operation_id:
+          type: string
+          format: uuid
+        plan_id:
+          type: string
+          format: uuid
+        plan_status:
+          type: string
+        items:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/OperationTimelineEntry'
+        next_cursor:
+          type: string
+        observed_at:
+          type: string
+          format: date-time
 
     TransferPlanDetails:
       type: object

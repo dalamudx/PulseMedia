@@ -17,6 +17,8 @@ type TorrentInfo struct {
 	Ratio           float64 `json:"ratio"`
 	State           string  `json:"state"`
 	Tags            string  `json:"tags,omitempty"`
+	// Display telemetry never changes sealed task or completion evidence.
+	DownloadRateBytesPerSecond *int64 `json:"-"`
 }
 
 // AddTorrentParam contains parameters for adding a new torrent task.

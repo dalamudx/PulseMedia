@@ -29,15 +29,16 @@ type automaticTVReader struct{ client *Client }
 var _ ports.AutomaticTVReadClient = automaticTVReader{}
 
 type automaticTVNativeTask struct {
-	Hash      *string                  `json:"hashString"`
-	Directory *string                  `json:"downloadDir"`
-	Labels    *[]string                `json:"labels"`
-	Status    *int64                   `json:"status"`
-	Total     *int64                   `json:"totalSize"`
-	Valid     *int64                   `json:"haveValid"`
-	Error     *int64                   `json:"error"`
-	Files     *[]automaticTVNativeFile `json:"files"`
-	Stats     *[]automaticTVNativeStat `json:"fileStats"`
+	Hash         *string                  `json:"hashString"`
+	Directory    *string                  `json:"downloadDir"`
+	Labels       *[]string                `json:"labels"`
+	Status       *int64                   `json:"status"`
+	Total        *int64                   `json:"totalSize"`
+	Valid        *int64                   `json:"haveValid"`
+	Error        *int64                   `json:"error"`
+	Files        *[]automaticTVNativeFile `json:"files"`
+	Stats        *[]automaticTVNativeStat `json:"fileStats"`
+	DownloadRate json.RawMessage          `json:"rateDownload"`
 }
 
 type automaticTVNativeFile struct {
@@ -159,7 +160,7 @@ func (t automaticTVNativeTask) remote() (ports.AutomaticTVRemoteTask, error) {
 	}
 	// Download/check states cannot certify completion, even if byte counters agree.
 	complete := *t.Error == 0 && *t.Total > 0 && *t.Valid == *t.Total && (*t.Status == 0 || *t.Status == 5 || *t.Status == 6)
-	return ports.AutomaticTVRemoteTask{InfoHash: strings.ToLower(*t.Hash), SavePath: *t.Directory, State: state, Tags: labels, TotalBytes: *t.Total, VerifiedBytes: *t.Valid, Complete: complete}, nil
+	return ports.AutomaticTVRemoteTask{InfoHash: strings.ToLower(*t.Hash), SavePath: *t.Directory, State: state, Tags: labels, TotalBytes: *t.Total, VerifiedBytes: *t.Valid, Complete: complete, DownloadRateBytesPerSecond: nativeDownloadRate(t.DownloadRate)}, nil
 }
 
 func automaticTVHash(hash string) bool {
@@ -196,7 +197,7 @@ func (c *Client) automaticTVGet(ctx context.Context, hash string) ([]automaticTV
 	if c == nil || c.httpClient == nil {
 		return nil, ports.ErrUnavailable
 	}
-	fields := []string{"hashString", "downloadDir", "labels", "status", "totalSize", "haveValid", "error"}
+	fields := []string{"hashString", "downloadDir", "labels", "status", "totalSize", "haveValid", "error", "rateDownload"}
 	args := map[string]any{"fields": fields}
 	if hash != "" {
 		args["fields"] = append(fields, "files", "fileStats")

@@ -22,11 +22,13 @@ type MovieUpgradeTrackingDescriptor struct {
 type MovieUpgradeTrackingQueryProof interface{}
 type MovieUpgradeTrackingProof interface{}
 type MovieUpgradeVerifiedTracking struct {
-	Binding    MovieUpgradeObservationBinding
-	Outcome    string
-	Reason     string
-	ReturnedAt time.Time
-	Evidence   json.RawMessage
+	Binding                    MovieUpgradeObservationBinding
+	Outcome                    string
+	Reason                     string
+	ReturnedAt                 time.Time
+	Evidence                   json.RawMessage
+	DownloadRateBytesPerSecond *int64   `json:"-"`
+	NativeProgress             *float64 `json:"-"`
 }
 type MovieUpgradeTrackingQueryVerifier interface {
 	ConsumeMovieUpgradeTrackingQuery(context.Context, MovieUpgradeTrackingQueryProof, MovieUpgradeTrackingDescriptor) (MovieUpgradeObservationBinding, error)

@@ -242,6 +242,11 @@ func (s *movieUpgradeTrackingSession) record(ctx context.Context, a *ports.Actor
 	if !preparationSameJSON(expected, actual) {
 		return nil, preparationConflict()
 	}
+	if s.base.store.recordRates {
+		if e = s.recordNativeRate(ctx, tx, v); e != nil {
+			return nil, e
+		}
+	}
 	if s.job != nil {
 		if e = s.job.finish(ctx, tx, s); e != nil {
 			return nil, e

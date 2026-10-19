@@ -65,15 +65,16 @@ func exactObservationProgress(raw json.RawMessage) (float64, error) {
 }
 func decodeTorrentObservations(body []byte) ([]*ports.TorrentInfo, error) {
 	var rows []struct {
-		Hash        *string         `json:"hash"`
-		SavePath    *string         `json:"save_path"`
-		Progress    json.RawMessage `json:"progress"`
-		Size        *int64          `json:"size"`
-		Downloaded  *int64          `json:"downloaded"`
-		State       *string         `json:"state"`
-		Name        string          `json:"name"`
-		ContentPath string          `json:"content_path"`
-		Tags        string          `json:"tags"`
+		Hash         *string         `json:"hash"`
+		SavePath     *string         `json:"save_path"`
+		Progress     json.RawMessage `json:"progress"`
+		Size         *int64          `json:"size"`
+		Downloaded   *int64          `json:"downloaded"`
+		State        *string         `json:"state"`
+		Name         string          `json:"name"`
+		ContentPath  string          `json:"content_path"`
+		Tags         string          `json:"tags"`
+		DownloadRate json.RawMessage `json:"dlspeed"`
 	}
 	if strings.TrimSpace(string(body)) == "null" || json.Unmarshal(body, &rows) != nil {
 		return nil, ports.ErrBadResponse
@@ -93,7 +94,7 @@ func decodeTorrentObservations(body []byte) ([]*ports.TorrentInfo, error) {
 		if e != nil {
 			return nil, e
 		}
-		result = append(result, &ports.TorrentInfo{InfoHash: hash, SavePath: *row.SavePath, Progress: progress, TotalBytes: *row.Size, DownloadedBytes: *row.Downloaded, State: *row.State, Name: row.Name, ContentPath: row.ContentPath, Tags: row.Tags})
+		result = append(result, &ports.TorrentInfo{InfoHash: hash, SavePath: *row.SavePath, Progress: progress, TotalBytes: *row.Size, DownloadedBytes: *row.Downloaded, State: *row.State, Name: row.Name, ContentPath: row.ContentPath, Tags: row.Tags, DownloadRateBytesPerSecond: nativeDownloadRate(row.DownloadRate)})
 	}
 	return result, nil
 }
