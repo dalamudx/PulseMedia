@@ -5,6 +5,8 @@ import { useAuth } from "@/features/auth/AuthContext";
 import { RSSConfigEditor } from "@/features/configuration/RSSConfigEditor";
 import { useActivityInvalidation } from "@/features/configuration/useActivityInvalidation";
 import { parseSitePending, serializeSitePending, sitePendingStorageKey, type SitePendingRecord } from "@/features/configuration/managedSiteRecovery";
+import {createSiteProbeBatch, type SiteProbeBatchSnapshot, type SiteProbeEntry} from "@/features/configuration/siteProbeBatch";
+import "@/features/configuration/site-probes.css";
 
 type Site = paths["/api/v1/indexers"]["get"]["responses"]["200"]["content"]["application/json"]["items"][number];
 type CreateBody = paths["/api/v1/indexers"]["post"]["requestBody"]["content"]["application/json"];
@@ -34,6 +36,19 @@ function timestamp(value?: string) {
   const date = new Date(value);
   return Number.isNaN(date.valueOf()) ? "暂无" : date.toLocaleString();
 }
+function probeResultText(entry: SiteProbeEntry) {
+  switch (entry.state) {
+    case "queued": return "等待检测。";
+    case "running": return "正在测试连接…";
+    case "online": return `探针完成：连通正常${entry.latencyMs === null ? "（耗时未知）" : `（${entry.latencyMs} ms）`}`;
+    case "offline": return "本轮探针未确认连通。";
+    case "unknown": return "本轮结果未确认，请核对最新健康观测。";
+    case "stale": return "配置已变化或无法读取，本轮结果不适用于当前配置。";
+    case "cancelled": return "尚未发出，已停止后续检测。";
+    case "rejected": return safeError(entry.status ?? 503);
+  }
+}
+
 
 // Reuse the application's reset stream (including reconnect and periodic reset hints).
 // Mount only for administrators; useEffectEvent keeps the refresh callback current.
@@ -66,9 +81,10 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
   const [storageError, setStorageError] = useState("");
   const [busy, setBusy] = useState(false);
   const writing = useRef(false);
-  const [testing, setTesting] = useState(false);
+  const [probeState, setProbeState] = useState<SiteProbeBatchSnapshot>({running: false, stopping: false, entries: []});
+  const testing = probeState.running;
   const testingRef = useRef(false);
-  const [testResults, setTestResults] = useState<Record<string, { version: number; text: string }>>({});
+  const probeBatch = useRef<ReturnType<typeof createSiteProbeBatch> | null>(null);
   const active = useRef(false);
   const readers = useRef(new Set<AbortController>());
   const listReader = useRef<AbortController | null>(null);
@@ -96,6 +112,7 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
         return;
       }
       sitesRef.current = data.items; setIndexers(data.items);
+      return true;
     } catch {
       if (!active.current || controller.signal.aborted || sequence !== listSequence.current) return;
       sitesRef.current = []; setIndexers([]);
@@ -169,9 +186,21 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
   const restoreOnMount = useEffectEvent(restore);
   useEffect(() => {
     active.current = true;
+    probeBatch.current = createSiteProbeBatch({
+      getSites: () => sitesRef.current.map(site => ({id: site.id, name: site.name, configVersion: site.config_version})),
+      canRun: () => active.current && admin && !writing.current && !pendingRef.current,
+      probe: async (site, signal) => {
+        const {data, response} = await api.POST("/api/v1/indexers/{id}/test", {params: {path: {id: site.id}}, signal});
+        return {status: response.status, alive: data?.alive, latencyMs: data?.latency_ms};
+      },
+      refresh: async () => { if (!await loadIndexers()) throw new Error("Site list refresh not confirmed"); },
+      now: Date.now,
+      onChange: state => { if (active.current) { testingRef.current = state.running; setProbeState(state); } },
+    });
     restoreOnMount(); void loadIndexers();
     return () => {
       active.current = false; ++listSequence.current;
+      probeBatch.current?.dispose(); probeBatch.current = null;
       listReader.current?.abort();
       for (const reader of readers.current) reader.abort();
       readers.current.clear();
@@ -181,14 +210,14 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
   }, [loadIndexers]);
 
   function startEdit(site: Site) {
-    if (!admin || pendingRef.current || writing.current) return;
+    if (!admin || testingRef.current || pendingRef.current || writing.current) return;
     setEditing({ id: site.id, version: site.config_version });
     setDraft({ ...emptyDraft(), name: site.name, protocol: site.protocol, categories: [...site.categories].join(", ") });
     setConflict(false); setError(""); setMessage("");
     formRef.current?.scrollIntoView({ block: "start" });
   }
   async function sendCommand(command: Command, original?: Pending) {
-    if (!admin || writing.current || recovering || storageError || conflict || (pendingRef.current && !original)) return;
+    if (!admin || testingRef.current || writing.current || recovering || storageError || conflict || (pendingRef.current && !original)) return;
     if (original && original !== pendingRef.current) return;
     if (original && (original.phase === "confirmed" || original.phase === "rejected")) return;
     const record: SitePendingRecord = original?.record ?? {
@@ -286,33 +315,23 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
     setError(""); setMessage("已重新加载配置，请核对最新版本并重新输入修改内容。");
   }
   async function probe(ids: string[]) {
-    if (!admin || testingRef.current || writing.current || pendingRef.current) return;
-    testingRef.current = true; setTesting(true);
-    try {
-      // Sequential probes share the server's endpoint budget and bound client concurrency to one.
-      for (const id of ids) {
-        if (!active.current) break;
-        const site = sitesRef.current.find(item => item.id === id);
-        if (!site) continue;
-        const controller = new AbortController(); readers.current.add(controller);
-        let text = "测试连接失败，请重试。";
-        try {
-          const { data, response } = await api.POST("/api/v1/indexers/{id}/test", { params: { path: { id } }, signal: controller.signal });
-          text = response.ok && data ? data.alive ? `探针完成：连通正常${data.latency_ms == null ? "（未返回耗时）" : `（${data.latency_ms} ms）`}` : "探针完成：当前不可用。" : safeError(response.status);
-          if ([401, 403].includes(response.status)) break;
-        } catch { if (controller.signal.aborted) break; }
-        finally { readers.current.delete(controller); }
-        if (!active.current) break;
-        if (sitesRef.current.some(item => item.id === id && item.config_version === site.config_version)) setTestResults(previous => ({ ...previous, [id]: { version: site.config_version, text } }));
-        // Status badges always come from persisted health after the test.
-        await loadIndexers();
-      }
-    } finally { testingRef.current = false; if (active.current) setTesting(false); }
+    if (!admin || loading || testingRef.current || writing.current || pendingRef.current || recovering || storageError || conflict) return;
+    await probeBatch.current?.start(ids);
+  }
+
+  const probeResults = new Map(probeState.entries.map(entry => [entry.target.id, entry]));
+  const completedProbes = probeState.entries.filter(entry => entry.state !== "queued" && entry.state !== "running").length;
+  const queuedProbes = probeState.entries.filter(entry => entry.state === "queued").length;
+  function probeResult(site: Site) {
+    const entry = probeResults.get(site.id);
+    if (!entry) return null;
+    const current = entry.target.configVersion === site.config_version;
+    return <p className="site-probe-result" data-state={current ? entry.state : "stale"} role="status">{current ? probeResultText(entry) : "配置已变化，本轮结果不适用于当前版本。"}</p>;
   }
 
   const reentry = pending?.phase === "absent" && !pending.command && pending.record.action !== "delete";
   const mutationBlocked = !admin || loading || busy || testing || recovering || !!storageError || !!pending || conflict;
-  const formBlocked = !admin || busy || testing || recovering || !!storageError || (!!pending && !reentry) || conflict;
+  const formBlocked = !admin || loading || busy || testing || recovering || !!storageError || (!!pending && !reentry) || conflict;
   const selectedRSS = indexers.find(site => site.id === rssID);
   return <div className="sites-container" style={{ minWidth: 0 }}>
     {admin && <SiteLiveRefresh invalidate={invalidate} />}
@@ -320,6 +339,11 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
       <div style={{ minWidth: 0 }}><h2>站点与索引器管理 (Indexers)</h2><p className="subtitle">管理 NexusPHP、公开 RSS 与 Torznab 站点，查看持久健康观测。</p></div>
       {admin && <div className="header-actions"><button type="button" className="btn-primary" style={buttonStyle} disabled={mutationBlocked || !indexers.length} onClick={() => void probe(indexers.map(site => site.id))}>{testing ? <Loader2 size={16} className="spinner-icon" /> : <Zap size={16} />}<span>{testing ? "正在测试连接…" : "测试全部站点"}</span></button></div>}
     </div>
+    {admin && probeState.entries.length > 0 && <section className="site-probe-summary" aria-label="本轮站点检测" aria-busy={testing}>
+      <div className="site-probe-summary-heading"><h3>{testing ? probeState.stopping ? "等待当前检测结束" : "正在检测站点" : "本轮检测已结束"}</h3><span role="status">已结束 {completedProbes}/{probeState.entries.length} 项</span></div>
+      <progress aria-label="本轮检测处理进度" value={completedProbes} max={probeState.entries.length} />
+      {testing && <div className="site-probe-stop"><button type="button" className="btn-secondary" disabled={!queuedProbes || probeState.stopping} onClick={() => probeBatch.current?.stopQueued()}>停止后续检测</button><p>尚未发出的站点将停止检测；当前请求结束后，本轮才会完成。</p></div>}
+    </section>}
     {!admin && <p className="config-description" role="status">当前为成员账户。站点管理、连通性测试与 RSS 配置仅限管理员；列表按当前账户权限读取。</p>}
     {message && <p className="config-description" role="status">{message}</p>}
     {error && <div className="config-error" role="alert">{error}</div>}
@@ -343,7 +367,7 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
           <p className="config-description">配置版本 {site.config_version} · 创建于 {timestamp(site.created_at)}{site.legacy_v1 ? " · 历史 V1 配置，请核对协议" : ""}</p>
           <p className="config-description">最近观测：{timestamp(site.health_observed_at ?? site.health_checked_at)} · {site.health_reason === "ok" ? "探针成功" : site.health_reason === "rate_limited" ? "端点限流，预算内等待" : site.health_reason === "unavailable" ? "探针失败，按退避重试" : "等待检测"}</p>
           {site.health_next_check_at && <p className="config-description">下次检测：{timestamp(site.health_next_check_at)}（受共享预算约束）</p>}
-          {testResults[site.id]?.version === site.config_version && <p className="test-res" role="status">{testResults[site.id].text}</p>}
+          {probeResult(site)}
         </div>
         {admin && <div className="idx-actions" style={wrapActions}>
           <button type="button" className="btn-sm btn-secondary" style={buttonStyle} disabled={mutationBlocked} aria-expanded={rssID === site.id} onClick={() => setRSSID(site.id)}>RSS 配置</button>

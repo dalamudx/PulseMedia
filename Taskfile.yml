@@ -184,6 +184,11 @@ tasks:
     cmds:
       - bash scripts/verify_m5_indexer_browser.sh {{.CLI_ARGS}}
 
+  test-site-probes-ui:
+    desc: Verify sequential native site probes, queue stop, version fences and responsive cards with Cookie, PG18 and Chrome
+    cmds:
+      - bash scripts/verify_m6_site_probes_ui.sh {{.CLI_ARGS}}
+
   test-interactive-search:
     desc: Verify progressive search with native sources, Cookie, PG18 and isolated Chrome
     cmds:

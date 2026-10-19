@@ -1,0 +1,71 @@
+.sites-container button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.sites-container .site-probe-summary {
+  display: grid;
+  gap: .75rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  min-width: 0;
+}
+
+.sites-container .site-probe-summary-heading,
+.sites-container .site-probe-stop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.sites-container .site-probe-summary h3,
+.sites-container .site-probe-summary p {
+  margin: 0;
+}
+
+.sites-container .site-probe-summary p {
+  color: var(--text-secondary);
+  flex: 1 1 16rem;
+}
+
+.sites-container .site-probe-summary button {
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.sites-container .site-probe-summary progress {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
+.sites-container .indexers-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+}
+
+.sites-container .indexer-row {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  align-content: start;
+}
+
+.sites-container .idx-actions button {
+  min-height: 44px;
+}
+
+.sites-container .site-probe-result {
+  margin: .5rem 0 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.sites-container .site-probe-result[data-state="online"] {
+  color: var(--success);
+}
