@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# mise exec -- bash scripts/verify_m5_discovery.sh [all|catalog|tv|movie|boards]
+# mise exec -- bash scripts/verify_m5_discovery.sh [all|catalog|tv|movie|boards|details]
 # Run after Main's RUNTIME_READY. Inspect SCREENSHOTS_READY images, then create
 # screenshots/inspected within 180 seconds; all task artifacts are deleted.
 set -euo pipefail
 umask 077
 repo=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
 cd "$repo"
-if [ "$#" -gt 1 ]; then echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie|boards]' >&2; exit 2; fi
+if [ "$#" -gt 1 ]; then echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie|boards|details]' >&2; exit 2; fi
 mode=${1:-all}
 case "$mode" in
  all)
@@ -17,7 +17,8 @@ case "$mode" in
  tv) pattern='^TestM5DiscoveryTVHandoffActualChromeHTTPPG$'; expected=1; receipts=M5_DISCOVERY_TV_PASS;;
  movie) pattern='^TestM5DiscoveryMoviePanelActualChromeHTTPPG$'; expected=1; receipts=M5_DISCOVERY_MOVIE_PASS;;
  boards) pattern='^TestM6DiscoveryBoardsActualChromeHTTPPG$'; expected=1; receipts=M6_DISCOVERY_BOARDS_PASS;;
- *) echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie|boards]' >&2; exit 2;;
+ details) pattern='^TestM6MediaDetailActualChromeHTTPPG$'; expected=1; receipts=M6_MEDIA_DETAIL_PASS;;
+ *) echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie|boards|details]' >&2; exit 2;;
 esac
 if [ "${PULSE_M5_DISCOVERY_OWNED_PG:-}" != 1 ]; then
  exec env PULSE_M5_DISCOVERY_OWNED_PG=1 bash scripts/with_podman_test_postgres.sh bash scripts/verify_m5_discovery.sh "$mode"
@@ -69,6 +70,7 @@ files=(
  ./internal/httpapi/m5_subscription_creation_browser_test.go
  ./internal/httpapi/m5_automatic_tv_acceptance_test.go
  ./internal/httpapi/m5_discovery_browser_test.go
+ ./internal/httpapi/m6_media_detail_browser_test.go
 )
 if ! mise exec -- go test -race "${files[@]}" -run "$pattern" -count=1 -v -timeout=7m >"$owned/acceptance.log" 2>&1; then
  tail -n 100 "$owned/acceptance.log"; exit 1
@@ -77,9 +79,9 @@ if grep -q -- '--- SKIP:' "$owned/acceptance.log"; then echo M5_DISCOVERY_UNEXPE
 actual=$(grep -Ec '^--- PASS: TestM[56]' "$owned/acceptance.log")
 if [ "$actual" != "$expected" ]; then echo "M5_DISCOVERY_MISSING_EXECUTION expected=$expected actual=$actual" >&2; exit 1; fi
 for receipt in $receipts; do grep -q "$receipt" "$owned/acceptance.log" || exit 1; done
-if [ "$mode" = all ] || [ "$mode" = catalog ] || [ "$mode" = boards ]; then
+if [ "$mode" = all ] || [ "$mode" = catalog ] || [ "$mode" = boards ] || [ "$mode" = details ]; then
  for screenshot in discovery-desktop discovery-375; do test -s "$owned/screenshots/$screenshot.png" || exit 1; done
- if [ "$mode" = boards ]; then test -s "$owned/screenshots/discovery-320.png" || exit 1; fi
+ if [ "$mode" = boards ] || [ "$mode" = details ]; then test -s "$owned/screenshots/discovery-320.png" || exit 1; fi
 fi
-grep -E 'M[56]_DISCOVERY_|--- PASS:|^ok[[:space:]]' "$owned/acceptance.log"
+grep -E 'M[56]_(DISCOVERY_|MEDIA_DETAIL_)|--- PASS:|^ok[[:space:]]' "$owned/acceptance.log"
 echo "M5_DISCOVERY_ACCEPTANCE_EXECUTED mode=$mode tests=$actual"

@@ -1783,6 +1783,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/media/tmdb/{media_type}/{id}/credits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read provider cast without creating subscription or acquisition */
+        get: operations["getTMDBMediaCredits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media/tmdb/tv/{id}/seasons/{season}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read actual episode numbers and details for one TMDB season */
+        get: operations["getTMDBSeasonDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/media/tmdb/tv/{id}": {
         parameters: {
             query?: never;
@@ -3709,6 +3743,40 @@ export interface components {
         TestConnectionResponse: {
             alive: boolean;
             message: string;
+        };
+        TMDBCastMember: {
+            /** Format: int64 */
+            tmdb_id: number;
+            name: string;
+            character?: string;
+            /** @description Safe fixed TMDB image projection; omitted if unknown */
+            profile_url?: string;
+        };
+        TMDBCreditsResponse: {
+            /** Format: int64 */
+            tmdb_id: number;
+            /** @enum {string} */
+            media_type: "movie" | "tv";
+            cast: components["schemas"]["TMDBCastMember"][];
+        };
+        TMDBEpisodeDetailsItem: {
+            /** Format: int64 */
+            tmdb_id: number;
+            episode_number: number;
+            name?: string;
+            overview?: string;
+            /** @description Provider YYYY-MM-DD value, omitted if unknown */
+            air_date?: string;
+            /** @description Safe fixed TMDB image projection; omitted if unknown */
+            still_url?: string;
+        };
+        TMDBSeasonDetailsResponse: {
+            /** Format: int64 */
+            tmdb_id: number;
+            season_number: number;
+            /** @description True only for a complete validated provider array */
+            complete: boolean;
+            episodes: components["schemas"]["TMDBEpisodeDetailsItem"][];
         };
         TMDBMovieDetailsResponse: {
             /** Format: int64 */
@@ -9193,6 +9261,15 @@ export interface operations {
                     "application/json": components["schemas"]["TMDBMovieDetailsResponse"];
                 };
             };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -9203,6 +9280,15 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Metadata read denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not found */
             404: {
                 headers: {
@@ -9211,6 +9297,151 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getTMDBMediaCredits: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                media_type: "movie" | "tv";
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Validated cast in provider order, including a real empty list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TMDBCreditsResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata read denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getTMDBSeasonDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                season: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Complete validated provider episode list; gaps are preserved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TMDBSeasonDetailsResponse"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata read denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -9235,6 +9466,15 @@ export interface operations {
                     "application/json": components["schemas"]["TMDBTVDetailsResponse"];
                 };
             };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -9243,6 +9483,15 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata read denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Not found */

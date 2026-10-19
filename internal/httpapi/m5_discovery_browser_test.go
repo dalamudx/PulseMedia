@@ -120,6 +120,18 @@ func m5DiscoveryBrowser(t *testing.T, mode string) {
 	other["genre_ids"] = []int{28}
 	movie["media_type"], tv["media_type"], other["media_type"] = "movie", "tv", "tv"
 	movie["overview"] = "动作 科幻 are words in this overview, not genres"
+	if mode == "details" {
+		movie["poster_path"], movie["backdrop_path"] = "/native-movie.jpg", "/native-movie-backdrop.jpg"
+		p.set("/3/movie/550/credits", `{"id":550,"cast":[{"id":55001,"name":"Native movie actor","character":"Leading role","profile_path":"/native-movie-actor.jpg"},{"id":55002,"name":"Movie actor without photo","character":"Supporting role","profile_path":null}]}`)
+		p.set("/3/tv/551/credits", `{"id":551,"cast":[]}`)
+		tv["poster_path"], tv["backdrop_path"], tv["overview"] = "/native-tv.jpg", "/native-tv-backdrop.jpg", "Native trusted plot for actual sparse episodes."
+		tv["seasons"] = []map[string]any{{"season_number": 0, "name": "特别篇", "episode_count": 1}, {"season_number": 1, "name": "第1季", "episode_count": 2}, {"season_number": 2, "name": "第2季", "episode_count": 2}, {"season_number": 3, "name": "第3季", "episode_count": 1}}
+		tv["number_of_seasons"], tv["number_of_episodes"] = 3, 5
+		p.set("/3/tv/550", m5CreationJSON(tv))
+		p.set("/3/tv/550/season/1", `{"season_number":1,"episodes":[{"id":5500101,"season_number":1,"episode_number":1,"name":"Native first episode","overview":"Native first plot","air_date":"2020-01-01","still_path":"/native-episode-one.jpg"},{"id":5500103,"season_number":1,"episode_number":3,"name":"Native third episode","overview":"Native third plot","air_date":"2020-01-15"}]}`)
+		p.set("/3/tv/550/season/2", `{"season_number":2,"episodes":[{"id":5500201,"season_number":2,"episode_number":1,"name":"Native future episode","overview":"Native future plot","air_date":"2099-01-01"},{"id":5500203,"season_number":2,"episode_number":3,"name":"Native unknown date","overview":"Native unknown-date plot","air_date":null}]}`)
+		p.set("/3/tv/550/season/3", `{"season_number":3,"episodes":[{"id":5500307,"season_number":3,"episode_number":7,"name":"Native seventh episode","overview":"Native seventh plot","air_date":null}]}`)
+	}
 	p.set("/3/movie/550", m5CreationJSON(movie))
 	movieFeed := m5CreationJSON(map[string]any{"page": 1, "total_pages": 1, "results": []any{movie}})
 	tvFeed := m5CreationJSON(map[string]any{"page": 1, "total_pages": 1, "results": []any{tv, other}})
@@ -256,7 +268,11 @@ func m5DiscoveryBrowser(t *testing.T, mode string) {
 	t.Cleanup(bridge.Close)
 	scratch := t.TempDir()
 	script := filepath.Join(scratch, "discovery-browser.mjs")
-	if err := os.WriteFile(script, []byte(m5DiscoveryChromeProgram), 0600); err != nil {
+	program := m5DiscoveryChromeProgram
+	if mode == "details" {
+		program = m6MediaDetailChromeProgram
+	}
+	if err := os.WriteFile(script, []byte(program), 0600); err != nil {
 		t.Fatal(err)
 	}
 	ctx, cancel := context.WithTimeout(t.Context(), 260*time.Second)
@@ -273,6 +289,9 @@ func m5DiscoveryBrowser(t *testing.T, mode string) {
 	receipt := "M5_DISCOVERY_" + strings.ToUpper(mode) + "_PASS"
 	if mode == "boards" {
 		receipt = "M6_DISCOVERY_BOARDS_PASS"
+	}
+	if mode == "details" {
+		receipt = "M6_MEDIA_DETAIL_PASS"
 	}
 	if !strings.Contains(string(out), receipt) {
 		t.Fatal("missing actual browser receipt")
@@ -365,13 +384,13 @@ try {
   await context.request.get(base+'/owned-m5-discovery/catalog?mode=fail');await search('all','owned-malformed','',503);await page.getByRole('alert').filter({hasText:/搜索/}).waitFor();assert.equal(await page.getByText('当前筛选没有影视',{exact:true}).count(),0);
   await context.request.get(base+'/owned-m5-discovery/catalog?mode=empty');await search('all','owned-empty');await page.getByText('当前筛选没有影视',{exact:true}).waitFor();await context.request.get(base+'/owned-m5-discovery/catalog?mode=restore');
   await search('all','same-numeric-identity');await card('Native trusted movie').waitFor();await card('Native Automatic Series').waitFor();
-  await card('Native trusted movie').click();const modal=page.getByRole('dialog',{name:'Native trusted movie详情',exact:true});await modal.waitFor();await modal.getByLabel('目标媒体根',{exact:true}).waitFor();
+  await card('Native trusted movie').click();const modal=page.getByRole('dialog',{name:'Native trusted movie',exact:true});await modal.waitFor();await modal.getByLabel('目标媒体根',{exact:true}).waitFor();
   let releasePost,postEntered;const postHold=new Promise(r=>{releasePost=r;}),postStarted=new Promise(r=>{postEntered=r;});
   const holdPost=async route=>{if(route.request().method()!=='POST'){await route.continue();return;}postEntered();await postHold;await route.continue();};await page.route('**/api/v1/subscriptions',holdPost);
-  const created=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions'&&r.request().method()==='POST',{timeout:45000});void created.catch(()=>{});await modal.locator('.detail-actions .btn-primary').click();await postStarted;
+  const created=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions'&&r.request().method()==='POST',{timeout:45000});void created.catch(()=>{});await modal.locator('.media-detail-actions .btn-primary').click();await postStarted;
   assert(await card('Native trusted movie').getByTitle('一键追更订阅',{exact:true}).isDisabled());assert(!(await card('Native Automatic Series').getByTitle('一键追更订阅',{exact:true}).isDisabled()),'movie 550 must not mark TV 550 busy');
   await shot('discovery-desktop',1440);await shot('discovery-375',375);releasePost();const movie=await created;assert.equal(movie.status(),201);const movieReceipt=await movie.json();await page.waitForURL(base+'/subscriptions?subscription='+movieReceipt.id);await page.unroute('**/api/v1/subscriptions',holdPost);
-  await search('tv','Native Automatic Series');await card('Native Automatic Series').click();const tvModal=page.getByRole('dialog',{name:'Native Automatic Series详情',exact:true});await tvModal.getByLabel('目标媒体根',{exact:true}).waitFor();const tvCreated=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions'&&r.request().method()==='POST');await tvModal.locator('.detail-actions .btn-primary').click();const tvResponse=await tvCreated;assert.equal(tvResponse.status(),201);const tvReceipt=await tvResponse.json();assert.notEqual(movieReceipt.media_id,tvReceipt.media_id);await page.waitForURL(base+'/subscriptions?subscription='+tvReceipt.id);assert.equal((await evidence()).tasks,0);
+  await search('tv','Native Automatic Series');await card('Native Automatic Series').click();const tvModal=page.getByRole('dialog',{name:'Native Automatic Series',exact:true});await tvModal.getByLabel('目标媒体根',{exact:true}).waitFor();const tvCreated=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions'&&r.request().method()==='POST');await tvModal.locator('.media-detail-actions .btn-primary').click();const tvResponse=await tvCreated;assert.equal(tvResponse.status(),201);const tvReceipt=await tvResponse.json();assert.notEqual(movieReceipt.media_id,tvReceipt.media_id);await page.waitForURL(base+'/subscriptions?subscription='+tvReceipt.id);assert.equal((await evidence()).tasks,0);
  } else if(mode==='movie') {
   await openResources('movie','Native trusted movie');await button('选择获取目标').first().click();const panel=page.getByRole('region',{name:'显式电影获取目标'});await panel.waitFor();await panel.getByLabel('电影目标根',{exact:true}).waitFor();await panel.getByLabel('获取下载器',{exact:true}).waitFor();assert(await button('确认创建持久获取',panel).isDisabled());await button('预览电影获取',panel).click();await panel.getByRole('alert').filter({hasText:'请明确选择电影目标根和下载器。'}).waitFor();
   let failure=503;const fault=async route=>route.request().method()==='GET'&&failure?route.fulfill({status:failure,contentType:'application/problem+json',body:'{"code":"OWNED_READ_FAILURE"}'}):route.continue();await page.route('**/api/v1/release-searches/*',fault);await button('刷新搜索观察').click();await page.getByRole('alert').filter({hasText:'当前观察读取失败'}).waitFor();assert.equal(await page.locator('.release-item').count(),1);assert(await button('选择获取目标').isDisabled());failure=0;await button('刷新搜索观察').click();await page.waitForFunction(()=>!document.querySelector('.release-item button')?.disabled);

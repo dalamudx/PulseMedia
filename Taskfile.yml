@@ -199,6 +199,16 @@ tasks:
     cmds:
       - bash scripts/verify_m5_discovery.sh {{.CLI_ARGS}}
 
+  test-media-details-api:
+    desc: Verify movie/TV details, native cast and sparse episodes with Cookie and private PostgreSQL
+    cmds:
+      - bash scripts/verify_m6_media_details_api.sh
+
+  test-media-details-ui:
+    desc: Verify real media detail, sparse selection, retry and dialog focus in isolated Chrome
+    cmds:
+      - bash scripts/verify_m5_discovery.sh details
+
   test-discovery-boards-ui:
     desc: Verify five native TMDB feeds, filters, retry and late-response isolation with Cookie, PG18 and Chrome
     cmds:

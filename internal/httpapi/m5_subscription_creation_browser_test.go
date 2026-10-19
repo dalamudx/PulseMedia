@@ -125,6 +125,9 @@ func m5CreationBrowserCatalog(t *testing.T, p *m5CreationProtocol) {
 		details := map[string]any{"id": item.id, "media_type": "movie", "title": item.title, "original_title": item.title, "release_date": "1999-10-15", "overview": "Complete owned native metadata", "native_fixture_padding": strings.Repeat("x", 3000), "vote_average": 8.1, "genres": []map[string]string{{"name": "剧情"}}}
 		movies = append(movies, details)
 		p.set(fmt.Sprintf("/3/movie/%d", item.id), m5CreationJSON(details))
+		if item.id != 550 {
+			p.set(fmt.Sprintf("/3/movie/%d/credits", item.id), m5CreationJSON(map[string]any{"id": item.id, "cast": []any{}}))
+		}
 	}
 	tvs := []map[string]any{}
 	for _, id := range []int{550, 551} {
@@ -201,14 +204,14 @@ try {
   await query.press('Enter');await read;
   const card=page.locator('.media-card-wrap').filter({has:page.locator('.caption-title',{hasText:title})});
   await card.waitFor();await card.click();
-  const modal=page.getByRole('dialog',{name:title+'详情',exact:true});await modal.waitFor();
+  const modal=page.getByRole('dialog',{name:title,exact:true});await modal.waitFor();
   await modal.getByLabel('目标媒体根',{exact:true}).waitFor();
-  await page.waitForFunction(()=>{const b=document.querySelector('.detail-actions .btn-primary');return b&&!b.disabled;});
+  await page.waitForFunction(()=>{const b=document.querySelector('.media-detail-actions .btn-primary');return b&&!b.disabled;});
   assert(await modal.getByLabel('目标媒体根',{exact:true}).inputValue(),'same-type default root must be selected');
   return modal;
  };
- const submit=modal=>modal.locator('.detail-actions .btn-primary');
- const accepted=async(modal,title)=>{const wait=response(201);await submit(modal).click();const r=await wait;const data=await r.json();await page.waitForURL(base+'/subscriptions');await page.getByText(title,{exact:true}).first().waitFor();return data;};
+ const submit=modal=>modal.locator('.media-detail-actions .btn-primary');
+ const accepted=async(modal,title,openDetail=true)=>{const wait=response(201);await submit(modal).click();const r=await wait;const data=await r.json();await page.waitForURL(url=>url.pathname==='/subscriptions'&&(openDetail?url.searchParams.get('subscription')===data.id:!url.search));await page.getByText(title,{exact:true}).first().waitFor();return data;};
  await page.goto(base+'/discover');
  const auth=await context.request.get(base+'/api/v1/auth/me');assert.equal(auth.status(),200);
  // A deliberately held real POST proves busy/progress precede the 201 receipt.
@@ -219,14 +222,19 @@ try {
  assert.equal(await page.getByText('《Native trusted movie》订阅成功',{exact:true}).count(),0);
  assert.equal(await page.locator('.media-card-wrap').count(),3,'catalog rows retained while creating');
  await pending();await screenshot('creation-desktop-busy');release();hold=null;
- const movie=await (await movieResponse).json();await page.waitForURL(base+'/subscriptions');await page.getByText('Native trusted movie',{exact:true}).first().waitFor();
+ const movie=await (await movieResponse).json();await page.waitForURL(url=>url.pathname==='/subscriptions'&&url.searchParams.get('subscription')===movie.id);await page.getByText('Native trusted movie',{exact:true}).first().waitFor();
  assert.equal(posts[0].body.tmdb_id,550);assert.equal(posts[0].body.media_type,'movie');assert(posts[0].key);assert.equal(movie.root_id,posts[0].body.root_id);
  modal=await search('tv','Native sparse television');
- await modal.getByRole('button',{name:'🎯 自定义指定季与选集监控',exact:true}).click();
- await modal.getByRole('button',{name:'✕ 清空',exact:true}).click();
+ // Empty custom selection must stay blocked; explicitly choose actual S01 episodes.
+ await modal.getByRole('radio',{name:'指定季与集',exact:true}).check();
+ await modal.getByLabel('查看季',{exact:true}).selectOption('1');
+ await modal.locator('[aria-label="订阅的季"]').getByRole('checkbox',{name:/^S01 ·/}).check();
+ await modal.getByRole('button',{name:'清空',exact:true}).click();
+ assert(await submit(modal).isDisabled(),'empty custom selection cannot silently become all');
+ await modal.getByRole('button',{name:'全选本季',exact:true}).click();
  await page.setViewportSize({width:375,height:812});await screenshot('creation-375-season');
  const tv=await accepted(modal,'Native sparse television');const tvPost=posts.at(-1);
- assert.equal(tvPost.body.tmdb_id,550);assert.equal(tvPost.body.media_type,'tv');assert.equal(tvPost.body.scope_type,'all');assert.deepEqual(tvPost.body.seasons,[1]);assert(!tvPost.body.episodes?.length);assert.notEqual(tv.media_id,movie.media_id);
+ assert.equal(tvPost.body.tmdb_id,550);assert.equal(tvPost.body.media_type,'tv');assert.equal(tvPost.body.scope_type,'selected');assert.deepEqual(tvPost.body.seasons,[1]);assert.deepEqual(tvPost.body.episodes,['S01E01','S01E03']);assert.notEqual(tv.media_id,movie.media_id);
  let observed=await evidence(tvPost.key);assert.equal(observed.graph.receipts,1);
  const tvUnits=observed.graph.units.filter(u=>u.media_id===tv.media_id);
  assert.deepEqual(tvUnits.map(u=>u.key).sort(),['S01E01','S01E03']);
@@ -236,8 +244,13 @@ try {
  await overflow();await screenshot('creation-375-subscriptions');await page.setViewportSize({width:1440,height:1000});
  // Dashboard uses its actual discover feed and the same production creation hook.
  await page.goto(base+'/');const dashboardCard=page.locator('.wall-card-modern').filter({has:page.locator('.wall-card-title',{hasText:'Native selected television'})});await dashboardCard.click();
- modal=page.getByRole('dialog',{name:'Native selected television详情',exact:true});await modal.getByRole('button',{name:'🎯 自定义指定季与选集监控',exact:true}).click();await modal.getByRole('button',{name:'✕ 清空',exact:true}).click();await modal.locator('.ep-item-chip').filter({has:page.getByText('第 1 集',{exact:true})}).click();
- const selected=await accepted(modal,'Native selected television');assert.equal(posts.at(-1).body.scope_type,'selected');assert.deepEqual(posts.at(-1).body.episodes,['S01E01']);assert.equal(posts.at(-1).body.media_type,'tv');assert(selected.id);
+ modal=page.getByRole('dialog',{name:'Native selected television',exact:true});
+ await modal.getByRole('radio',{name:'指定季与集',exact:true}).check();
+ await modal.getByLabel('查看季',{exact:true}).selectOption('1');
+ await modal.locator('[aria-label="订阅的季"]').getByRole('checkbox',{name:/^S01 ·/}).check();
+ await modal.getByRole('button',{name:'清空',exact:true}).click();
+ await modal.getByRole('button',{name:'选择 S01E01',exact:true}).click();
+ const selected=await accepted(modal,'Native selected television',false);assert.equal(posts.at(-1).body.scope_type,'selected');assert.deepEqual(posts.at(-1).body.episodes,['S01E01']);assert.equal(posts.at(-1).body.media_type,'tv');assert(selected.id);
  // Lose one real committed 201; receipt reads remain unavailable until reload.
  modal=await search('movie','Native recovery movie');dropNext=true;blockReceipts=true;const beforeLost=posts.length;await submit(modal).click();
  await page.getByText('订阅结果未确认，已保留原请求。请先读取原命令结果。',{exact:true}).waitFor();assert(lost);assert.equal(posts.length,beforeLost+1);
@@ -246,19 +259,19 @@ try {
  // Suppress only unrelated background feed refresh during the recovery observation.
  const feedPattern=url=>url.pathname==='/api/v1/discover';const feedFault=route=>route.abort('failed');await page.route(feedPattern,feedFault);
  let releaseList;listHold=new Promise(resolve=>{releaseList=resolve;});blockReceipts=false;const recovered=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscription-commands/'+original.key&&r.request().method()==='GET'&&r.status()===200);
- await page.reload();assert.deepEqual(await (await recovered).json(),lost);await page.waitForURL(base+'/subscriptions');
+ await page.reload();assert.deepEqual(await (await recovered).json(),lost);await page.waitForURL(url=>url.pathname==='/subscriptions'&&url.searchParams.get('subscription')===lost.id);
  assert.equal(posts.length,beforeLost+1);assert.deepEqual(await evidence(original.key),beforeRecovery);listHold=null;releaseList();await page.getByText('Native recovery movie',{exact:true}).first().waitFor();
  assert.equal(await page.evaluate(()=>Object.keys(sessionStorage).filter(k=>k.startsWith('pulse:subscription-create:v1:')).length),0);
  await page.unroute(feedPattern,feedFault);
  // A POST lost before publication gives a real 404. Reload never retries it.
  modal=await search('movie','Native retry movie');abortBeforeCommit=true;const beforeUnknown=posts.length;await submit(modal).click();await page.getByText('订阅结果未确认，已保留原请求。请先读取原命令结果。',{exact:true}).waitFor();const unknown=await pending();
  const unknownRead=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscription-commands/'+unknown.key&&r.status()===404);await page.reload();await unknownRead;await page.getByText('尚未查到原命令回执，发布结果仍未确认。可再次读取，或明确重试原请求。',{exact:true}).waitFor();assert.equal(posts.length,beforeUnknown+1);await pending();
- const explicit=response(201);await button('重试原订阅请求').click();await explicit;await page.waitForURL(base+'/subscriptions');assert.equal(posts.length,beforeUnknown+2);assert.equal(posts.at(-1).key,unknown.key);assert.equal(posts.at(-1).raw,posts[beforeUnknown].raw);assert.equal((await evidence(unknown.key)).graph.receipts,1);
+ const explicit=response(201);await button('重试原订阅请求').click();const retried=await (await explicit).json();await page.waitForURL(url=>url.pathname==='/subscriptions'&&url.searchParams.get('subscription')===retried.id);assert.equal(posts.length,beforeUnknown+2);assert.equal(posts.at(-1).key,unknown.key);assert.equal(posts.at(-1).raw,posts[beforeUnknown].raw);assert.equal((await evidence(unknown.key)).graph.receipts,1);
  // A real stale intent (no expected version) fails 409 and keeps the original.
  modal=await search('tv','Native sparse television');const conflict=response(409);await submit(modal).click();await conflict;await page.getByText('原命令存在键冲突或意图版本已变化。请读取原结果并核对订阅当前版本，原请求已保留。',{exact:true}).waitFor();const conflictRecord=await pending();const conflictPosts=posts.length;
  await page.reload();await page.getByText('尚未查到原命令回执，发布结果仍未确认。可再次读取，或明确重试原请求。',{exact:true}).waitFor();assert.equal(posts.length,conflictPosts);assert.equal((await pending()).key,conflictRecord.key);
  await screenshot('creation-desktop-failure');assert.deepEqual(errors,[]);assert(lookups.every(r=>r.method==='GET'));
- console.log('M5_SUBSCRIPTION_CREATION_ACTUAL_CHROME_PASS '+JSON.stringify({realChrome:true,ephemeralCDP:true,realApp:true,realPG:true,actualCookie:true,nativeSearchOver8KiB:true,nativeMovieAndTV550:true,desktop:true,mobile375:true,defaultRoot:true,busyBeforeReceipt:true,catalogRetained:true,seasonOnlyAllScope:true,sparseProviderEpisodeIDs:true,nullableAirDates:true,realWanted:true,dashboardSelectedEpisode:true,lostCommitted201:true,reloadPureOriginalGET:true,noRecoveryPOST:true,oneOriginalReceipt:true,noMetadataOnRecovery:true,whitelistedPendingOnly:true,unknown404NoAutoPOST:true,explicitExactRetry:true,real409PreservesCommand:true,screenshots:4,tvAutomaticAcquisitionAccepted:false}));
+ console.log('M5_SUBSCRIPTION_CREATION_ACTUAL_CHROME_PASS '+JSON.stringify({realChrome:true,ephemeralCDP:true,realApp:true,realPG:true,actualCookie:true,nativeSearchOver8KiB:true,nativeMovieAndTV550:true,desktop:true,mobile375:true,defaultRoot:true,busyBeforeReceipt:true,catalogRetained:true,explicitSparseSeasonSelection:true,emptyCustomBlocked:true,sparseProviderEpisodeIDs:true,nullableAirDates:true,realWanted:true,dashboardSelectedEpisode:true,lostCommitted201:true,reloadPureOriginalGET:true,noRecoveryPOST:true,oneOriginalReceipt:true,noMetadataOnRecovery:true,whitelistedPendingOnly:true,unknown404NoAutoPOST:true,explicitExactRetry:true,real409PreservesCommand:true,screenshots:4,tvAutomaticAcquisitionAccepted:false}));
 } catch(error) {
  const page=context.pages().at(-1);if(page){console.error('BROWSER_FAILURE_DOM '+JSON.stringify({path:new URL(page.url()).pathname,text:(await page.locator('body').innerText()).slice(-14000)}));await page.screenshot({path:shots+'/creation-failure.png',fullPage:true});}
  throw error;

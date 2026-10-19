@@ -4122,6 +4122,7 @@ paths:
           schema:
             type: integer
             format: int64
+            minimum: 1
       responses:
         '200':
           description: Movie details
@@ -4147,6 +4148,136 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Metadata read denied
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Metadata unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/media/tmdb/{media_type}/{id}/credits:
+    get:
+      summary: Read provider cast without creating subscription or acquisition
+      operationId: getTMDBMediaCredits
+      parameters:
+        - name: media_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [movie, tv]
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Validated cast in provider order, including a real empty list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TMDBCreditsResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Metadata read denied
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Metadata not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Metadata unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/media/tmdb/tv/{id}/seasons/{season}:
+    get:
+      summary: Read actual episode numbers and details for one TMDB season
+      operationId: getTMDBSeasonDetails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+        - name: season
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        '200':
+          description: Complete validated provider episode list; gaps are preserved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TMDBSeasonDetailsResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Metadata read denied
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Metadata not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Metadata unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/v1/media/tmdb/tv/{id}:
     get:
@@ -4161,6 +4292,18 @@ paths:
             format: int64
             minimum: 1
       responses:
+        '400':
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Metadata read denied
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '200':
           description: TV show details
           content:
@@ -6666,6 +6809,80 @@ components:
         message:
           type: string
 
+
+    TMDBCastMember:
+      type: object
+      required: [tmdb_id, name]
+      properties:
+        tmdb_id:
+          type: integer
+          format: int64
+          minimum: 1
+        name:
+          type: string
+        character:
+          type: string
+        profile_url:
+          type: string
+          description: Safe fixed TMDB image projection; omitted if unknown
+
+    TMDBCreditsResponse:
+      type: object
+      required: [tmdb_id, media_type, cast]
+      properties:
+        tmdb_id:
+          type: integer
+          format: int64
+          minimum: 1
+        media_type:
+          type: string
+          enum: [movie, tv]
+        cast:
+          type: array
+          maxItems: 24
+          items:
+            $ref: '#/components/schemas/TMDBCastMember'
+
+    TMDBEpisodeDetailsItem:
+      type: object
+      required: [tmdb_id, episode_number]
+      properties:
+        tmdb_id:
+          type: integer
+          format: int64
+          minimum: 1
+        episode_number:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+        overview:
+          type: string
+        air_date:
+          type: string
+          description: Provider YYYY-MM-DD value, omitted if unknown
+        still_url:
+          type: string
+          description: Safe fixed TMDB image projection; omitted if unknown
+
+    TMDBSeasonDetailsResponse:
+      type: object
+      required: [tmdb_id, season_number, complete, episodes]
+      properties:
+        tmdb_id:
+          type: integer
+          format: int64
+          minimum: 1
+        season_number:
+          type: integer
+          minimum: 0
+        complete:
+          type: boolean
+          description: True only for a complete validated provider array
+        episodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TMDBEpisodeDetailsItem'
 
     TMDBMovieDetailsResponse:
       type: object

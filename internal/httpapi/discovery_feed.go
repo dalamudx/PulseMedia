@@ -13,16 +13,7 @@ func (s *ServerHandler) GetDiscoverFeed(ctx context.Context, request GetDiscover
 	if actor == nil {
 		return GetDiscoverFeed401ApplicationProblemPlusJSONResponse(problemResponse(http.StatusUnauthorized, "UNAUTHORIZED", "authentication required", id)), nil
 	}
-	readable := actor.Type == ports.ActorTypeUser && (actor.Role == ports.RoleAdmin || actor.Role == ports.RoleMember)
-	if actor.Scopes != nil {
-		hasRead := false
-		for _, scope := range actor.Scopes {
-			if scope == "read" {
-				hasRead = true
-			}
-		}
-		readable = readable && hasRead
-	}
+	readable := metadataReadAllowed(actor)
 	if !readable {
 		return GetDiscoverFeed403ApplicationProblemPlusJSONResponse(problemResponse(http.StatusForbidden, "FORBIDDEN", "metadata read access denied", id)), nil
 	}
@@ -69,4 +60,19 @@ func (s *ServerHandler) GetDiscoverFeed(ctx context.Context, request GetDiscover
 		results = append(results, DiscoverMediaItem{TmdbId: item.TMDBID, Title: item.Title, MediaType: DiscoverMediaItemMediaType(item.MediaType), Year: year, Overview: &item.Overview, PosterUrl: &item.PosterURL, BackdropUrl: &item.BackdropURL, Rating: rating, Genres: &item.Genres})
 	}
 	return GetDiscoverFeed200JSONResponse{Results: results}, nil
+}
+
+func metadataReadAllowed(actor *ports.Actor) bool {
+	if actor == nil || actor.Type != ports.ActorTypeUser || (actor.Role != ports.RoleAdmin && actor.Role != ports.RoleMember) {
+		return false
+	}
+	if actor.Scopes == nil {
+		return true
+	}
+	for _, scope := range actor.Scopes {
+		if scope == "read" {
+			return true
+		}
+	}
+	return false
 }

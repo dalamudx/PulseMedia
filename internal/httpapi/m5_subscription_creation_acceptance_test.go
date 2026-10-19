@@ -149,6 +149,10 @@ func m5CreationTV(p *m5CreationProtocol, id int, expanded, specials, empty bool)
 	p.set(fmt.Sprintf("/3/tv/%d/season/2", id), m5CreationJSON(map[string]any{"season_number": 2, "episodes": []map[string]any{episode(2, 1, "2099-01-01"), episode(2, 3, nil)}}))
 	p.set(fmt.Sprintf("/3/tv/%d/season/3", id), m5CreationJSON(map[string]any{"season_number": 3, "episodes": []map[string]any{episode(3, 7, nil)}}))
 	p.set(fmt.Sprintf("/3/tv/%d/season/0", id), m5CreationJSON(map[string]any{"season_number": 0, "episodes": []map[string]any{episode(0, 2, "2020-01-01")}}))
+	p.set(fmt.Sprintf("/3/tv/%d/credits", id), m5CreationJSON(map[string]any{"id": id, "cast": []map[string]any{
+		{"id": id*100 + 1, "name": "Native TV actor", "character": "Leading role", "profile_path": "/native-tv-actor.jpg"},
+		{"id": id*100 + 2, "name": "Unknown photo actor", "character": "Supporting role", "profile_path": nil},
+	}}))
 }
 func newM5CreationAcceptance(t *testing.T) (*m5IndexerAcceptance, *m5CreationProtocol) {
 	t.Helper()
@@ -167,6 +171,7 @@ func newM5CreationAcceptance(t *testing.T) (*m5IndexerAcceptance, *m5CreationPro
 	}
 	p := &m5CreationProtocol{bodies: map[string]string{}, calls: map[string]int{}}
 	p.set("/3/movie/550", `{"id":550,"title":"Native trusted movie","original_title":"Native trusted movie","release_date":"1999-10-15","overview":"Complete owned native metadata"}`)
+	p.set("/3/movie/550/credits", `{"id":550,"cast":[{"id":55001,"name":"Native movie actor","character":"Leading role","profile_path":"/native-movie-actor.jpg"}]}`)
 	m5CreationTV(p, 550, false, true, false)
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { p.serve(t, w, r) }))
 	t.Cleanup(server.Close)

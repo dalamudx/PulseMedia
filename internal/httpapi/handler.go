@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"unicode/utf8"
 
@@ -75,6 +76,7 @@ type ServerHandler struct {
 	revisionSvc              *transfer.RevisionService
 	reuseSvc                 *transfer.LibraryReuseService
 	metaProvider             ports.MetadataProvider
+	metadataDetailSvc        metadataDetailApplication
 	localMediaReader         ports.LocalMediaSearchReader
 	subSvc                   *subscription.Service
 	subCreationSvc           subscriptionCreationApplication
@@ -1053,21 +1055,26 @@ func (s *ServerHandler) RecheckSubscriptionSearch(ctx context.Context, request R
 
 // GetTMDBMovieDetails handles GET /api/v1/media/tmdb/movie/{id}
 func (s *ServerHandler) GetTMDBMovieDetails(ctx context.Context, request GetTMDBMovieDetailsRequestObject) (GetTMDBMovieDetailsResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
+	reqID, actor := GetRequestID(ctx), GetActor(ctx)
 	if actor == nil {
-		return GetTMDBMovieDetails401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
+		return GetTMDBMovieDetails401ApplicationProblemPlusJSONResponse(problemResponse(http.StatusUnauthorized, "UNAUTHORIZED", "authentication required", reqID)), nil
 	}
-
+	if !metadataReadAllowed(actor) {
+		return GetTMDBMovieDetails403ApplicationProblemPlusJSONResponse(problemResponse(http.StatusForbidden, "FORBIDDEN", "metadata read access denied", reqID)), nil
+	}
+	if request.Id <= 0 {
+		return GetTMDBMovieDetails400ApplicationProblemPlusJSONResponse(problemResponse(http.StatusBadRequest, "INVALID_ID", "invalid movie identity", reqID)), nil
+	}
 	if s.metaProvider == nil {
-		return GetTMDBMovieDetails404JSONResponse{Code: "NOT_FOUND", Message: "metadata provider unavailable", RequestId: reqID}, nil
+		return GetTMDBMovieDetails503ApplicationProblemPlusJSONResponse(problemResponse(http.StatusServiceUnavailable, "METADATA_UNAVAILABLE", "movie metadata is temporarily unavailable", reqID)), nil
 	}
-
 	meta, err := s.metaProvider.GetMovieDetails(ctx, request.Id, "zh-CN")
-	if err != nil {
-		return GetTMDBMovieDetails404JSONResponse{Code: "NOT_FOUND", Message: "request could not be completed", RequestId: reqID}, nil
+	if errors.Is(err, ports.ErrNotFound) {
+		return GetTMDBMovieDetails404ApplicationProblemPlusJSONResponse(problemResponse(http.StatusNotFound, "NOT_FOUND", "movie not found", reqID)), nil
 	}
-
+	if err != nil || meta == nil || meta.TMDBID != request.Id || strings.TrimSpace(meta.Title) == "" || (meta.MediaType != "" && meta.MediaType != "movie") {
+		return GetTMDBMovieDetails503ApplicationProblemPlusJSONResponse(problemResponse(http.StatusServiceUnavailable, "METADATA_UNAVAILABLE", "movie metadata is temporarily unavailable", reqID)), nil
+	}
 	var ratingPtr *float32
 	if meta.Rating > 0 {
 		r := float32(meta.Rating)
@@ -1090,20 +1097,24 @@ func (s *ServerHandler) GetTMDBMovieDetails(ctx context.Context, request GetTMDB
 
 // GetTMDBTVDetails handles GET /api/v1/media/tmdb/tv/{id}
 func (s *ServerHandler) GetTMDBTVDetails(ctx context.Context, request GetTMDBTVDetailsRequestObject) (GetTMDBTVDetailsResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
+	reqID, actor := GetRequestID(ctx), GetActor(ctx)
 	if actor == nil {
-		return GetTMDBTVDetails401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
+		return GetTMDBTVDetails401ApplicationProblemPlusJSONResponse(problemResponse(http.StatusUnauthorized, "UNAUTHORIZED", "authentication required", reqID)), nil
 	}
-
+	if !metadataReadAllowed(actor) {
+		return GetTMDBTVDetails403ApplicationProblemPlusJSONResponse(problemResponse(http.StatusForbidden, "FORBIDDEN", "metadata read access denied", reqID)), nil
+	}
+	if request.Id <= 0 {
+		return GetTMDBTVDetails400ApplicationProblemPlusJSONResponse(problemResponse(http.StatusBadRequest, "INVALID_ID", "invalid TV identity", reqID)), nil
+	}
 	if s.metaProvider == nil {
-		return GetTMDBTVDetails503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "metadata provider unavailable", RequestId: reqID}, nil
+		return GetTMDBTVDetails503ApplicationProblemPlusJSONResponse(problemResponse(http.StatusServiceUnavailable, "METADATA_UNAVAILABLE", "TV metadata is temporarily unavailable", reqID)), nil
 	}
 	tv, err := s.metaProvider.GetTVDetails(ctx, request.Id, "zh-CN")
 	if errors.Is(err, ports.ErrNotFound) {
 		return GetTMDBTVDetails404JSONResponse{Code: "NOT_FOUND", Message: "TV show not found", RequestId: reqID}, nil
 	}
-	if err != nil || tv == nil {
+	if err != nil || tv == nil || tv.TMDBID != request.Id || strings.TrimSpace(tv.Title) == "" {
 		return GetTMDBTVDetails503JSONResponse{Code: "METADATA_UNAVAILABLE", Message: "TV metadata is temporarily unavailable", RequestId: reqID}, nil
 	}
 

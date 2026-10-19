@@ -40,6 +40,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/library"
 	mediausecase "github.com/dalamudx/PulseMedia/internal/usecase/media"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediaserver"
+	metadatausecase "github.com/dalamudx/PulseMedia/internal/usecase/metadata"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
 	"github.com/dalamudx/PulseMedia/internal/usecase/policy"
 	usecaseScheduler "github.com/dalamudx/PulseMedia/internal/usecase/scheduler"
@@ -400,6 +401,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 
 	var reuseSvc *transfer.LibraryReuseService
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
+	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
 	serverHandler.SetTokenManagementService(auth.NewTokenManagementService(postgres.NewTokenManagementStore(a.dbPool, a.idgen), crypto.ReadTokenIssuer{}, a.clock))
 	serverHandler.SetNotificationDispatcher(notifySvc)
 	serverHandler.SetFileMappingService(mediausecase.NewFileMappingService(postgres.NewFileMappingStore(a.dbPool, a.idgen)))

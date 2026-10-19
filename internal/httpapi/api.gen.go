@@ -868,6 +868,24 @@ func (e SubscriptionControlReceiptState) Valid() bool {
 	}
 }
 
+// Defines values for TMDBCreditsResponseMediaType.
+const (
+	TMDBCreditsResponseMediaTypeMovie TMDBCreditsResponseMediaType = "movie"
+	TMDBCreditsResponseMediaTypeTv    TMDBCreditsResponseMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the TMDBCreditsResponseMediaType enum.
+func (e TMDBCreditsResponseMediaType) Valid() bool {
+	switch e {
+	case TMDBCreditsResponseMediaTypeMovie:
+		return true
+	case TMDBCreditsResponseMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for TVCoverageCandidateReviewObservationExecutionAllowed.
 const (
 	TVCoverageCandidateReviewObservationExecutionAllowedFalse TVCoverageCandidateReviewObservationExecutionAllowed = false
@@ -1735,6 +1753,24 @@ const (
 func (e SkipIntegrationDelivery200JSONResponseBodyState) Valid() bool {
 	switch e {
 	case SkipIntegrationDelivery200JSONResponseBodyStateSkipped:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for GetTMDBMediaCreditsParamsMediaType.
+const (
+	GetTMDBMediaCreditsParamsMediaTypeMovie GetTMDBMediaCreditsParamsMediaType = "movie"
+	GetTMDBMediaCreditsParamsMediaTypeTv    GetTMDBMediaCreditsParamsMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the GetTMDBMediaCreditsParamsMediaType enum.
+func (e GetTMDBMediaCreditsParamsMediaType) Valid() bool {
+	switch e {
+	case GetTMDBMediaCreditsParamsMediaTypeMovie:
+		return true
+	case GetTMDBMediaCreditsParamsMediaTypeTv:
 		return true
 	default:
 		return false
@@ -3336,6 +3372,39 @@ type SystemStatus struct {
 	Version  string  `json:"version"`
 }
 
+// TMDBCastMember defines model for TMDBCastMember.
+type TMDBCastMember struct {
+	Character *string `json:"character,omitempty"`
+	Name      string  `json:"name"`
+
+	// ProfileUrl Safe fixed TMDB image projection; omitted if unknown
+	ProfileUrl *string `json:"profile_url,omitempty"`
+	TmdbId     int64   `json:"tmdb_id"`
+}
+
+// TMDBCreditsResponse defines model for TMDBCreditsResponse.
+type TMDBCreditsResponse struct {
+	Cast      []TMDBCastMember             `json:"cast"`
+	MediaType TMDBCreditsResponseMediaType `json:"media_type"`
+	TmdbId    int64                        `json:"tmdb_id"`
+}
+
+// TMDBCreditsResponseMediaType defines model for TMDBCreditsResponse.MediaType.
+type TMDBCreditsResponseMediaType string
+
+// TMDBEpisodeDetailsItem defines model for TMDBEpisodeDetailsItem.
+type TMDBEpisodeDetailsItem struct {
+	// AirDate Provider YYYY-MM-DD value, omitted if unknown
+	AirDate       *string `json:"air_date,omitempty"`
+	EpisodeNumber int     `json:"episode_number"`
+	Name          *string `json:"name,omitempty"`
+	Overview      *string `json:"overview,omitempty"`
+
+	// StillUrl Safe fixed TMDB image projection; omitted if unknown
+	StillUrl *string `json:"still_url,omitempty"`
+	TmdbId   int64   `json:"tmdb_id"`
+}
+
 // TMDBMovieDetailsResponse defines model for TMDBMovieDetailsResponse.
 type TMDBMovieDetailsResponse struct {
 	BackdropUrl   *string   `json:"backdrop_url,omitempty"`
@@ -3348,6 +3417,15 @@ type TMDBMovieDetailsResponse struct {
 	Title         string    `json:"title"`
 	TmdbId        int64     `json:"tmdb_id"`
 	Year          *int      `json:"year,omitempty"`
+}
+
+// TMDBSeasonDetailsResponse defines model for TMDBSeasonDetailsResponse.
+type TMDBSeasonDetailsResponse struct {
+	// Complete True only for a complete validated provider array
+	Complete     bool                     `json:"complete"`
+	Episodes     []TMDBEpisodeDetailsItem `json:"episodes"`
+	SeasonNumber int                      `json:"season_number"`
+	TmdbId       int64                    `json:"tmdb_id"`
 }
 
 // TMDBTVDetailsResponse defines model for TMDBTVDetailsResponse.
@@ -4181,6 +4259,9 @@ type RescrapeMediaJSONBody struct {
 	MediaId *openapi_types.UUID `json:"media_id,omitempty"`
 }
 
+// GetTMDBMediaCreditsParamsMediaType defines parameters for GetTMDBMediaCredits.
+type GetTMDBMediaCreditsParamsMediaType string
+
 // AcquireMovieParams defines parameters for AcquireMovie.
 type AcquireMovieParams struct {
 	// IdempotencyKey Binds retries to the original actor and complete acquisition command
@@ -4956,6 +5037,12 @@ type ServerInterface interface {
 	// GetTMDBTVDetails Get TV show details with complete seasons from TMDB
 	// (GET /api/v1/media/tmdb/tv/{id})
 	GetTMDBTVDetails(w http.ResponseWriter, r *http.Request, id int64)
+	// GetTMDBSeasonDetails Read actual episode numbers and details for one TMDB season
+	// (GET /api/v1/media/tmdb/tv/{id}/seasons/{season})
+	GetTMDBSeasonDetails(w http.ResponseWriter, r *http.Request, id int64, season int)
+	// GetTMDBMediaCredits Read provider cast without creating subscription or acquisition
+	// (GET /api/v1/media/tmdb/{media_type}/{id}/credits)
+	GetTMDBMediaCredits(w http.ResponseWriter, r *http.Request, mediaType GetTMDBMediaCreditsParamsMediaType, id int64)
 	// AcquireMovie Acquire a movie release
 	// (POST /api/v1/movies/acquire)
 	AcquireMovie(w http.ResponseWriter, r *http.Request, params AcquireMovieParams)
@@ -6620,6 +6707,76 @@ func (siw *ServerInterfaceWrapper) GetTMDBTVDetails(w http.ResponseWriter, r *ht
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetTMDBTVDetails(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetTMDBSeasonDetails operation middleware
+func (siw *ServerInterfaceWrapper) GetTMDBSeasonDetails(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "season" -------------
+	var season int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "season", r.PathValue("season"), &season, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "season", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTMDBSeasonDetails(w, r, id, season)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetTMDBMediaCredits operation middleware
+func (siw *ServerInterfaceWrapper) GetTMDBMediaCredits(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "media_type" -------------
+	var mediaType GetTMDBMediaCreditsParamsMediaType
+
+	err = runtime.BindStyledParameterWithOptions("simple", "media_type", r.PathValue("media_type"), &mediaType, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "media_type", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTMDBMediaCredits(w, r, mediaType, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9713,6 +9870,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/media-servers/{id}", wrapper.UpdateMediaServer)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/media-servers/{id}/test", wrapper.TestMediaServer)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/movie/{id}", wrapper.GetTMDBMovieDetails)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/{media_type}/{id}/credits", wrapper.GetTMDBMediaCredits)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/tv/{id}/seasons/{season}", wrapper.GetTMDBSeasonDetails)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/tv/{id}", wrapper.GetTMDBTVDetails)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover", wrapper.GetDiscoverFeed)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/sync/douban", wrapper.SyncDoubanWishlist)
@@ -14227,6 +14386,20 @@ func (response GetTMDBMovieDetails200JSONResponse) VisitGetTMDBMovieDetailsRespo
 	return err
 }
 
+type GetTMDBMovieDetails400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMovieDetails400ApplicationProblemPlusJSONResponse) VisitGetTMDBMovieDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type GetTMDBMovieDetails401JSONResponse ErrorResponse
 
 func (response GetTMDBMovieDetails401JSONResponse) VisitGetTMDBMovieDetailsResponse(w http.ResponseWriter) error {
@@ -14251,6 +14424,20 @@ func (response GetTMDBMovieDetails401ApplicationProblemPlusJSONResponse) VisitGe
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBMovieDetails403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMovieDetails403ApplicationProblemPlusJSONResponse) VisitGetTMDBMovieDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -14283,6 +14470,20 @@ func (response GetTMDBMovieDetails404ApplicationProblemPlusJSONResponse) VisitGe
 	return err
 }
 
+type GetTMDBMovieDetails503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMovieDetails503ApplicationProblemPlusJSONResponse) VisitGetTMDBMovieDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type GetTMDBTVDetailsRequestObject struct {
 	Id int64 `json:"id"`
 }
@@ -14301,6 +14502,20 @@ func (response GetTMDBTVDetails200JSONResponse) VisitGetTMDBTVDetailsResponse(w 
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBTVDetails400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBTVDetails400ApplicationProblemPlusJSONResponse) VisitGetTMDBTVDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -14329,6 +14544,20 @@ func (response GetTMDBTVDetails401ApplicationProblemPlusJSONResponse) VisitGetTM
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBTVDetails403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBTVDetails403ApplicationProblemPlusJSONResponse) VisitGetTMDBTVDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -14378,6 +14607,192 @@ func (response GetTMDBTVDetails503JSONResponse) VisitGetTMDBTVDetailsResponse(w 
 type GetTMDBTVDetails503ApplicationProblemPlusJSONResponse ErrorResponse
 
 func (response GetTMDBTVDetails503ApplicationProblemPlusJSONResponse) VisitGetTMDBTVDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBSeasonDetailsRequestObject struct {
+	Id     int64 `json:"id"`
+	Season int   `json:"season"`
+}
+
+type GetTMDBSeasonDetailsResponseObject interface {
+	VisitGetTMDBSeasonDetailsResponse(w http.ResponseWriter) error
+}
+
+type GetTMDBSeasonDetails200JSONResponse TMDBSeasonDetailsResponse
+
+func (response GetTMDBSeasonDetails200JSONResponse) VisitGetTMDBSeasonDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBSeasonDetails400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBSeasonDetails400ApplicationProblemPlusJSONResponse) VisitGetTMDBSeasonDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBSeasonDetails401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBSeasonDetails401ApplicationProblemPlusJSONResponse) VisitGetTMDBSeasonDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBSeasonDetails403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBSeasonDetails403ApplicationProblemPlusJSONResponse) VisitGetTMDBSeasonDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBSeasonDetails404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBSeasonDetails404ApplicationProblemPlusJSONResponse) VisitGetTMDBSeasonDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBSeasonDetails503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBSeasonDetails503ApplicationProblemPlusJSONResponse) VisitGetTMDBSeasonDetailsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBMediaCreditsRequestObject struct {
+	MediaType GetTMDBMediaCreditsParamsMediaType `json:"media_type"`
+	Id        int64                              `json:"id"`
+}
+
+type GetTMDBMediaCreditsResponseObject interface {
+	VisitGetTMDBMediaCreditsResponse(w http.ResponseWriter) error
+}
+
+type GetTMDBMediaCredits200JSONResponse TMDBCreditsResponse
+
+func (response GetTMDBMediaCredits200JSONResponse) VisitGetTMDBMediaCreditsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBMediaCredits400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMediaCredits400ApplicationProblemPlusJSONResponse) VisitGetTMDBMediaCreditsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBMediaCredits401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMediaCredits401ApplicationProblemPlusJSONResponse) VisitGetTMDBMediaCreditsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBMediaCredits403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMediaCredits403ApplicationProblemPlusJSONResponse) VisitGetTMDBMediaCreditsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBMediaCredits404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMediaCredits404ApplicationProblemPlusJSONResponse) VisitGetTMDBMediaCreditsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTMDBMediaCredits503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetTMDBMediaCredits503ApplicationProblemPlusJSONResponse) VisitGetTMDBMediaCreditsResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -22439,6 +22854,12 @@ type StrictServerInterface interface {
 	// GetTMDBTVDetails Get TV show details with complete seasons from TMDB
 	// (GET /api/v1/media/tmdb/tv/{id})
 	GetTMDBTVDetails(ctx context.Context, request GetTMDBTVDetailsRequestObject) (GetTMDBTVDetailsResponseObject, error)
+	// GetTMDBSeasonDetails Read actual episode numbers and details for one TMDB season
+	// (GET /api/v1/media/tmdb/tv/{id}/seasons/{season})
+	GetTMDBSeasonDetails(ctx context.Context, request GetTMDBSeasonDetailsRequestObject) (GetTMDBSeasonDetailsResponseObject, error)
+	// GetTMDBMediaCredits Read provider cast without creating subscription or acquisition
+	// (GET /api/v1/media/tmdb/{media_type}/{id}/credits)
+	GetTMDBMediaCredits(ctx context.Context, request GetTMDBMediaCreditsRequestObject) (GetTMDBMediaCreditsResponseObject, error)
 	// AcquireMovie Acquire a movie release
 	// (POST /api/v1/movies/acquire)
 	AcquireMovie(ctx context.Context, request AcquireMovieRequestObject) (AcquireMovieResponseObject, error)
@@ -24072,6 +24493,60 @@ func (sh *strictHandler) GetTMDBTVDetails(w http.ResponseWriter, r *http.Request
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetTMDBTVDetailsResponseObject); ok {
 		if err := validResponse.VisitGetTMDBTVDetailsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetTMDBSeasonDetails operation middleware
+func (sh *strictHandler) GetTMDBSeasonDetails(w http.ResponseWriter, r *http.Request, id int64, season int) {
+	var request GetTMDBSeasonDetailsRequestObject
+
+	request.Id = id
+	request.Season = season
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetTMDBSeasonDetails(ctx, request.(GetTMDBSeasonDetailsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetTMDBSeasonDetails")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetTMDBSeasonDetailsResponseObject); ok {
+		if err := validResponse.VisitGetTMDBSeasonDetailsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetTMDBMediaCredits operation middleware
+func (sh *strictHandler) GetTMDBMediaCredits(w http.ResponseWriter, r *http.Request, mediaType GetTMDBMediaCreditsParamsMediaType, id int64) {
+	var request GetTMDBMediaCreditsRequestObject
+
+	request.MediaType = mediaType
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetTMDBMediaCredits(ctx, request.(GetTMDBMediaCreditsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetTMDBMediaCredits")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetTMDBMediaCreditsResponseObject); ok {
+		if err := validResponse.VisitGetTMDBMediaCreditsResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
