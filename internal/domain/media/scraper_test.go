@@ -26,7 +26,7 @@ func TestMovieAndTVNFOGeneration(t *testing.T) {
 
 	xmlStr := string(nfoBytes)
 	if !strings.Contains(xmlStr, "<title>Fight Club</title>") ||
-		!strings.Contains(xmlStr, "<uniqueid>550</uniqueid>") ||
+		!strings.Contains(xmlStr, `<uniqueid type="tmdb" default="true">550</uniqueid>`) ||
 		!strings.Contains(xmlStr, "<year>1999</year>") {
 		t.Fatalf("invalid generated nfo xml: %s", xmlStr)
 	}
