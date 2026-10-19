@@ -2369,6 +2369,12 @@ button {
 .subscriptions-container > .page-header > :first-child { flex: 1 1 20rem; min-width: 0; }
 .subscriptions-container > .page-header .header-actions { flex: 0 0 auto; }
 .subscriptions-container > .page-header .btn-primary { white-space: nowrap; }
+
+.discover-container > .page-header { flex-wrap: wrap; gap: 1rem; }
+.discover-container > .page-header > :first-child { flex: 1 1 20rem; min-width: 0; }
+.discover-container > .page-header .header-actions { flex: 0 0 auto; }
+.discover-container > .page-header .btn-secondary { white-space: nowrap; }
+.discover-container .movie-grid > .media-card-wrap { min-width: 0; }
 .indexers-table { display: flex; flex-direction: column; gap: 0.85rem; }
 .indexer-row { display: flex; justify-content: space-between; align-items: center; background-color: var(--bg); border: 1px solid var(--border); padding: 1rem 1.35rem; border-radius: var(--radius-md); }
 .idx-name-box { display: flex; align-items: center; gap: 0.6rem; }
@@ -3257,6 +3263,9 @@ button {
   .movie-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.75rem !important;
+  }
+  .discover-container .movie-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
   .wall-carousel-wrap {
     grid-template-columns: repeat(2, 1fr) !important;

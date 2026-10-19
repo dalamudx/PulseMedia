@@ -48,7 +48,7 @@ func TestVersionedBindings(t *testing.T) {
 		router.ServeHTTP(rec, r)
 		return rec
 	}
-	create := call(http.MethodPost, "/api/v1/subscriptions", "", httpapi.CreateSubscriptionRequest{MediaId: &media, RootId: &root})
+	create := call(http.MethodPost, "/api/v1/subscriptions", "versioned-bindings-create", httpapi.CreateSubscriptionRequest{MediaId: &media, RootId: &root})
 	if create.Code != 201 {
 		t.Fatal(create.Code, create.Body.String())
 	}

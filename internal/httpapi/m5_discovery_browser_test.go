@@ -188,25 +188,33 @@ func m5DiscoveryBrowser(t *testing.T, mode string) {
 			proxy.ServeHTTP(w, r)
 			return
 		}
-		if r.URL.Path == "/owned-m5-discovery/source-ready" {
-			ctx, cancel := context.WithTimeout(r.Context(), 45*time.Second)
+		if r.URL.Path == "/owned-m5-discovery/source-ready" || r.URL.Path == "/owned-m5-discovery/task-ready" {
+			query := `SELECT next_query_at<=clock_timestamp() AND (rate_limit_until IS NULL OR rate_limit_until<=clock_timestamp()) AND NOT EXISTS(SELECT 1 FROM job WHERE kind='automatic_tv_source' AND state IN ('queued','running')) FROM indexer WHERE id=$1`
+			args := []any{h.indexer}
+			deadline := 45 * time.Second
+			if r.URL.Path == "/owned-m5-discovery/task-ready" {
+				query = `SELECT EXISTS(SELECT 1 FROM download_task)`
+				args = nil
+				deadline = 30 * time.Second
+			}
+			ctx, cancel := context.WithTimeout(r.Context(), deadline)
 			defer cancel()
 			for {
 				var ready bool
-				err := f.app.DBPool().QueryRow(ctx, `SELECT next_query_at<=clock_timestamp() AND (rate_limit_until IS NULL OR rate_limit_until<=clock_timestamp()) AND NOT EXISTS(SELECT 1 FROM job WHERE kind='automatic_tv_source' AND state IN ('queued','running')) FROM indexer WHERE id=$1`, h.indexer).Scan(&ready)
+				err := f.app.DBPool().QueryRow(ctx, query, args...).Scan(&ready)
 				if err != nil {
-					http.Error(w, "owned budget observation unavailable", http.StatusServiceUnavailable)
+					http.Error(w, "owned readiness observation unavailable", http.StatusServiceUnavailable)
 					return
 				}
 				if ready {
-					w.WriteHeader(204)
+					w.WriteHeader(http.StatusNoContent)
 					return
 				}
 				timer := time.NewTimer(100 * time.Millisecond)
 				select {
 				case <-ctx.Done():
 					timer.Stop()
-					http.Error(w, "owned budget deadline", http.StatusServiceUnavailable)
+					http.Error(w, "owned readiness deadline", http.StatusServiceUnavailable)
 					return
 				case <-timer.C:
 				}
@@ -311,7 +319,14 @@ try {
   if(candidate)assert(!raw.includes(candidate),'ephemeral candidate persisted before explicit command');
   for(const u of urls){const parsed=new URL(u);assert(!parsed.searchParams.has('candidate'));assert(!parsed.searchParams.has('query'));assert(!u.includes('Native.'));}
  }
- async function shot(name,width){await page.setViewportSize({width,height:width===375?812:1000});if(width===375){const backdrop=page.locator('.mobile-drawer-backdrop');if(await backdrop.isVisible())await backdrop.click({position:{x:350,y:150}});await page.waitForFunction(()=>document.querySelector('.sidebar').getBoundingClientRect().right<=1);}assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal overflow');const path=process.env.PULSE_M5_DISCOVERY_SCREENSHOTS+'/'+name+'.png';await page.screenshot({path,fullPage:true});assert((await stat(path)).size>1000);}
+ async function shot(name,width){
+  await page.setViewportSize({width,height:width===375?812:1000});
+  if(width===375){const backdrop=page.locator('.mobile-drawer-backdrop');if(await backdrop.isVisible())await backdrop.click({position:{x:350,y:150}});await page.waitForFunction(()=>document.querySelector('.sidebar').getBoundingClientRect().right<=1);}
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal overflow');
+  assert(await page.locator('.discover-container .media-card-wrap').evaluateAll(cards=>cards.every(card=>{const rect=card.getBoundingClientRect();return rect.left>=0&&rect.right<=innerWidth+1;})),'discovery cards must remain inside the viewport');
+  const refresh=await page.getByTitle('刷新推荐数据',{exact:true}).boundingBox();assert(refresh&&refresh.height<50&&refresh.x+refresh.width<=width+1,'refresh text must remain on one line');
+  const path=process.env.PULSE_M5_DISCOVERY_SCREENSHOTS+'/'+name+'.png';await page.screenshot({path,fullPage:true});assert((await stat(path)).size>1000);
+ }
  async function picker(title='Native Automatic Series') {await openResources('tv',title);const row=page.locator('.release-item').filter({hasText:'S01E03.'});await button('选择获取目标',row).click();await button('前往订阅审核此资源').click();return page.getByRole('dialog').filter({has:page.getByText('选择本剧的订阅目标。',{exact:false})});}
  async function enter(row){const detail=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions/'+sub&&r.request().method()==='GET');const status=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions/'+sub+'/status');await row.getByLabel('订阅目标根',{exact:true}).selectOption(sub);await button('进入原订阅审核',row).click();assert.equal((await detail).status(),200);assert.equal((await status).status(),200);await page.waitForURL(base+'/subscriptions?subscription='+sub);await page.getByRole('region',{name:'真实资源单集审核'}).waitFor();}
  if(mode==='catalog'){
@@ -358,7 +373,18 @@ try {
   const acquirePath='/api/v1/subscriptions/'+sub+'/episode-acquisitions';let acquireLost=true,acquireKey,acquireBody;
   const dropAcquire=async route=>{if(acquireLost){acquireLost=false;acquireKey=route.request().headers()['idempotency-key'];acquireBody=route.request().postData();const r=await route.fetch();assert.equal(r.status(),202,await r.text());await route.abort('failed');}else{assert.equal(route.request().headers()['idempotency-key'],acquireKey);assert.equal(route.request().postData(),acquireBody);await route.continue();}};
   await page.route('**'+acquirePath,dropAcquire);await button('确认获取标准单集',acquire).click();await acquire.getByRole('alert').filter({hasText:'获取回执未确认'}).waitFor();const old=await page.evaluate(id=>sessionStorage.getItem('pulse:episode-acquisition:'+id),sub);assert(old);await page.reload();await button('查看编号映射').click();await button('恢复同一单集获取命令',acquire).waitFor();assert.equal(await page.evaluate(id=>sessionStorage.getItem('pulse:episode-acquisition:'+id),sub),old);await button('读取当前单集获取条件',acquire).click();assert.equal(await page.evaluate(id=>sessionStorage.getItem('pulse:episode-acquisition:'+id),sub),old);await button('恢复同一单集获取命令',acquire).click();await acquire.getByRole('status').filter({hasText:'尚不代表下载器接受'}).waitFor();await page.unroute('**'+acquirePath,dropAcquire);
-  const after=await evidence();assert.equal(after.tasks,1);assert.equal(after.jobs,1);assert.equal(after.reviews,1);assert.equal(after.subscriptions,before.subscriptions);assert.equal(new Set(after.operations).size,1);assert.equal(requests.filter(r=>r.path==='/api/v1/acquisitions/selected-movie'&&r.method==='POST').length,0);await privacy();
+  // Accepted persists the original job; its controlled worker creates the task asynchronously.
+  const ready=await context.request.get(base+'/owned-m5-discovery/task-ready',{timeout:35000});
+  assert.equal(ready.status(),204,'original controlled worker must persist its download task');
+  const after=await evidence();
+  console.error('M5_DISCOVERY_FINAL_COUNTS '+JSON.stringify({before,after}));
+  assert.equal(after.tasks,1,'exactly one durable download task');
+  assert.equal(after.jobs,1,'exactly one original episode submission job');
+  assert.equal(after.reviews,1,'exactly one preserved episode review');
+  assert.equal(after.subscriptions,before.subscriptions,'handoff must not create another subscription');
+  assert.equal(new Set(after.operations).size,1,'only the original operation may be submitted');
+  assert.equal(requests.filter(r=>r.path==='/api/v1/acquisitions/selected-movie'&&r.method==='POST').length,0,'TV must never use movie acquisition');
+  await privacy();
  }
  assert.deepEqual(errors,[]);console.log('M5_DISCOVERY_'+mode.toUpperCase()+'_PASS '+JSON.stringify({actualChrome:true,realCookieAppPG:true,nativeTMDB:true,nativeTorznab:true,ephemeralCDP:port,mode,acceptedMeansDurableOnly:true}));
 } finally {await context.close();}

@@ -41,6 +41,7 @@ func TestMemberSubscriptionReadTokenObjectAndPathPrivacy(t *testing.T) {
 	create := httptest.NewRequest(http.MethodPost, "/api/v1/subscriptions", bytes.NewReader(body))
 	create.Header.Set("Content-Type", "application/json")
 	create.Header.Set("Authorization", "Bearer "+memberSession)
+	create.Header.Set("Idempotency-Key", uuid.NewString())
 	result := httptest.NewRecorder()
 	router.ServeHTTP(result, create)
 	if result.Code != http.StatusCreated {

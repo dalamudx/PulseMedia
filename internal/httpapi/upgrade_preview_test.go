@@ -477,6 +477,7 @@ func TestUpgradePreviewAppNativeCookie(t *testing.T) {
 	f := newUpgradeFixture(t)
 	cfg := config.NewDefault()
 	cfg.DataDir = t.TempDir()
+	cfg.SecretKey = f.a.Config().SecretKey
 	if e := library.EnsureDefaultRoots(context.Background(), postgres.NewLibraryBootstrapStore(f.a.DBPool()), rootfs.NewFilesystem(), idgen.New(), cfg.DataDir); e != nil {
 		t.Fatal(e)
 	}

@@ -70,6 +70,7 @@ func TestSubscriptionBindingsPersistAndReconfigureAtomically(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/subscriptions", bytes.NewReader(raw))
 		req.Header.Set("Authorization", "Bearer "+memberToken)
 		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Idempotency-Key", uuid.NewString())
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, req)
 		return rec
@@ -109,6 +110,8 @@ func TestSubscriptionBindingsPersistAndReconfigureAtomically(t *testing.T) {
 	if _, err := pool.Exec(ctx, "CREATE FUNCTION fail_scope() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'injected'; END $$; CREATE TRIGGER fail_scope BEFORE INSERT OR UPDATE ON wanted_item FOR EACH ROW EXECUTE FUNCTION fail_scope()"); err != nil {
 		t.Fatal(err)
 	}
+	version := int64(first.IntentVersion)
+	body.ExpectedIntentVersion = &version
 	empty := []uuid.UUID{}
 	body.IndexerIds = &empty
 	rec = call(body)

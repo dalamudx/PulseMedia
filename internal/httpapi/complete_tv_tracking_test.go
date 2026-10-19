@@ -1,7 +1,6 @@
 package httpapi_test
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -48,7 +47,7 @@ func newTrackingFixtureWithRoots(t *testing.T, before func(*completeTVFixture), 
 		originalHash = "2b9fc2d07ed413dec72dcf377b3ffde554d65184"
 	}
 	n.export = func() string { return rawInput }
-	key := bytes.Repeat([]byte{42}, 32)
+	key := make([]byte, 32)
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if n.hook != nil {
 			n.hook(r.URL.Path)

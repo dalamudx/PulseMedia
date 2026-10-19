@@ -87,6 +87,7 @@ func TestCompleteTVOrganizationPGInterruptedAppRestartAndScanReuse(t *testing.T)
 		t.Fatal(e)
 	}
 	f.n.f.a = restarted
+	queries := restarted.Queries()
 	runCtx, cancel := context.WithTimeout(ctx, 12*time.Second)
 	done := make(chan error, 1)
 	go func() { done <- restarted.Run(runCtx) }()
@@ -101,7 +102,7 @@ func TestCompleteTVOrganizationPGInterruptedAppRestartAndScanReuse(t *testing.T)
 	ticker := time.NewTicker(25 * time.Millisecond)
 	defer ticker.Stop()
 	for {
-		task, e := restarted.Queries().GetDownloadTaskByOpID(runCtx, f.command.OperationID)
+		task, e := queries.GetDownloadTaskByOpID(runCtx, f.command.OperationID)
 		if e != nil {
 			t.Fatal(e)
 		}

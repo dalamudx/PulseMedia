@@ -71,6 +71,9 @@ func automaticTVOrganizationPresent(ctx context.Context, q *db.Queries, operatio
 		return false, e
 	}
 	for _, d := range demands {
+		if len(d.SubmissionFence) == 0 {
+			continue
+		}
 		var f struct {
 			Kind      string    `json:"kind"`
 			Authority uuid.UUID `json:"authority"`

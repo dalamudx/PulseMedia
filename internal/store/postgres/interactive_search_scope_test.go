@@ -91,7 +91,7 @@ func TestInteractiveSearchDeadlineAndHistoryPG(t *testing.T) {
 	if v, e := postgres.Rollback(ctx, dsn, "../../../migrations"); e != nil || v != 85 {
 		t.Fatalf("empty down: %d %v", v, e)
 	}
-	if v, e := postgres.Migrate(ctx, dsn, "../../../migrations"); e != nil || v != 86 {
+	if v, e := postgres.Migrate(ctx, dsn, repositoryMigrationsThrough(t, 86)); e != nil || v != 86 {
 		t.Fatalf("up: %d %v", v, e)
 	}
 	site := interactiveSite(t, p, "Site", "offline", true, false)

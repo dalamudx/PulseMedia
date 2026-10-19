@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
+	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
 	"github.com/dalamudx/PulseMedia/internal/platform/jobs"
 	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
@@ -79,14 +80,22 @@ func organizationSetup(t *testing.T) *organizationFixture {
 		t.Fatal(err)
 	}
 	indexer, candidate := uuid.New(), uuid.New()
-	if _, err := f.q.CreateIndexer(ctx, db.CreateIndexerParams{ID: indexer, Name: "fixture", Url: "https://example.test", ApiKeyEncrypted: []byte("fixture"), Categories: []byte("[]")}); err != nil {
+	credential, err := crypto.Encrypt(outboxTestKey, []byte("fixture"))
+	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := f.q.UpsertReleaseCandidate(ctx, db.UpsertReleaseCandidateParams{ID: candidate, IndexerID: indexer, Title: "Movie.2020.1080p", Guid: "fixture", LinkEncrypted: []byte("fixture"), InfoHash: pgtype.Text{String: "aaa", Valid: true}, QualityProfile: []byte(`{"resolution":"1080p"}`), MatchedMediaID: pgtype.UUID{Bytes: f.media, Valid: true}, MatchedUnitID: pgtype.UUID{Bytes: f.unit, Valid: true}}); err != nil {
+	link, err := crypto.Encrypt(outboxTestKey, []byte("https://example.test/download.torrent"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.q.CreateIndexer(ctx, db.CreateIndexerParams{ID: indexer, Name: "fixture", Url: "https://example.test", ApiKeyEncrypted: credential, Categories: []byte("[]")}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.q.UpsertReleaseCandidate(ctx, db.UpsertReleaseCandidateParams{ID: candidate, IndexerID: indexer, Title: "Movie.2020.1080p", Guid: "fixture", LinkEncrypted: link, InfoHash: pgtype.Text{String: "aaa", Valid: true}, QualityProfile: []byte(`{"resolution":"1080p"}`), MatchedMediaID: pgtype.UUID{Bytes: f.media, Valid: true}, MatchedUnitID: pgtype.UUID{Bytes: f.unit, Valid: true}}); err != nil {
 		t.Fatal(err)
 	}
 	mapping, _ := json.Marshal(map[string]string{"/remote/downloads": f.source})
-	if _, err := f.q.CreateDownloadClient(ctx, db.CreateDownloadClientParams{ID: f.client, Name: "fixture", ClientType: "qbittorrent", Url: "http://fixture", Username: "fixture", PasswordEncrypted: []byte("fixture"), RemotePathMap: mapping}); err != nil {
+	if _, err := f.q.CreateDownloadClient(ctx, db.CreateDownloadClientParams{ID: f.client, Name: "fixture", ClientType: "qbittorrent", Url: "http://fixture", Username: "fixture", PasswordEncrypted: credential, RemotePathMap: mapping}); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := f.q.CreateDownloadTask(ctx, db.CreateDownloadTaskParams{ID: f.taskID, OperationID: f.op, ClientID: f.client, CandidateID: candidate, InfoHash: "aaa", State: "tracking", SavePath: "/remote/downloads"}); err != nil {

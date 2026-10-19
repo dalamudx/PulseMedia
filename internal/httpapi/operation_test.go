@@ -3,6 +3,7 @@ package httpapi_test
 import (
 	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -61,6 +62,8 @@ func setupOperationHTTP(t *testing.T, configure ...func(*httpapi.ServerHandler, 
 
 	cfg := config.NewDefault()
 	cfg.DataDir = filepath.Join(tempDir, "data")
+	masterKey := make([]byte, 32)
+	cfg.SecretKey = hex.EncodeToString(masterKey)
 	cfg.Database.URL = dbDSN
 
 	var logBuf bytes.Buffer
@@ -127,12 +130,20 @@ func setupOperationHTTP(t *testing.T, configure ...func(*httpapi.ServerHandler, 
 	unitID, _ := uuid.NewV7()
 	_, _ = queries.CreateMediaUnit(ctx, db.CreateMediaUnitParams{ID: unitID, MediaID: mediaID, UnitKey: "movie"})
 
+	indexerKey, err := crypto.Encrypt(masterKey, []byte("fixture-key"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	candidateLink, err := crypto.Encrypt(masterKey, []byte("https://tracker.invalid/download.torrent"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	indexerID, _ := uuid.NewV7()
 	_, _ = queries.CreateIndexer(ctx, db.CreateIndexerParams{
 		ID:              indexerID,
 		Name:            "Tracker",
-		Url:             "https://tracker.com",
-		ApiKeyEncrypted: []byte("enc"),
+		Url:             "https://tracker.invalid",
+		ApiKeyEncrypted: indexerKey,
 		Categories:      []byte("[]"),
 	})
 	candID, _ := uuid.NewV7()
@@ -141,7 +152,7 @@ func setupOperationHTTP(t *testing.T, configure ...func(*httpapi.ServerHandler, 
 		IndexerID:      indexerID,
 		Title:          "Fight.Club.1999.1080p.mkv",
 		Guid:           "guid-1",
-		LinkEncrypted:  []byte("enc"),
+		LinkEncrypted:  candidateLink,
 		SizeBytes:      8000000000,
 		QualityProfile: []byte("{}"),
 	})
@@ -156,7 +167,6 @@ func setupOperationHTTP(t *testing.T, configure ...func(*httpapi.ServerHandler, 
 	subSvcStore := postgres.NewSubscriptionIntentStore(a.DBPool(), gen)
 	subSvc := subscription.NewService(subSvcStore, subSvcStore, postgres.NewSubscriptionControlStore(a.DBPool(), gen), subSvcStore)
 	polSvc := policy.NewService(postgres.NewPolicyStore(a.DBPool(), gen))
-	masterKey := make([]byte, 32)
 	searchSvc := usecaseSearch.NewService(postgres.NewSearchExecutionStore(a.DBPool()), gen, crypto.NewSecretProtector(masterKey))
 	searchSvc.SetHealthRepository(postgres.NewIndexerHealthStore(a.DBPool(), gen))
 	searchSvc.SetClientFactory(func(baseURL, key string) ports.IndexerClient { return torznab.NewClient(baseURL, key, nil) })
@@ -175,6 +185,7 @@ func setupOperationHTTP(t *testing.T, configure ...func(*httpapi.ServerHandler, 
 	serverHandler.SetFeedService(usecaseSearch.NewFeedService(postgres.NewRSSStore(a.DBPool(), gen), crypto.NewSecretProtector(masterKey), searchSvc))
 	serverHandler.SetSubscriptionBindingService(subscription.NewBindingService(postgres.NewSubscriptionBindingStore(a.DBPool(), gen)))
 	serverHandler.SetSubscriptionStatusService(subscription.NewStatusService(postgres.NewSubscriptionStatusStore(a.DBPool())))
+	serverHandler.SetSubscriptionCreationService(subscription.NewSubscriptionCreationService(postgres.NewSubscriptionCreationStore(a.DBPool(), gen), metaProvider, nil, crypto.NewSecretProtector(masterKey)))
 	for _, f := range configure {
 		f(serverHandler, a)
 	}

@@ -31,6 +31,7 @@ func TestM2CommandsCurrentUserBeforeReceipt(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/v1/subscriptions", bytes.NewReader(raw))
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Idempotency-Key", uuid.NewString())
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, req)
 	var detail httpapi.SubscriptionDetails

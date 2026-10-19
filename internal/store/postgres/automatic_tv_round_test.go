@@ -28,9 +28,9 @@ type automaticTVFixture struct {
 	indexer, client, sub, unit, wanted uuid.UUID
 }
 
-func newAutomaticTVFixture(t *testing.T) automaticTVFixture {
+func newAutomaticTVFixture(t *testing.T, through ...int64) automaticTVFixture {
 	t.Helper()
-	f := newCreationFixture(t)
+	f := newCreationFixture(t, through...)
 	ctx := t.Context()
 	codec := crypto.NewSecretProtector(bytes.Repeat([]byte{27}, 32))
 	key, e := codec.EncryptSecret([]byte("fixture-api-key"))
@@ -450,7 +450,7 @@ func TestAutomaticTVQueryFaultRollbackAndTailLeasePG(t *testing.T) {
 	}
 }
 func TestAutomaticTVHistoryAndDowngradePG(t *testing.T) {
-	f := newAutomaticTVFixture(t)
+	f := newAutomaticTVFixture(t, 87)
 	r := f.start(t)
 	w := f.load(t, r)
 	s := automaticTVSpec(t, w, 0)

@@ -140,10 +140,16 @@ func TestDownloaderCancelledAdmissionNeverMutatesTask(t *testing.T) {
 	finish := func() {
 		finishOnce.Do(func() {
 			close(hold)
+			cancelled := 0
 			for range 2 {
-				if e := <-done; e != nil {
+				if e := <-done; errors.Is(e, context.Canceled) {
+					cancelled++
+				} else if e != nil {
 					t.Errorf("owner: %v", e)
 				}
+			}
+			if cancelled != 1 {
+				t.Errorf("cancelled owners: got %d, want 1", cancelled)
 			}
 		})
 	}

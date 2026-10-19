@@ -93,11 +93,19 @@ func TestEpisodeSourceHTTPIdentityUnknownRefreshThenCurrentJoin(t *testing.T) {
 		router.ServeHTTP(w, r)
 		return w
 	}
-	created := call(admin, "POST", "/api/v1/subscriptions", "", httpapi.CreateSubscriptionRequest{MediaId: &m, RootId: &root})
-	var sub httpapi.SubscriptionDetails
-	if created.Code != 201 || json.Unmarshal(created.Body.Bytes(), &sub) != nil {
-		t.Fatal(created.Code)
+	// This legacy directory deliberately lacks trusted provider episode identities.
+	owner, err := q.GetUserByUsername(ctx, "admin")
+	if err != nil {
+		t.Fatal(err)
 	}
+	sub := httpapi.SubscriptionDetails{Id: uuid.New(), IntentVersion: 1}
+	if _, err = q.CreateSubscription(ctx, db.CreateSubscriptionParams{ID: sub.Id, UserID: owner.ID, MediaID: m, RootID: root, QualityPolicyID: "default", QualityPolicyRevision: 1, ScopeType: "all", IndexerIds: []byte("[]")}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = q.UpsertWantedItem(ctx, db.UpsertWantedItemParams{ID: uuid.New(), SubscriptionID: sub.Id, UnitID: unit, IntentVersion: 1}); err != nil {
+		t.Fatal(err)
+	}
+	calls.Store(0)
 	base := "/api/v1/subscriptions/" + sub.Id.String() + "/episode-groups"
 	preview := base + "/preview?group_id=group1"
 	if w := call(member, "GET", preview, "", nil); w.Code != 403 || calls.Load() != 0 {

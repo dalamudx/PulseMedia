@@ -78,7 +78,10 @@ func TestSubscriptionSearchChecksOwnerAndStateAndNeverDownloadsUnverifiedCandida
 	req.Header.Set("Authorization", "Bearer "+adminToken)
 	rec = httptest.NewRecorder()
 	router.ServeHTTP(rec, req)
-	if rec.Code != http.StatusServiceUnavailable {
-		t.Fatalf("broken aggregate search: status=%d body=%s", rec.Code, rec.Body.String())
+	var problem struct {
+		Code string `json:"code"`
+	}
+	if rec.Code != http.StatusBadRequest || json.Unmarshal(rec.Body.Bytes(), &problem) != nil || problem.Code != "EXPLICIT_SEARCH_REQUIRED" {
+		t.Fatalf("legacy aggregate GET must require an explicit search: status=%d body=%s", rec.Code, rec.Body.String())
 	}
 }

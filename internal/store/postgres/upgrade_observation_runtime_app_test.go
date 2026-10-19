@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/dalamudx/PulseMedia/internal/app"
 	"github.com/dalamudx/PulseMedia/internal/config"
+	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/google/uuid"
@@ -22,7 +23,12 @@ import (
 func observationRuntimeAppNative(t *testing.T) *nativeUpgradeFixture {
 	t.Helper()
 	root := t.TempDir()
+	credential, err := crypto.Encrypt([]byte(strings.Repeat("%", 32)), []byte("runtime-indexer-key"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	n := nativeUpgrade(t, "ambiguous", false, func(f *frozenUpgradeFixture) {
+		f.exec(t, `UPDATE indexer SET api_key_encrypted=$2 WHERE id=$1`, f.source, credential)
 		f.exec(t, `UPDATE library_root SET path=$2 WHERE id=$1`, f.root, root)
 
 		f.exec(t, `UPDATE library_root SET baseline_completed=true,health='online' WHERE id=$1`, f.root)
@@ -129,7 +135,9 @@ func TestMovieUpgradeObservationAppRunAndRestartPG(t *testing.T) {
 		}
 		select {
 		case <-deadline.C:
-			t.Fatalf("no atomic result; query=%d", n.observationQueries.Load())
+			var state string
+			err := n.p.QueryRow(context.Background(), `SELECT COALESCE(jsonb_agg(jsonb_build_object('state',j.state,'disposition',r.disposition,'changed_fields',(SELECT jsonb_agg(e.key) FROM jsonb_each(to_jsonb(j)) e WHERE e.value IS DISTINCT FROM pulse_upgrade_observation_terminal_job(b.observation_id)->e.key))),'[]'::jsonb)::text FROM movie_upgrade_observation_job b JOIN job j ON j.id=b.job_id LEFT JOIN movie_upgrade_observation_result r ON r.observation_id=b.observation_id WHERE b.operation_id=$1`, n.operation).Scan(&state)
+			t.Fatalf("no atomic result; query=%d state=%s diagnostic_error=%v", n.observationQueries.Load(), state, err)
 		case <-ticker.C:
 		}
 	}

@@ -218,10 +218,10 @@ func TestMigrationCLI(t *testing.T) {
 			t.Fatal("locked command mutated database")
 		}
 		out := call(t, true, args...)
-		if !strings.Contains(out, "schema 0 -> 83") {
+		if !strings.Contains(out, fmt.Sprintf("schema 0 -> %d", postgres.CurrentMigrationVersion)) {
 			t.Fatal(out)
 		}
-		version(t, c, 83)
+		version(t, c, postgres.CurrentMigrationVersion)
 		if _, err = os.Lstat(filepath.Join(o.DataDir, "secret.key")); !os.IsNotExist(err) {
 			t.Fatal("master key created")
 		}
@@ -346,7 +346,7 @@ func TestMigrationCLI(t *testing.T) {
 		version(t, c, 82)
 		put(t, o.IdentityFile, []byte(id.String()+"\n"))
 		call(t, true, recoveryArgs...)
-		version(t, c, 83)
+		version(t, c, postgres.CurrentMigrationVersion)
 		var stored []byte
 		if e = c.QueryRow(ctx, "SELECT api_key_encrypted FROM indexer WHERE name='migration fixture'").Scan(&stored); e != nil || !bytes.Equal(stored, encrypted) {
 			t.Fatal("encrypted data changed")
@@ -361,7 +361,7 @@ func TestMigrationCLI(t *testing.T) {
 		if e != nil {
 			t.Fatal(e)
 		}
-		// Re-export schema83 before a repeat migration. The CLI must preserve both
+		// Re-export the current schema before a repeat migration. Preserve both
 		// persistent isolation and immutable activation history.
 		bo.Archive = filepath.Join(o.DataDir, "isolated.age")
 		bo.KeyArchive = filepath.Join(o.DataDir, "isolated-key.age")

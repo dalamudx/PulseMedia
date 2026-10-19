@@ -40,6 +40,7 @@ func testProjectionContractRejectsBareContainerGroupResult(t *testing.T, origina
 	req := httptest.NewRequest("POST", "/api/v1/subscriptions", bytes.NewReader(raw))
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Idempotency-Key", uuid.NewString())
 	response := httptest.NewRecorder()
 	router.ServeHTTP(response, req)
 	var sub httpapi.SubscriptionDetails

@@ -30,7 +30,7 @@ func TestSubscriptionControlAtomicReceiptScopeAndVersions(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	created := call("POST", "/api/v1/subscriptions", "", httpapi.CreateSubscriptionRequest{MediaId: &u.MediaID, RootId: &root})
+	created := call("POST", "/api/v1/subscriptions", "control-fixture-create", httpapi.CreateSubscriptionRequest{MediaId: &u.MediaID, RootId: &root})
 	var sub httpapi.SubscriptionDetails
 	if created.Code != 201 || json.Unmarshal(created.Body.Bytes(), &sub) != nil {
 		t.Fatal(created.Code)

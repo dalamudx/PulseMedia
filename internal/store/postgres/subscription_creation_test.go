@@ -34,11 +34,11 @@ type creationFixture struct {
 	path      string
 }
 
-func newCreationFixture(t *testing.T) creationFixture {
+func newCreationFixture(t *testing.T, through ...int64) creationFixture {
 	t.Helper()
 	ctx := context.Background()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	if _, err := postgres.Migrate(ctx, dsn, "../../../migrations"); err != nil {
+	if _, err := postgres.Migrate(ctx, dsn, repositoryMigrationsThrough(t, through...)); err != nil {
 		t.Fatal(err)
 	}
 	pool, err := postgres.NewPool(ctx, dsn, postgres.DefaultPoolConfig())

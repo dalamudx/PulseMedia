@@ -27,9 +27,9 @@ import (
 
 // Arrange a real, explicit standard catalog revision. This does not insert an
 // automatic decision or authority; every positive still uses Source87's permit.
-func newTVExecutionFixture(t *testing.T) automaticTVFixture {
+func newTVExecutionFixture(t *testing.T, through ...int64) automaticTVFixture {
 	t.Helper()
-	f := newAutomaticTVFixture(t)
+	f := newAutomaticTVFixture(t, through...)
 	tx, e := f.pool.Begin(t.Context())
 	if e != nil {
 		t.Fatal(e)

@@ -40,9 +40,17 @@ func newCoverageFixture(t *testing.T, third ...bool) *coverageFixture {
 			t.Fatal(e)
 		}
 	}
-	run("INSERT INTO indexer(id,name,url,api_key_encrypted,categories,health) VALUES($1,'coverage fixture','http://fixture.invalid',$2,'[]','online')", idx, []byte("fixture"))
+	credential, err := crypto.Encrypt(make([]byte, 32), []byte("fixture"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	link, err := crypto.Encrypt(make([]byte, 32), []byte("http://fixture.invalid/torrent"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	run("INSERT INTO indexer(id,name,url,api_key_encrypted,categories,health) VALUES($1,'coverage fixture','http://fixture.invalid',$2,'[]','online')", idx, credential)
 	run("UPDATE subscription SET indexer_ids=jsonb_build_array($2::text),intent_version=intent_version+1 WHERE id=$1", f.sub.Id, idx.String())
-	run("INSERT INTO release_candidate(id,indexer_id,guid,title,link_encrypted,size_bytes,quality_profile,source_config_version) SELECT $1,$2,'coverage','Mapping.Browser.Show.2020.S01E01E02.1080p.WEB-DL.mkv',$3,1024,'{}',config_version FROM indexer WHERE id=$2", candidate, idx, []byte("fixture"))
+	run("INSERT INTO release_candidate(id,indexer_id,guid,title,link_encrypted,size_bytes,quality_profile,source_config_version) SELECT $1,$2,'coverage','Mapping.Browser.Show.2020.S01E01E02.1080p.WEB-DL.mkv',$3,1024,'{}',config_version FROM indexer WHERE id=$2", candidate, idx, link)
 	run("INSERT INTO indexer_query(id,indexer_id,query_type,keyword,page,config_version,state,results_count,finished_at) SELECT $1,$2,'search','fixture',1,config_version,'succeeded',1,clock_timestamp() FROM indexer WHERE id=$2", query, idx)
 	run("INSERT INTO indexer_query_candidate(query_id,candidate_id) VALUES($1,$2)", query, candidate)
 	// Independently specified provider response, not parser output or a generated count/range.

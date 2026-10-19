@@ -43,7 +43,7 @@ func startTrackingRuntime(t *testing.T, n *trackingFixture) *trackingRuntimeApp 
 	t.Helper()
 	cfg := config.NewDefault()
 	cfg.DataDir = t.TempDir()
-	cfg.SecretKey = hex.EncodeToString(bytes.Repeat([]byte{42}, 32))
+	cfg.SecretKey = hex.EncodeToString(make([]byte, 32))
 	cfg.Database.URL = n.f.a.Config().Database.URL
 	cfg.Server.HTTPAddr = "127.0.0.1:0"
 	l := &trackingRuntimeLog{startup: runtimeTVStartup{ready: make(chan struct{})}, closing: make(chan struct{})}

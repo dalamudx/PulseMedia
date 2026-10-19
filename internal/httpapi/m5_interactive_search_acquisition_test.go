@@ -404,6 +404,7 @@ func TestM5InteractiveSearchSelectedMovieAcquisitionNativeHTTPPG(t *testing.T) {
 		t.Fatal("actual successful health probe failed to restore eligibility", p)
 	}
 	command.ExpectedInputStamp = p.InputStamp
+	delete(clientBody, "remote_path_map") // Creation-only; edits retain the configured path map.
 	clientBody["username"] = "m5-qbit-edited"
 	clientBody["password"] = ""
 	clientBody["expected_updated_at"] = clientView["updated_at"]

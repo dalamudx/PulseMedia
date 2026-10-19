@@ -21,6 +21,7 @@ func TestCandidateExplanationHTTPObjectScopeEmptyAndReadFailure(t *testing.T) {
 	create := httptest.NewRequest("POST", "/api/v1/subscriptions", bytes.NewReader(raw))
 	create.Header.Set("Authorization", "Bearer "+member)
 	create.Header.Set("Content-Type", "application/json")
+	create.Header.Set("Idempotency-Key", uuid.NewString())
 	created := httptest.NewRecorder()
 	router.ServeHTTP(created, create)
 	var sub httpapi.SubscriptionDetails

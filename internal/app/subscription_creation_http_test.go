@@ -57,7 +57,9 @@ func TestSubscriptionCreationVerifiedMetadataAndAtomicRollback(t *testing.T) {
 	userID = u.ID.String()
 	root := f.root
 	subscriptionStore := postgres.NewSubscriptionIntentStore(f.pool, f.gen)
-	h := httpapi.NewServerHandler(a, nil, nil, nil, nil, tmdb.NewClient("fixture-key", tmdb.WithBaseURL(native.URL)), subscription.NewService(subscriptionStore, subscriptionStore, postgres.NewSubscriptionControlStore(f.pool, f.gen), subscriptionStore), nil, nil, nil, nil, nil, outboxTestKey)
+	metadata := tmdb.NewClient("fixture-key", tmdb.WithBaseURL(native.URL))
+	h := httpapi.NewServerHandler(a, nil, nil, nil, nil, metadata, subscription.NewService(subscriptionStore, subscriptionStore, postgres.NewSubscriptionControlStore(f.pool, f.gen), subscriptionStore), nil, nil, nil, nil, nil, outboxTestKey)
+	h.SetSubscriptionCreationService(subscription.NewSubscriptionCreationService(postgres.NewSubscriptionCreationStore(f.pool, f.gen), metadata, metadata, crypto.NewSecretProtector(outboxTestKey)))
 	token := "pm_sess_creation_fixture"
 	if _, e := f.q.CreateSession(ctx, db.CreateSessionParams{ID: uuid.New(), UserID: u.ID, TokenHash: crypto.HashToken(token), CsrfTokenHash: []byte("fixture"), ExpiresAt: pgtype.Timestamptz{Time: time.Now().Add(time.Hour), Valid: true}}); e != nil {
 		t.Fatal(e)
@@ -76,6 +78,7 @@ func TestSubscriptionCreationVerifiedMetadataAndAtomicRollback(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/subscriptions", bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", "Bearer "+token)
+		req.Header.Set("Idempotency-Key", fmt.Sprintf("native-create:%d", id))
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, req)
 		return rec
@@ -95,7 +98,7 @@ func TestSubscriptionCreationVerifiedMetadataAndAtomicRollback(t *testing.T) {
 		t.Fatal(e)
 	}
 	mode.Store(0)
-	if _, e := a.DBPool().Exec(ctx, `CREATE FUNCTION reject_subscription_creation_audit() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN IF NEW.action='subscription.created' THEN RAISE EXCEPTION 'fixture-sensitive-error';END IF;RETURN NEW;END$$;CREATE TRIGGER reject_subscription_creation_audit BEFORE INSERT ON audit_log FOR EACH ROW EXECUTE FUNCTION reject_subscription_creation_audit()`); e != nil {
+	if _, e := a.DBPool().Exec(ctx, `CREATE FUNCTION reject_subscription_creation_audit() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN IF NEW.action='subscription.creation' THEN RAISE EXCEPTION 'fixture-sensitive-error';END IF;RETURN NEW;END$$;CREATE TRIGGER reject_subscription_creation_audit BEFORE INSERT ON audit_log FOR EACH ROW EXECUTE FUNCTION reject_subscription_creation_audit()`); e != nil {
 		t.Fatal(e)
 	}
 	r = call(991003)

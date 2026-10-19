@@ -37,6 +37,7 @@ func TestGuardedWantedProjection(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/subscriptions", bytes.NewReader(raw))
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Idempotency-Key", uuid.NewString())
 	out := httptest.NewRecorder()
 	router.ServeHTTP(out, req)
 	var created httpapi.SubscriptionDetails

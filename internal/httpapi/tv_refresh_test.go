@@ -69,13 +69,17 @@ func TestTVRefreshHTTPRealProviderReceiptAndScope(t *testing.T) {
 		router.ServeHTTP(out, r)
 		return out
 	}
-	created := call(admin, "POST", "/api/v1/subscriptions", "", httpapi.CreateSubscriptionRequest{MediaId: &m, RootId: &root})
-	var sub httpapi.SubscriptionDetails
-	if created.Code != 201 || json.Unmarshal(created.Body.Bytes(), &sub) != nil {
-		t.Fatal(created.Code)
-	}
+	// Preserve a legacy catalog without trusted season completeness. Current
+	// subscription creation already publishes that evidence and is tested separately.
 	adminUser, err := a.Queries().GetUserByUsername(ctx, "admin")
 	if err != nil {
+		t.Fatal(err)
+	}
+	sub := httpapi.SubscriptionDetails{Id: uuid.New(), IntentVersion: 1}
+	if _, err = a.Queries().CreateSubscription(ctx, db.CreateSubscriptionParams{ID: sub.Id, UserID: adminUser.ID, MediaID: m, RootID: root, QualityPolicyID: "default", QualityPolicyRevision: 1, ScopeType: "all", IndexerIds: []byte("[]")}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = a.Queries().UpsertWantedItem(ctx, db.UpsertWantedItemParams{ID: uuid.New(), SubscriptionID: sub.Id, UnitID: unit, IntentVersion: 1}); err != nil {
 		t.Fatal(err)
 	}
 	actor := &ports.Actor{Type: ports.ActorTypeUser, ID: adminUser.ID.String(), Role: ports.RoleAdmin}

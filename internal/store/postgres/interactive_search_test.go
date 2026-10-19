@@ -22,7 +22,7 @@ import (
 func interactiveFixture(t *testing.T) (*pgxpool.Pool, string, *ports.Actor, *postgres.InteractiveSearchStore) {
 	t.Helper()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	if v, e := postgres.Migrate(t.Context(), dsn, "../../../migrations"); e != nil || v != 86 {
+	if v, e := postgres.Migrate(t.Context(), dsn, repositoryMigrationsThrough(t, 86)); e != nil || v != 86 {
 		t.Fatalf("migrate86: %d %v", v, e)
 	}
 	p, e := postgres.NewPool(t.Context(), dsn, postgres.DefaultPoolConfig())

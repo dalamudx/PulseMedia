@@ -16,7 +16,10 @@ cleanup() {
   exit "$result"
 }
 trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 export TMPDIR="$work" TMP="$work" TEMP="$work"
+export GOCACHE="$work/go-cache"
 go test -race -c -o "$work/tests" "$package"
 mapfile -t names < <("$work/tests" -test.list '^Test' | awk '/^Test[A-Za-z0-9_]+$/')
 ((${#names[@]} > 0)) || exit 1
@@ -37,9 +40,10 @@ for ((group=0; group<groups; group++)); do
   printf 'BETA_GROUP_BEGIN package=%s group=%s selected=%s\n' "$package" "$((group+1))" "$count"
   if bash scripts/with_podman_test_postgres.sh bash -c 'cd -- "$1"; shift; exec "$@"' bash "$package" "$work/tests" -test.v -test.run "$expression" -test.timeout=12m 2>&1 | awk '
     {last[NR%80]=$0}
+    /_test[.]go:[0-9]+:/ {diagnostics[++diagnostic_count]=$0}
     /^--- PASS:/ {passed++}
     /^--- SKIP:/ {skipped++}
-    /^--- FAIL:/ {bad=1; print}
+    /^--- FAIL:/ {bad=1; start=diagnostic_count>12?diagnostic_count-11:1; for (n=start;n<=diagnostic_count;n++) print diagnostics[n]; print}
     /WARNING: DATA RACE|panic:|^FAIL$|Owned test databases were not confirmed clean/ {bad=1; print}
     /OWNED_PODMAN_TEST/ {print}
     END {

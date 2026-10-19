@@ -35,6 +35,7 @@ func TestWantedInputVersionsInvalidateAtCommit(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/v1/subscriptions", bytes.NewReader(body))
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Idempotency-Key", uuid.NewString())
 	r := httptest.NewRecorder()
 	router.ServeHTTP(r, req)
 	var sub httpapi.SubscriptionDetails

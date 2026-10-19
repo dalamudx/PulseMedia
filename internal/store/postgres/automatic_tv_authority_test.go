@@ -99,19 +99,20 @@ func TestAutomaticTVFinalizerR0RecoveryPG(t *testing.T) {
 func TestAutomaticTVExecutionSchemaHistoryPG(t *testing.T) {
 	t.Run("empty-up-down-up", func(t *testing.T) {
 		dsn := pgtest.GetCluster(t).NewTestDB(t)
-		if v, e := postgres.Migrate(t.Context(), dsn, "../../../migrations"); e != nil || v != 88 {
+		migrations := repositoryMigrationsThrough(t, 88)
+		if v, e := postgres.Migrate(t.Context(), dsn, migrations); e != nil || v != 88 {
 			t.Fatal(v, e)
 		}
-		if v, e := postgres.Rollback(t.Context(), dsn, "../../../migrations"); e != nil || v != 87 {
+		if v, e := postgres.Rollback(t.Context(), dsn, migrations); e != nil || v != 87 {
 			t.Fatal(v, e)
 		}
-		if v, e := postgres.Migrate(t.Context(), dsn, "../../../migrations"); e != nil || v != 88 {
+		if v, e := postgres.Migrate(t.Context(), dsn, migrations); e != nil || v != 88 {
 			t.Fatal(v, e)
 		}
 	})
 	for _, selected := range []bool{false, true} {
 		t.Run(map[bool]string{false: "closed", true: "reserved"}[selected], func(t *testing.T) {
-			f := newTVExecutionFixture(t)
+			f := newTVExecutionFixture(t, 88)
 			r := f.start(t)
 			if selected {
 				tvExecutionPage(t, f, r, tvExecutionCandidate(t, f, "history", "1080p", 1))

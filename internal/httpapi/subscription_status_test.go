@@ -39,6 +39,7 @@ func TestCurrentSubscriptionStatus(t *testing.T) {
 	create := httptest.NewRequest(http.MethodPost, "/api/v1/subscriptions", bytes.NewReader(body))
 	create.Header.Set("Authorization", "Bearer "+token)
 	create.Header.Set("Content-Type", "application/json")
+	create.Header.Set("Idempotency-Key", uuid.NewString())
 	out := httptest.NewRecorder()
 	router.ServeHTTP(out, create)
 	if out.Code != 201 {
