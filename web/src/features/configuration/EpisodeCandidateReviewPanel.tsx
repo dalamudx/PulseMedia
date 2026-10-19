@@ -8,19 +8,22 @@ import {safeReason} from "./statusReasons";
 import {ReviewedEpisodeAcquisitionPanel,type EpisodeReviewReceipt,restoreEpisodeReviewReceipt} from "./ReviewedEpisodeAcquisitionPanel";
 import {confirmedEpisodeReview,repairEpisodeReview,sendEpisodeReview,type PendingReview} from "./singleEpisodeReviewRecovery";
 import {CompleteTVCoveragePanel} from "./CompleteTVCoveragePanel";
+import {useDiscoveryReviewHandoff, type DiscoveryReviewCandidateRef} from "./DiscoveryReviewHandoff";
+import {currentDiscoveryReview} from "./discoveryReviewHandoff";
+import {journalKey,readJournal} from "./completeTVJournal";
 
 type Evidence=paths["/api/v1/subscriptions/{id}/episode-mapping/explain-release"]["post"]["responses"]["200"]["content"]["application/json"];
 type Pending=PendingReview;
 const storage=(id:string)=>`pulse:episode-review:${id}`;
 const reason=(v:string)=>safeReason(v,{source_not_bound:"资源来源未绑定本订阅",source_changed:"来源配置或健康状态已变化",source_observation_expired:"来源观测已过期",standard_coverage_only:"标准单集对应已确认，仍不是执行许可",standard_multi_coverage_only:"明确多集编号完整对应，只读解释；多单元获取未开放",multi_unit_review_required:"涉及多个单元，不能保存单集审核或创建单集任务",standard_coverage_unresolved:"标准覆盖不完整或不明确，未返回部分单元",duplicate_episode_coverage:"编号集合重复，完整覆盖未确认",mapped_coverage_only:"编号对应已确认，仍不是执行许可",exact_title_year_review:"标题与作品年份一致，需人工审核",media_identity_unproven:"作品身份证据不足，请核对资源",media_title_unproven:"标题不能可靠对应作品",media_year_conflict:"资源年份与作品矛盾，不能审核通过",media_identity_conflict:"资源外部身份与作品矛盾",external_identity_unverified:"资源外部身份尚未核实",quality_unknown:"品质事实未知",quality_allowed:"当前品质规则通过",quality_rejected:"当前品质规则拒绝",policy_unavailable:"品质策略不可读取",target_missing:"当前目标未满足",coverage_unresolved:"覆盖尚未确定",target_not_in_scope:"单集不在当前目标范围"});
 function restore(id:string):Pending|null{try{const raw=sessionStorage.getItem(storage(id));if(!raw)return null;const value=JSON.parse(raw) as Pending;if(typeof value.key!=="string"||!value.key||!value.body||typeof value.body.candidate_id!=="string"||!/^[-0-9a-f]{36}$/i.test(value.body.candidate_id)||!/^[0-9a-f]{64}$/.test(value.body.expected_input_stamp)||value.body.confirmed!==true||value.body.reason!=="已人工核对当前资源的作品与单集身份")return null;return confirmedEpisodeReview(id,value)?null:value}catch{return null}}
-type Props={subscriptionId:string;signature:string;disabled?:boolean};
+type Props={subscriptionId:string;signature:string;disabled?:boolean;discoveryCandidate?:DiscoveryReviewCandidateRef};
 export function EpisodeCandidateReviewPanel(props:Props){
  const {user}=useAuth();
  if(!user)return null;
  return <EpisodeReviewWorkflow key={`${user.id}:${props.subscriptionId}`} {...props} userId={user.id}/>;
 }
-function EpisodeReviewWorkflow({subscriptionId,signature,disabled,userId}:Props&{userId:string}){
+function EpisodeReviewWorkflow({subscriptionId,signature,disabled,userId,discoveryCandidate}:Props&{userId:string}){
  const [alternatives,setAlternatives]=useState<ReviewAlternative[]>([]),[comparisonEpoch,setComparisonEpoch]=useState(0);
  const remember=useCallback((row:ReviewAlternative)=>setAlternatives(current=>collectReview(current,row)),[]);
  const invalidateComparison=useCallback(()=>setComparisonEpoch(current=>current+1),[]);
@@ -35,6 +38,24 @@ function EpisodeReviewWorkflow({subscriptionId,signature,disabled,userId}:Props&
  const owner=useRef<AbortController|null>(null),epoch=useRef(0),alert=useRef<HTMLParagraphElement>(null),previous=useRef(signature);
  useEffect(()=>()=>owner.current?.abort(),[]);useEffect(()=>{if(error)alert.current?.focus()},[error]);useEffect(()=>{if(previous.current!==signature){previous.current=signature;epoch.current++;setEvidence(null);setAck(false);setNotice("订阅或元数据已变化，旧解释已清除；未确认审核保留原命令。")}},[signature]);
  const locked=busy||disabled||acquirePending;const chosen=items?.find(i=>i.id===selected);const canReview=!searchUnsafe&&!!evidence?.source_current&&evidence.coverage_known&&evidence.rows.length===1&&evidence.identity_decision!=="reject"&&!!evidence.candidate_input_stamp&&evidence.candidate_id===selected;
+ const handoff=useDiscoveryReviewHandoff(), {user}=useAuth();
+ const appliedDiscovery=useRef<string|null>(null);
+ useEffect(()=>{
+  const ref=currentDiscoveryReview(discoveryCandidate??null,userId,user?.role);
+  if(!ref||ref.subscriptionId!==subscriptionId||disabled||busy)return;
+  const token=`${ref.searchId}:${ref.candidateId}`;
+  if(appliedDiscovery.current===token)return;
+  appliedDiscovery.current=token;
+  let savedPending=false;
+  try{savedPending=!!sessionStorage.getItem(storage(subscriptionId))||!!sessionStorage.getItem(`pulse:episode-acquisition:${subscriptionId}`)||readJournal(localStorage,journalKey(userId,subscriptionId)).entries.some(entry=>entry.phase==="pending")}catch{savedPending=true}
+  if(pending||repairPending||acquirePending||savedPending||["creating","recovering","unknown","missing","blocked"].includes(searcher.phase)){
+   setNotice("已有未确认搜索、审核或获取记录，已保留原命令。请先恢复原结果，再重新选择发现页候选。");
+  }else{
+   setSelected(ref.candidateId);setEvidence(null);setReviewed(null);setAck(false);invalidateComparison();
+   setNotice(`已选择发现页候选 ${ref.candidateId}。请先读取当前证据，再分别确认审核与获取。`);
+  }
+  handoff.clear();
+ },[discoveryCandidate,disabled,busy,userId,user?.role,subscriptionId,pending,repairPending,acquirePending,searcher.phase,invalidateComparison]);
  async function run(action:(c:AbortController,g:number)=>Promise<void>){if(owner.current||disabled||acquirePending)return;const c=new AbortController(),g=epoch.current;owner.current=c;invalidateComparison();setBusy(true);setError("");try{await action(c,g)}catch{if(!c.signal.aborted){setEvidence(null);setAck(false);setError("请求连接失败，旧解释已清除；未确认审核仍保留原命令。")}}finally{if(owner.current===c)owner.current=null;if(!c.signal.aborted)setBusy(false)}}
  async function search(){if(blocked||!query.trim()||searcher.busy)return;setEvidence(null);setSelected("");setAck(false);invalidateComparison();await searcher.start(query);}
  async function explain(){const id=pending?.body.candidate_id??selected;if(!id)return;setEvidence(null);setAck(false);await run(async(c,g)=>{const r=await api.POST("/api/v1/subscriptions/{id}/episode-mapping/explain-release",{signal:c.signal,cache:"no-store",params:{path:{id:subscriptionId}},body:{candidate_id:id}});if(c.signal.aborted||g!==epoch.current)return;if(r.error||!r.data){setError("候选证据读取失败，未沿用旧身份或编号结果。");return}setEvidence(r.data);if(pending)setNotice("读取观测不能确认审核命令；重试使用原命令 ID。")})}

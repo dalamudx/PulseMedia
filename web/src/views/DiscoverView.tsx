@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, Loader2, Sparkles, Film, Tv, Trophy, Rss, RefreshCw } from "lucide-react";
-import { api } from "@/api/client";
+import { useAuth } from "@/features/auth/AuthContext";
+import { useDiscoveryCatalog } from "@/features/configuration/useDiscoveryCatalog";
+import { matchesDiscoveryGenre, type DiscoveryCategory } from "@/features/configuration/discoveryCatalog";
 import { useToast } from "@/features/toast/ToastContext";
 import { MediaCard, type MediaItem } from "@/components/cards/MediaCard";
 import { MediaDetailModal } from "@/components/dialog/MediaDetailModal";
@@ -16,26 +18,27 @@ export const DiscoverView: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
+  const {user} = useAuth();
 
-  const [activeCategory, setActiveCategory] = useState<"trending" | "movies" | "tv" | "douban">("trending");
+  const [activeCategory, setActiveCategory] = useState<DiscoveryCategory>("trending");
   const [selectedGenre, setSelectedGenre] = useState<string>("全部");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState<"all" | "movie" | "tv">("all");
   const [searchYear, setSearchYear] = useState<string>("");
-  const [searching, setSearching] = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [movies, setMovies] = useState<MediaItem[]>([]);
+  const {feedItems, movies, searching, searched, loadingFeed, feedError, searchError,
+    search: searchCatalog, refreshFeed, resetSearch: resetCatalogSearch} = useDiscoveryCatalog({
+      category: activeCategory, locationKey: location.key, userId: user?.id,
+    });
   const subscriptionCreation = useSubscriptionCreation({ onSuccess: (result) => {
     setShowDetailModal(false);
     toast.success(result.title ? `《${result.title}》订阅成功` : "订阅成功", "订阅意图已确认，可在订阅页查看季集范围与获取状态。");
-    navigate("/subscriptions");
+    navigate(`/subscriptions?subscription=${result.id}`);
   } });
-  const subscribingId = subscriptionCreation.busy ? subscriptionCreation.recovery?.body.tmdb_id ?? null : null;
+  const isSubscribing = (media: MediaItem | null) => !!media && subscriptionCreation.busy
+    && subscriptionCreation.recovery?.body.tmdb_id === media.tmdb_id
+    && (subscriptionCreation.recovery.body.media_type ?? "movie") === (media.media_type ?? "movie");
 
-  // Dynamic Discover Feed (TMDB API 20+ items)
-  const [feedItems, setFeedItems] = useState<MediaItem[]>([]);
-  const [loadingFeed, setLoadingFeed] = useState(false);
 
   // Detail Modal
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -46,101 +49,39 @@ export const DiscoverView: React.FC = () => {
   const [currentMedia, setCurrentMedia] = useState<MediaItem | null>(null);
   const releaseSearch=useInteractiveReleaseSearch({scope:"discover"});
 
-  const [feedError, setFeedError] = useState("");
-  const feedRequest = useRef<AbortController | null>(null);
-
-  const switchCategory = (cat: "trending" | "movies" | "tv" | "douban") => {
-    setActiveCategory(cat);
-    setSelectedGenre("全部");
-    setSearched(false);
-    setSearchQuery("");
-    setMovies([]);
-  };
-
-  const refreshDiscoverData = (notify = false) => {
-    feedRequest.current?.abort();
-    const controller = new AbortController(); feedRequest.current = controller;
-    setLoadingFeed(true); setFeedItems([]); setFeedError("");
-    let category: "trending" | "movie" | "tv" | "top_rated" = "trending";
-    if (activeCategory === "movies") category = "movie";
-    if (activeCategory === "tv") category = "tv";
-    if (activeCategory === "douban") category = "top_rated";
-    api.GET("/api/v1/discover", { params: { query: { category, page: 1 } }, signal: controller.signal })
-      .then(({ data, error }) => {
-        if (controller.signal.aborted) return;
-        if (error || !data) { setFeedError("推荐读取失败，请检查元数据配置或重新加载。"); if (notify) toast.error("刷新失败", "未取得推荐数据。"); return; }
-        setFeedItems(data.results.map(item => ({ ...item, year: item.year ?? undefined, overview: item.overview ?? undefined, poster_url: item.poster_url ?? undefined, backdrop_url: item.backdrop_url ?? undefined, rating: item.rating ?? undefined, genres: item.genres ?? undefined })));
-        if (notify) toast.success("推荐列表已刷新", data.results.length ? "已读取推荐数据。" : "暂无推荐影视。");
-      })
-      .catch(() => { if (!controller.signal.aborted) setFeedError("连接失败，未取得推荐数据。"); })
-      .finally(() => { if (!controller.signal.aborted) setLoadingFeed(false); });
-  };
-
   useEffect(() => {
-    refreshDiscoverData(false);
-    return () => feedRequest.current?.abort();
-  }, [activeCategory, location.key]);
+    setShowDetailModal(false); setShowReleaseModal(false);
+    setSelectedDetailMedia(null); setCurrentMedia(null);
+  }, [user?.id, user?.role]);
 
-  // Real genre filtering and display computation
-  const currentDisplayList = useMemo(() => {
-    const baseList = searched ? movies : feedItems;
-    if (selectedGenre === "全部") return baseList;
+  const switchCategory = (category: DiscoveryCategory) => {
+    resetCatalogSearch();
+    setActiveCategory(category);
+    setSelectedGenre("全部");
+    setSearchQuery("");
+  };
 
-    return baseList.filter((m) => {
-      const inGenres = m.genres?.some(
-        (g) => g.includes(selectedGenre) || selectedGenre.includes(g)
-      );
-      const inOverview = m.overview?.includes(selectedGenre);
-      const inTitle = m.title.includes(selectedGenre);
-      return inGenres || inOverview || inTitle;
-    });
-  }, [searched, movies, feedItems, selectedGenre]);
-
-  const spotlightItem = feedItems[0];
-
-  const handleSearch = async (queryText?: string, typeVal?: "all" | "movie" | "tv") => {
-    const q = (queryText ?? searchQuery).trim();
-    if (!q) return;
-    const t = typeVal ?? searchType;
-
-    setSearching(true);
-    try {
-      const yearNum = searchYear ? parseInt(searchYear, 10) : undefined;
-      const { data, error } = await api.GET("/api/v1/search/movies", {
-        params: {
-          query: {
-            query: q,
-            type: t,
-            year: yearNum,
-          },
-        },
-      });
-      if (error) {
-        toast.error("搜索失败", error.message || "未能检索到影片");
-        setMovies([]);
-        return;
-      }
-      setMovies((data?.results as MediaItem[]) || []);
-      setSearched(true);
-    } finally {
-      setSearching(false);
+  const refreshDiscoverData = async (notify = false) => {
+    const refreshed = await refreshFeed();
+    if (notify) {
+      if (refreshed) toast.success("推荐列表已刷新", "已读取推荐数据。");
     }
   };
 
+  const currentDisplayList = useMemo(() => (searched ? movies : feedItems)
+    .filter(media => matchesDiscoveryGenre(media, selectedGenre)), [searched, movies, feedItems, selectedGenre]);
+  const spotlightItem = feedItems[0];
+  const handleSearch = (queryText = searchQuery, type = searchType, year = searchYear) =>
+    searchCatalog(queryText, type, year);
+
   const resetSearch = () => {
-    setSearched(false);
-    setSearchQuery("");
-    setSearchYear("");
-    setMovies([]);
+    resetCatalogSearch(); setSearchQuery(""); setSearchYear("");
   };
 
-  const quickSearch = (title: string, t: "all" | "movie" | "tv") => {
-    setSearchQuery(title);
-    setSearchType(t);
-    setSearchYear("");
-    handleSearch(title, t);
+  const quickSearch = (title: string, type: "all" | "movie" | "tv") => {
+    setSearchQuery(title); setSearchType(type); setSearchYear("");
+    void handleSearch(title, type, "");
   };
-
   const openMediaDetail = (m: MediaItem) => {
     setSelectedDetailMedia(m);
     setShowDetailModal(true);
@@ -293,12 +234,14 @@ export const DiscoverView: React.FC = () => {
             placeholder="输入电影或电视剧名称 (例如 绝命毒师, Breaking Bad, 权力的游戏, 我不是药神)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="影视名称"
           />
           <input
             type="number"
             placeholder="年份 (可选)"
             className="year-input"
             value={searchYear}
+            aria-label="上映或首播年份" min={1800} max={9999} step={1}
             onChange={(e) => setSearchYear(e.target.value)}
           />
           <button type="submit" className="btn-primary" disabled={searching}>
@@ -356,35 +299,35 @@ export const DiscoverView: React.FC = () => {
             onClick={() => switchCategory("trending")}
           >
             <Sparkles size={14} />
-            <span>🔥 热门流行 (20+)</span>
+            <span>热门流行</span>
           </button>
           <button
-            className={`tab-btn ${activeCategory === "movies" ? "active" : ""}`}
-            onClick={() => switchCategory("movies")}
+            className={`tab-btn ${activeCategory === "movie" ? "active" : ""}`}
+            onClick={() => switchCategory("movie")}
           >
             <Film size={14} />
-            <span>🎬 热门电影 (20+)</span>
+            <span>热门电影</span>
           </button>
           <button
             className={`tab-btn ${activeCategory === "tv" ? "active" : ""}`}
             onClick={() => switchCategory("tv")}
           >
             <Tv size={14} />
-            <span>📺 热门剧集 (20+)</span>
+            <span>热门剧集</span>
           </button>
           <button
-            className={`tab-btn tab-calendar ${activeCategory === "douban" ? "active" : ""}`}
-            onClick={() => switchCategory("douban")}
+            className={`tab-btn tab-calendar ${activeCategory === "top_rated" ? "active" : ""}`}
+            onClick={() => switchCategory("top_rated")}
           >
             <Trophy size={14} />
-            <span>🏆 豆瓣 Top250</span>
+            <span>TMDB 高分</span>
           </button>
         </div>
       )}
 
       {/* Genre Filter Pills with Real Live Filtering */}
       <div className="recommend-box">
-        <span className="recommend-label">题材筛选:</span>
+        <span className="recommend-label">题材筛选（当前列表）:</span>
         <div className="tag-list">
           {["全部", "剧情", "动作", "科幻", "悬疑", "犯罪", "动画", "喜剧", "惊悚", "冒险", "战争"].map(
             (g) => (
@@ -392,6 +335,7 @@ export const DiscoverView: React.FC = () => {
                 key={g}
                 type="button"
                 className={`tag-btn ${selectedGenre === g ? "tag-btn-active" : ""}`}
+                aria-pressed={selectedGenre === g}
                 onClick={() => setSelectedGenre(g)}
               >
                 {g}
@@ -402,9 +346,10 @@ export const DiscoverView: React.FC = () => {
       </div>
 
       {!searched && feedError && <div role="alert" className="config-error">{feedError} <button className="btn-sm btn-secondary" onClick={() => refreshDiscoverData(false)}>重新加载推荐</button></div>}
+      {searched && searchError && <div role="alert" className="config-error">{searchError} <button type="button" className="btn-sm btn-secondary" disabled={searching} onClick={() => void handleSearch()}>重试当前搜索</button></div>}
 
       {/* Search State / Loading State / Display Grid */}
-      {searching || loadingFeed ? (
+      {searching || (!searched && loadingFeed && feedItems.length === 0) ? (
         <div className="loading-state">
           <div className="spinner"></div>
           <p>正在加载影视数据…</p>
@@ -415,14 +360,14 @@ export const DiscoverView: React.FC = () => {
             <MediaCard
               key={`${m.tmdb_id}-${m.media_type}`}
               media={m}
-              subscribing={subscribingId === m.tmdb_id}
+              subscribing={isSubscribing(m)}
               onClick={openMediaDetail}
               onSubscribe={() => openMediaDetail(m)}
               onSearch={openReleaseSearch}
             />
           ))}
         </div>
-      ) : feedError && !searched ? null : (
+      ) : (searched ? !!searchError : !!feedError) ? null : (
         <div className="empty-state" role="status">
           <h3>{searched || selectedGenre !== "全部" ? "当前筛选没有影视" : "暂无推荐影视"}</h3>
           <p>{searched || selectedGenre !== "全部" ? "可调整题材筛选或更换搜索关键词。" : "元数据源成功返回空列表，可稍后重新加载。"}</p>
@@ -433,7 +378,7 @@ export const DiscoverView: React.FC = () => {
       {showDetailModal && (
         <MediaDetailModal
           media={selectedDetailMedia}
-          subscribing={subscribingId === selectedDetailMedia?.tmdb_id}
+          subscribing={isSubscribing(selectedDetailMedia)}
           onClose={() => setShowDetailModal(false)}
           onSubscribe={subscribeMedia}
           onSearchReleases={openReleaseSearch}
@@ -450,7 +395,7 @@ export const DiscoverView: React.FC = () => {
           releases={releaseSearch.results}
           search={releaseSearch}
           loading={releaseSearch.loading}
-          onClose={() => {releaseSearch.pause();void releaseSearch.cancel();setShowReleaseModal(false);}}
+          onClose={() => {releaseSearch.pause();setShowReleaseModal(false);}}
         />
       )}
     </div>

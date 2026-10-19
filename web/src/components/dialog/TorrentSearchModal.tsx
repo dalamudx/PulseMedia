@@ -5,6 +5,7 @@ import { X, ArrowUp, HardDrive, Download, Loader2 } from "lucide-react";
 import type { paths } from "@/api/client";
 import {MovieAcquisitionPanel} from "@/features/configuration/MovieAcquisitionPanel";
 import {useDialogFocus} from "@/features/configuration/useDialogFocus";
+import {DiscoveryTVReviewTarget} from "@/features/configuration/DiscoveryTVReviewTarget";
 
 type ReleaseItem = paths["/api/v1/releases/search"]["get"]["responses"]["200"]["content"]["application/json"]["results"][number];
 
@@ -50,8 +51,10 @@ export const TorrentSearchModal: React.FC<TorrentSearchModalProps> = ({
           </button>
         </div>
 
-        {mediaType!=="movie"&&<p className="config-description">剧集获取请前往原订阅，完成单集或完整覆盖审核与确认。</p>}{!movieId&&<p className="config-description">恢复的搜索可继续观察。请选择原电影重新发起搜索后，再确认获取目标。</p>}
+        {mediaType === "tv" && <p className="config-description">选择本剧的本人订阅，再分别确认单集或完整覆盖审核与获取。</p>}{!movieId && <p className="config-description">恢复的搜索可继续观察。请重新选择原影视发起搜索，再确认获取目标。</p>}
+        {mediaType === "tv" && user?.role !== "admin" && <p role="status" className="config-description">手工剧集审核与获取需要管理员会话。成员可创建本人订阅并查看自动获取状态。</p>}
         {user&&chosen&&movieId&&mediaType==="movie"&&search.phase!=="auth"&&<fieldset className="config-fieldset" disabled={!search.canAcquire&&!pending}><MovieAcquisitionPanel key={user.id} movieId={movieId} candidateId={chosen.id} candidateTitle={chosen.title} onPending={setPending}/></fieldset>}
+        {user && chosen && movieId && mediaType === "tv" && search.recovery?.searchId && <DiscoveryTVReviewTarget tmdbId={movieId} candidateId={chosen.id} searchId={search.recovery.searchId} disabled={!search.canAcquire} onPending={setPending}/>}
         {search.message&&<p role={search.phase==="stale"||search.phase==="auth"?"alert":"status"} className="config-description">{search.message}</p>}
         {search.sourceSummary&&<p className="config-description">{search.sourceSummary}</p>}
         {search.policySummary&&<p className="config-description">{search.policySummary}</p>}
@@ -81,7 +84,7 @@ export const TorrentSearchModal: React.FC<TorrentSearchModalProps> = ({
                 <div className="rel-action">
                   <button
                     className="btn-sm btn-primary"
-                    disabled={pending || !search.canAcquire || !movieId || mediaType!=="movie"}
+                    disabled={pending || !search.canAcquire || !movieId || !(mediaType === "movie" || mediaType === "tv" && user?.role === "admin")}
                     onClick={() => user&&search.recovery?.searchId&&setChosen({userId:user.id,searchId:search.recovery.searchId,item:rel})}
                   >
                     <Download size={13} /><span>选择获取目标</span>

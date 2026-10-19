@@ -4965,6 +4965,12 @@ components:
         media_type:
           type: string
           example: "tv"
+        tmdb_id:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+          description: Canonical native TMDB identity, when uniquely available for the actual media_type in the authorized subscription list. Never a local media UUID or an execution permission.
         poster_url:
           type: string
         root_name:

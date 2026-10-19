@@ -28,11 +28,13 @@ import { CandidateReasonsPanel } from "@/features/configuration/CandidateReasons
 import { MovieUpgradePanel } from "@/features/configuration/MovieUpgradePanel";
 import { LibraryReusePanel } from "@/features/configuration/LibraryReusePanel";
 
+import type {DiscoveryReviewCandidateRef} from "@/features/configuration/DiscoveryReviewHandoff";
 type SubDetail = paths["/api/v1/subscriptions"]["get"]["responses"]["200"]["content"]["application/json"]["items"][number];
 type WantedItem = NonNullable<SubDetail["wanted_items"]>[number] & { reservation_protected?: boolean; status?: string };
 
 interface SubscriptionDetailModalProps {
   subscription: SubDetail;
+  discoveryCandidate?: DiscoveryReviewCandidateRef;
   posterUrl?: string;
   operating?: boolean;
   onClose: () => void;
@@ -55,6 +57,7 @@ function parseSeasonAndEpisode(unitKey?: string | null): { season: number; episo
 
 export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = ({
   subscription,
+  discoveryCandidate,
   posterUrl,
   operating,
   onClose,
@@ -264,7 +267,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
           {!isTV&&explanationWanted&&<CandidateReasonsPanel key={"candidates-"+subscription.id} subscriptionId={subscription.id} wantedId={explanationWanted.id} intentVersion={subscription.intent_version} onChanged={()=>void status.refresh()}/> }
           {!isTV&&<MovieUpgradePanel subscription={subscription} wantedId={explanationWanted?.id??""} onUpdated={()=>void status.refresh()}/>}
           {isTV&&<TVMetadataRefreshPanel subscription={subscription} onUpdated={onUpdated} disabled={operating}/>}
-{isTV&&<EpisodeMappingPanel subscription={subscription} onUpdated={onUpdated} disabled={operating}/>}
+{isTV&&<EpisodeMappingPanel subscription={subscription} onUpdated={onUpdated} disabled={operating} discoveryCandidate={discoveryCandidate}/>}
           <SubscriptionScopeEditor subscriptionId={subscription.id} onUpdated={onUpdated} disabled={operating}/>
           <SubscriptionBindingEditor key={subscription.id} subscription={subscription} onUpdated={onUpdated} disabled={operating} />
           {/* Season Pill Tabs (按季平铺导航药丸) */}

@@ -14,6 +14,7 @@ import { SettingsView } from "@/views/SettingsView";
 import { AccountTokensView } from "@/views/AccountTokensView";
 import { LoginView } from "@/views/LoginView";
 import { SetupView } from "@/views/SetupView";
+import {DiscoveryReviewHandoffProvider} from "@/features/configuration/DiscoveryReviewHandoff";
 
 export const App: React.FC = () => {
   const { user, initialized, checking, statusError, checkStatus } = useAuth();
@@ -82,6 +83,7 @@ export const App: React.FC = () => {
 
   // Full Console Layout (with Responsive Adaptive Container & Mobile Drawer)
   return (
+    <DiscoveryReviewHandoffProvider>
     <div
       className={`app-shell with-sidebar ${isCollapsed ? "sidebar-collapsed" : ""} ${
         mobileDrawerOpen ? "mobile-drawer-open" : ""
@@ -118,5 +120,6 @@ export const App: React.FC = () => {
         </main>
       </div>
     </div>
+    </DiscoveryReviewHandoffProvider>
   );
 };

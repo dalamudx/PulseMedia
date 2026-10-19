@@ -2419,6 +2419,11 @@ export interface components {
             year?: number;
             /** @example tv */
             media_type?: string;
+            /**
+             * Format: int64
+             * @description Canonical native TMDB identity, when uniquely available for the actual media_type in the authorized subscription list. Never a local media UUID or an execution permission.
+             */
+            tmdb_id?: number;
             poster_url?: string;
             /** @example 默认电视剧存储库 */
             root_name?: string;

@@ -39,9 +39,10 @@ FROM subscription s
 JOIN media m ON m.id = s.media_id
 JOIN library_root r ON r.id = s.root_id
 LEFT JOIN LATERAL (
-    SELECT external_id FROM media_identity
-    WHERE media_id = m.id AND namespace LIKE 'tmdb.%'
-    LIMIT 1
+    SELECT CASE WHEN count(*) = 1 THEN min(external_id) ELSE '' END AS external_id
+    FROM media_identity
+    WHERE media_id = m.id
+      AND namespace = CASE m.media_type WHEN 'movie' THEN 'tmdb.movie' WHEN 'tv' THEN 'tmdb.tv' END
 ) identity ON true
 WHERE $1::boolean OR s.user_id = $2::uuid
 ORDER BY s.created_at DESC

@@ -3092,6 +3092,9 @@ type SubscriptionDetails struct {
 	// Title Example: 绝命毒师 (Breaking Bad)
 	Title *string `json:"title,omitempty"`
 
+	// TmdbId Canonical native TMDB identity, when uniquely available for the actual media_type in the authorized subscription list. Never a local media UUID or an execution permission.
+	TmdbId *int64 `json:"tmdb_id,omitempty"`
+
 	// TotalEpisodes Example: 62
 	TotalEpisodes *int                 `json:"total_episodes,omitempty"`
 	UserId        openapi_types.UUID   `json:"user_id"`

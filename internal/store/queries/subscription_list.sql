@@ -6,7 +6,7 @@ SELECT id, is_active, role FROM app_user WHERE id = $1 FOR SHARE;
 -- name: SetSubscriptionListReadOnly :exec
 SET TRANSACTION READ ONLY;
 
--- Keep the legacy list order and TMDB namespace/identity selection.
+-- Keep list order; expose only one identity in the actual media type's native namespace.
 -- name: ReadSubscriptionListEntries :many
 SELECT s.id, s.user_id, s.media_id, s.root_id, s.quality_policy_id, s.quality_policy_revision,
        s.state, s.intent_version, s.scope_type, s.indexer_ids, s.downloader_id,
@@ -17,9 +17,10 @@ FROM subscription s
 JOIN media m ON m.id = s.media_id
 JOIN library_root r ON r.id = s.root_id
 LEFT JOIN LATERAL (
-    SELECT external_id FROM media_identity
-    WHERE media_id = m.id AND namespace LIKE 'tmdb.%'
-    LIMIT 1
+    SELECT CASE WHEN count(*) = 1 THEN min(external_id) ELSE '' END AS external_id
+    FROM media_identity
+    WHERE media_id = m.id
+      AND namespace = CASE m.media_type WHEN 'movie' THEN 'tmdb.movie' WHEN 'tv' THEN 'tmdb.tv' END
 ) identity ON true
 WHERE sqlc.arg(is_admin)::boolean OR s.user_id = sqlc.arg(user_id)::uuid
 ORDER BY s.created_at DESC;

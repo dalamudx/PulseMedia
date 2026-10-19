@@ -703,6 +703,7 @@ func (s *ServerHandler) ListSubscriptions(ctx context.Context, request ListSubsc
 			Title: &row.Title, Year: row.Year, MediaType: &row.MediaType, RootName: &row.RootName, RootPath: row.RootPath,
 			IndexerIds: &row.IndexerIDs, DownloaderId: row.DownloaderID, PosterUrl: row.PosterURL,
 			TotalEpisodes: &row.TotalEpisodes, SatisfiedEpisodes: &row.SatisfiedEpisodes, WantedItems: &wanted,
+			TmdbId: subscriptionListTMDBID(row.MediaType, row.TMDBExternalID),
 		}
 	}
 	return ListSubscriptions200JSONResponse{Items: items}, nil

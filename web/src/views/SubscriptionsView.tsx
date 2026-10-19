@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Plus,
   Pause,
@@ -14,6 +14,8 @@ import { useToast } from "@/features/toast/ToastContext";
 import { SubscriptionDetailModal } from "@/components/dialog/SubscriptionDetailModal";
 import type { paths } from "@/api/client";
 import { useAuth } from "@/features/auth/AuthContext";
+import {useDiscoveryReviewHandoff} from "@/features/configuration/DiscoveryReviewHandoff";
+import {isReviewUUID} from "@/features/configuration/discoveryReviewHandoff";
 
 type PendingStateControl = {id:string;state:"active"|"paused"|"archived";version:number;key:string};
 function readStateControl(key:string|null):PendingStateControl|null {
@@ -27,12 +29,21 @@ type SubDetail = paths["/api/v1/subscriptions"]["get"]["responses"]["200"]["cont
 export const SubscriptionsView: React.FC = () => {
   const router = useNavigate();
   const toast = useToast();
+  const location = useLocation();
+  const handoff = useDiscoveryReviewHandoff();
+  const targetSubscription = new URLSearchParams(location.search).get("subscription");
+  const [targetError, setTargetError] = useState("");
 
   const [subscriptions, setSubscriptions] = useState<SubDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [operatingId, setOperatingId] = useState<string | null>(null);
 const [controlError,setControlError]=useState("");const [controlBlocked,setControlBlocked]=useState(false);
 const {user}=useAuth();
+const listAccount = `${user?.id ?? ""}:${user?.role ?? ""}`;
+const listLiveAccount = useRef(listAccount); listLiveAccount.current = listAccount;
+const [listSnapshotAccount, setListSnapshotAccount] = useState(listAccount);
+const visibleSubscriptions = useMemo(() => listSnapshotAccount === listAccount ? subscriptions : [], [listSnapshotAccount, listAccount, subscriptions]);
+const listOwner = useRef<AbortController | null>(null);
 const controlStorageKey=user?`pulsemedia.subscription-state.${user.id}`:null;
 const [pendingControl,updatePendingControl]=useState<PendingStateControl|null>(()=>readStateControl(controlStorageKey));
 const setPendingControl=(command:PendingStateControl|null)=>{updatePendingControl(command);if(controlStorageKey)try{if(command)sessionStorage.setItem(controlStorageKey,JSON.stringify(command));else sessionStorage.removeItem(controlStorageKey)}catch{}};
@@ -43,22 +54,52 @@ useEffect(()=>()=>controlOwner.current?.abort(),[]);
   const [searchFilter, setSearchFilter] = useState("");
 
   // Selected subscription for detail modal
-  const [selectedSub, setSelectedSub] = useState<SubDetail | null>(null);
+  const selectionIdentity = `${user?.id ?? ""}:${user?.role ?? ""}`;
+  const [selection, updateSelection] = useState<{identity: string; value: SubDetail | null}>({identity: selectionIdentity, value: null});
+  const selectedSub = selection.identity === selectionIdentity ? selection.value : null;
+  const setSelectedSub = (value: React.SetStateAction<SubDetail | null>) => updateSelection(previous => ({
+    identity: selectionIdentity, value: typeof value === "function" ? value(previous.identity === selectionIdentity ? previous.value : null) : value,
+  }));
 
+  useEffect(() => {
+    if (!targetSubscription || !user) return;
+    setSelectedSub(null); setTargetError("");
+    if (!isReviewUUID(targetSubscription)) {
+      handoff.clear(); setTargetError("订阅定位无效，请从当前订阅列表重新选择。"); return;
+    }
+    const controller = new AbortController();
+    void (async () => {
+      try {
+        const result = await api.GET("/api/v1/subscriptions/{id}", {params: {path: {id: targetSubscription}}, signal: controller.signal, cache: "no-store"});
+        if (controller.signal.aborted) return;
+        if (result.error || !result.data || result.data.id !== targetSubscription) {
+          handoff.clear(); setTargetError("目标订阅读取失败或已不可访问。请从当前列表重新选择。"); return;
+        }
+        const ref = handoff.candidate;
+        if (ref && (ref.subscriptionId !== targetSubscription || ref.userId !== user.id || result.data.user_id !== user.id || result.data.media_type !== "tv" || result.data.state !== "active")) {
+          handoff.clear(); setTargetError("候选与当前订阅或账号不再一致。请重新搜索并选择本人订阅。"); return;
+        }
+        setSelectedSub(result.data);
+      } catch {
+        if (!controller.signal.aborted) {handoff.clear(); setTargetError("目标订阅连接失败。请重新读取当前列表。");}
+      }
+    })();
+    return () => controller.abort();
+  }, [targetSubscription, location.key, user?.id, user?.role]);
   const movieCount = useMemo(
-    () => subscriptions.filter((s) => s.media_type !== "tv" && (!s.wanted_items || s.wanted_items.length <= 1)).length,
-    [subscriptions]
+    () => visibleSubscriptions.filter((s) => s.media_type !== "tv" && (!s.wanted_items || s.wanted_items.length <= 1)).length,
+    [visibleSubscriptions]
   );
   const tvCount = useMemo(
     () =>
-      subscriptions.filter(
+      visibleSubscriptions.filter(
         (s) => s.media_type === "tv" || (s.media_type !== "movie" && s.wanted_items && s.wanted_items.length > 1)
       ).length,
-    [subscriptions]
+    [visibleSubscriptions]
   );
 
   const filteredSubscriptions = useMemo(() => {
-    let list = subscriptions;
+    let list = visibleSubscriptions;
     if (activeTab === "movie") {
       list = list.filter((s) => s.media_type !== "tv" && (!s.wanted_items || s.wanted_items.length <= 1));
     } else if (activeTab === "tv") {
@@ -75,29 +116,38 @@ useEffect(()=>()=>controlOwner.current?.abort(),[]);
       );
     }
     return list;
-  }, [activeTab, subscriptions, searchFilter]);
+  }, [activeTab, visibleSubscriptions, searchFilter]);
 
 
   const loadSubscriptions = async () => {
+    listOwner.current?.abort();
+    const controller = new AbortController(); listOwner.current = controller;
+    const current = () => !controller.signal.aborted && listOwner.current === controller && listLiveAccount.current === listAccount;
     setLoading(true);
     try {
-      const { data, error } = await api.GET("/api/v1/subscriptions");
-      if (error) {
-        setSubscriptions([]);setSelectedSub(null);setControlError("订阅列表读取失败，未沿用旧计数与控制状态。请重试读取。");
-        return false;
-      }
-      const items=data?.items||[];setSubscriptions(items);setSelectedSub(prev=>prev?items.find(item=>item.id===prev.id)?{...prev,...items.find(item=>item.id===prev.id)!}:null:null);return true;
-    } catch {setSubscriptions([]);setSelectedSub(null);setControlError("订阅连接失败，未沿用旧状态。请重试读取。");return false;} finally {
-      setLoading(false);
+      const {data, error} = await api.GET("/api/v1/subscriptions", {signal: controller.signal, cache: "no-store"});
+      if (!current()) return false;
+      setListSnapshotAccount(listAccount);
+      if (error || !data) {setSubscriptions([]); setSelectedSub(null); setControlError("订阅列表读取失败，未沿用旧计数与控制状态。请重试读取。"); return false;}
+      const items = data.items;
+      setSubscriptions(items);
+      setSelectedSub(previous => previous ? items.find(item => item.id === previous.id) ? {...previous, ...items.find(item => item.id === previous.id)!} : null : null);
+      return true;
+    } catch {
+      if (current()) {setListSnapshotAccount(listAccount); setSubscriptions([]); setSelectedSub(null); setControlError("订阅连接失败，未沿用旧状态。请重试读取。");}
+      return false;
+    } finally {
+      if (current()) {listOwner.current = null; setLoading(false);}
     }
   };
 
   useEffect(() => {
-    loadSubscriptions();
-  }, []);
+    void loadSubscriptions();
+    return () => listOwner.current?.abort();
+  }, [user?.id, user?.role]);
 
   const applyState = async (id:string,state:"active"|"paused"|"archived") => {
-if(controlOwner.current||controlBlocked)return;const current=selectedSub?.id===id?selectedSub:subscriptions.find(s=>s.id===id);if(!current)return;
+if(controlOwner.current||controlBlocked)return;const current=selectedSub?.id===id?selectedSub:visibleSubscriptions.find(s=>s.id===id);if(!current)return;
 const command=pendingControl??{id,state,version:current.intent_version,key:crypto.randomUUID()};if(command.id!==id||command.state!==state)return;
 const ctl=new AbortController();controlOwner.current=ctl;setPendingControl(command);setControlError("");setOperatingId(id);let confirmed=false;
 try{const{data,error,response}=await api.PUT("/api/v1/subscriptions/{id}/control",{signal:ctl.signal,params:{path:{id},header:{"Idempotency-Key":command.key}},body:{action:"state",state:command.state,expected_version:command.version}});if(ctl.signal.aborted)return;
@@ -140,11 +190,12 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
 
   return (
     <div className="subscriptions-container">
+      {targetError && <p role="alert" className="config-error">{targetError}</p>}
       {/* Top Header Bar */}
       <div className="page-header">
         <div>
           <h2>影视订阅与追更管理</h2>
-          <p className="subtitle">管理订阅意图与季集进度。自动补缺仅支持通过订阅 API 绑定索引器和下载器的单电影；剧集及模糊匹配仍需人工处理。</p>
+          <p className="subtitle">管理订阅意图与季集进度。已绑定来源和下载器的电影与证据完整的标准单集可自动补缺；映射、完整覆盖和歧义资源请进入原审核流程。</p>
         </div>
         <div className="header-actions">
           <button className="btn-primary" onClick={() => router("/discover")}>
@@ -163,7 +214,7 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
             className={`tab-btn ${activeTab === "all" ? "active" : ""}`}
             onClick={() => setActiveTab("all")}
           >
-            全部订阅 ({subscriptions.length})
+            全部订阅 ({visibleSubscriptions.length})
           </button>
           <button
             className={`tab-btn ${activeTab === "movie" ? "active" : ""}`}
@@ -196,7 +247,7 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
       </div>
 
       {/* Main View Container */}
-      {loading ? (
+      {loading || listSnapshotAccount !== listAccount ? (
         <div className="loading-state">
           <div className="spinner"></div>
           <p>正在加载订阅列表...</p>
@@ -345,9 +396,10 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
       {selectedSub && (
         <SubscriptionDetailModal
           subscription={selectedSub}
+          discoveryCandidate={handoff.candidate?.subscriptionId === selectedSub.id && selectedSub.user_id === user?.id && selectedSub.media_type === "tv" ? handoff.candidate : undefined}
           posterUrl={selectedSub.poster_url || undefined}
           operating={operatingId === selectedSub.id}
-          onClose={() => setSelectedSub(null)}
+          onClose={() => {handoff.clear(); setSelectedSub(null); if(targetSubscription) router("/subscriptions", {replace: true});}}
           controlFeedback={controlFeedback}
           onPause={pauseSub}
           onResume={resumeSub}
