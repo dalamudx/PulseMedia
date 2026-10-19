@@ -1,6 +1,8 @@
 import {useCallback,useEffect,useMemo,useRef,useState} from "react";
 import {Film,Tv,RefreshCw} from "lucide-react";
 import {api,type paths} from "@/api/client";
+import {useAuth} from "@/features/auth/AuthContext";
+import "./media-view.css";
 type Page=paths["/api/v1/library/catalog"]["get"]["responses"]["200"]["content"]["application/json"];
 type Entry=Page["items"][number];
 const key=(e:Entry)=>`${e.file_id}:${e.unit_id}`;
@@ -8,6 +10,10 @@ function bytes(value:string){try{return `${BigInt(value).toLocaleString()} 字�
 const healthLabel:Record<string,string>={healthy:"可用",online:"在线",offline:"离线",pending:"等待首次扫描",unknown:"尚未确认"};
 function status(e:Entry){return e.confirmed?"已有服务器确认记录":e.imported?"已入库":"已关联，未入库"}
 export function MediaView(){
+ const {user}=useAuth();
+ return user?<MediaContent key={`${user.id}:${user.role}`}/>:null;
+}
+function MediaContent(){
  const[items,setItems]=useState<Entry[]>([]),[cursor,setCursor]=useState(""),[tab,setTab]=useState<"movie"|"tv"|"files">("movie"),[filter,setFilter]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[loaded,setLoaded]=useState(false),[expanded,setExpanded]=useState<Set<string>>(()=>new Set());const owner=useRef<AbortController|null>(null);
  const load=useCallback(async(next="")=>{owner.current?.abort();const c=new AbortController();owner.current=c;setBusy(true);setError("");if(!next){setItems([]);setCursor("");setLoaded(false)}try{const r=await api.GET("/api/v1/library/catalog",{signal:c.signal,cache:"no-store",params:{query:{limit:50,cursor:next||undefined}}});if(c.signal.aborted)return;if(r.error||!r.data){setItems([]);setCursor("");setLoaded(false);setError("媒体库读取失败，旧文件状态已清除，请重新读取。");return}const data=r.data;setItems(old=>next?[...new Map([...old,...data.items].map(e=>[key(e),e])).values()]:data.items);setCursor(data.next_cursor??"");setLoaded(true)}catch{if(!c.signal.aborted){setItems([]);setCursor("");setLoaded(false);setError("媒体库连接失败，旧文件状态已清除，请重新读取。")}}finally{if(owner.current===c)owner.current=null;if(!c.signal.aborted)setBusy(false)}},[]);
  useEffect(()=>{void load();return()=>owner.current?.abort()},[load]);

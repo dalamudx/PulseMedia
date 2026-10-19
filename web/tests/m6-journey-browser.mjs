@@ -1,0 +1,82 @@
+import assert from 'node:assert/strict';
+import {stat} from 'node:fs/promises';
+import {join} from 'node:path';
+import {setTimeout as delay} from 'node:timers/promises';
+import {chromium} from 'playwright-core';
+
+const env=process.env,base=env.PULSE_M6_JOURNEY_BASE,title='Native Automatic Series';
+assert(base&&env.PULSE_M6_JOURNEY_SESSION&&env.PULSE_M6_JOURNEY_CDP&&env.PULSE_M6_JOURNEY_SCREENSHOTS?.startsWith('/data/temp/'),'owned fixture required');
+assert.notEqual(new URL(env.PULSE_M6_JOURNEY_CDP).port,'9222');
+const browser=await chromium.connectOverCDP(env.PULSE_M6_JOURNEY_CDP);
+const context=await browser.newContext({viewport:{width:1440,height:1000},colorScheme:'dark',reducedMotion:'reduce',serviceWorkers:'block'});
+try {
+ const external=[],errors=[],writes=[],reads=[];
+ // External images fail honestly; API responses are never replaced.
+ await context.route('**/*',route=>{const u=new URL(route.request().url());if(u.origin===base)return route.continue();external.push(u.origin+u.pathname);return route.abort('blockedbyclient');});
+ await context.addCookies([{name:'pulsemedia_session',value:env.PULSE_M6_JOURNEY_SESSION,url:base,httpOnly:true,sameSite:'Strict'}]);
+ const page=await context.newPage();page.setDefaultTimeout(15000);
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{const path=new URL(r.url()).pathname;if(path.startsWith('/api/')&&!['GET','HEAD'].includes(r.method()))writes.push({method:r.method(),path,body:r.postDataJSON(),key:r.headers()['idempotency-key']});});
+ page.on('response',r=>{if(r.request().method()==='GET'&&r.status()===200)reads.push(new URL(r.url()).pathname);});
+ const evidence=async()=>{const r=await context.request.get(base+'/__m6_journey/evidence');assert.equal(r.status(),200);return r.json();};
+ const shot=async name=>{assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal overflow '+name);const path=join(env.PULSE_M6_JOURNEY_SCREENSHOTS,name+'.png');await page.screenshot({path,fullPage:true});assert((await stat(path)).size>1000);};
+ const readPage=async(path,endpoint)=>{const reply=page.waitForResponse(r=>new URL(r.url()).pathname===endpoint&&r.status()===200&&r.request().method()==='GET');await page.goto(base+path,{waitUntil:'domcontentloaded'});return (await reply).json();};
+ await readPage('/','/api/v1/library/overview');
+ const empty=await evidence();assert.equal(empty.facts,0);assert.equal(empty.tasks,0);assert.deepEqual(empty.subscriptions,[]);
+ await page.locator('.wall-card-modern').filter({has:page.locator('.wall-card-title',{hasText:title})}).click();
+ const modal=page.getByRole('dialog',{name:title,exact:true});await modal.waitFor();
+ await modal.getByRole('radio',{name:'指定季与集',exact:true}).check();
+ await modal.getByLabel('查看季',{exact:true}).selectOption('1');
+ await modal.locator('[aria-label="订阅的季"]').getByRole('checkbox',{name:/^S01 ·/}).check();
+ await modal.getByRole('button',{name:'清空',exact:true}).click();
+ for(const key of ['S01E01','S01E03','S01E07'])await modal.getByRole('button',{name:'选择 '+key,exact:true}).waitFor();
+ assert.equal(await modal.getByRole('button',{name:'选择 S01E02',exact:true}).count(),0,'never invent episode 2');
+ await modal.getByRole('button',{name:'选择 S01E03',exact:true}).click();
+ await modal.getByLabel('目标媒体根',{exact:true}).selectOption(env.PULSE_M6_JOURNEY_ROOT);
+ await modal.getByLabel('质量与过滤策略',{exact:true}).selectOption('m6-journey');
+ await modal.getByRole('checkbox',{name:/Journey source/}).check();
+ await modal.getByLabel('下载器',{exact:true}).selectOption(env.PULSE_M6_JOURNEY_CLIENT);
+ const created=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions'&&r.request().method()==='POST');
+ await modal.getByRole('button',{name:'保存选集订阅（1 集）',exact:true}).click();
+ const response=await created;assert.equal(response.status(),201);const subscription=await response.json();assert.match(subscription.id,/^[0-9a-f-]{36}$/);
+ await page.waitForURL(u=>u.pathname==='/subscriptions');
+ const posts=writes.filter(r=>r.path==='/api/v1/subscriptions');assert.equal(posts.length,1);assert(posts[0].key);
+ assert.equal(posts[0].body.tmdb_id,550);assert.equal(posts[0].body.scope_type,'selected');assert.deepEqual(posts[0].body.seasons,[1]);assert.deepEqual(posts[0].body.episodes,['S01E03']);assert.equal(posts[0].body.root_id,env.PULSE_M6_JOURNEY_ROOT);assert.equal(posts[0].body.quality_policy_id,'m6-journey');assert.equal(posts[0].body.downloader_id,env.PULSE_M6_JOURNEY_CLIENT);assert.deepEqual(posts[0].body.indexer_ids,[env.PULSE_M6_JOURNEY_INDEXER]);
+ await readPage('/subscriptions?subscription='+subscription.id,'/api/v1/subscriptions/'+subscription.id);
+ await page.getByText(title,{exact:true}).first().waitFor();
+ let final;const deadline=Date.now()+130000;
+ while(Date.now()<deadline){final=await evidence();if(final.plans.length===1&&final.plans[0].state==='completed'&&final.organization_succeeded===1&&final.wanted.find(w=>w.key==='S01E03')?.satisfied&&final.wanted.find(w=>w.key==='S01E03')?.stage==='imported')break;await delay(250);}
+ assert.equal(final.plans.length,1);assert.equal(final.plans[0].state,'completed','natural worker/finalizer must finish');
+ assert.equal(final.subscriptions.length,1);assert.equal(final.subscriptions[0].id,subscription.id);assert.equal(final.creation_receipts,1);
+ assert.deepEqual(final.wanted.map(w=>w.key),['S01E01','S01E03','S01E07']);
+ assert.deepEqual(final.wanted.filter(w=>!w.excluded&&!w.skipped).map(w=>w.key),['S01E03']);
+ assert.deepEqual(final.wanted.filter(w=>w.satisfied).map(w=>w.key),['S01E03']);
+ for(const key of ['facts','maps','operations','tasks','completed_tasks','submission_jobs','authorities','steps','organization_jobs','organization_succeeded','imports'])assert.equal(final[key],1,key+' exactly once');
+ assert.equal(final.files.length,1);assert.equal(final.files[0].key,'S01E03');
+ const op=final.plans[0].operation_id;
+ for(const [width,label] of [[1440,'desktop'],[375,'375']]){
+  await page.setViewportSize({width,height:width===375?812:1000});
+  const catalog=await readPage('/media','/api/v1/library/catalog');
+  const actual=catalog.items.find(i=>i.file_id===final.files[0].file_id&&i.unit_id===final.files[0].unit_id);
+  assert(actual?.imported);assert.equal(actual.relative_path,final.files[0].path);assert.equal(actual.unit_key,'S01E03');
+  await page.getByRole('button',{name:'文件',exact:true}).click();
+  await page.getByText('S01E03 · '+actual.relative_path,{exact:true}).click();await page.getByText(/已入库 ·/).waitFor();await shot('library-'+label);
+  const statusReply=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions/'+subscription.id+'/status'&&r.status()===200);
+  const detail=await readPage('/subscriptions?subscription='+subscription.id,'/api/v1/subscriptions/'+subscription.id);assert.equal(detail.id,subscription.id);
+  const report=await (await statusReply).json();const current=report.items.find(i=>i.unit_id===actual.unit_id);assert.equal(current?.current_fact_stage,'imported');assert.equal(current.is_satisfied,true);
+  await page.getByText(title,{exact:true}).first().waitFor();await shot('subscription-'+label);
+  await readPage('/activity','/api/v1/operations');
+  await page.getByRole('group',{name:'操作范围'}).getByRole('button',{name:'全部',exact:true}).click();
+  const ownReply=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/operations/'+op+'/requirements'&&r.request().method()==='GET');void ownReply.catch(()=>{});
+  await page.getByRole('button',{name:title+' · 已完成',exact:true}).click();
+  assert.equal((await ownReply).status(),403,'system requirement remains outside actor-owned withdrawal');
+  const own=page.getByRole('region',{name:'自身入库需求',exact:true});await own.getByRole('status').filter({hasText:'当前账号没有可在此读取或撤销的自身需求。'}).waitFor();assert.equal(await own.getByRole('button',{name:'撤销自身入库需求',exact:true}).count(),0);
+  const timeline=page.getByRole('region',{name:'整理步骤',exact:true});await timeline.getByText('计划状态：计划步骤完成',{exact:true}).waitFor();await timeline.getByText('此步骤完成',{exact:true}).waitFor();
+  await page.getByRole('heading',{name:'操作 '+op,exact:true}).waitFor();await shot('activity-'+label);
+ }
+ assert.deepEqual(await evidence(),final,'actual UI GETs must not alter completion graph');
+ assert.equal(writes.length,1,'UI navigation must never submit work');assert.deepEqual(errors,[]);
+ for(const endpoint of ['/api/v1/library/catalog','/api/v1/subscriptions/'+subscription.id,'/api/v1/operations/'+op+'/timeline'])assert(reads.includes(endpoint),'actual UI GET '+endpoint);
+ assert(external.some(path=>path.startsWith('https://image.tmdb.org/')),'exercise honest blocked external poster fallback');
+ console.log('M6_JOURNEY_BROWSER_PASS real Cookie create201=1 Add checked by Go screenshots=6 external_images=blocked_fallback');
+} finally {await context.close();await browser.close();}

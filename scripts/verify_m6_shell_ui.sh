@@ -39,5 +39,13 @@ if grep -q -- '--- SKIP:' "$owned/acceptance.log"; then echo M6_SHELL_UNEXPECTED
 test "$(grep -c '^--- PASS: TestM6ApplicationShellActualChromeHTTPPG' "$owned/acceptance.log")" = 1
 for marker in M6_SHELL_BROWSER_PASS M6_SHELL_APP_COOKIE_PG_PASS M6_SHELL_CHROME_CLEANUP_VERIFIED; do grep -q "$marker" "$owned/acceptance.log"; done
 for name in shell-desktop shell-tablet shell-375 shell-drawer-375; do test -s "$PULSE_M6_SHELL_SCREENSHOTS/$name.png"; done
-if [ "${PULSE_M6_SHELL_REVIEW:-}" = 1 ]; then test -f "$PULSE_M6_SHELL_SCREENSHOTS/inspected"; fi
+if [ "${PULSE_M6_SHELL_REVIEW:-}" = 1 ]; then
+  printf 'M6_SHELL_SCREENSHOTS_READY %s\n' "$PULSE_M6_SHELL_SCREENSHOTS"
+  inspected=0
+  for ((attempt=0;attempt<180;attempt++)); do
+    if [ -f "$PULSE_M6_SHELL_SCREENSHOTS/inspected" ]; then inspected=1; break; fi
+    sleep 1
+  done
+  if [ "$inspected" != 1 ]; then echo M6_SHELL_SCREENSHOT_INSPECTION_TIMEOUT >&2; exit 1; fi
+fi
 echo 'M6_SHELL_ACCEPTANCE_EXECUTED tests=1 skipped=0'

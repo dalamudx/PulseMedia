@@ -1,7 +1,5 @@
 import assert from 'node:assert/strict';
-import {existsSync} from 'node:fs';
 import {join} from 'node:path';
-import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright-core';
 
 const env=process.env,base=env.PULSE_M6_SHELL_BASE,shots=env.PULSE_M6_SHELL_SCREENSHOTS;
@@ -90,11 +88,6 @@ try {
    await page.screenshot({path:join(shots,'shell-drawer-375.png'),fullPage:true});
    await page.keyboard.press('Escape');await menu().waitFor();
   }
- }
- if(env.PULSE_M6_SHELL_REVIEW==='1') {
-  console.log('M6_SHELL_SCREENSHOTS_READY '+shots);
-  const until=Date.now()+90000;
-  while(!existsSync(join(shots,'inspected'))) { assert(Date.now()<until,'bounded screenshot review timed out');await delay(100); }
  }
  await page.getByTitle('退出登录').click();await page.waitForURL(base+'/login');
  check(await page.locator('.app-shell').count()===0,'logout must remove private application shell');

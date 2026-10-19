@@ -219,6 +219,21 @@ tasks:
     cmds:
       - bash scripts/verify_m6_media_details_api.sh
 
+  test-media-library-ui:
+    desc: Verify library catalog views, scoped reads and responsive layout with Cookie, PG18 and isolated Chrome
+    cmds:
+      - bash scripts/verify_m6_media_library_ui.sh {{.CLI_ARGS}}
+
+  test-m6-journey-ui:
+    desc: Verify dashboard subscription creation through native automatic TV and real hardlink ingestion in Chrome
+    cmds:
+      - bash scripts/verify_m6_journey_ui.sh
+
+  test-compact-controls-ui:
+    desc: Verify long token names and policy original-key recovery at four widths with Cookie, PG18 and Chrome
+    cmds:
+      - bash scripts/verify_m6_compact_controls_ui.sh {{.CLI_ARGS}}
+
   test-media-details-ui:
     desc: Verify real media detail, sparse selection, retry and dialog focus in isolated Chrome
     cmds:

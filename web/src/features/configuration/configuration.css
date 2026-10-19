@@ -1,4 +1,10 @@
 .policy-panel .card-body { min-width: 0; }
+.settings-container .policy-panel button { min-width: 44px; min-height: 44px; }
+.settings-container .policy-panel .config-actions > button {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 .policy-panel label { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .8rem; }
 .policy-panel label:has(input[type="checkbox"]) { flex-direction: row; align-items: center; }
 .policy-panel input[type="number"], .policy-panel input:not([type]), .policy-panel textarea, .policy-panel select { width: 100%; max-width: 36rem; padding: .6rem; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); }

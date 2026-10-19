@@ -1,0 +1,76 @@
+.media-container > .page-header {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.media-container > .page-header > :first-child {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.media-container .page-header-actions {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.media-container .page-header-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.media-container .media-control-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-block: 1rem;
+}
+
+.media-container .media-tabs-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.media-container .media-tab-btn {
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.media-container .media-tab-btn.active {
+  border-color: var(--primary);
+  background: var(--surface-active);
+}
+
+.media-container .media-control-bar > label {
+  display: grid;
+  flex: 1 1 16rem;
+  min-width: 0;
+  gap: 0.5rem;
+}
+
+.media-container .media-filter-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.media-container .config-editor {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.media-container h2 svg,
+.media-container .page-header-actions svg {
+  flex-shrink: 0;
+}

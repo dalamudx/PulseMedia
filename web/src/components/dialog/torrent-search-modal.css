@@ -1,0 +1,14 @@
+.torrent-search-card > .modal-header {
+  flex-shrink: 0;
+}
+
+.torrent-search-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.torrent-search-content > .release-list {
+  overflow: visible;
+}

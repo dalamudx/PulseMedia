@@ -393,6 +393,20 @@ try {
   await search('tv','Native Automatic Series');await card('Native Automatic Series').click();const tvModal=page.getByRole('dialog',{name:'Native Automatic Series',exact:true});await tvModal.getByLabel('目标媒体根',{exact:true}).waitFor();const tvCreated=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions'&&r.request().method()==='POST');await tvModal.locator('.media-detail-actions .btn-primary').click();const tvResponse=await tvCreated;assert.equal(tvResponse.status(),201);const tvReceipt=await tvResponse.json();assert.notEqual(movieReceipt.media_id,tvReceipt.media_id);await page.waitForURL(base+'/subscriptions?subscription='+tvReceipt.id);assert.equal((await evidence()).tasks,0);
  } else if(mode==='movie') {
   await openResources('movie','Native trusted movie');await button('选择获取目标').first().click();const panel=page.getByRole('region',{name:'显式电影获取目标'});await panel.waitFor();await panel.getByLabel('电影目标根',{exact:true}).waitFor();await panel.getByLabel('获取下载器',{exact:true}).waitFor();assert(await button('确认创建持久获取',panel).isDisabled());await button('预览电影获取',panel).click();await panel.getByRole('alert').filter({hasText:'请明确选择电影目标根和下载器。'}).waitFor();
+  await panel.getByLabel('电影目标根',{exact:true}).selectOption({index:1});await panel.getByLabel('获取下载器',{exact:true}).selectOption({index:1});
+  const inspected=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/acquisitions/selected-movie/preview'&&r.request().method()==='POST');void inspected.catch(()=>{});
+  await button('预览电影获取',panel).click();assert.equal((await inspected).status(),200);await panel.getByRole('status').filter({hasText:'当前规则允许'}).waitFor();await panel.getByRole('checkbox').check();
+  const confirm=button('确认创建持久获取',panel),content=page.locator('.torrent-search-content');assert(await confirm.isEnabled());
+  for(const width of [1280,768,375,320]){
+   await page.setViewportSize({width,height:width<=375?812:1000});
+   await page.waitForFunction(width=>{const nav=document.getElementById('app-navigation');return nav&&innerWidth===width&&(width>1024?!nav.inert:nav.inert&&nav.getBoundingClientRect().right<=1);},width);
+   assert(await content.evaluate(el=>['auto','scroll'].includes(getComputedStyle(el).overflowY)),'the form and candidate list share a user-scrollable body');
+   await confirm.scrollIntoViewIfNeeded();
+   const bounds=await confirm.evaluate(button=>{const body=button.closest('.torrent-search-content'),r=button.getBoundingClientRect(),c=body.getBoundingClientRect();return {inside:r.left>=-1&&r.right<=innerWidth+1&&r.top>=Math.max(0,c.top)-1&&r.bottom<=Math.min(innerHeight,c.bottom)+1,overflow:document.documentElement.scrollWidth>innerWidth+1};});
+   assert(bounds.inside&&!bounds.overflow,'the preview confirmation must be scrollable into the viewport at '+width);
+   await page.screenshot({path:process.env.PULSE_M5_DISCOVERY_SCREENSHOTS+'/fetch-preview-'+width+'.png',animations:'disabled'});
+  }
+  assert.equal((await evidence()).tasks,0,'preview and responsive inspection create no task');
   let failure=503;const fault=async route=>route.request().method()==='GET'&&failure?route.fulfill({status:failure,contentType:'application/problem+json',body:'{"code":"OWNED_READ_FAILURE"}'}):route.continue();await page.route('**/api/v1/release-searches/*',fault);await button('刷新搜索观察').click();await page.getByRole('alert').filter({hasText:'当前观察读取失败'}).waitFor();assert.equal(await page.locator('.release-item').count(),1);assert(await button('选择获取目标').isDisabled());failure=0;await button('刷新搜索观察').click();await page.waitForFunction(()=>!document.querySelector('.release-item button')?.disabled);
   for(const status of [403,401]){failure=status;await button('刷新搜索观察').click();await page.waitForFunction(()=>document.querySelectorAll('.release-item').length===0);failure=0;await page.unroute('**/api/v1/release-searches/*',fault);if(status===403){await openResources('movie','Native trusted movie');await page.route('**/api/v1/release-searches/*',fault);}}
   assert.equal((await evidence()).tasks,0);await privacy();

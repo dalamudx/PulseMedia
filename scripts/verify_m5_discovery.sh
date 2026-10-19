@@ -28,7 +28,7 @@ owned=$(mktemp -d /data/temp/pulse-m5-discovery.XXXXXX)
 cleanup(){
  rc=$?
  trap - EXIT
- if [ -f "$owned/screenshots/discovery-desktop.png" ] || [ -f "$owned/screenshots/discovery-375.png" ]; then
+ if [ -f "$owned/screenshots/discovery-desktop.png" ] || [ -f "$owned/screenshots/discovery-375.png" ] || [ -f "$owned/screenshots/fetch-preview-1280.png" ]; then
   echo "M5_DISCOVERY_SCREENSHOTS_READY $owned/screenshots"
   inspected=0
   review_seconds=180

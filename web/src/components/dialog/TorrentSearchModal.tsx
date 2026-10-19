@@ -6,6 +6,7 @@ import type { paths } from "@/api/client";
 import {MovieAcquisitionPanel} from "@/features/configuration/MovieAcquisitionPanel";
 import {useDialogFocus} from "@/features/configuration/useDialogFocus";
 import {DiscoveryTVReviewTarget} from "@/features/configuration/DiscoveryTVReviewTarget";
+import "./torrent-search-modal.css";
 
 type ReleaseItem = paths["/api/v1/releases/search"]["get"]["responses"]["200"]["content"]["application/json"]["results"][number];
 
@@ -43,13 +44,14 @@ export const TorrentSearchModal: React.FC<TorrentSearchModalProps> = ({
 
   return (
     <div className="modal-overlay" onClick={close}>
-      <div ref={dialog} role="dialog" aria-modal="true" aria-labelledby={titleId} className="modal-card" onClick={(e) => e.stopPropagation()}>
+      <div ref={dialog} role="dialog" aria-modal="true" aria-labelledby={titleId} className="modal-card torrent-search-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3 id={titleId}>{mediaTitle?`「${mediaTitle}」站点资源检索`: "恢复站点资源检索"}</h3>
           <button aria-label="关闭资源检索" disabled={pending} className="close-btn" onClick={close}>
             <X size={18} />
           </button>
         </div>
+        <div className="torrent-search-content">
 
         {mediaType === "tv" && <p className="config-description">选择本剧的本人订阅，再分别确认单集或完整覆盖审核与获取。</p>}{!movieId && <p className="config-description">恢复的搜索可继续观察。请重新选择原影视发起搜索，再确认获取目标。</p>}
         {mediaType === "tv" && user?.role !== "admin" && <p role="status" className="config-description">手工剧集审核与获取需要管理员会话。成员可创建本人订阅并查看自动获取状态。</p>}
@@ -94,6 +96,7 @@ export const TorrentSearchModal: React.FC<TorrentSearchModalProps> = ({
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
