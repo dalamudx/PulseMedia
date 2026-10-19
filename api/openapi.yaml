@@ -518,6 +518,83 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /api/v1/library/overview:
+    get:
+      operationId: getLibraryOverview
+      summary: Read registered shared-library facts and capacity observations
+      description: >-
+        Counts distinct works, TV units and files with current imported facts. Offline roots
+        retain registered counts. Capacity is a per-root persisted scan sample, never summed
+        across roots or collected by this request. Recent arrivals use first file import history;
+        corrections do not mint a new arrival. No absolute paths or execution permission.
+      parameters:
+        - {name: recent_limit, in: query, schema: {type: integer, default: 12, minimum: 1, maximum: 24}}
+      responses:
+        '200':
+          description: Consistent read-only library snapshot
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/LibraryOverview'}
+        '400':
+          description: Invalid result limit
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current account or read permission denied
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Library storage unavailable; never an empty success
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+
+  /api/v1/dashboard/activity:
+    get:
+      operationId: getDashboardActivity
+      summary: Read visible persisted operation activity without probing clients
+      description: >-
+        Members see their own demand and administrators see all visible operations. Active
+        also includes unknown, review and organization states. Progress is nullable with its
+        source; native_percent is stored downloader percentage, verified_bytes is a validated
+        automatic TV observation. Updated time is the task record or TV observation time,
+        not a promise of a new client probe. No cumulative transfer-byte ratio is inferred.
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, default: 6, minimum: 1, maximum: 12}}
+      responses:
+        '200':
+          description: Bounded scoped activity snapshot
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DashboardActivityPage'}
+        '400':
+          description: Invalid result limit
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current account or read permission denied
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Activity storage unavailable; never an empty success
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+
   /api/v1/library/catalog:
     get:
       operationId: listLibraryCatalog
@@ -5904,6 +5981,74 @@ components:
         target_title: {type: string}
         root_name: {type: string}
         downloader_name: {type: string}
+    LibraryOverviewCounts:
+      type: object
+      required: [movies, tv_shows, episodes, files]
+      description: Distinct current imported facts, not subscription satisfaction. Episodes include specials. Decimal strings preserve integer precision.
+      properties:
+        movies: {type: string, pattern: '^(0|[1-9][0-9]*)$', maxLength: 19}
+        tv_shows: {type: string, pattern: '^(0|[1-9][0-9]*)$', maxLength: 19}
+        episodes: {type: string, pattern: '^(0|[1-9][0-9]*)$', maxLength: 19}
+        files: {type: string, pattern: '^(0|[1-9][0-9]*)$', maxLength: 19}
+    LibraryRootOverview:
+      type: object
+      required: [root_id, name, media_type, health, availability, capacity_state]
+      properties:
+        root_id: {type: string, format: uuid}
+        name: {type: string}
+        media_type: {type: string, enum: [movie, tv]}
+        health: {type: string}
+        availability: {type: string, enum: [available, unknown]}
+        capacity_state: {type: string, enum: [fresh, stale, unknown]}
+        total_bytes: {type: string, pattern: '^[1-9][0-9]*$', maxLength: 19}
+        available_bytes: {type: string, pattern: '^(0|[1-9][0-9]*)$', maxLength: 19}
+        sampled_at: {type: string, format: date-time}
+    LibraryRecentImport:
+      type: object
+      required: [media_id, media_type, title, imported_at]
+      properties:
+        media_id: {type: string, format: uuid}
+        media_type: {type: string, enum: [movie, tv]}
+        title: {type: string}
+        year: {type: integer}
+        imported_at: {type: string, format: date-time}
+        poster_url:
+          type: string
+          format: uri
+          description: Optional version-bound trusted TMDB image projection; never an arbitrary stored URL.
+    LibraryOverview:
+      type: object
+      required: [counts, roots, recent, observed_at]
+      properties:
+        counts: {$ref: '#/components/schemas/LibraryOverviewCounts'}
+        roots:
+          type: array
+          items: {$ref: '#/components/schemas/LibraryRootOverview'}
+        recent:
+          type: array
+          maxItems: 24
+          items: {$ref: '#/components/schemas/LibraryRecentImport'}
+        observed_at: {type: string, format: date-time}
+    DashboardActivity:
+      type: object
+      required: [operation_id, title, status]
+      properties:
+        operation_id: {type: string, format: uuid}
+        title: {type: string}
+        status: {type: string}
+        progress: {type: number, format: double, minimum: 0, maximum: 1}
+        progress_source: {type: string, enum: [native_percent, verified_bytes]}
+        updated_at: {type: string, format: date-time}
+    DashboardActivityPage:
+      type: object
+      required: [items, more, observed_at]
+      properties:
+        items:
+          type: array
+          maxItems: 12
+          items: {$ref: '#/components/schemas/DashboardActivity'}
+        more: {type: boolean}
+        observed_at: {type: string, format: date-time}
     LibraryCatalogPage:
       type: object
       required: [items]

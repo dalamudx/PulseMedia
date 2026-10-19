@@ -682,6 +682,9 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 			return nil, ports.ErrSubscriptionBindingsConflict
 		}
 	}
+	if err = persistCreationArtwork(ctx, q, mediaID, prepared); err != nil {
+		return nil, err
+	}
 	sub, err := t.publishCreationIntent(ctx, in, expected, existing)
 	if err != nil {
 		return nil, err

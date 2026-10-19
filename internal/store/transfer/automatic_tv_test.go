@@ -201,11 +201,8 @@ func automaticTVOrganizationClaim(t *testing.T, q *db.Queries, kind string) port
 // preparation, Add, complete inventory and organization all use production code.
 func newAutomaticTVOrganizationFixture(t *testing.T) *automaticTVOrganizationFixture {
 	t.Helper()
-	if postgres.CurrentMigrationVersion != 91 {
-		t.Fatal("91 PG tests require Main's shared hooks and Current91 release")
-	}
 	f := &automaticTVOrganizationFixture{dsn: pgtest.GetCluster(t).NewTestDB(t), root: uuid.New(), owner: uuid.New(), subscription: uuid.New(), unit: uuid.New(), indexer: uuid.New(), client: uuid.New(), rootPath: t.TempDir(), video: "Trusted.Native.Series.2024.S02E03.1080p.WEB-DL.H264.mkv"}
-	if v, e := postgres.Migrate(t.Context(), f.dsn, "../../../migrations"); e != nil || v != 91 {
+	if v, e := postgres.Migrate(t.Context(), f.dsn, automaticTVOrganizationMigrations(t)); e != nil || v != 91 {
 		t.Fatal("migration91", v, e)
 	}
 	var e error
@@ -797,7 +794,7 @@ func TestAutomaticTVOrganizationConcurrentDowngradePG(t *testing.T) {
 		t.Fatal(e)
 	}
 	done := make(chan error, 1)
-	go func() { _, err := postgres.Rollback(ctx, f.dsn, "../../../migrations"); done <- err }()
+	go func() { _, err := postgres.Rollback(ctx, f.dsn, automaticTVOrganizationMigrations(t)); done <- err }()
 	defer func() {
 		_ = holder.Rollback(context.WithoutCancel(ctx))
 		select {
@@ -850,20 +847,20 @@ func TestAutomaticTVOrganizationConcurrentDowngradePG(t *testing.T) {
 
 func TestAutomaticTVOrganizationMigration91PG(t *testing.T) {
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	if v, e := postgres.Migrate(t.Context(), dsn, "../../../migrations"); e != nil || v != 91 {
+	if v, e := postgres.Migrate(t.Context(), dsn, automaticTVOrganizationMigrations(t)); e != nil || v != 91 {
 		t.Fatal(v, e)
 	}
-	if v, e := postgres.Rollback(t.Context(), dsn, "../../../migrations"); e != nil || v != 90 {
+	if v, e := postgres.Rollback(t.Context(), dsn, automaticTVOrganizationMigrations(t)); e != nil || v != 90 {
 		t.Fatal("empty down", v, e)
 	}
-	if v, e := postgres.Migrate(t.Context(), dsn, "../../../migrations"); e != nil || v != 91 {
+	if v, e := postgres.Migrate(t.Context(), dsn, automaticTVOrganizationMigrations(t)); e != nil || v != 91 {
 		t.Fatal("empty up again", v, e)
 	}
 	f := newAutomaticTVOrganizationFixture(t)
 	if e := f.svc.OrganizeDownload(t.Context(), f.lease); e != nil {
 		t.Fatal(e)
 	}
-	if _, e := postgres.Rollback(t.Context(), f.dsn, "../../../migrations"); e == nil {
+	if _, e := postgres.Rollback(t.Context(), f.dsn, automaticTVOrganizationMigrations(t)); e == nil {
 		t.Fatal("91 history discarded by downgrade")
 	}
 	for _, statement := range []string{`DELETE FROM automatic_tv_organization_plan`, `UPDATE automatic_tv_organization_completion SET lease_token=lease_token+1`, `TRUNCATE automatic_tv_organization_observation`} {

@@ -11,6 +11,7 @@ type ScanSeal struct {
 	Path, MediaType, MarkerFilename                         string
 	Generation, HealthRevision, ScanToken, StartMutationSeq int64
 	RootIdentity                                            FileIdentity
+	Capacity                                                *RootCapacity
 }
 
 type ScanFinalizationProgress struct {

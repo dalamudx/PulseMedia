@@ -91,6 +91,9 @@ func (s *ScanObservationStore) Seal(ctx context.Context, in ports.ScanSeal) erro
 		if !sameScanSeal(f, in) {
 			return ports.ErrScanObservationStale
 		}
+		if err = recordScanCapacity(ctx, q, in, true); err != nil {
+			return err
+		}
 		return s.commitWork(ctx, tx, in.RootID, "scan")
 	}
 	if run.State != "running" {
@@ -102,6 +105,9 @@ func (s *ScanObservationStore) Seal(ctx context.Context, in ports.ScanSeal) erro
 		}
 	}
 	if err = q.InsertScanFinalization(ctx, db.InsertScanFinalizationParams{ScanRunID: in.RunID, RootID: in.RootID, ExpectedPath: in.Path, ExpectedMediaType: in.MediaType, ExpectedMarkerFilename: in.MarkerFilename, ExpectedHealthRevision: in.HealthRevision, RootDevice: in.RootIdentity.Device, RootInode: in.RootIdentity.Inode}); err != nil {
+		return err
+	}
+	if err = recordScanCapacity(ctx, q, in, false); err != nil {
 		return err
 	}
 	if err = q.SealScanRun(ctx, in.RunID); err != nil {

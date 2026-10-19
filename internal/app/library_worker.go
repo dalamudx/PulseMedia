@@ -67,7 +67,7 @@ func (a *App) runLibraryConsumer(ctx context.Context, queue *jobs.Queue, runtime
 				files := rootfs.NewFilesystem()
 				switch work.Phase {
 				case "scan":
-					_, workErr = library.NewScanner(a.idgen, files, repo).ScanRoot(workCtx, work.RootID)
+					_, workErr = library.NewScanner(a.idgen, files, repo).WithCapacitySampler(rootfs.NewCapacitySampler(a.clock)).ScanRoot(workCtx, work.RootID)
 				case "missing":
 					_, workErr = library.NewMissingConfirmer(files, repo).Confirm(workCtx, work.RootID, work.RunID)
 					if workErr == nil || errors.Is(workErr, ports.ErrScanObservationStale) {

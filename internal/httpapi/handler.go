@@ -53,6 +53,8 @@ type ServerHandler struct {
 	app                      AppContext
 	operationSvc             *operation.Service
 	libraryCatalogSvc        *media_library.Service
+	libraryOverviewSvc       *media_library.OverviewService
+	dashboardActivitySvc     *operation.ActivityService
 	submissionRetrySvc       *operation.SubmissionRetryService
 	activityHub              *SSEHub
 	tokenManagementSvc       *auth.TokenManagementService
@@ -137,6 +139,18 @@ func NewServerHandler(
 	}); ok {
 		submissionRetrySvc = operation.NewSubmissionRetryService(provider.SubmissionRetryRepository())
 	}
+	var libraryOverviewSvc *media_library.OverviewService
+	if provider, ok := a.(interface {
+		LibraryOverviewReader() ports.LibraryOverviewReader
+	}); ok {
+		libraryOverviewSvc = media_library.NewOverviewService(provider.LibraryOverviewReader())
+	}
+	var dashboardActivitySvc *operation.ActivityService
+	if provider, ok := a.(interface {
+		DashboardActivityReader() ports.DashboardActivityReader
+	}); ok {
+		dashboardActivitySvc = operation.NewActivityService(provider.DashboardActivityReader())
+	}
 	var libraryCatalogSvc *media_library.Service
 	if provider, ok := a.(interface {
 		LibraryCatalogReader() ports.LibraryCatalogReader
@@ -172,6 +186,8 @@ func NewServerHandler(
 	return &ServerHandler{
 		subscriptionListSvc:      subscriptionListSvc,
 		libraryCatalogSvc:        libraryCatalogSvc,
+		libraryOverviewSvc:       libraryOverviewSvc,
+		dashboardActivitySvc:     dashboardActivitySvc,
 		submissionRetrySvc:       submissionRetrySvc,
 		operationSvc:             operationSvc,
 		app:                      a,

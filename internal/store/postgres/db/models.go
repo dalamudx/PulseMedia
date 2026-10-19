@@ -670,6 +670,16 @@ type LibraryScanSchedule struct {
 	LastScanJobID pgtype.UUID
 }
 
+type MediaArtwork struct {
+	MediaID         uuid.UUID
+	Provider        string
+	Namespace       string
+	ExternalID      string
+	MetadataVersion int64
+	PosterPath      string
+	RecordedAt      pgtype.Timestamptz
+}
+
 type MediaIdentity struct {
 	ID         uuid.UUID
 	MediaID    uuid.UUID
@@ -1242,6 +1252,13 @@ type RestoreIsolationAudit struct {
 	OperatorName string
 	Evidence     string
 	RecordedAt   pgtype.Timestamptz
+}
+
+type RootCapacityObservation struct {
+	ScanRunID      uuid.UUID
+	TotalBytes     int64
+	AvailableBytes int64
+	SampledAt      pgtype.Timestamptz
 }
 
 type ScanFinalization struct {

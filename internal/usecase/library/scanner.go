@@ -35,10 +35,17 @@ type Scanner struct {
 	idgen        ports.IDGen
 	files        ports.ScanFilesystem
 	observations ports.ScanRepository
+	capacity     ports.RootCapacitySampler
 }
 
 func NewScanner(idgen ports.IDGen, files ports.ScanFilesystem, observations ports.ScanRepository) *Scanner {
 	return &Scanner{idgen: idgen, files: files, observations: observations}
+}
+
+// WithCapacitySampler configures the optional display observer before execution.
+func (s *Scanner) WithCapacitySampler(sampler ports.RootCapacitySampler) *Scanner {
+	s.capacity = sampler
+	return s
 }
 
 // ProbeRoot verifies that the directory exists and its identity marker file is present.
@@ -204,12 +211,23 @@ func (s *Scanner) ScanRoot(ctx context.Context, rootID uuid.UUID) (*ScanReport, 
 		return nil, walkErr
 	}
 
+	var capacity *ports.RootCapacity
+	if s.capacity != nil {
+		observed, sampleErr := s.capacity.SampleCapacity(ctx, capability)
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		if sampleErr == nil {
+			capacity = &observed
+		}
+	}
+
 	identity, err = capability.Identity(ctx)
 	if err != nil {
 		return nil, err
 	}
 	seal := ports.ScanSeal{RunID: runID, RootID: rootID, Path: root.Path, MediaType: root.MediaType, MarkerFilename: root.MarkerFilename,
-		Generation: run.Generation, HealthRevision: root.HealthRevision, ScanToken: run.ScanToken, StartMutationSeq: run.StartMutationSeq, RootIdentity: identity}
+		Generation: run.Generation, HealthRevision: root.HealthRevision, ScanToken: run.ScanToken, StartMutationSeq: run.StartMutationSeq, RootIdentity: identity, Capacity: capacity}
 	if err = s.observations.Seal(ctx, seal); err != nil {
 		return nil, err
 	}

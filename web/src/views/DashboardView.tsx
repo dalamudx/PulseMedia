@@ -19,25 +19,40 @@ import { subscriptionScope } from "@/features/configuration/subscriptionCreation
 import { MediaDetailModal } from "@/components/dialog/MediaDetailModal";
 import type { MediaItem } from "@/components/cards/MediaCard";
 import type { paths } from "@/api/client";
+import { useDashboardFacts } from "@/features/dashboard/useDashboardFacts";
+import { DashboardFactsPanel } from "@/features/dashboard/DashboardFactsPanel";
 
 type SystemStatus = paths["/api/v1/system/status"]["get"]["responses"]["200"]["content"]["application/json"];
 
+const deniedDashboardRead = (result: PromiseSettledResult<{ response: Response } | null>) => result.status === "fulfilled" && result.value !== null && [401, 403].includes(result.value.response.status);
 export const DashboardView: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const toast = useToast();
 
-  const [status, setStatus] = useState<SystemStatus | null>(null);
-  const [movieSubsCount, setMovieSubsCount] = useState<number | null>(null);
-  const [tvSubsCount, setTvSubsCount] = useState<number | null>(null);
-  const [onlineSitesCount, setOnlineSitesCount] = useState<number | null>(null);
-  const [totalSitesCount, setTotalSitesCount] = useState<number | null>(null);
+  const scope = user ? JSON.stringify([user.id, user.role]) : "";
+  const canReadSites = user?.role === "admin";
+  const facts = useDashboardFacts({ userId: user?.id, role: user?.role });
+  const [dataScope, setDataScope] = useState(scope);
+  const sameScope = dataScope === scope;
+  const [storedStatus, setStatus] = useState<SystemStatus | null>(null);
+  const [storedMovieSubsCount, setMovieSubsCount] = useState<number | null>(null);
+  const [storedTvSubsCount, setTvSubsCount] = useState<number | null>(null);
+  const [storedOnlineSitesCount, setOnlineSitesCount] = useState<number | null>(null);
+  const [storedTotalSitesCount, setTotalSitesCount] = useState<number | null>(null);
+  const status = sameScope ? storedStatus : null;
+  const movieSubsCount = sameScope ? storedMovieSubsCount : null;
+  const tvSubsCount = sameScope ? storedTvSubsCount : null;
+  const onlineSitesCount = sameScope ? storedOnlineSitesCount : null;
+  const totalSitesCount = sameScope ? storedTotalSitesCount : null;
   const [refreshing, setRefreshing] = useState(false);
   const [refreshFailures, setRefreshFailures] = useState<string[]>([]);
   const refreshRequest = useRef<AbortController | null>(null);
 
   // Dynamic Recent Posters from real TMDB discover feed
-  const [recentItems, setRecentItems] = useState<MediaItem[]>([]);
+  const [storedRecentItems, setRecentItems] = useState<MediaItem[]>([]);
+  const recentItems = sameScope ? storedRecentItems : [];
+  const pageRefreshing = refreshing || facts.overviewStatus === "loading" || facts.activityStatus === "loading";
 
   // Media Detail Modal directly on Dashboard
   const [selectedDetailMedia, setSelectedDetailMedia] = useState<MediaItem | null>(null);
@@ -65,6 +80,7 @@ export const DashboardView: React.FC = () => {
   }, []);
 
   const loadData = useCallback(async () => {
+    if (!scope) return null;
     refreshRequest.current?.abort();
     const controller = new AbortController();
     refreshRequest.current = controller;
@@ -72,7 +88,7 @@ export const DashboardView: React.FC = () => {
     const [system, subscriptions, indexers, discover] = await Promise.allSettled([
       api.GET("/api/v1/system/status", { signal: controller.signal }),
       api.GET("/api/v1/subscriptions", { signal: controller.signal }),
-      api.GET("/api/v1/indexers", { signal: controller.signal }),
+      canReadSites ? api.GET("/api/v1/indexers", { signal: controller.signal }) : Promise.resolve(null),
       api.GET("/api/v1/discover", {
         params: { query: { category: "trending", page: 1 } },
         signal: controller.signal,
@@ -83,18 +99,24 @@ export const DashboardView: React.FC = () => {
     if (system.status === "fulfilled" && system.value.data) {
       setStatus(system.value.data);
     } else {
+      if (deniedDashboardRead(system)) setStatus(null);
       failures.push("系统状态");
     }
     if (subscriptions.status === "fulfilled" && subscriptions.value.data) {
       setMovieSubsCount(subscriptions.value.data.items.filter((sub) => sub.media_type === "movie").length);
       setTvSubsCount(subscriptions.value.data.items.filter((sub) => sub.media_type === "tv").length);
     } else {
+      if (deniedDashboardRead(subscriptions)) { setMovieSubsCount(null); setTvSubsCount(null); }
       failures.push("订阅统计");
     }
-    if (indexers.status === "fulfilled" && indexers.value.data) {
+    if (!canReadSites) {
+      setTotalSitesCount(null);
+      setOnlineSitesCount(null);
+    } else if (indexers.status === "fulfilled" && indexers.value?.data) {
       setTotalSitesCount(indexers.value.data.items.length);
       setOnlineSitesCount(indexers.value.data.items.filter((item) => item.health === "online").length);
     } else {
+      if (deniedDashboardRead(indexers)) { setTotalSitesCount(null); setOnlineSitesCount(null); }
       failures.push("站点状态");
     }
     if (discover.status === "fulfilled" && discover.value.data) {
@@ -110,26 +132,39 @@ export const DashboardView: React.FC = () => {
         genres: item.genres ?? undefined,
       })));
     } else {
+      if (deniedDashboardRead(discover)) setRecentItems([]);
       failures.push("影视推荐");
     }
     setRefreshFailures(failures);
     setRefreshing(false);
     return failures;
-  }, []);
+  }, [scope, canReadSites]);
 
   useEffect(() => {
+    refreshRequest.current?.abort();
+    setStatus(null);
+    setMovieSubsCount(null);
+    setTvSubsCount(null);
+    setOnlineSitesCount(null);
+    setTotalSitesCount(null);
+    setRecentItems([]);
+    setShowDetailModal(false);
+    setSelectedDetailMedia(null);
+    setRefreshFailures([]);
+    setDataScope(scope);
     void loadData();
     return () => refreshRequest.current?.abort();
-  }, [loadData]);
+  }, [loadData, scope]);
 
   const handleManualRefresh = async () => {
-    const failures = await loadData();
+    const [failures, factsReady] = await Promise.all([loadData(), facts.refresh()]);
     if (failures === null) return;
-    if (failures.length > 0) {
-      toast.error("部分数据未刷新", `未能读取${failures.join("、")}，请稍后重试。`);
+    const failed = [...failures, ...(!factsReady ? ["媒体库与活动"] : [])];
+    if (failed.length > 0) {
+      toast.error("部分数据未刷新", `未能读取${failed.join("、")}，请稍后重试。`);
       return;
     }
-    toast.success("控制台状态已刷新", "已读取最新系统、订阅、站点和影视推荐。");
+    toast.success("控制台状态已刷新", "已读取当前账户可访问的首页数据。");
   };
 
   const openDetail = (item: MediaItem) => {
@@ -181,7 +216,7 @@ export const DashboardView: React.FC = () => {
             {greeting}，{user?.username || "管理员"}
           </h2>
           <p className="welcome-subtitle">
-            在这里查看订阅与站点状态；未接入的数据不会显示为运行中。
+            查看媒体库、存储容量和获取活动；未能读取的数据会明确标注。
           </p>
         </div>
 
@@ -194,21 +229,24 @@ export const DashboardView: React.FC = () => {
             <PackageOpen size={16} />
             <span>整理状态</span>
           </button>
-          <button className="btn-secondary btn-banner-action" onClick={() => navigate("/sites")}>
+          {canReadSites && <button className="btn-secondary btn-banner-action" onClick={() => navigate("/sites")}>{/* Administrator-only configuration */}
             <Globe2 size={16} />
             <span>管理站点</span>
-          </button>
+          </button>}
           <button
             className="btn-icon-refresh"
             onClick={handleManualRefresh}
-            disabled={refreshing}
+            disabled={pageRefreshing}
+            aria-label="刷新首页数据"
+            aria-busy={pageRefreshing}
             title="刷新系统状态"
           >
-            <RefreshCw size={16} className={refreshing ? "spinner-icon" : ""} />
+            <RefreshCw size={16} className={pageRefreshing ? "spinner-icon" : ""} />
           </button>
         </div>
       </div>
 
+      <DashboardFactsPanel facts={facts} />
       {refreshFailures.length > 0 && (
         <p className="empty-hint" role="alert">未能刷新：{refreshFailures.join("、")}。已显示的数据保持上次读取结果。</p>
       )}
@@ -244,7 +282,7 @@ export const DashboardView: React.FC = () => {
           </div>
         </div>
 
-        <div className="stat-card-modern" onClick={() => navigate("/sites")}>
+        {canReadSites && <div className="stat-card-modern" onClick={() => navigate("/sites")}>{/* Administrator-only configuration */}
           <div className="stat-icon-wrapper site-gradient">
             <Globe2 size={22} />
           </div>
@@ -257,7 +295,7 @@ export const DashboardView: React.FC = () => {
               <span className="stat-unit">/ {totalSitesCount ?? "—"} 正常</span>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
 
       {/* System Status Details */}
@@ -355,7 +393,7 @@ export const DashboardView: React.FC = () => {
       </div>
 
       {/* Media Detail Modal directly mounted on Dashboard */}
-      {showDetailModal && (
+      {sameScope && showDetailModal && (
         <MediaDetailModal
           media={selectedDetailMedia}
           subscribing={subscribingId === selectedDetailMedia?.tmdb_id}

@@ -9,8 +9,9 @@ package ports
 // This material grants no permission by itself: publication must revalidate the
 // current actor, media version, affected subscriptions, roots and command key.
 type PreparedSubscriptionCreationMetadata struct {
-	TMDBID  int64
-	Media   SubscriptionMediaInput
-	Units   []SubscriptionMediaUnitSpec
-	Seasons []TVSeasonMetadata
+	TMDBID     int64
+	PosterPath string `json:"poster_path,omitempty"`
+	Media      SubscriptionMediaInput
+	Units      []SubscriptionMediaUnitSpec
+	Seasons    []TVSeasonMetadata
 }

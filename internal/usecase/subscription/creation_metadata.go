@@ -69,6 +69,7 @@ func PrepareSubscriptionCreationMetadata(ctx context.Context, provider ports.Met
 		if err != nil {
 			return nil, err
 		}
+		out.PosterPath = media.TMDBPosterPath(details.PosterURL)
 		out.Units = append(out.Units, ports.SubscriptionMediaUnitSpec{UnitKey: media.FormatMovieUnitKey()})
 	} else {
 		details, err := provider.GetTVDetails(network, tmdbID, "zh-CN")
@@ -85,6 +86,7 @@ func PrepareSubscriptionCreationMetadata(ctx context.Context, provider ports.Met
 		if err != nil {
 			return nil, err
 		}
+		out.PosterPath = media.TMDBPosterPath(details.PosterURL)
 		out.Media.Seasons, err = creationMetadataSelectSeasons(details, requested, includeSpecials)
 		if err != nil {
 			return nil, err

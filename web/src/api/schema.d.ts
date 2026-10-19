@@ -246,6 +246,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/library/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read registered shared-library facts and capacity observations
+         * @description Counts distinct works, TV units and files with current imported facts. Offline roots retain registered counts. Capacity is a per-root persisted scan sample, never summed across roots or collected by this request. Recent arrivals use first file import history; corrections do not mint a new arrival. No absolute paths or execution permission.
+         */
+        get: operations["getLibraryOverview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read visible persisted operation activity without probing clients
+         * @description Members see their own demand and administrators see all visible operations. Active also includes unknown, review and organization states. Progress is nullable with its source; native_percent is stored downloader percentage, verified_bytes is a validated automatic TV observation. Updated time is the task record or TV observation time, not a promise of a new client probe. No cumulative transfer-byte ratio is inferred.
+         */
+        get: operations["getDashboardActivity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/library/catalog": {
         parameters: {
             query?: never;
@@ -3170,6 +3210,69 @@ export interface components {
             root_name?: string;
             downloader_name?: string;
         };
+        /** @description Distinct current imported facts, not subscription satisfaction. Episodes include specials. Decimal strings preserve integer precision. */
+        LibraryOverviewCounts: {
+            movies: string;
+            tv_shows: string;
+            episodes: string;
+            files: string;
+        };
+        LibraryRootOverview: {
+            /** Format: uuid */
+            root_id: string;
+            name: string;
+            /** @enum {string} */
+            media_type: "movie" | "tv";
+            health: string;
+            /** @enum {string} */
+            availability: "available" | "unknown";
+            /** @enum {string} */
+            capacity_state: "fresh" | "stale" | "unknown";
+            total_bytes?: string;
+            available_bytes?: string;
+            /** Format: date-time */
+            sampled_at?: string;
+        };
+        LibraryRecentImport: {
+            /** Format: uuid */
+            media_id: string;
+            /** @enum {string} */
+            media_type: "movie" | "tv";
+            title: string;
+            year?: number;
+            /** Format: date-time */
+            imported_at: string;
+            /**
+             * Format: uri
+             * @description Optional version-bound trusted TMDB image projection; never an arbitrary stored URL.
+             */
+            poster_url?: string;
+        };
+        LibraryOverview: {
+            counts: components["schemas"]["LibraryOverviewCounts"];
+            roots: components["schemas"]["LibraryRootOverview"][];
+            recent: components["schemas"]["LibraryRecentImport"][];
+            /** Format: date-time */
+            observed_at: string;
+        };
+        DashboardActivity: {
+            /** Format: uuid */
+            operation_id: string;
+            title: string;
+            status: string;
+            /** Format: double */
+            progress?: number;
+            /** @enum {string} */
+            progress_source?: "native_percent" | "verified_bytes";
+            /** Format: date-time */
+            updated_at?: string;
+        };
+        DashboardActivityPage: {
+            items: components["schemas"]["DashboardActivity"][];
+            more: boolean;
+            /** Format: date-time */
+            observed_at: string;
+        };
         LibraryCatalogPage: {
             items: components["schemas"]["LibraryCatalogEntry"][];
             next_cursor?: string;
@@ -4401,6 +4504,122 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getLibraryOverview: {
+        parameters: {
+            query?: {
+                recent_limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Consistent read-only library snapshot */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryOverview"];
+                };
+            };
+            /** @description Invalid result limit */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current account or read permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Library storage unavailable; never an empty success */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getDashboardActivity: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Bounded scoped activity snapshot */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardActivityPage"];
+                };
+            };
+            /** @description Invalid result limit */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current account or read permission denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Activity storage unavailable; never an empty success */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

@@ -151,6 +151,24 @@ func (e CreateSubscriptionRequestScopeType) Valid() bool {
 	}
 }
 
+// Defines values for DashboardActivityProgressSource.
+const (
+	NativePercent DashboardActivityProgressSource = "native_percent"
+	VerifiedBytes DashboardActivityProgressSource = "verified_bytes"
+)
+
+// Valid indicates whether the value is a known member of the DashboardActivityProgressSource enum.
+func (e DashboardActivityProgressSource) Valid() bool {
+	switch e {
+	case NativePercent:
+		return true
+	case VerifiedBytes:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DeliverySummaryState.
 const (
 	DeliverySummaryStateDead       DeliverySummaryState = "dead"
@@ -385,6 +403,24 @@ func (e LibraryCatalogEntryMediaType) Valid() bool {
 	}
 }
 
+// Defines values for LibraryRecentImportMediaType.
+const (
+	LibraryRecentImportMediaTypeMovie LibraryRecentImportMediaType = "movie"
+	LibraryRecentImportMediaTypeTv    LibraryRecentImportMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the LibraryRecentImportMediaType enum.
+func (e LibraryRecentImportMediaType) Valid() bool {
+	switch e {
+	case LibraryRecentImportMediaTypeMovie:
+		return true
+	case LibraryRecentImportMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LibraryReuseCommandAction.
 const (
 	LibraryReuseCommandActionCopy     LibraryReuseCommandAction = "copy"
@@ -481,6 +517,63 @@ func (e LibraryReuseStatusState) Valid() bool {
 	case LibraryReuseStatusStateRunning:
 		return true
 	case LibraryReuseStatusStateWaiting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryRootOverviewAvailability.
+const (
+	LibraryRootOverviewAvailabilityAvailable LibraryRootOverviewAvailability = "available"
+	LibraryRootOverviewAvailabilityUnknown   LibraryRootOverviewAvailability = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the LibraryRootOverviewAvailability enum.
+func (e LibraryRootOverviewAvailability) Valid() bool {
+	switch e {
+	case LibraryRootOverviewAvailabilityAvailable:
+		return true
+	case LibraryRootOverviewAvailabilityUnknown:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryRootOverviewCapacityState.
+const (
+	LibraryRootOverviewCapacityStateFresh   LibraryRootOverviewCapacityState = "fresh"
+	LibraryRootOverviewCapacityStateStale   LibraryRootOverviewCapacityState = "stale"
+	LibraryRootOverviewCapacityStateUnknown LibraryRootOverviewCapacityState = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the LibraryRootOverviewCapacityState enum.
+func (e LibraryRootOverviewCapacityState) Valid() bool {
+	switch e {
+	case LibraryRootOverviewCapacityStateFresh:
+		return true
+	case LibraryRootOverviewCapacityStateStale:
+		return true
+	case LibraryRootOverviewCapacityStateUnknown:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryRootOverviewMediaType.
+const (
+	LibraryRootOverviewMediaTypeMovie LibraryRootOverviewMediaType = "movie"
+	LibraryRootOverviewMediaTypeTv    LibraryRootOverviewMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the LibraryRootOverviewMediaType enum.
+func (e LibraryRootOverviewMediaType) Valid() bool {
+	switch e {
+	case LibraryRootOverviewMediaTypeMovie:
+		return true
+	case LibraryRootOverviewMediaTypeTv:
 		return true
 	default:
 		return false
@@ -2144,6 +2237,26 @@ type CreateSubscriptionRequestMediaType string
 // CreateSubscriptionRequestScopeType defines model for CreateSubscriptionRequest.ScopeType.
 type CreateSubscriptionRequestScopeType string
 
+// DashboardActivity defines model for DashboardActivity.
+type DashboardActivity struct {
+	OperationId    openapi_types.UUID               `json:"operation_id"`
+	Progress       *float64                         `json:"progress,omitempty"`
+	ProgressSource *DashboardActivityProgressSource `json:"progress_source,omitempty"`
+	Status         string                           `json:"status"`
+	Title          string                           `json:"title"`
+	UpdatedAt      *time.Time                       `json:"updated_at,omitempty"`
+}
+
+// DashboardActivityProgressSource defines model for DashboardActivity.ProgressSource.
+type DashboardActivityProgressSource string
+
+// DashboardActivityPage defines model for DashboardActivityPage.
+type DashboardActivityPage struct {
+	Items      []DashboardActivity `json:"items"`
+	More       bool                `json:"more"`
+	ObservedAt time.Time           `json:"observed_at"`
+}
+
 // DeliverySummary defines model for DeliverySummary.
 type DeliverySummary struct {
 	AggregateId   string               `json:"aggregate_id"`
@@ -2536,6 +2649,38 @@ type LibraryCatalogPage struct {
 	NextCursor *string               `json:"next_cursor,omitempty"`
 }
 
+// LibraryOverview defines model for LibraryOverview.
+type LibraryOverview struct {
+	// Counts Distinct current imported facts, not subscription satisfaction. Episodes include specials. Decimal strings preserve integer precision.
+	Counts     LibraryOverviewCounts `json:"counts"`
+	ObservedAt time.Time             `json:"observed_at"`
+	Recent     []LibraryRecentImport `json:"recent"`
+	Roots      []LibraryRootOverview `json:"roots"`
+}
+
+// LibraryOverviewCounts Distinct current imported facts, not subscription satisfaction. Episodes include specials. Decimal strings preserve integer precision.
+type LibraryOverviewCounts struct {
+	Episodes string `json:"episodes"`
+	Files    string `json:"files"`
+	Movies   string `json:"movies"`
+	TvShows  string `json:"tv_shows"`
+}
+
+// LibraryRecentImport defines model for LibraryRecentImport.
+type LibraryRecentImport struct {
+	ImportedAt time.Time                    `json:"imported_at"`
+	MediaId    openapi_types.UUID           `json:"media_id"`
+	MediaType  LibraryRecentImportMediaType `json:"media_type"`
+
+	// PosterUrl Optional version-bound trusted TMDB image projection; never an arbitrary stored URL.
+	PosterUrl *string `json:"poster_url,omitempty"`
+	Title     string  `json:"title"`
+	Year      *int    `json:"year,omitempty"`
+}
+
+// LibraryRecentImportMediaType defines model for LibraryRecentImport.MediaType.
+type LibraryRecentImportMediaType string
+
 // LibraryReuseCandidate defines model for LibraryReuseCandidate.
 type LibraryReuseCandidate struct {
 	FileId          openapi_types.UUID     `json:"file_id"`
@@ -2621,6 +2766,28 @@ type LibraryReuseTarget struct {
 	SubscriptionId *openapi_types.UUID `json:"subscription_id,omitempty"`
 	UnitId         openapi_types.UUID  `json:"unit_id"`
 }
+
+// LibraryRootOverview defines model for LibraryRootOverview.
+type LibraryRootOverview struct {
+	Availability   LibraryRootOverviewAvailability  `json:"availability"`
+	AvailableBytes *string                          `json:"available_bytes,omitempty"`
+	CapacityState  LibraryRootOverviewCapacityState `json:"capacity_state"`
+	Health         string                           `json:"health"`
+	MediaType      LibraryRootOverviewMediaType     `json:"media_type"`
+	Name           string                           `json:"name"`
+	RootId         openapi_types.UUID               `json:"root_id"`
+	SampledAt      *time.Time                       `json:"sampled_at,omitempty"`
+	TotalBytes     *string                          `json:"total_bytes,omitempty"`
+}
+
+// LibraryRootOverviewAvailability defines model for LibraryRootOverview.Availability.
+type LibraryRootOverviewAvailability string
+
+// LibraryRootOverviewCapacityState defines model for LibraryRootOverview.CapacityState.
+type LibraryRootOverviewCapacityState string
+
+// LibraryRootOverviewMediaType defines model for LibraryRootOverview.MediaType.
+type LibraryRootOverviewMediaType string
 
 // LibraryRootSelection defines model for LibraryRootSelection.
 type LibraryRootSelection struct {
@@ -3879,6 +4046,11 @@ type RevokeOwnTokenParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
 
+// GetDashboardActivityParams defines parameters for GetDashboardActivity.
+type GetDashboardActivityParams struct {
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
 // GetDiscoverFeedParams defines parameters for GetDiscoverFeed.
 type GetDiscoverFeedParams struct {
 	Category *GetDiscoverFeedParamsCategory `form:"category,omitempty" json:"category,omitempty"`
@@ -3983,6 +4155,11 @@ type CorrectFileMappingJSONBody struct {
 // CorrectFileMappingParams defines parameters for CorrectFileMapping.
 type CorrectFileMappingParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// GetLibraryOverviewParams defines parameters for GetLibraryOverview.
+type GetLibraryOverviewParams struct {
+	RecentLimit *int `form:"recent_limit,omitempty" json:"recent_limit,omitempty"`
 }
 
 // PreviewLibraryReuseJSONBody defines parameters for PreviewLibraryReuse.
@@ -4662,6 +4839,9 @@ type ServerInterface interface {
 	// RevokeOwnToken Irreversibly revoke an own token; session required
 	// (POST /api/v1/auth/tokens/{id}/revoke)
 	RevokeOwnToken(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RevokeOwnTokenParams)
+	// GetDashboardActivity Read visible persisted operation activity without probing clients
+	// (GET /api/v1/dashboard/activity)
+	GetDashboardActivity(w http.ResponseWriter, r *http.Request, params GetDashboardActivityParams)
 	// GetDiscoverFeed Get discover feeds from TMDB
 	// (GET /api/v1/discover)
 	GetDiscoverFeed(w http.ResponseWriter, r *http.Request, params GetDiscoverFeedParams)
@@ -4737,6 +4917,9 @@ type ServerInterface interface {
 	// GetFileMappingOptions Administrator index and persisted media choices, latest 100 only; not evidence of physical presence
 	// (GET /api/v1/library/mapping-options)
 	GetFileMappingOptions(w http.ResponseWriter, r *http.Request)
+	// GetLibraryOverview Read registered shared-library facts and capacity observations
+	// (GET /api/v1/library/overview)
+	GetLibraryOverview(w http.ResponseWriter, r *http.Request, params GetLibraryOverviewParams)
 	// PreviewLibraryReuse Preview up to 20 target demands in one snapshot without creating work
 	// (POST /api/v1/library/reuse-previews)
 	PreviewLibraryReuse(w http.ResponseWriter, r *http.Request)
@@ -5257,6 +5440,39 @@ func (siw *ServerInterfaceWrapper) RevokeOwnToken(w http.ResponseWriter, r *http
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RevokeOwnToken(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetDashboardActivity operation middleware
+func (siw *ServerInterfaceWrapper) GetDashboardActivity(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDashboardActivityParams
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetDashboardActivity(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -6123,6 +6339,39 @@ func (siw *ServerInterfaceWrapper) GetFileMappingOptions(w http.ResponseWriter, 
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetFileMappingOptions(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetLibraryOverview operation middleware
+func (siw *ServerInterfaceWrapper) GetLibraryOverview(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetLibraryOverviewParams
+
+	// ------------- Optional query parameter "recent_limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "recent_limit", r.URL.Query(), &params.RecentLimit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "recent_limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "recent_limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetLibraryOverview(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9362,6 +9611,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/settings/{key}", wrapper.UpdateSetting)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/settings/{key}/commands/{request_key}", wrapper.GetSettingCommand)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/movies/acquire", wrapper.AcquireMovie)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/overview", wrapper.GetLibraryOverview)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/dashboard/activity", wrapper.GetDashboardActivity)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/catalog", wrapper.ListLibraryCatalog)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/stream", wrapper.GetActivityStream)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/operations", wrapper.ListOperations)
@@ -10304,6 +10555,84 @@ func (response RevokeOwnToken503JSONResponse) VisitRevokeOwnTokenResponse(w http
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDashboardActivityRequestObject struct {
+	Params GetDashboardActivityParams
+}
+
+type GetDashboardActivityResponseObject interface {
+	VisitGetDashboardActivityResponse(w http.ResponseWriter) error
+}
+
+type GetDashboardActivity200JSONResponse DashboardActivityPage
+
+func (response GetDashboardActivity200JSONResponse) VisitGetDashboardActivityResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDashboardActivity400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDashboardActivity400ApplicationProblemPlusJSONResponse) VisitGetDashboardActivityResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDashboardActivity401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDashboardActivity401ApplicationProblemPlusJSONResponse) VisitGetDashboardActivityResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDashboardActivity403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDashboardActivity403ApplicationProblemPlusJSONResponse) VisitGetDashboardActivityResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDashboardActivity503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDashboardActivity503ApplicationProblemPlusJSONResponse) VisitGetDashboardActivityResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -12730,6 +13059,84 @@ func (response GetFileMappingOptions503JSONResponse) VisitGetFileMappingOptionsR
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetLibraryOverviewRequestObject struct {
+	Params GetLibraryOverviewParams
+}
+
+type GetLibraryOverviewResponseObject interface {
+	VisitGetLibraryOverviewResponse(w http.ResponseWriter) error
+}
+
+type GetLibraryOverview200JSONResponse LibraryOverview
+
+func (response GetLibraryOverview200JSONResponse) VisitGetLibraryOverviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetLibraryOverview400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetLibraryOverview400ApplicationProblemPlusJSONResponse) VisitGetLibraryOverviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetLibraryOverview401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetLibraryOverview401ApplicationProblemPlusJSONResponse) VisitGetLibraryOverviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetLibraryOverview403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetLibraryOverview403ApplicationProblemPlusJSONResponse) VisitGetLibraryOverviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetLibraryOverview503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetLibraryOverview503ApplicationProblemPlusJSONResponse) VisitGetLibraryOverviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -21873,6 +22280,9 @@ type StrictServerInterface interface {
 	// RevokeOwnToken Irreversibly revoke an own token; session required
 	// (POST /api/v1/auth/tokens/{id}/revoke)
 	RevokeOwnToken(ctx context.Context, request RevokeOwnTokenRequestObject) (RevokeOwnTokenResponseObject, error)
+	// GetDashboardActivity Read visible persisted operation activity without probing clients
+	// (GET /api/v1/dashboard/activity)
+	GetDashboardActivity(ctx context.Context, request GetDashboardActivityRequestObject) (GetDashboardActivityResponseObject, error)
 	// GetDiscoverFeed Get discover feeds from TMDB
 	// (GET /api/v1/discover)
 	GetDiscoverFeed(ctx context.Context, request GetDiscoverFeedRequestObject) (GetDiscoverFeedResponseObject, error)
@@ -21948,6 +22358,9 @@ type StrictServerInterface interface {
 	// GetFileMappingOptions Administrator index and persisted media choices, latest 100 only; not evidence of physical presence
 	// (GET /api/v1/library/mapping-options)
 	GetFileMappingOptions(ctx context.Context, request GetFileMappingOptionsRequestObject) (GetFileMappingOptionsResponseObject, error)
+	// GetLibraryOverview Read registered shared-library facts and capacity observations
+	// (GET /api/v1/library/overview)
+	GetLibraryOverview(ctx context.Context, request GetLibraryOverviewRequestObject) (GetLibraryOverviewResponseObject, error)
 	// PreviewLibraryReuse Preview up to 20 target demands in one snapshot without creating work
 	// (POST /api/v1/library/reuse-previews)
 	PreviewLibraryReuse(ctx context.Context, request PreviewLibraryReuseRequestObject) (PreviewLibraryReuseResponseObject, error)
@@ -22540,6 +22953,32 @@ func (sh *strictHandler) RevokeOwnToken(w http.ResponseWriter, r *http.Request, 
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(RevokeOwnTokenResponseObject); ok {
 		if err := validResponse.VisitRevokeOwnTokenResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetDashboardActivity operation middleware
+func (sh *strictHandler) GetDashboardActivity(w http.ResponseWriter, r *http.Request, params GetDashboardActivityParams) {
+	var request GetDashboardActivityRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDashboardActivity(ctx, request.(GetDashboardActivityRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDashboardActivity")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetDashboardActivityResponseObject); ok {
+		if err := validResponse.VisitGetDashboardActivityResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -23248,6 +23687,32 @@ func (sh *strictHandler) GetFileMappingOptions(w http.ResponseWriter, r *http.Re
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetFileMappingOptionsResponseObject); ok {
 		if err := validResponse.VisitGetFileMappingOptionsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetLibraryOverview operation middleware
+func (sh *strictHandler) GetLibraryOverview(w http.ResponseWriter, r *http.Request, params GetLibraryOverviewParams) {
+	var request GetLibraryOverviewRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetLibraryOverview(ctx, request.(GetLibraryOverviewRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetLibraryOverview")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetLibraryOverviewResponseObject); ok {
+		if err := validResponse.VisitGetLibraryOverviewResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
