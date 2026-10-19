@@ -17,6 +17,9 @@ import { useAuth } from "@/features/auth/AuthContext";
 import {useDiscoveryReviewHandoff} from "@/features/configuration/DiscoveryReviewHandoff";
 import {isReviewUUID} from "@/features/configuration/discoveryReviewHandoff";
 
+import "@/features/configuration/subscription-view.css";
+import {SubscriptionCalendar} from "@/features/configuration/SubscriptionCalendar";
+import {subscriptionProgress} from "@/features/configuration/subscriptionCalendar";
 type PendingStateControl = {id:string;state:"active"|"paused"|"archived";version:number;key:string};
 function readStateControl(key:string|null):PendingStateControl|null {
   if (!key) return null;
@@ -50,7 +53,7 @@ const setPendingControl=(command:PendingStateControl|null)=>{updatePendingContro
 useEffect(()=>{updatePendingControl(readStateControl(controlStorageKey));setControlBlocked(false);setControlError("")},[controlStorageKey]);
 const controlOwner=useRef<AbortController|null>(null);
 useEffect(()=>()=>controlOwner.current?.abort(),[]);
-  const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv" | "calendar">("all");
   const [searchFilter, setSearchFilter] = useState("");
 
   // Selected subscription for detail modal
@@ -87,13 +90,13 @@ useEffect(()=>()=>controlOwner.current?.abort(),[]);
     return () => controller.abort();
   }, [targetSubscription, location.key, user?.id, user?.role]);
   const movieCount = useMemo(
-    () => visibleSubscriptions.filter((s) => s.media_type !== "tv" && (!s.wanted_items || s.wanted_items.length <= 1)).length,
+    () => visibleSubscriptions.filter((s) => s.media_type === "movie").length,
     [visibleSubscriptions]
   );
   const tvCount = useMemo(
     () =>
       visibleSubscriptions.filter(
-        (s) => s.media_type === "tv" || (s.media_type !== "movie" && s.wanted_items && s.wanted_items.length > 1)
+        (s) => s.media_type === "tv"
       ).length,
     [visibleSubscriptions]
   );
@@ -101,9 +104,9 @@ useEffect(()=>()=>controlOwner.current?.abort(),[]);
   const filteredSubscriptions = useMemo(() => {
     let list = visibleSubscriptions;
     if (activeTab === "movie") {
-      list = list.filter((s) => s.media_type !== "tv" && (!s.wanted_items || s.wanted_items.length <= 1));
+      list = list.filter((s) => s.media_type === "movie");
     } else if (activeTab === "tv") {
-      list = list.filter((s) => s.media_type === "tv" || (s.wanted_items && s.wanted_items.length > 1));
+      list = list.filter((s) => s.media_type === "tv");
     }
 
     if (searchFilter.trim()) {
@@ -230,6 +233,7 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
             <Tv size={14} />
             <span>电视剧追更 ({tvCount})</span>
           </button>
+          <button type="button" className={`tab-btn ${activeTab === "calendar" ? "active" : ""}`} aria-pressed={activeTab === "calendar"} onClick={() => setActiveTab("calendar")}>追剧日历</button>
         </div>
 
         {(
@@ -252,6 +256,8 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
           <div className="spinner"></div>
           <p>正在加载订阅列表...</p>
         </div>
+      ) : activeTab === "calendar" ? (
+        <SubscriptionCalendar key={listAccount} subscriptions={filteredSubscriptions} onOpen={id => { const sub=visibleSubscriptions.find(item=>item.id===id);if(sub)setSelectedSub(sub); }} />
       ) : filteredSubscriptions.length === 0 ? (
         /* Empty State */
         <div className="empty-state">
@@ -266,12 +272,12 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
         /* Poster Cards Grid (探索同款海报网格！) */
         <div className="movie-grid">
           {filteredSubscriptions.map((sub) => {
-            const isTV = sub.media_type === "tv" || (sub.wanted_items && sub.wanted_items.length > 1);
-            const activeWantedItems = sub.wanted_items?.filter((w) => !w.is_skipped) || [];
-            const hasSkipped = (sub.wanted_items?.length || 0) > activeWantedItems.length && activeWantedItems.length > 0;
-            const totalEps = activeWantedItems.length;
-            const satisfiedEps = activeWantedItems.filter((w) => w.is_satisfied).length;
-            const pct = totalEps > 0 ? Math.round((satisfiedEps / totalEps) * 100) : 0;
+            const progress = subscriptionProgress(sub);
+            const isTV = progress.mediaType === "tv";
+            const totalEps = progress.total;
+            const satisfiedEps = progress.satisfied;
+            const pct = progress.percent;
+            const hasSkipped = (sub.wanted_items?.length || 0) > totalEps && totalEps > 0;
             const poster = sub.poster_url || undefined;
 
             return (
@@ -296,11 +302,11 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
 
                   {/* Top Badges */}
                   <span className={`badge-type ${isTV ? "tv" : "movie"}`}>
-                    {isTV ? "电视剧" : "电影"}
+                    {isTV ? "电视剧" : progress.mediaType === "movie" ? "电影" : "类型未知"}
                   </span>
 
                   <span className={`badge-sub-state ${sub.state}`}>
-                    {sub.state === "active" ? "订阅有效" : "已暂停"}
+                    {sub.state === "active" ? "订阅有效" : sub.state === "paused" ? "已暂停" : "已归档"}
                   </span>
 
                   {/* Hover Overlay with Quick Actions (MoviePilot Style) */}
@@ -375,12 +381,12 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
                         {hasSkipped ? `投影：已选 ${totalEps} 集 · 满足 ${satisfiedEps} 集 (${pct}%)` : `投影 ${satisfiedEps}/${totalEps} 集 (${pct}%)`}
                       </span>
                     ) : (
-                      <span className="caption-progress-tag">单部全量</span>
+                      <span className="caption-progress-tag">{isTV ? "无有效追更目标" : progress.mediaType === "movie" ? "单部全量" : "媒体类型未知"}</span>
                     )}
                   </div>
                   {/* Subtle Progress Bar */}
                   {isTV && totalEps > 0 && (
-                    <div className="card-mini-bar">
+                    <div className="card-mini-bar" role="progressbar" aria-label="追更投影进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct ?? undefined}>
                       <div className="card-mini-fill" style={{ width: `${pct}%` }}></div>
                     </div>
                   )}

@@ -1,0 +1,192 @@
+.subscription-calendar {
+  min-width: 0;
+  color: var(--text);
+  font-size: .9375rem;
+  line-height: 1.6;
+  container-type: inline-size;
+}
+
+.subscription-calendar .calendar-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.subscription-calendar .calendar-heading {
+  min-width: 0;
+}
+
+.subscription-calendar h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  overflow-wrap: anywhere;
+}
+
+.subscription-calendar .calendar-range {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font-size: .875rem;
+}
+
+.subscription-calendar time {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.subscription-calendar .calendar-controls,
+.subscription-calendar .calendar-navigation,
+.subscription-calendar .calendar-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.subscription-calendar button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.5;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.subscription-calendar button:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+.subscription-calendar button:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.subscription-calendar button[aria-pressed="true"] {
+  background: var(--surface-active);
+  border-color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.subscription-calendar button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+.subscription-calendar .calendar-days {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  border: 1px solid var(--border);
+  background: var(--border);
+  min-width: 0;
+}
+
+.subscription-calendar .calendar-days-month {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.subscription-calendar .calendar-day {
+  min-width: 0;
+  padding: 8px;
+  background: var(--surface);
+}
+
+.subscription-calendar .calendar-day[data-outside-month="true"] {
+  background: var(--bg);
+}
+
+.subscription-calendar h3 {
+  margin: 0 0 8px;
+  font-size: .875rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.subscription-calendar .calendar-day h3 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+}
+
+.subscription-calendar time[aria-current="date"] {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.subscription-calendar .calendar-episodes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+}
+
+.subscription-calendar .calendar-episodes li {
+  min-width: 0;
+}
+
+.subscription-calendar .calendar-episode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.subscription-calendar .calendar-episode > span {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.subscription-calendar .calendar-episode-title {
+  font-weight: 600;
+}
+
+.subscription-calendar .calendar-episode-meta,
+.subscription-calendar .calendar-day-empty,
+.subscription-calendar .calendar-empty {
+  color: var(--text-secondary);
+  font-size: .875rem;
+}
+
+.subscription-calendar .calendar-day-empty {
+  margin: 0;
+}
+
+.subscription-calendar .calendar-empty {
+  margin: 0 0 16px;
+}
+
+.subscription-calendar .calendar-unknown {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  min-width: 0;
+}
+
+@container (max-width: 760px) {
+  .subscription-calendar .calendar-days-month {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .subscription-calendar .calendar-days-month {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

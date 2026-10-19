@@ -1,0 +1,48 @@
+.subscriptions-container .media-control-bar {
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.subscriptions-container .tabs-bar {
+  flex-wrap: wrap;
+  gap: .5rem;
+  min-width: 0;
+}
+
+.subscriptions-container .tabs-bar .tab-btn {
+  flex: 0 0 auto;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.subscriptions-container .movie-grid > .media-card-wrap {
+  min-width: 0;
+}
+
+.subscriptions-container .card-caption .subscription-open {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 44px;
+  padding: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.subscriptions-container .card-caption .caption-sub-row {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: .25rem .5rem;
+  min-width: 0;
+}
+
+.subscriptions-container .caption-sub-row > span:first-child {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.subscriptions-container .caption-progress-tag {
+  white-space: normal;
+}

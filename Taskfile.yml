@@ -209,6 +209,11 @@ tasks:
     cmds:
       - bash scripts/verify_m5_discovery.sh details
 
+  test-subscription-calendar-ui:
+    desc: Verify subscription cards and week/month airing calendar with Cookie, PG18 and isolated Chrome
+    cmds:
+      - bash scripts/verify_m6_subscription_calendar_ui.sh
+
   test-discovery-boards-ui:
     desc: Verify five native TMDB feeds, filters, retry and late-response isolation with Cookie, PG18 and Chrome
     cmds:
