@@ -1148,58 +1148,6 @@ func (s *ServerHandler) GetTMDBTVDetails(ctx context.Context, request GetTMDBTVD
 	}, nil
 }
 
-// GetDiscoverFeed handles GET /api/v1/discover
-func (s *ServerHandler) GetDiscoverFeed(ctx context.Context, request GetDiscoverFeedRequestObject) (GetDiscoverFeedResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil {
-		return GetDiscoverFeed401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
-	}
-
-	category := "trending"
-	if request.Params.Category != nil {
-		category = string(*request.Params.Category)
-	}
-	page := 1
-	if request.Params.Page != nil && *request.Params.Page > 0 {
-		page = *request.Params.Page
-	}
-
-	var results []DiscoverMediaItem
-
-	if s.metaProvider != nil {
-		items, err := s.metaProvider.GetDiscoverFeed(ctx, category, page)
-		if err == nil {
-			results = make([]DiscoverMediaItem, len(items))
-			for i, m := range items {
-				mType := DiscoverMediaItemMediaType(m.MediaType)
-				if mType != "movie" && mType != "tv" {
-					mType = "movie"
-				}
-				var ratingPtr *float32
-				if m.Rating > 0 {
-					r := float32(m.Rating)
-					ratingPtr = &r
-				}
-				results[i] = DiscoverMediaItem{
-					TmdbId:      m.TMDBID,
-					Title:       m.Title,
-					Year:        &m.Year,
-					MediaType:   mType,
-					Overview:    &m.Overview,
-					PosterUrl:   &m.PosterURL,
-					BackdropUrl: &m.BackdropURL,
-					Rating:      ratingPtr,
-					Genres:      &m.Genres,
-				}
-			}
-			return GetDiscoverFeed200JSONResponse{Results: results}, nil
-		}
-	}
-
-	return GetDiscoverFeed200JSONResponse{Results: []DiscoverMediaItem{}}, nil
-}
-
 // SyncDoubanWishlist handles POST /api/v1/sync/douban
 func (s *ServerHandler) SyncDoubanWishlist(ctx context.Context, request SyncDoubanWishlistRequestObject) (SyncDoubanWishlistResponseObject, error) {
 	reqID := GetRequestID(ctx)

@@ -1775,6 +1775,10 @@ button {
 .tab-btn.active { color: #818cf8; background-color: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.3); }
 .tab-calendar.active { color: #c084fc; background-color: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.3); }
 
+.discover-container .tabs-bar { flex-wrap: wrap; }
+.discover-container .tab-btn { display: inline-flex; align-items: center; gap: 0.4rem; flex: 0 0 auto; min-height: 44px; white-space: nowrap; }
+.discover-container .tab-btn svg { flex-shrink: 0; }
+
 .calendar-view { display: flex; flex-direction: column; gap: 1.5rem; }
 .cal-tip { color: var(--muted); font-size: 0.85rem; }
 .schedule-timeline { display: flex; flex-direction: column; gap: 1.25rem; }

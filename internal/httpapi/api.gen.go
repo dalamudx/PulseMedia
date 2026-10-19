@@ -1659,16 +1659,19 @@ func (e WantedStatusDetailsStatus) Valid() bool {
 
 // Defines values for GetDiscoverFeedParamsCategory.
 const (
-	GetDiscoverFeedParamsCategoryMovie    GetDiscoverFeedParamsCategory = "movie"
-	GetDiscoverFeedParamsCategoryTopRated GetDiscoverFeedParamsCategory = "top_rated"
-	GetDiscoverFeedParamsCategoryTrending GetDiscoverFeedParamsCategory = "trending"
-	GetDiscoverFeedParamsCategoryTv       GetDiscoverFeedParamsCategory = "tv"
+	GetDiscoverFeedParamsCategoryMovie      GetDiscoverFeedParamsCategory = "movie"
+	GetDiscoverFeedParamsCategoryNowPlaying GetDiscoverFeedParamsCategory = "now_playing"
+	GetDiscoverFeedParamsCategoryTopRated   GetDiscoverFeedParamsCategory = "top_rated"
+	GetDiscoverFeedParamsCategoryTrending   GetDiscoverFeedParamsCategory = "trending"
+	GetDiscoverFeedParamsCategoryTv         GetDiscoverFeedParamsCategory = "tv"
 )
 
 // Valid indicates whether the value is a known member of the GetDiscoverFeedParamsCategory enum.
 func (e GetDiscoverFeedParamsCategory) Valid() bool {
 	switch e {
 	case GetDiscoverFeedParamsCategoryMovie:
+		return true
+	case GetDiscoverFeedParamsCategoryNowPlaying:
 		return true
 	case GetDiscoverFeedParamsCategoryTopRated:
 		return true
@@ -10660,6 +10663,20 @@ func (response GetDiscoverFeed200JSONResponse) VisitGetDiscoverFeedResponse(w ht
 	return err
 }
 
+type GetDiscoverFeed400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDiscoverFeed400ApplicationProblemPlusJSONResponse) VisitGetDiscoverFeedResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type GetDiscoverFeed401JSONResponse ErrorResponse
 
 func (response GetDiscoverFeed401JSONResponse) VisitGetDiscoverFeedResponse(w http.ResponseWriter) error {
@@ -10684,6 +10701,34 @@ func (response GetDiscoverFeed401ApplicationProblemPlusJSONResponse) VisitGetDis
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDiscoverFeed403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDiscoverFeed403ApplicationProblemPlusJSONResponse) VisitGetDiscoverFeedResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDiscoverFeed503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDiscoverFeed503ApplicationProblemPlusJSONResponse) VisitGetDiscoverFeedResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }

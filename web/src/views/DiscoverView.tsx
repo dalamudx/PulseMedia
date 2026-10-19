@@ -28,7 +28,7 @@ export const DiscoverView: React.FC = () => {
   const [searchYear, setSearchYear] = useState<string>("");
   const {feedItems, movies, searching, searched, loadingFeed, feedError, searchError,
     search: searchCatalog, refreshFeed, resetSearch: resetCatalogSearch} = useDiscoveryCatalog({
-      category: activeCategory, locationKey: location.key, userId: user?.id,
+      category: activeCategory, locationKey: location.key, userId: user?.id, role: user?.role,
     });
   const subscriptionCreation = useSubscriptionCreation({ onSuccess: (result) => {
     setShowDetailModal(false);
@@ -59,6 +59,7 @@ export const DiscoverView: React.FC = () => {
     setActiveCategory(category);
     setSelectedGenre("全部");
     setSearchQuery("");
+    setSearchYear("");
   };
 
   const refreshDiscoverData = async (notify = false) => {
@@ -293,9 +294,10 @@ export const DiscoverView: React.FC = () => {
 
       {/* Source Category Tabs (Trending / Movies / TV / Douban) */}
       {!searched && (
-        <div className="tabs-bar">
+        <div className="tabs-bar" role="group" aria-label="TMDB榜单">
           <button
             className={`tab-btn ${activeCategory === "trending" ? "active" : ""}`}
+            aria-pressed={activeCategory === "trending"}
             onClick={() => switchCategory("trending")}
           >
             <Sparkles size={14} />
@@ -303,6 +305,7 @@ export const DiscoverView: React.FC = () => {
           </button>
           <button
             className={`tab-btn ${activeCategory === "movie" ? "active" : ""}`}
+            aria-pressed={activeCategory === "movie"}
             onClick={() => switchCategory("movie")}
           >
             <Film size={14} />
@@ -310,13 +313,24 @@ export const DiscoverView: React.FC = () => {
           </button>
           <button
             className={`tab-btn ${activeCategory === "tv" ? "active" : ""}`}
+            aria-pressed={activeCategory === "tv"}
             onClick={() => switchCategory("tv")}
           >
             <Tv size={14} />
             <span>热门剧集</span>
           </button>
           <button
+            type="button"
+            className={`tab-btn ${activeCategory === "now_playing" ? "active" : ""}`}
+            aria-pressed={activeCategory === "now_playing"}
+            onClick={() => switchCategory("now_playing")}
+          >
+            <Film size={14} />
+            <span>正在热映</span>
+          </button>
+          <button
             className={`tab-btn tab-calendar ${activeCategory === "top_rated" ? "active" : ""}`}
+            aria-pressed={activeCategory === "top_rated"}
             onClick={() => switchCategory("top_rated")}
           >
             <Trophy size={14} />

@@ -18,6 +18,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/tmdb"
 	"github.com/dalamudx/PulseMedia/internal/config"
 	"github.com/dalamudx/PulseMedia/internal/httpapi"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
@@ -97,7 +98,16 @@ func runM6DashboardBrowser(t *testing.T, mode string) {
 	syncService.SetCredentialDecoder(crypto.NewSecretProtector(key))
 	syncService.SetServerFactory(NativeMediaServerClient)
 	settingsService := settings.NewService(postgres.NewSettingsStore(f.pool, f.gen), crypto.NewSettingsCipher(key))
-	handler := httpapi.NewServerHandler(application, authService, settingsService, nil, nil, nil, nil, nil, nil, nil, manager, syncService, key)
+	metadata := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/trending/all/day" || r.URL.Query().Get("api_key") != "owned-dashboard-metadata" {
+			t.Error("unexpected configured dashboard metadata request")
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{"results":[]}`)
+	}))
+	t.Cleanup(metadata.Close)
+	provider := tmdb.NewClient("owned-dashboard-metadata", tmdb.WithBaseURL(metadata.URL), tmdb.WithHTTPClient(metadata.Client()))
+	handler := httpapi.NewServerHandler(application, authService, settingsService, nil, nil, provider, nil, nil, nil, nil, manager, syncService, key)
 	indexerStore := postgres.NewIndexerManagementStore(f.pool, f.gen, crypto.NewSecretProtector(key))
 	handler.SetIndexerManagementServices(usecaseSearch.NewIndexerManagementService(indexerStore, crypto.NewSecretProtector(key)), usecaseSearch.NewIndexerManagementReceiptService(indexerStore))
 	router := httpapi.NewRouter(application, handler, authService, nil)

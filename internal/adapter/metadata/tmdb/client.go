@@ -503,37 +503,36 @@ var tmdbGenreMap = map[int]string{
 	10768: "战争",
 }
 
-// GetDiscoverFeed fetches curated feeds (trending, movie, tv, top_rated) from TMDB.
+// GetDiscoverFeed reads one explicit TMDB list. Fixed-type routes may omit
+// media_type; trending items must identify their own movie/TV namespace.
 func (c *Client) GetDiscoverFeed(ctx context.Context, category string, page int) ([]*ports.MovieMetadata, error) {
-	if page <= 0 {
+	if page == 0 {
 		page = 1
 	}
-
-	var endpoint string
-	var defaultType string
-
+	if page < 1 || page > 500 {
+		return nil, ports.ErrRejected
+	}
+	var endpoint, defaultType string
 	switch category {
 	case "movie", "movies", "popular_movies":
-		endpoint = "movie/popular"
-		defaultType = "movie"
+		endpoint, defaultType = "movie/popular", "movie"
 	case "tv", "popular_tv":
-		endpoint = "tv/popular"
-		defaultType = "tv"
+		endpoint, defaultType = "tv/popular", "tv"
 	case "top_rated":
-		endpoint = "movie/top_rated"
-		defaultType = "movie"
-	default:
+		endpoint, defaultType = "movie/top_rated", "movie"
+	case "now_playing":
+		endpoint, defaultType = "movie/now_playing", "movie"
+	case "", "trending":
 		endpoint = "trending/all/day"
-		defaultType = "movie"
+	default:
+		return nil, ports.ErrRejected
 	}
-
 	reqURL := fmt.Sprintf("%s/%s?language=zh-CN&page=%d", c.baseURL, endpoint, page)
-	respBytes, _, err := c.doGet(ctx, reqURL, "")
+	raw, _, err := c.doGet(ctx, reqURL, "")
 	if err != nil {
 		return nil, err
 	}
-
-	var d struct {
+	var response struct {
 		Results []struct {
 			ID           int64   `json:"id"`
 			MediaType    string  `json:"media_type"`
@@ -548,55 +547,40 @@ func (c *Client) GetDiscoverFeed(ctx context.Context, category string, page int)
 			GenreIDs     []int   `json:"genre_ids"`
 		} `json:"results"`
 	}
-
-	if err := json.Unmarshal(respBytes, &d); err != nil {
-		return nil, fmt.Errorf("%w: failed to parse discover feed: %v", ports.ErrBadResponse, err)
+	if json.Unmarshal(raw, &response) != nil || response.Results == nil {
+		return nil, ports.ErrBadResponse
 	}
-
-	results := make([]*ports.MovieMetadata, 0, len(d.Results))
-	for _, r := range d.Results {
-		mType := r.MediaType
-		if mType == "" {
-			mType = defaultType
-		}
-		if mType != "movie" && mType != "tv" {
+	items := make([]*ports.MovieMetadata, 0, len(response.Results))
+	for _, item := range response.Results {
+		kind := item.MediaType
+		if kind == "person" && defaultType == "" {
 			continue
 		}
-
-		title := r.Title
-		dateStr := r.ReleaseDate
-		if mType == "tv" {
-			title = r.Name
-			dateStr = r.FirstAirDate
+		if kind == "" {
+			kind = defaultType
 		}
-
-		var poster, backdrop string
-		if r.PosterPath != nil {
-			poster = imageBaseURL + *r.PosterPath
+		if (kind != "movie" && kind != "tv") || (defaultType != "" && kind != defaultType) || item.ID <= 0 || item.VoteAverage < 0 || item.VoteAverage > 10 {
+			return nil, ports.ErrBadResponse
 		}
-		if r.BackdropPath != nil {
-			backdrop = imageBaseURL + *r.BackdropPath
+		title, date := item.Title, item.ReleaseDate
+		if kind == "tv" {
+			title, date = item.Name, item.FirstAirDate
 		}
-
-		genres := make([]string, 0, len(r.GenreIDs))
-		for _, gid := range r.GenreIDs {
-			if gName, ok := tmdbGenreMap[gid]; ok {
-				genres = append(genres, gName)
+		year, valid := catalogDateYear(date)
+		if strings.TrimSpace(title) == "" || !valid {
+			return nil, ports.ErrBadResponse
+		}
+		genres := make([]string, 0, len(item.GenreIDs))
+		for _, id := range item.GenreIDs {
+			if name, ok := tmdbGenreMap[id]; ok {
+				genres = append(genres, name)
 			}
 		}
-
-		results = append(results, &ports.MovieMetadata{
-			TMDBID:      r.ID,
-			MediaType:   mType,
-			Title:       title,
-			Year:        parseYearFromDate(dateStr),
-			Overview:    r.Overview,
-			PosterURL:   poster,
-			BackdropURL: backdrop,
-			Rating:      r.VoteAverage,
-			Genres:      genres,
+		items = append(items, &ports.MovieMetadata{
+			TMDBID: item.ID, MediaType: kind, Title: title, Year: year,
+			Overview: item.Overview, PosterURL: catalogImageURL(item.PosterPath),
+			BackdropURL: catalogImageURL(item.BackdropPath), Rating: item.VoteAverage, Genres: genres,
 		})
 	}
-
-	return results, nil
+	return items, nil
 }

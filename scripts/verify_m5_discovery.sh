@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# mise exec -- bash scripts/verify_m5_discovery.sh [all|catalog|tv|movie]
+# mise exec -- bash scripts/verify_m5_discovery.sh [all|catalog|tv|movie|boards]
 # Run after Main's RUNTIME_READY. Inspect SCREENSHOTS_READY images, then create
-# screenshots/inspected within 90 seconds; all task artifacts are deleted.
+# screenshots/inspected within 180 seconds; all task artifacts are deleted.
 set -euo pipefail
 umask 077
 repo=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
 cd "$repo"
-if [ "$#" -gt 1 ]; then echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie]' >&2; exit 2; fi
+if [ "$#" -gt 1 ]; then echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie|boards]' >&2; exit 2; fi
 mode=${1:-all}
 case "$mode" in
  all)
@@ -16,7 +16,8 @@ case "$mode" in
  catalog) pattern='^TestM5DiscoveryCatalogSubscriptionActualChromeHTTPPG$'; expected=1; receipts=M5_DISCOVERY_CATALOG_PASS;;
  tv) pattern='^TestM5DiscoveryTVHandoffActualChromeHTTPPG$'; expected=1; receipts=M5_DISCOVERY_TV_PASS;;
  movie) pattern='^TestM5DiscoveryMoviePanelActualChromeHTTPPG$'; expected=1; receipts=M5_DISCOVERY_MOVIE_PASS;;
- *) echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie]' >&2; exit 2;;
+ boards) pattern='^TestM6DiscoveryBoardsActualChromeHTTPPG$'; expected=1; receipts=M6_DISCOVERY_BOARDS_PASS;;
+ *) echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie|boards]' >&2; exit 2;;
 esac
 if [ "${PULSE_M5_DISCOVERY_OWNED_PG:-}" != 1 ]; then
  exec env PULSE_M5_DISCOVERY_OWNED_PG=1 bash scripts/with_podman_test_postgres.sh bash scripts/verify_m5_discovery.sh "$mode"
@@ -29,7 +30,8 @@ cleanup(){
  if [ -f "$owned/screenshots/discovery-desktop.png" ] || [ -f "$owned/screenshots/discovery-375.png" ]; then
   echo "M5_DISCOVERY_SCREENSHOTS_READY $owned/screenshots"
   inspected=0
-  for ((attempt=0;attempt<90;attempt++)); do
+  review_seconds=180
+  for ((attempt=0;attempt<review_seconds;attempt++)); do
    if [ -f "$owned/screenshots/inspected" ]; then inspected=1; break; fi
    sleep 1
   done
@@ -72,11 +74,12 @@ if ! mise exec -- go test -race "${files[@]}" -run "$pattern" -count=1 -v -timeo
  tail -n 100 "$owned/acceptance.log"; exit 1
 fi
 if grep -q -- '--- SKIP:' "$owned/acceptance.log"; then echo M5_DISCOVERY_UNEXPECTED_SKIP >&2; exit 1; fi
-actual=$(grep -c '^--- PASS: TestM5' "$owned/acceptance.log")
+actual=$(grep -Ec '^--- PASS: TestM[56]' "$owned/acceptance.log")
 if [ "$actual" != "$expected" ]; then echo "M5_DISCOVERY_MISSING_EXECUTION expected=$expected actual=$actual" >&2; exit 1; fi
 for receipt in $receipts; do grep -q "$receipt" "$owned/acceptance.log" || exit 1; done
-if [ "$mode" = all ] || [ "$mode" = catalog ]; then
+if [ "$mode" = all ] || [ "$mode" = catalog ] || [ "$mode" = boards ]; then
  for screenshot in discovery-desktop discovery-375; do test -s "$owned/screenshots/$screenshot.png" || exit 1; done
+ if [ "$mode" = boards ]; then test -s "$owned/screenshots/discovery-320.png" || exit 1; fi
 fi
-grep -E 'M5_DISCOVERY_|--- PASS:|^ok[[:space:]]' "$owned/acceptance.log"
+grep -E 'M[56]_DISCOVERY_|--- PASS:|^ok[[:space:]]' "$owned/acceptance.log"
 echo "M5_DISCOVERY_ACCEPTANCE_EXECUTED mode=$mode tests=$actual"

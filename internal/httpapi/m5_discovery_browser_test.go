@@ -28,6 +28,7 @@ func TestM5DiscoveryCatalogSubscriptionActualChromeHTTPPG(t *testing.T) {
 }
 func TestM5DiscoveryTVHandoffActualChromeHTTPPG(t *testing.T)  { m5DiscoveryBrowser(t, "tv") }
 func TestM5DiscoveryMoviePanelActualChromeHTTPPG(t *testing.T) { m5DiscoveryBrowser(t, "movie") }
+func TestM6DiscoveryBoardsActualChromeHTTPPG(t *testing.T)     { m5DiscoveryBrowser(t, "boards") }
 
 func m5DiscoveryBrowser(t *testing.T, mode string) {
 	t.Helper()
@@ -129,7 +130,7 @@ func m5DiscoveryBrowser(t *testing.T, mode string) {
 		p.set("/3/search/multi", allFeed)
 	}
 	restore()
-	for path, body := range map[string]string{"/3/trending/all/day": allFeed, "/3/movie/popular": movieFeed, "/3/tv/popular": tvFeed, "/3/movie/top_rated": movieFeed} {
+	for path, body := range map[string]string{"/3/trending/all/day": allFeed, "/3/movie/popular": movieFeed, "/3/tv/popular": tvFeed, "/3/movie/top_rated": movieFeed, "/3/movie/now_playing": movieFeed} {
 		p.set(path, body)
 	}
 	if err := f.app.DBPool().QueryRow(t.Context(), `SELECT id,path FROM library_root WHERE media_type='tv' AND health='online' AND baseline_completed`).Scan(&h.root, &h.rootPath); err != nil {
@@ -269,7 +270,11 @@ func m5DiscoveryBrowser(t *testing.T, mode string) {
 		readErr := f.app.DBPool().QueryRow(t.Context(), `SELECT jsonb_build_object('next_query_at',i.next_query_at,'observed_at',clock_timestamp(),'health',i.health,'health_reason',i.health_reason,'health_failures',i.health_failures,'queries',(SELECT coalesce(jsonb_agg(jsonb_build_object('kind',q.query_type,'state',q.state,'count',q.results_count)),'[]') FROM indexer_query q WHERE q.indexer_id=i.id),'automatic_jobs',(SELECT count(*) FROM job WHERE kind='automatic_tv_source'))::text FROM indexer i WHERE id=$1`, h.indexer).Scan(&diagnostics)
 		t.Fatalf("actual discovery Chrome %s: %v\n%s\nowned read-only diagnostics=%s readErr=%v", mode, err, out, diagnostics, readErr)
 	}
-	if !strings.Contains(string(out), "M5_DISCOVERY_"+strings.ToUpper(mode)+"_PASS") {
+	receipt := "M5_DISCOVERY_" + strings.ToUpper(mode) + "_PASS"
+	if mode == "boards" {
+		receipt = "M6_DISCOVERY_BOARDS_PASS"
+	}
+	if !strings.Contains(string(out), receipt) {
 		t.Fatal("missing actual browser receipt")
 	}
 	if mode == "tv" {
@@ -325,11 +330,30 @@ try {
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'horizontal overflow');
   assert(await page.locator('.discover-container .media-card-wrap').evaluateAll(cards=>cards.every(card=>{const rect=card.getBoundingClientRect();return rect.left>=0&&rect.right<=innerWidth+1;})),'discovery cards must remain inside the viewport');
   const refresh=await page.getByTitle('刷新推荐数据',{exact:true}).boundingBox();assert(refresh&&refresh.height<50&&refresh.x+refresh.width<=width+1,'refresh text must remain on one line');
-  const path=process.env.PULSE_M5_DISCOVERY_SCREENSHOTS+'/'+name+'.png';await page.screenshot({path,fullPage:true});assert((await stat(path)).size>1000);
+  if(mode==='boards')assert(await page.getByRole('group',{name:'TMDB榜单',exact:true}).getByRole('button').evaluateAll(buttons=>buttons.every(button=>{const rect=button.getBoundingClientRect(),label=button.querySelector('span')?.getBoundingClientRect();return rect.left>=0&&rect.right<=innerWidth+1&&rect.height<60&&label&&label.height<30;})),'feed labels must stay horizontal and inside the viewport');
+  const path=process.env.PULSE_M5_DISCOVERY_SCREENSHOTS+'/'+name+'.png';await page.screenshot({path,fullPage:true,animations:'disabled'});assert((await stat(path)).size>1000);
  }
  async function picker(title='Native Automatic Series') {await openResources('tv',title);const row=page.locator('.release-item').filter({hasText:'S01E03.'});await button('选择获取目标',row).click();await button('前往订阅审核此资源').click();return page.getByRole('dialog').filter({has:page.getByText('选择本剧的订阅目标。',{exact:false})});}
  async function enter(row){const detail=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions/'+sub&&r.request().method()==='GET');const status=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/subscriptions/'+sub+'/status');await row.getByLabel('订阅目标根',{exact:true}).selectOption(sub);await button('进入原订阅审核',row).click();assert.equal((await detail).status(),200);assert.equal((await status).status(),200);await page.waitForURL(base+'/subscriptions?subscription='+sub);await page.getByRole('region',{name:'真实资源单集审核'}).waitFor();}
- if(mode==='catalog'){
+ if(mode==='boards'){
+  await context.addInitScript(()=>{const original=window.fetch.bind(window);window.fetch=(input,init)=>{const url=new URL(typeof input==='string'?input:input.url,location.href);if(url.pathname==='/api/v1/discover'&&url.searchParams.get('category')==='movie'){const unabortable=input instanceof Request?new Request(input,{signal:new AbortController().signal}):input;return original(unabortable,{...init,signal:new AbortController().signal});}return original(input,init);};});
+  const before=await evidence();await page.goto(base+'/discover');await card('Native trusted movie').waitFor();
+  const group=page.getByRole('group',{name:'TMDB榜单',exact:true});assert.equal(await group.getByRole('button').count(),5);
+  const choose=async(name,category,title)=>{const reply=page.waitForResponse(r=>{const u=new URL(r.url());return u.pathname==='/api/v1/discover'&&u.searchParams.get('category')===category;});await button(name,group).click();assert.equal((await reply).status(),200);await card(title).waitFor();assert.equal(await button(name,group).getAttribute('aria-pressed'),'true');};
+  await choose('热门电影','movie','Native trusted movie');await choose('热门剧集','tv','Native Automatic Series');
+  assert.equal(await card('Native trusted movie').count(),0,'TV list must not retain movie data');
+  await choose('正在热映','now_playing','Native trusted movie');await button('动作').click();await page.getByText('当前筛选没有影视',{exact:true}).waitFor();await button('全部').last().click();await card('Native trusted movie').waitFor();
+  await choose('TMDB 高分','top_rated','Native trusted movie');
+  const feed=url=>url.pathname==='/api/v1/discover';
+  const fault=async route=>{const actual=await route.fetch();assert.equal(actual.status(),200);await route.fulfill({status:503,contentType:'application/problem+json',body:JSON.stringify({code:'UNAVAILABLE',message:'owned transport failure'})});};
+  await page.route(feed,fault);await page.getByTitle('刷新推荐数据',{exact:true}).click();await page.getByRole('alert').filter({hasText:'推荐读取失败'}).waitFor();assert.equal(await card('Native trusted movie').count(),1,'same-list failure keeps prior data with error');await page.unroute(feed,fault);
+  const retry=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/discover');await button('重新加载推荐').click();assert.equal((await retry).status(),200);await page.getByRole('alert').filter({hasText:'推荐读取失败'}).waitFor({state:'hidden'});
+  let release,started;const held=new Promise(resolve=>{release=resolve;}),requested=new Promise(resolve=>{started=resolve;});
+  const delayMovie=async route=>{if(new URL(route.request().url()).searchParams.get('category')!=='movie'){await route.continue();return;}const actual=await route.fetch();assert.equal(actual.status(),200);started();await held;await route.fulfill({response:actual});};
+  await page.route(feed,delayMovie);await button('热门电影',group).click();await requested;await choose('热门剧集','tv','Native Automatic Series');const late=page.waitForResponse(r=>{const u=new URL(r.url());return u.pathname==='/api/v1/discover'&&u.searchParams.get('category')==='movie';});release();assert.equal((await late).status(),200);await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await card('Native trusted movie').count(),0,'ignored-abort late movie cannot replace TV');assert.equal(await button('热门剧集',group).getAttribute('aria-pressed'),'true');await page.unroute(feed,delayMovie);
+  await choose('正在热映','now_playing','Native trusted movie');await shot('discovery-desktop',1440);await shot('discovery-375',375);await shot('discovery-320',320);
+  const after=await evidence();assert.equal(after.tasks,before.tasks);assert.equal(after.jobs,before.jobs);assert.equal(after.reviews,before.reviews);assert.equal(after.subscriptions,before.subscriptions);assert.equal(writeCount(),0,'browsing cannot create review/acquisition');
+ } else if(mode==='catalog'){
   await page.goto(base+'/discover');await card('Native trusted movie').waitFor();assert.equal(await button('豆瓣高分').count(),0);await button('TMDB 高分').click();await card('Native trusted movie').waitFor();
   assert(requests.some(r=>r.path==='/api/v1/discover'));
   await button('动作').click();await page.getByText('当前筛选没有影视',{exact:true}).waitFor();assert.equal(await card('Native trusted movie').count(),0,'overview must not grant genre membership');await button('剧情').click();await card('Native trusted movie').waitFor();
@@ -386,6 +410,6 @@ try {
   assert.equal(requests.filter(r=>r.path==='/api/v1/acquisitions/selected-movie'&&r.method==='POST').length,0,'TV must never use movie acquisition');
   await privacy();
  }
- assert.deepEqual(errors,[]);console.log('M5_DISCOVERY_'+mode.toUpperCase()+'_PASS '+JSON.stringify({actualChrome:true,realCookieAppPG:true,nativeTMDB:true,nativeTorznab:true,ephemeralCDP:port,mode,acceptedMeansDurableOnly:true}));
+ assert.deepEqual(errors,[]);console.log((mode==='boards'?'M6_DISCOVERY_BOARDS_PASS':'M5_DISCOVERY_'+mode.toUpperCase()+'_PASS')+' '+JSON.stringify({actualChrome:true,realCookieAppPG:true,nativeTMDB:true,nativeTorznab:true,ephemeralCDP:port,mode,acceptedMeansDurableOnly:true}));
 } finally {await context.close();}
 `

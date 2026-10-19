@@ -7,6 +7,7 @@ type Scope = {
   category: DiscoveryCategory;
   locationKey: string;
   userId: string | undefined;
+  role: string | undefined;
   active: boolean;
   feed: AbortController | null;
   search: AbortController | null;
@@ -14,12 +15,13 @@ type Scope = {
 type Feed = { scope: Scope; items: MediaItem[]; busy: boolean; error: string };
 type Search = Feed & { searched: boolean };
 
-export function useDiscoveryCatalog({ category, locationKey, userId }: {
+export function useDiscoveryCatalog({ category, locationKey, userId, role }: {
   category: DiscoveryCategory;
   locationKey: string;
   userId: string | undefined;
+  role?: string;
 }) {
-  const scope = useMemo<Scope>(() => ({ category, locationKey, userId, active: false, feed: null, search: null }), [category, locationKey, userId]);
+  const scope = useMemo<Scope>(() => ({ category, locationKey, userId, role, active: false, feed: null, search: null }), [category, locationKey, userId, role]);
   const current = useRef(scope);
   current.current = scope;
   const [feed, setFeed] = useState<Feed>(() => ({ scope, items: [], busy: false, error: "" }));
@@ -34,12 +36,12 @@ export function useDiscoveryCatalog({ category, locationKey, userId }: {
     const owns = () => active() && scope.feed === controller && !controller.signal.aborted;
     setFeed(previous => ({ scope, items: previous.scope === scope ? previous.items : [], busy: true, error: "" }));
     try {
-      const { data, error } = await api.GET("/api/v1/discover", {
+      const { data, error, response } = await api.GET("/api/v1/discover", {
         params: { query: { category: scope.category, page: 1 } }, signal: controller.signal,
       });
       if (!owns()) return false;
       if (error || !data || !Array.isArray(data.results)) {
-        setFeed(previous => ({ ...previous, error: "推荐读取失败，请检查元数据配置或重新加载。" }));
+        setFeed(previous => ({ ...previous, items: response?.status === 401 || response?.status === 403 ? [] : previous.items, error: "推荐读取失败，请检查元数据配置或重新加载。" }));
         return false;
       }
       setFeed({ scope, items: data.results.map(discoveryMediaItem), busy: false, error: "" });

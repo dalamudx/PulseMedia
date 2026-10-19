@@ -9270,7 +9270,7 @@ export interface operations {
     getDiscoverFeed: {
         parameters: {
             query?: {
-                category?: "trending" | "movie" | "tv" | "top_rated";
+                category?: "trending" | "movie" | "tv" | "top_rated" | "now_playing";
                 page?: number;
             };
             header?: never;
@@ -9288,6 +9288,15 @@ export interface operations {
                     "application/json": components["schemas"]["DiscoverFeedResponse"];
                 };
             };
+            /** @description Invalid discover category or page */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -9296,6 +9305,24 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata read access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata feed temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

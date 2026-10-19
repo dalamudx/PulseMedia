@@ -199,6 +199,11 @@ tasks:
     cmds:
       - bash scripts/verify_m5_discovery.sh {{.CLI_ARGS}}
 
+  test-discovery-boards-ui:
+    desc: Verify five native TMDB feeds, filters, retry and late-response isolation with Cookie, PG18 and Chrome
+    cmds:
+      - bash scripts/verify_m5_discovery.sh boards
+
   test-dashboard-facts:
     desc: Verify shared library facts, capacity and activity with Cookie, PG18 and isolated Chrome
     cmds:

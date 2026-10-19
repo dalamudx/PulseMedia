@@ -1,6 +1,6 @@
 import type { MediaItem } from "@/components/cards/MediaCard";
 
-export type DiscoveryCategory = "trending" | "movie" | "tv" | "top_rated";
+export type DiscoveryCategory = "trending" | "movie" | "tv" | "top_rated" | "now_playing";
 export type DiscoverySearchType = "all" | "movie" | "tv";
 
 // TMDB TV labels combine genres that the discovery filters expose separately.
