@@ -3301,3 +3301,33 @@ button {
   min-inline-size: 44px;
 }
 
+/* Application navigation: one accessible shell across viewport sizes. */
+.app-shell .sidebar { position: sticky; top: 0; height: 100dvh; align-self: flex-start; }
+.app-shell .sidebar-brand, .app-shell .sidebar-footer { flex-shrink: 0; }
+.app-shell .sidebar-nav { min-height: 0; }
+.app-shell .collapse-btn, .app-shell .mobile-menu-btn { min-width: 44px; min-height: 44px; }
+.app-shell .mobile-menu-btn { display: none; border: 0; padding: 0; background: transparent; color: var(--text); border-radius: var(--radius-md); align-items: center; justify-content: center; }
+.app-shell .nav-item { min-height: 44px; }
+.app-shell .topbar { gap: 12px; }
+.app-shell .topbar-left { flex: 1; min-width: 0; }
+.app-shell .topbar-right { flex-shrink: 0; }
+.app-shell .page-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-shell .user-meta { min-width: 0; }
+.app-shell .username { max-width: 14rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-shell .btn-logout { flex-shrink: 0; min-width: 44px; min-height: 44px; white-space: nowrap; }
+.app-shell :is(.collapse-btn, .nav-item, .mobile-menu-btn, .btn-logout, .quick-search-pill):focus-visible {
+  outline: 2px solid var(--text); outline-offset: 2px;
+}
+.skip-link { position: fixed; top: 8px; left: 8px; z-index: 1001; padding: 12px; background: var(--surface); color: var(--text); }
+.skip-link:not(:focus) { width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 1024px) {
+  .app-shell .sidebar { height: 100dvh !important; }
+}
+@media (max-width: 640px) {
+  .app-shell .topbar { padding-inline: 12px !important; }
+  .app-shell .topbar-left { gap: 8px; }
+  .app-shell .user-profile { gap: 8px; padding: 4px 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-shell :is(.sidebar, .sidebar-brand, .nav-item, .collapse-btn, .mobile-menu-btn, .btn-logout) { transition: none !important; }
+}

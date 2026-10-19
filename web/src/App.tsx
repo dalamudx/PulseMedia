@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/AuthContext";
 import { Sidebar } from "@/components/common/Sidebar";
@@ -15,6 +15,7 @@ import { AccountTokensView } from "@/views/AccountTokensView";
 import { LoginView } from "@/views/LoginView";
 import { SetupView } from "@/views/SetupView";
 import {DiscoveryReviewHandoffProvider} from "@/features/configuration/DiscoveryReviewHandoff";
+import { useDialogFocus } from "@/features/configuration/useDialogFocus";
 
 export const App: React.FC = () => {
   const { user, initialized, checking, statusError, checkStatus } = useAuth();
@@ -22,10 +23,29 @@ export const App: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-  // Close mobile drawer on route navigation
+  const [isCompact, setIsCompact] = useState(() => window.matchMedia("(max-width: 1024px)").matches);
+  const navigation = useRef<HTMLElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const drawerOpen = Boolean(user) && isCompact && mobileDrawerOpen;
+  useDialogFocus(navigation, () => setMobileDrawerOpen(false), drawerOpen, menuButton);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1024px)");
+    const update = () => { setIsCompact(query.matches); setMobileDrawerOpen(false); };
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
   useEffect(() => {
     setMobileDrawerOpen(false);
-  }, [location.pathname]);
+  }, [location.key, user?.id, user?.role]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previous; };
+  }, [drawerOpen]);
 
   if (statusError) {
     return (
@@ -84,13 +104,14 @@ export const App: React.FC = () => {
   // Full Console Layout (with Responsive Adaptive Container & Mobile Drawer)
   return (
     <DiscoveryReviewHandoffProvider>
+    <a className="skip-link" href="#main-content">跳到主要内容</a>
     <div
       className={`app-shell with-sidebar ${isCollapsed ? "sidebar-collapsed" : ""} ${
-        mobileDrawerOpen ? "mobile-drawer-open" : ""
+        drawerOpen ? "mobile-drawer-open" : ""
       }`}
     >
       {/* Mobile Drawer Dark Backdrop */}
-      {mobileDrawerOpen && (
+      {drawerOpen && (
         <div
           className="mobile-drawer-backdrop"
           onClick={() => setMobileDrawerOpen(false)}
@@ -98,13 +119,17 @@ export const App: React.FC = () => {
       )}
 
       <Sidebar
-        isCollapsed={isCollapsed}
-        onToggle={() => setIsCollapsed(!isCollapsed)}
+        navigationRef={navigation}
+        isMobile={isCompact}
+        isOpen={drawerOpen}
+        isCollapsed={!isCompact && isCollapsed}
+        onToggle={() => setIsCollapsed(previous => !previous)}
+        onClose={() => setMobileDrawerOpen(false)}
       />
 
-      <div className="main-wrapper">
-        <Header onToggleMobile={() => setMobileDrawerOpen(!mobileDrawerOpen)} />
-        <main className="page-content">
+      <div className="main-wrapper" inert={drawerOpen}>
+        <Header menuButtonRef={menuButton} mobileDrawerOpen={drawerOpen} onToggleMobile={() => setMobileDrawerOpen(previous => !previous)} />
+        <main id="main-content" tabIndex={-1} className="page-content">
           <Routes>
             <Route path="/" element={<DashboardView />} />
             <Route path="/discover" element={<DiscoverView />} />

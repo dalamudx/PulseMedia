@@ -199,6 +199,11 @@ tasks:
     cmds:
       - bash scripts/verify_m5_discovery.sh {{.CLI_ARGS}}
 
+  test-shell-ui:
+    desc: Verify responsive application navigation, keyboard focus and dark startup with Cookie, PG18 and isolated Chrome
+    cmds:
+      - PULSE_M6_SHELL_BROWSER=1 bash scripts/verify_m6_shell_ui.sh
+
   test-episode-tracking-ui:
     desc: Verify per-episode controls and original-command recovery with PG18 and isolated Chrome
     cmds:

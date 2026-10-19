@@ -1,0 +1,103 @@
+import assert from 'node:assert/strict';
+import {existsSync} from 'node:fs';
+import {join} from 'node:path';
+import {setTimeout as delay} from 'node:timers/promises';
+import {chromium} from 'playwright-core';
+
+const env=process.env,base=env.PULSE_M6_SHELL_BASE,shots=env.PULSE_M6_SHELL_SCREENSHOTS;
+assert(base&&env.PULSE_M6_SHELL_SESSION&&env.PULSE_M6_SHELL_CDP&&shots?.startsWith('/data/temp/'),'owned fixture required');
+const browser=await chromium.connectOverCDP(env.PULSE_M6_SHELL_CDP);
+const context=await browser.newContext({viewport:{width:1280,height:900},colorScheme:'light',reducedMotion:'reduce',serviceWorkers:'block'});
+let checks=0;
+const check=(value,message)=>{assert(value,message);checks++;};
+try {
+ await context.addCookies([{name:'pulsemedia_session',value:env.PULSE_M6_SHELL_SESSION,url:base,httpOnly:true,sameSite:'Lax'}]);
+ const early=await context.newPage();
+ await early.route('**/*.css',route=>route.abort());
+ await early.goto(base,{waitUntil:'domcontentloaded'});
+ const paint=await early.evaluate(()=>({background:getComputedStyle(document.documentElement).backgroundColor,scheme:getComputedStyle(document.documentElement).colorScheme,theme:document.querySelector('meta[name="theme-color"]')?.content}));
+ check(paint.background==='rgb(9, 13, 22)'&&paint.scheme==='dark'&&paint.theme==='#090d16','startup must remain dark with stylesheet unavailable and system light');
+ await early.close();
+ const page=await context.newPage();page.setDefaultTimeout(12000);
+ const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto(base+'/subscriptions',{waitUntil:'domcontentloaded'});
+ const navigation=page.getByRole('navigation',{name:'主导航'});
+ await navigation.waitFor();
+ const labels=['仪表盘','探索发现','影视订阅','媒体库','下载活动','历史整理','站点管理','服务设置','API 令牌'];
+ check(await navigation.getByRole('link').count()===labels.length,'all navigation links must exist');
+ check(await navigation.getByRole('link',{name:'影视订阅',exact:true}).getAttribute('aria-current')==='page','current route must be announced');
+ check(await page.getByRole('group',{name:'当前用户：shell-admin-with-long-name（admin）'}).count()===1,'current user and role must be readable');
+ await page.getByRole('button',{name:'收起侧边栏',exact:true}).click();
+ for(const label of labels) check(await navigation.getByRole('link',{name:label,exact:true}).count()===1,'collapsed icon must preserve name: '+label);
+ check(await page.getByRole('button',{name:'展开侧边栏',exact:true}).evaluate(el=>el===document.activeElement),'folding must keep keyboard focus on its real button');
+ check(await page.locator('#app-navigation').evaluate(el=>el.getBoundingClientRect().width===68),'desktop fold width');
+ await page.setViewportSize({width:1024,height:768});
+ const menu=()=>page.getByRole('button',{name:'打开导航菜单',exact:true});
+ await menu().waitFor();
+ check(await page.locator('#app-navigation').evaluate(el=>el.inert),'closed mobile drawer must be inert');
+ const accessibility=await context.newCDPSession(page);
+ const tree=await accessibility.send('Accessibility.getFullAXTree');await accessibility.detach();
+ check(!tree.nodes.some(node=>!node.ignored&&node.role?.value==='navigation'&&node.name?.value==='主导航'),'closed navigation must be absent from actual Chrome accessibility tree');
+ await menu().focus();
+ await page.locator('#app-navigation a').first().evaluate(el=>el.focus());
+ check(await menu().evaluate(el=>el===document.activeElement),'closed drawer must reject programmatic keyboard focus');
+ await menu().click();
+ const dialog=()=>page.getByRole('dialog',{name:'导航菜单'});
+ await dialog().waitFor();
+ check(await dialog().getByRole('link').count()===labels.length,'mobile drawer must expand labels independently of desktop fold');
+ check(await page.locator('.main-wrapper').evaluate(el=>el.inert),'drawer must isolate background');
+ check(await page.evaluate(()=>document.body.style.overflow)==='hidden','drawer must lock background scrolling');
+ await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='关闭导航菜单');
+ await page.keyboard.press('Shift+Tab');
+ check(await dialog().getByRole('link',{name:'API 令牌',exact:true}).evaluate(el=>el===document.activeElement),'backward Tab must wrap inside drawer');
+ await page.keyboard.press('Tab');
+ check(await dialog().getByRole('button',{name:'关闭导航菜单',exact:true}).evaluate(el=>el===document.activeElement),'forward Tab must wrap inside drawer');
+ await page.keyboard.press('Escape');
+ await page.waitForFunction(()=>!document.querySelector('.main-wrapper').inert&&document.activeElement?.getAttribute('aria-label')==='打开导航菜单');
+ check(await page.evaluate(()=>document.body.style.overflow)==='','Escape must restore scrolling and focus');
+ await menu().click();await dialog().waitFor();
+ await dialog().getByRole('button',{name:'关闭导航菜单',exact:true}).click();
+ await menu().waitFor();
+ await menu().click();await dialog().waitFor();
+ await page.locator('.mobile-drawer-backdrop').click({position:{x:1018,y:760}});
+ await menu().waitFor();
+ await menu().click();await dialog().waitFor();
+ await dialog().getByRole('link',{name:'媒体库',exact:true}).click();
+ await page.waitForURL(base+'/media');await menu().waitFor();
+ check(!(await page.locator('.main-wrapper').evaluate(el=>el.inert)),'route navigation must release background');
+ await menu().click();await dialog().waitFor();
+ await page.screenshot({path:join(shots,'shell-tablet.png'),fullPage:true});
+ await page.setViewportSize({width:1280,height:900});
+ await navigation.waitFor();
+ await page.waitForFunction(()=>!document.querySelector('.main-wrapper').inert&&document.body.style.overflow==='');
+ check(await page.getByRole('dialog',{name:'导航菜单'}).count()===0,'desktop resize must remove modal semantics');
+ check(await page.getByRole('button',{name:'展开侧边栏',exact:true}).count()===1,'desktop fold preference must survive mobile drawer');
+ await page.getByRole('button',{name:'展开侧边栏',exact:true}).click();
+ await page.screenshot({path:join(shots,'shell-desktop.png'),fullPage:true});
+ await page.getByRole('link',{name:'跳到主要内容'}).focus();await page.keyboard.press('Enter');
+ check(await page.locator('#main-content').evaluate(el=>el===document.activeElement),'skip link must reach main content');
+ for(const width of [768,375,320]) {
+  await page.setViewportSize({width,height:850});await menu().waitFor();
+  const bounds=await page.locator('.topbar').evaluate(el=>{
+   const title=el.querySelector('.page-title').getBoundingClientRect(),logout=el.querySelector('.btn-logout'),button=el.querySelector('.mobile-menu-btn');
+   const l=logout.getBoundingClientRect(),m=button.getBoundingClientRect();
+   return {fits:el.scrollWidth<=el.clientWidth,title:title.left>=0&&title.right<=innerWidth,logout:l.width>=44&&l.height>=44,menu:m.width>=44&&m.height>=44,oneLine:logout.querySelector('span').getClientRects().length===1};
+  });
+  for(const [key,value] of Object.entries(bounds)) check(value,'header '+key+' at '+width);
+  if(width===375) {
+   await page.screenshot({path:join(shots,'shell-375.png'),fullPage:true});
+   await menu().click();await dialog().waitFor();
+   await page.screenshot({path:join(shots,'shell-drawer-375.png'),fullPage:true});
+   await page.keyboard.press('Escape');await menu().waitFor();
+  }
+ }
+ if(env.PULSE_M6_SHELL_REVIEW==='1') {
+  console.log('M6_SHELL_SCREENSHOTS_READY '+shots);
+  const until=Date.now()+90000;
+  while(!existsSync(join(shots,'inspected'))) { assert(Date.now()<until,'bounded screenshot review timed out');await delay(100); }
+ }
+ await page.getByTitle('退出登录').click();await page.waitForURL(base+'/login');
+ check(await page.locator('.app-shell').count()===0,'logout must remove private application shell');
+ check(errors.length===0,'no runtime errors: '+errors.join(';'));
+ console.log('M6_SHELL_BROWSER_PASS '+JSON.stringify({checks,actualChrome:true,realCookie:true,widths:[1280,1024,768,375,320],earlyDarkWithoutCSS:true,keyboard:true}));
+} finally { await context.close();await browser.close();console.log('M6_SHELL_CHROME_CLEANUP_VERIFIED'); }
