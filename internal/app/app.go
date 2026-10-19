@@ -13,14 +13,9 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/dalamudx/PulseMedia/internal/adapter/downloader/qbittorrent"
-	"github.com/dalamudx/PulseMedia/internal/adapter/downloader/transmission"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/nexusphp"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/torznab"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/universal_rss"
-	"github.com/dalamudx/PulseMedia/internal/adapter/mediaserver/emby"
-	"github.com/dalamudx/PulseMedia/internal/adapter/mediaserver/jellyfin"
-	"github.com/dalamudx/PulseMedia/internal/adapter/mediaserver/plex"
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/tmdb"
 	"github.com/dalamudx/PulseMedia/internal/adapter/torrent"
 	"github.com/dalamudx/PulseMedia/internal/config"
@@ -350,12 +345,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		completeTV = downloadRepo
 		dlMgr = download.NewManager(downloadRepo)
 		dlMgr.SetSubmissionRepository(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen))
-		dlMgr.SetClientFactory(func(clientType, baseURL, username, password string) (ports.DownloadClient, error) {
-			if clientType == "transmission" {
-				return transmission.NewClient(baseURL, username, password, nil)
-			}
-			return qbittorrent.NewClient(baseURL, username, password, nil)
-		})
+		dlMgr.SetClientFactory(NativeDownloadClient)
 
 		runtime, observer, observationErr := a.movieUpgradeObservationServices(downloadRepo)
 		if observationErr != nil {
@@ -378,15 +368,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 
 		syncSvc = mediaserver.NewSyncService(ob, postgres.NewMediaConfirmationRepository(a.dbPool, a.idgen))
 		syncSvc.SetCredentialDecoder(crypto.NewSecretProtector(masterKey))
-		syncSvc.SetServerFactory(func(serverType, baseURL, apiKey string) (ports.MediaServerClient, error) {
-			if serverType == "plex" {
-				return plex.NewClient(baseURL, apiKey, nil), nil
-			}
-			if serverType == "emby" {
-				return emby.NewClient(baseURL, apiKey, nil), nil
-			}
-			return jellyfin.NewClient(baseURL, apiKey, nil), nil
-		})
+		syncSvc.SetServerFactory(NativeMediaServerClient)
 
 		searchSvc = usecaseSearch.NewService(postgres.NewSearchExecutionStore(a.dbPool, a.indexerDecoder), a.idgen, crypto.NewSecretProtector(masterKey))
 		searchSvc.SetEndpointRepository(postgres.NewSearchEndpointStore(a.dbPool))

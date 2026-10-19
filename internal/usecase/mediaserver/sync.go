@@ -66,16 +66,34 @@ func (s *SyncService) clientForConnection(row ports.MediaServerConnection) (port
 	return client, nil
 }
 func (s *SyncService) TestServer(ctx context.Context, id uuid.UUID) (bool, string, error) {
+	if s.confirmations == nil {
+		return false, "media server unavailable", ports.ErrUnavailable
+	}
 	row, err := s.confirmations.LoadMediaServerConnection(ctx, id)
 	if err != nil {
-		return false, "server not found", ports.ErrNotFound
+		if ctx.Err() != nil {
+			return false, "media server unavailable", ctx.Err()
+		}
+		if errors.Is(err, ports.ErrNotFound) {
+			return false, "server not found", ports.ErrNotFound
+		}
+		return false, "media server unavailable", ports.ErrUnavailable
 	}
 	c, err := s.clientForConnection(row)
-	if err != nil {
-		return false, "media server unavailable", err
+	if err != nil || c == nil {
+		return false, "media server unavailable", ports.ErrUnavailable
+	}
+	if ctx.Err() != nil {
+		return false, "media server unavailable", ctx.Err()
 	}
 	if err = c.Test(ctx); err != nil {
-		return false, "media server unavailable", ErrServerUnreachable
+		if errors.Is(ctx.Err(), context.Canceled) {
+			return false, "media server unavailable", ctx.Err()
+		}
+		return false, "media server unavailable", errors.Join(ErrServerUnreachable, ports.ErrEndpointProbeFailed)
+	}
+	if ctx.Err() != nil {
+		return false, "media server unavailable", ctx.Err()
 	}
 	return true, "ok", nil
 }

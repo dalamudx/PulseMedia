@@ -5,14 +5,16 @@ import (
 	"testing"
 )
 
-func TestEndpointURLPreservationRequiresRevisionOnlyForLossyProjection(t *testing.T) {
+func TestEndpointURLPreservationRequiresRevisionForEveryEdit(t *testing.T) {
 	for _, tc := range []struct {
 		name, current, submitted string
 		present, matches         bool
 		want                     string
 		err                      error
 	}{
-		{"benign order", "https://example.test/?page=2&category=tv", "https://example.test/?page=2&category=tv", false, false, "https://example.test/?page=2&category=tv", nil},
+		{"benign order", "https://example.test/?page=2&category=tv", "https://example.test/?page=2&category=tv", true, true, "https://example.test/?page=2&category=tv", nil},
+		{"benign missing version", "https://example.test/?page=2", "https://example.test/?page=2", false, false, "", errEndpointRevision},
+		{"full replacement missing version", "https://example.test/", "http://127.0.0.1:8080/new", false, false, "", errEndpointRevision},
 		{"userinfo removed", "https://user:fixture@example.test/", "https://example.test/", true, true, "https://user:fixture@example.test/", nil},
 		{"userinfo missing version", "https://user:fixture@example.test/", "https://example.test/", false, false, "", errEndpointRevision},
 		{"fragment removed", "https://example.test/#fixture", "https://example.test/", true, true, "https://example.test/#fixture", nil},

@@ -209,6 +209,22 @@ tasks:
     cmds:
       - bash scripts/verify_m5_automatic_tv.sh
 
+  test-endpoint-configuration:
+    desc: Verify endpoint configuration through native services, Cookie, PG18 and actual Chrome
+    cmds:
+      - task: test-endpoint-configuration-api
+      - task: test-endpoint-configuration-ui
+
+  test-endpoint-configuration-api:
+    desc: Verify current endpoint permissions, versions and native connection changes on PG18
+    cmds:
+      - bash scripts/verify_m5_endpoint_configuration.sh public
+
+  test-endpoint-configuration-ui:
+    desc: Verify endpoint CRUD and conflict recovery on desktop and 375px with isolated Chrome
+    cmds:
+      - PULSE_M5_ENDPOINT_BROWSER=1 bash scripts/verify_m5_endpoint_ui.sh {{.CLI_ARGS}}
+
   test-endpoint-ui:
     desc: Verify safe endpoint URL edits with private PostgreSQL and Chrome
     cmds:

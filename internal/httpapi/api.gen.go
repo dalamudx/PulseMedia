@@ -60,16 +60,16 @@ func (e ChannelReplacementRequestChannelType) Valid() bool {
 
 // Defines values for CreateDownloadClientRequestClientType.
 const (
-	Qbittorrent  CreateDownloadClientRequestClientType = "qbittorrent"
-	Transmission CreateDownloadClientRequestClientType = "transmission"
+	CreateDownloadClientRequestClientTypeQbittorrent  CreateDownloadClientRequestClientType = "qbittorrent"
+	CreateDownloadClientRequestClientTypeTransmission CreateDownloadClientRequestClientType = "transmission"
 )
 
 // Valid indicates whether the value is a known member of the CreateDownloadClientRequestClientType enum.
 func (e CreateDownloadClientRequestClientType) Valid() bool {
 	switch e {
-	case Qbittorrent:
+	case CreateDownloadClientRequestClientTypeQbittorrent:
 		return true
-	case Transmission:
+	case CreateDownloadClientRequestClientTypeTransmission:
 		return true
 	default:
 		return false
@@ -78,19 +78,19 @@ func (e CreateDownloadClientRequestClientType) Valid() bool {
 
 // Defines values for CreateMediaServerRequestServerType.
 const (
-	Emby     CreateMediaServerRequestServerType = "emby"
-	Jellyfin CreateMediaServerRequestServerType = "jellyfin"
-	Plex     CreateMediaServerRequestServerType = "plex"
+	CreateMediaServerRequestServerTypeEmby     CreateMediaServerRequestServerType = "emby"
+	CreateMediaServerRequestServerTypeJellyfin CreateMediaServerRequestServerType = "jellyfin"
+	CreateMediaServerRequestServerTypePlex     CreateMediaServerRequestServerType = "plex"
 )
 
 // Valid indicates whether the value is a known member of the CreateMediaServerRequestServerType enum.
 func (e CreateMediaServerRequestServerType) Valid() bool {
 	switch e {
-	case Emby:
+	case CreateMediaServerRequestServerTypeEmby:
 		return true
-	case Jellyfin:
+	case CreateMediaServerRequestServerTypeJellyfin:
 		return true
-	case Plex:
+	case CreateMediaServerRequestServerTypePlex:
 		return true
 	default:
 		return false
@@ -931,6 +931,45 @@ const (
 func (e TransferRevisionReceiptState) Valid() bool {
 	switch e {
 	case QueuedRevisedPlan:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateDownloadClientRequestClientType.
+const (
+	UpdateDownloadClientRequestClientTypeQbittorrent  UpdateDownloadClientRequestClientType = "qbittorrent"
+	UpdateDownloadClientRequestClientTypeTransmission UpdateDownloadClientRequestClientType = "transmission"
+)
+
+// Valid indicates whether the value is a known member of the UpdateDownloadClientRequestClientType enum.
+func (e UpdateDownloadClientRequestClientType) Valid() bool {
+	switch e {
+	case UpdateDownloadClientRequestClientTypeQbittorrent:
+		return true
+	case UpdateDownloadClientRequestClientTypeTransmission:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateMediaServerRequestServerType.
+const (
+	UpdateMediaServerRequestServerTypeEmby     UpdateMediaServerRequestServerType = "emby"
+	UpdateMediaServerRequestServerTypeJellyfin UpdateMediaServerRequestServerType = "jellyfin"
+	UpdateMediaServerRequestServerTypePlex     UpdateMediaServerRequestServerType = "plex"
+)
+
+// Valid indicates whether the value is a known member of the UpdateMediaServerRequestServerType enum.
+func (e UpdateMediaServerRequestServerType) Valid() bool {
+	switch e {
+	case UpdateMediaServerRequestServerTypeEmby:
+		return true
+	case UpdateMediaServerRequestServerTypeJellyfin:
+		return true
+	case UpdateMediaServerRequestServerTypePlex:
 		return true
 	default:
 		return false
@@ -1998,9 +2037,6 @@ type CheckinIndexerResponse struct {
 type CreateDownloadClientRequest struct {
 	ClientType CreateDownloadClientRequestClientType `json:"client_type"`
 
-	// ExpectedUpdatedAt On update, the observed updated_at. Required to preserve a redacted URL; stale versions return 409.
-	ExpectedUpdatedAt *time.Time `json:"expected_updated_at,omitempty"`
-
 	// Name Example: qBittorrent Primary
 	Name string `json:"name"`
 
@@ -2034,9 +2070,6 @@ type CreateMediaServerRequest struct {
 	//
 	// Example: token123
 	ApiKey string `json:"api_key"`
-
-	// ExpectedUpdatedAt On update, the observed updated_at. Required to preserve a redacted URL; stale versions return 409.
-	ExpectedUpdatedAt *time.Time `json:"expected_updated_at,omitempty"`
 
 	// Name Example: Jellyfin Primary
 	Name        string                             `json:"name"`
@@ -3379,6 +3412,25 @@ type TransferRevisionReceipt struct {
 // TransferRevisionReceiptState defines model for TransferRevisionReceipt.State.
 type TransferRevisionReceiptState string
 
+// UpdateDownloadClientRequest defines model for UpdateDownloadClientRequest.
+type UpdateDownloadClientRequest struct {
+	ClientType UpdateDownloadClientRequestClientType `json:"client_type"`
+
+	// ExpectedUpdatedAt Required original read version for every edit. Stale versions return 409; reload before changing configuration.
+	ExpectedUpdatedAt time.Time `json:"expected_updated_at"`
+	Name              string    `json:"name"`
+
+	// Password Empty value retains the existing encrypted password.
+	Password string `json:"password"`
+
+	// Url Complete replacement URL, or the unchanged display URL with the original version to retain its encrypted credentials.
+	Url      string `json:"url"`
+	Username string `json:"username"`
+}
+
+// UpdateDownloadClientRequestClientType defines model for UpdateDownloadClientRequest.ClientType.
+type UpdateDownloadClientRequestClientType string
+
 // UpdateIndexerRequest defines model for UpdateIndexerRequest.
 type UpdateIndexerRequest struct {
 	// ApiKey Omit to preserve original ciphertext; an explicit empty string deliberately clears the credential
@@ -3391,6 +3443,23 @@ type UpdateIndexerRequest struct {
 	// Url Omit to preserve the complete original encrypted URL; otherwise provide a complete replacement
 	Url *string `json:"url,omitempty"`
 }
+
+// UpdateMediaServerRequest defines model for UpdateMediaServerRequest.
+type UpdateMediaServerRequest struct {
+	// ApiKey Empty value retains the existing encrypted API key.
+	ApiKey string `json:"api_key"`
+
+	// ExpectedUpdatedAt Required original read version for every edit. Stale versions return 409; reload before changing configuration.
+	ExpectedUpdatedAt time.Time                          `json:"expected_updated_at"`
+	Name              string                             `json:"name"`
+	ServerType        UpdateMediaServerRequestServerType `json:"server_type"`
+
+	// Url Complete replacement URL, or the unchanged display URL with the original version to retain its original value.
+	Url string `json:"url"`
+}
+
+// UpdateMediaServerRequestServerType defines model for UpdateMediaServerRequest.ServerType.
+type UpdateMediaServerRequestServerType string
 
 // UpdateSettingRequest defines model for UpdateSettingRequest.
 type UpdateSettingRequest struct {
@@ -4290,7 +4359,7 @@ type CreateOwnTokenJSONRequestBody = CreateOwnTokenRequest
 type CreateDownloadClientJSONRequestBody = CreateDownloadClientRequest
 
 // UpdateDownloadClientJSONRequestBody defines body for UpdateDownloadClient for application/json ContentType.
-type UpdateDownloadClientJSONRequestBody = CreateDownloadClientRequest
+type UpdateDownloadClientJSONRequestBody = UpdateDownloadClientRequest
 
 // ConfirmCompleteTVOrganizationJSONRequestBody defines body for ConfirmCompleteTVOrganization for application/json ContentType.
 type ConfirmCompleteTVOrganizationJSONRequestBody ConfirmCompleteTVOrganizationJSONBody
@@ -4323,7 +4392,7 @@ type ConfirmLibraryReuseJSONRequestBody = LibraryReuseCommand
 type CreateMediaServerJSONRequestBody = CreateMediaServerRequest
 
 // UpdateMediaServerJSONRequestBody defines body for UpdateMediaServer for application/json ContentType.
-type UpdateMediaServerJSONRequestBody = CreateMediaServerRequest
+type UpdateMediaServerJSONRequestBody = UpdateMediaServerRequest
 
 // RescrapeMediaJSONRequestBody defines body for RescrapeMedia for application/json ContentType.
 type RescrapeMediaJSONRequestBody RescrapeMediaJSONBody
@@ -10339,6 +10408,62 @@ func (response ListDownloadClients401ApplicationProblemPlusJSONResponse) VisitLi
 	return err
 }
 
+type ListDownloadClients403JSONResponse ErrorResponse
+
+func (response ListDownloadClients403JSONResponse) VisitListDownloadClientsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListDownloadClients403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListDownloadClients403ApplicationProblemPlusJSONResponse) VisitListDownloadClientsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListDownloadClients503JSONResponse ErrorResponse
+
+func (response ListDownloadClients503JSONResponse) VisitListDownloadClientsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListDownloadClients503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListDownloadClients503ApplicationProblemPlusJSONResponse) VisitListDownloadClientsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type CreateDownloadClientRequestObject struct {
 	Body *CreateDownloadClientJSONRequestBody
 }
@@ -10417,6 +10542,62 @@ func (response CreateDownloadClient401ApplicationProblemPlusJSONResponse) VisitC
 	return err
 }
 
+type CreateDownloadClient403JSONResponse ErrorResponse
+
+func (response CreateDownloadClient403JSONResponse) VisitCreateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateDownloadClient403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response CreateDownloadClient403ApplicationProblemPlusJSONResponse) VisitCreateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateDownloadClient503JSONResponse ErrorResponse
+
+func (response CreateDownloadClient503JSONResponse) VisitCreateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateDownloadClient503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response CreateDownloadClient503ApplicationProblemPlusJSONResponse) VisitCreateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type DeleteDownloadClientRequestObject struct {
 	Id openapi_types.UUID `json:"id"`
 }
@@ -10457,6 +10638,34 @@ func (response DeleteDownloadClient401ApplicationProblemPlusJSONResponse) VisitD
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDownloadClient403JSONResponse ErrorResponse
+
+func (response DeleteDownloadClient403JSONResponse) VisitDeleteDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDownloadClient403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response DeleteDownloadClient403ApplicationProblemPlusJSONResponse) VisitDeleteDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -10513,6 +10722,34 @@ func (response DeleteDownloadClient409ApplicationProblemPlusJSONResponse) VisitD
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDownloadClient503JSONResponse ErrorResponse
+
+func (response DeleteDownloadClient503JSONResponse) VisitDeleteDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDownloadClient503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response DeleteDownloadClient503ApplicationProblemPlusJSONResponse) VisitDeleteDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -10582,6 +10819,34 @@ func (response UpdateDownloadClient401ApplicationProblemPlusJSONResponse) VisitU
 	return err
 }
 
+type UpdateDownloadClient403JSONResponse ErrorResponse
+
+func (response UpdateDownloadClient403JSONResponse) VisitUpdateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateDownloadClient403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response UpdateDownloadClient403ApplicationProblemPlusJSONResponse) VisitUpdateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type UpdateDownloadClient404JSONResponse ErrorResponse
 
 func (response UpdateDownloadClient404JSONResponse) VisitUpdateDownloadClientResponse(w http.ResponseWriter) error {
@@ -10620,6 +10885,34 @@ func (response UpdateDownloadClient409JSONResponse) VisitUpdateDownloadClientRes
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateDownloadClient503JSONResponse ErrorResponse
+
+func (response UpdateDownloadClient503JSONResponse) VisitUpdateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateDownloadClient503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response UpdateDownloadClient503ApplicationProblemPlusJSONResponse) VisitUpdateDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -10674,6 +10967,34 @@ func (response TestDownloadClient401ApplicationProblemPlusJSONResponse) VisitTes
 	return err
 }
 
+type TestDownloadClient403JSONResponse ErrorResponse
+
+func (response TestDownloadClient403JSONResponse) VisitTestDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestDownloadClient403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response TestDownloadClient403ApplicationProblemPlusJSONResponse) VisitTestDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type TestDownloadClient404JSONResponse ErrorResponse
 
 func (response TestDownloadClient404JSONResponse) VisitTestDownloadClientResponse(w http.ResponseWriter) error {
@@ -10698,6 +11019,62 @@ func (response TestDownloadClient404ApplicationProblemPlusJSONResponse) VisitTes
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestDownloadClient409JSONResponse ErrorResponse
+
+func (response TestDownloadClient409JSONResponse) VisitTestDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestDownloadClient409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response TestDownloadClient409ApplicationProblemPlusJSONResponse) VisitTestDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestDownloadClient503JSONResponse ErrorResponse
+
+func (response TestDownloadClient503JSONResponse) VisitTestDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestDownloadClient503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response TestDownloadClient503ApplicationProblemPlusJSONResponse) VisitTestDownloadClientResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -12655,6 +13032,62 @@ func (response ListMediaServers401ApplicationProblemPlusJSONResponse) VisitListM
 	return err
 }
 
+type ListMediaServers403JSONResponse ErrorResponse
+
+func (response ListMediaServers403JSONResponse) VisitListMediaServersResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMediaServers403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListMediaServers403ApplicationProblemPlusJSONResponse) VisitListMediaServersResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMediaServers503JSONResponse ErrorResponse
+
+func (response ListMediaServers503JSONResponse) VisitListMediaServersResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMediaServers503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListMediaServers503ApplicationProblemPlusJSONResponse) VisitListMediaServersResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type CreateMediaServerRequestObject struct {
 	Body *CreateMediaServerJSONRequestBody
 }
@@ -12733,6 +13166,62 @@ func (response CreateMediaServer401ApplicationProblemPlusJSONResponse) VisitCrea
 	return err
 }
 
+type CreateMediaServer403JSONResponse ErrorResponse
+
+func (response CreateMediaServer403JSONResponse) VisitCreateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMediaServer403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response CreateMediaServer403ApplicationProblemPlusJSONResponse) VisitCreateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMediaServer503JSONResponse ErrorResponse
+
+func (response CreateMediaServer503JSONResponse) VisitCreateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateMediaServer503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response CreateMediaServer503ApplicationProblemPlusJSONResponse) VisitCreateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type DeleteMediaServerRequestObject struct {
 	Id openapi_types.UUID `json:"id"`
 }
@@ -12777,6 +13266,34 @@ func (response DeleteMediaServer401ApplicationProblemPlusJSONResponse) VisitDele
 	return err
 }
 
+type DeleteMediaServer403JSONResponse ErrorResponse
+
+func (response DeleteMediaServer403JSONResponse) VisitDeleteMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMediaServer403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response DeleteMediaServer403ApplicationProblemPlusJSONResponse) VisitDeleteMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type DeleteMediaServer404JSONResponse ErrorResponse
 
 func (response DeleteMediaServer404JSONResponse) VisitDeleteMediaServerResponse(w http.ResponseWriter) error {
@@ -12801,6 +13318,62 @@ func (response DeleteMediaServer404ApplicationProblemPlusJSONResponse) VisitDele
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMediaServer409JSONResponse ErrorResponse
+
+func (response DeleteMediaServer409JSONResponse) VisitDeleteMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMediaServer409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response DeleteMediaServer409ApplicationProblemPlusJSONResponse) VisitDeleteMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMediaServer503JSONResponse ErrorResponse
+
+func (response DeleteMediaServer503JSONResponse) VisitDeleteMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteMediaServer503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response DeleteMediaServer503ApplicationProblemPlusJSONResponse) VisitDeleteMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -12870,6 +13443,34 @@ func (response UpdateMediaServer401ApplicationProblemPlusJSONResponse) VisitUpda
 	return err
 }
 
+type UpdateMediaServer403JSONResponse ErrorResponse
+
+func (response UpdateMediaServer403JSONResponse) VisitUpdateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMediaServer403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response UpdateMediaServer403ApplicationProblemPlusJSONResponse) VisitUpdateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type UpdateMediaServer404JSONResponse ErrorResponse
 
 func (response UpdateMediaServer404JSONResponse) VisitUpdateMediaServerResponse(w http.ResponseWriter) error {
@@ -12908,6 +13509,34 @@ func (response UpdateMediaServer409JSONResponse) VisitUpdateMediaServerResponse(
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMediaServer503JSONResponse ErrorResponse
+
+func (response UpdateMediaServer503JSONResponse) VisitUpdateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateMediaServer503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response UpdateMediaServer503ApplicationProblemPlusJSONResponse) VisitUpdateMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -12962,6 +13591,34 @@ func (response TestMediaServer401ApplicationProblemPlusJSONResponse) VisitTestMe
 	return err
 }
 
+type TestMediaServer403JSONResponse ErrorResponse
+
+func (response TestMediaServer403JSONResponse) VisitTestMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestMediaServer403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response TestMediaServer403ApplicationProblemPlusJSONResponse) VisitTestMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type TestMediaServer404JSONResponse ErrorResponse
 
 func (response TestMediaServer404JSONResponse) VisitTestMediaServerResponse(w http.ResponseWriter) error {
@@ -12986,6 +13643,62 @@ func (response TestMediaServer404ApplicationProblemPlusJSONResponse) VisitTestMe
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestMediaServer409JSONResponse ErrorResponse
+
+func (response TestMediaServer409JSONResponse) VisitTestMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestMediaServer409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response TestMediaServer409ApplicationProblemPlusJSONResponse) VisitTestMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestMediaServer503JSONResponse ErrorResponse
+
+func (response TestMediaServer503JSONResponse) VisitTestMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type TestMediaServer503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response TestMediaServer503ApplicationProblemPlusJSONResponse) VisitTestMediaServerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }

@@ -3511,11 +3511,6 @@ export interface components {
             client_id?: string;
         };
         CreateDownloadClientRequest: {
-            /**
-             * Format: date-time
-             * @description On update, the observed updated_at. Required to preserve a redacted URL; stale versions return 409.
-             */
-            expected_updated_at?: string;
             /** @example qBittorrent Primary */
             name: string;
             /**
@@ -3533,6 +3528,35 @@ export interface components {
                 [key: string]: string;
             };
         };
+        UpdateDownloadClientRequest: {
+            /**
+             * Format: date-time
+             * @description Required original read version for every edit. Stale versions return 409; reload before changing configuration.
+             */
+            expected_updated_at: string;
+            name: string;
+            /** @enum {string} */
+            client_type: "qbittorrent" | "transmission";
+            /** @description Complete replacement URL, or the unchanged display URL with the original version to retain its encrypted credentials. */
+            url: string;
+            username: string;
+            /** @description Empty value retains the existing encrypted password. */
+            password: string;
+        };
+        UpdateMediaServerRequest: {
+            /**
+             * Format: date-time
+             * @description Required original read version for every edit. Stale versions return 409; reload before changing configuration.
+             */
+            expected_updated_at: string;
+            name: string;
+            /** @enum {string} */
+            server_type: "jellyfin" | "plex" | "emby";
+            /** @description Complete replacement URL, or the unchanged display URL with the original version to retain its original value. */
+            url: string;
+            /** @description Empty value retains the existing encrypted API key. */
+            api_key: string;
+        };
         DownloadClientDetails: {
             /** Format: date-time */
             updated_at: string;
@@ -3547,11 +3571,6 @@ export interface components {
             items: components["schemas"]["DownloadClientDetails"][];
         };
         CreateMediaServerRequest: {
-            /**
-             * Format: date-time
-             * @description On update, the observed updated_at. Required to preserve a redacted URL; stale versions return 409.
-             */
-            expected_updated_at?: string;
             /** @example Jellyfin Primary */
             name: string;
             /**
@@ -8283,6 +8302,26 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     createDownloadClient: {
@@ -8327,6 +8366,26 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     updateDownloadClient: {
@@ -8340,7 +8399,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateDownloadClientRequest"];
+                "application/json": components["schemas"]["UpdateDownloadClientRequest"];
             };
         };
         responses: {
@@ -8372,6 +8431,16 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Download client not found */
             404: {
                 headers: {
@@ -8388,6 +8457,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -8421,6 +8500,16 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Download client not found */
             404: {
                 headers: {
@@ -8433,6 +8522,16 @@ export interface operations {
             };
             /** @description Download client is still referenced by active tasks or subscriptions */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8473,8 +8572,38 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint version changed or still referenced */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8505,6 +8634,26 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8557,6 +8706,26 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     updateMediaServer: {
@@ -8570,7 +8739,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateMediaServerRequest"];
+                "application/json": components["schemas"]["UpdateMediaServerRequest"];
             };
         };
         responses: {
@@ -8602,6 +8771,16 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Media server not found */
             404: {
                 headers: {
@@ -8618,6 +8797,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -8651,8 +8840,38 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint version changed or still referenced */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8693,8 +8912,38 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Current account is not permitted */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint version changed or still referenced */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Endpoint configuration storage or service unavailable */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

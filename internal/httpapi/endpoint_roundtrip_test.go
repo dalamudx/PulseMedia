@@ -28,17 +28,21 @@ func TestEndpointURLHTTPRoundtripPreservesSecretsAndFencesVersions(t *testing.T)
 	search.SetHealthRepository(postgres.NewIndexerHealthStore(a.DBPool(), a.IDGen()))
 	handler := httpapi.NewServerHandler(a, svc, nil, nil, nil, nil, nil, nil, search, nil, nil, nil, key)
 	router := httpapi.NewRouter(a, handler, svc, nil)
-	for _, kind := range []struct{ path, table string }{{"indexers", "indexer"}, {"download-clients", "download_client"}, {"media-servers", "media_server"}} {
+	for _, kind := range []struct{ path, table string }{{"download-clients", "download_client"}, {"media-servers", "media_server"}} {
 		t.Run(kind.path, func(t *testing.T) {
 			raw := "https://legacy-user:secret-first@example.test/base?category=movie&token=secret-first#secret-fragment"
 			payload := func(endpoint, name string, version any) map[string]any {
-				body := map[string]any{"name": name, "url": endpoint, "api_key": "fixture-key", "client_type": "qbittorrent", "username": "configured-user", "password": "fixture-password", "server_type": "jellyfin"}
+				body := map[string]any{"name": name, "url": endpoint}
+				if kind.table == "download_client" {
+					body["client_type"] = "qbittorrent"
+					body["username"] = "configured-user"
+					body["password"] = "fixture-credential"
+				} else {
+					body["server_type"] = "jellyfin"
+					body["api_key"] = "fixture-key"
+				}
 				if version != nil {
-					if kind.table == "indexer" {
-						body["expected_version"] = version
-					} else {
-						body["expected_updated_at"] = version
-					}
+					body["expected_updated_at"] = version
 				}
 				return body
 			}
@@ -68,9 +72,6 @@ func TestEndpointURLHTTPRoundtripPreservesSecretsAndFencesVersions(t *testing.T)
 			revision := func(body map[string]any) any {
 				t.Helper()
 				field := "updated_at"
-				if kind.table == "indexer" {
-					field = "config_version"
-				}
 				value := body[field]
 				if value == nil || value == "0001-01-01T00:00:00Z" {
 					t.Fatalf("missing response version: %s", field)
@@ -100,7 +101,7 @@ func TestEndpointURLHTTPRoundtripPreservesSecretsAndFencesVersions(t *testing.T)
 					t.Fatal("stored endpoint or configuration changed unexpectedly")
 				}
 			}
-			decode(call(http.MethodPut, object, payload(display, "missing-version", nil)), http.StatusConflict)
+			decode(call(http.MethodPut, object, payload(display, "missing-version", nil)), http.StatusBadRequest)
 			checkStored(raw, "created")
 			preserved := decode(call(http.MethodPut, object, payload(display, "renamed", v1)), http.StatusOK)
 			v2 := revision(preserved)
@@ -120,9 +121,11 @@ func TestEndpointURLHTTPRoundtripPreservesSecretsAndFencesVersions(t *testing.T)
 			}
 			decode(call(http.MethodPut, object, payload(display, "stale-secret", v2)), http.StatusConflict)
 			checkStored(rotated, "rotated")
-			// Existing callers may still explicitly replace a full URL without a version.
+			// Complete replacement URLs require the same observed version as redacted URLs.
 			replacement := "http://127.0.0.1:8080/new?category=tv&token=secret-replacement"
-			replaced := decode(call(http.MethodPut, object, payload(replacement, "replaced", nil)), http.StatusOK)
+			decode(call(http.MethodPut, object, payload(replacement, "missing-replacement-version", nil)), http.StatusBadRequest)
+			checkStored(rotated, "rotated")
+			replaced := decode(call(http.MethodPut, object, payload(replacement, "replaced", revision(rotation))), http.StatusOK)
 			checkStored(replacement, "replaced")
 			decode(call(http.MethodPut, object, payload("https://example.test/new?token=***", "masked-replacement", revision(replaced))), http.StatusBadRequest)
 			checkStored(replacement, "replaced")

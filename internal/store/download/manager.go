@@ -126,15 +126,39 @@ func (m *Manager) clientFor(ctx context.Context, id uuid.UUID) (ports.DownloadCl
 func (m *Manager) TestClient(ctx context.Context, clientID uuid.UUID) (bool, string, error) {
 	release, err := m.acquireClientBudget(ctx, clientID)
 	if err != nil {
-		return false, "download client unavailable", err
+		if ctx.Err() != nil {
+			return false, "download client unavailable", ctx.Err()
+		}
+		if errors.Is(err, pgx.ErrNoRows) || errors.Is(err, ports.ErrNotFound) {
+			return false, "download client not found", ports.ErrNotFound
+		}
+		return false, "download client unavailable", ports.ErrUnavailable
 	}
 	defer release()
 	client, err := m.clientFor(ctx, clientID)
 	if err != nil {
-		return false, "download client unavailable", err
+		if ctx.Err() != nil {
+			return false, "download client unavailable", ctx.Err()
+		}
+		if errors.Is(err, pgx.ErrNoRows) || errors.Is(err, ports.ErrNotFound) {
+			return false, "download client not found", ports.ErrNotFound
+		}
+		return false, "download client unavailable", ports.ErrUnavailable
+	}
+	if client == nil {
+		return false, "download client unavailable", ports.ErrUnavailable
+	}
+	if ctx.Err() != nil {
+		return false, "download client unavailable", ctx.Err()
 	}
 	if err := client.Test(ctx); err != nil {
-		return false, "download client unavailable", err
+		if errors.Is(ctx.Err(), context.Canceled) {
+			return false, "download client unavailable", ctx.Err()
+		}
+		return false, "download client unavailable", ports.ErrEndpointProbeFailed
+	}
+	if ctx.Err() != nil {
+		return false, "download client unavailable", ctx.Err()
 	}
 	return true, "ok", nil
 }

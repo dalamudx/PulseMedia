@@ -3466,6 +3466,24 @@ paths:
       summary: List configured download clients
       operationId: listDownloadClients
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '200':
           description: Download clients list
           content:
@@ -3491,6 +3509,24 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateDownloadClientRequest'
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '201':
           description: Download client created
           content:
@@ -3528,6 +3564,24 @@ paths:
             type: string
             format: uuid
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '204':
           description: Download client deleted
         '401':
@@ -3573,8 +3627,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateDownloadClientRequest'
+              $ref: '#/components/schemas/UpdateDownloadClientRequest'
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '200':
           description: Download client updated
           content:
@@ -3624,6 +3696,33 @@ paths:
             type: string
             format: uuid
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Endpoint version changed or still referenced
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '200':
           description: Test result
           content:
@@ -3654,6 +3753,24 @@ paths:
       summary: List configured media servers
       operationId: listMediaServers
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '200':
           description: Media servers list
           content:
@@ -3679,6 +3796,24 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateMediaServerRequest'
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '201':
           description: Media server created
           content:
@@ -3716,6 +3851,33 @@ paths:
             type: string
             format: uuid
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Endpoint version changed or still referenced
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '204':
           description: Media server deleted
         '401':
@@ -3752,8 +3914,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateMediaServerRequest'
+              $ref: '#/components/schemas/UpdateMediaServerRequest'
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '200':
           description: Media server updated
           content:
@@ -3803,6 +3983,33 @@ paths:
             type: string
             format: uuid
       responses:
+        '403':
+          description: Current account is not permitted
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Endpoint configuration storage or service unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Endpoint version changed or still referenced
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '200':
           description: Test result
           content:
@@ -6143,12 +6350,9 @@ components:
 
     CreateDownloadClientRequest:
       type: object
+      additionalProperties: false
       required: [name, client_type, url, username, password]
       properties:
-        expected_updated_at:
-          type: string
-          format: date-time
-          description: On update, the observed updated_at. Required to preserve a redacted URL; stale versions return 409.
         name:
           type: string
           example: "qBittorrent Primary"
@@ -6169,6 +6373,47 @@ components:
           type: object
           additionalProperties:
             type: string
+
+    UpdateDownloadClientRequest:
+      type: object
+      additionalProperties: false
+      required: [name, client_type, url, username, password, expected_updated_at]
+      properties:
+        expected_updated_at:
+          type: string
+          format: date-time
+          description: Required original read version for every edit. Stale versions return 409; reload before changing configuration.
+        name: {type: string}
+        client_type:
+          type: string
+          enum: [qbittorrent, transmission]
+        url:
+          type: string
+          description: Complete replacement URL, or the unchanged display URL with the original version to retain its encrypted credentials.
+        username: {type: string}
+        password:
+          type: string
+          description: Empty value retains the existing encrypted password.
+
+    UpdateMediaServerRequest:
+      type: object
+      additionalProperties: false
+      required: [name, server_type, url, api_key, expected_updated_at]
+      properties:
+        expected_updated_at:
+          type: string
+          format: date-time
+          description: Required original read version for every edit. Stale versions return 409; reload before changing configuration.
+        name: {type: string}
+        server_type:
+          type: string
+          enum: [jellyfin, plex, emby]
+        url:
+          type: string
+          description: Complete replacement URL, or the unchanged display URL with the original version to retain its original value.
+        api_key:
+          type: string
+          description: Empty value retains the existing encrypted API key.
 
     DownloadClientDetails:
       type: object
@@ -6198,12 +6443,9 @@ components:
 
     CreateMediaServerRequest:
       type: object
+      additionalProperties: false
       required: [name, server_type, url, api_key]
       properties:
-        expected_updated_at:
-          type: string
-          format: date-time
-          description: On update, the observed updated_at. Required to preserve a redacted URL; stale versions return 409.
         name:
           type: string
           example: "Jellyfin Primary"

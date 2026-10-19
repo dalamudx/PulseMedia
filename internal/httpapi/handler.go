@@ -5,12 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	"github.com/dalamudx/PulseMedia/internal/config"
@@ -52,60 +50,61 @@ type AppContext interface {
 
 // ServerHandler implements StrictServerInterface.
 type ServerHandler struct {
-	app                    AppContext
-	operationSvc           *operation.Service
-	libraryCatalogSvc      *media_library.Service
-	submissionRetrySvc     *operation.SubmissionRetryService
-	activityHub            *SSEHub
-	tokenManagementSvc     *auth.TokenManagementService
-	authSvc                *auth.Service
-	settingsSvc            *settings.Service
-	upgradePreviewSvc      *acquisition.UpgradePreviewService
-	upgradeReservationSvc  *acquisition.UpgradeReservationService
-	upgradePreparationSvc  *acquisition.PublicUpgradePreparationService
-	upgradeSendSvc         *acquisition.PublicUpgradeSendService
-	upgradeOrganizationSvc *acquisition.PublicUpgradeOrganizationService
-	upgradeRetirementSvc   *acquisition.PublicUpgradeRetirementService
-	acqSvc                 *acquisition.Service
-	movieSelectionSvc      *acquisition.MovieSelectionService
-	withdrawSvc            *acquisition.WithdrawalService
-	transferSvc            *transfer.Service
-	recoverySvc            *transfer.RecoveryService
-	revisionSvc            *transfer.RevisionService
-	reuseSvc               *transfer.LibraryReuseService
-	metaProvider           ports.MetadataProvider
-	localMediaReader       ports.LocalMediaSearchReader
-	subSvc                 *subscription.Service
-	subCreationSvc         subscriptionCreationApplication
-	subscriptionListSvc    *subscription.ListService
-	controlSvc             *subscription.ControlService
-	tvRefreshSvc           *subscription.TVRefreshService
-	episodeSourceSvc       *subscription.EpisodeSourceService
-	episodeMappingSvc      *subscription.EpisodeMappingService
-	episodeReviewSvc       *subscription.EpisodeCandidateReviewService
-	tvCoverageReviewSvc    *subscription.TVCoverageCandidateReviewService
-	episodeAcquisitionSvc  *acquisition.EpisodeService
-	bindingSvc             *subscription.BindingService
-	rootSelectionSvc       *subscription.RootSelectionService
-	polSvc                 *policy.Service
-	searchSvc              *usecaseSearch.Service
-	interactiveSearchSvc   *usecaseSearch.InteractiveSearchService
-	indexerManagementSvc   *usecaseSearch.IndexerManagementService
-	indexerReceiptSvc      *usecaseSearch.IndexerManagementReceiptService
-	candidateSvc           *usecaseSearch.CandidateExplanationService
-	scheduler              *usecaseScheduler.AutoFulfillScheduler
-	dlMgr                  *download.Manager
-	syncSvc                *mediaserver.SyncService
-	notifySvc              *notify.Dispatcher
-	deliveryManagementSvc  *notify.DeliveryManagementService
-	channelStateSvc        *notify.ChannelStateService
-	channelReplacementSvc  *notify.ChannelReplacementService
-	batchQuerySvc          *notify.BatchQueryService
-	deliverySkipSvc        *notify.DeliverySkipService
-	fileMappingSvc         *mediausecase.FileMappingService
-	statusSvc              *subscription.StatusService
-	feedSvc                *usecaseSearch.FeedService
-	masterKey              []byte
+	app                      AppContext
+	operationSvc             *operation.Service
+	libraryCatalogSvc        *media_library.Service
+	submissionRetrySvc       *operation.SubmissionRetryService
+	activityHub              *SSEHub
+	tokenManagementSvc       *auth.TokenManagementService
+	authSvc                  *auth.Service
+	settingsSvc              *settings.Service
+	endpointConfigurationSvc *settings.EndpointConfigurationService
+	upgradePreviewSvc        *acquisition.UpgradePreviewService
+	upgradeReservationSvc    *acquisition.UpgradeReservationService
+	upgradePreparationSvc    *acquisition.PublicUpgradePreparationService
+	upgradeSendSvc           *acquisition.PublicUpgradeSendService
+	upgradeOrganizationSvc   *acquisition.PublicUpgradeOrganizationService
+	upgradeRetirementSvc     *acquisition.PublicUpgradeRetirementService
+	acqSvc                   *acquisition.Service
+	movieSelectionSvc        *acquisition.MovieSelectionService
+	withdrawSvc              *acquisition.WithdrawalService
+	transferSvc              *transfer.Service
+	recoverySvc              *transfer.RecoveryService
+	revisionSvc              *transfer.RevisionService
+	reuseSvc                 *transfer.LibraryReuseService
+	metaProvider             ports.MetadataProvider
+	localMediaReader         ports.LocalMediaSearchReader
+	subSvc                   *subscription.Service
+	subCreationSvc           subscriptionCreationApplication
+	subscriptionListSvc      *subscription.ListService
+	controlSvc               *subscription.ControlService
+	tvRefreshSvc             *subscription.TVRefreshService
+	episodeSourceSvc         *subscription.EpisodeSourceService
+	episodeMappingSvc        *subscription.EpisodeMappingService
+	episodeReviewSvc         *subscription.EpisodeCandidateReviewService
+	tvCoverageReviewSvc      *subscription.TVCoverageCandidateReviewService
+	episodeAcquisitionSvc    *acquisition.EpisodeService
+	bindingSvc               *subscription.BindingService
+	rootSelectionSvc         *subscription.RootSelectionService
+	polSvc                   *policy.Service
+	searchSvc                *usecaseSearch.Service
+	interactiveSearchSvc     *usecaseSearch.InteractiveSearchService
+	indexerManagementSvc     *usecaseSearch.IndexerManagementService
+	indexerReceiptSvc        *usecaseSearch.IndexerManagementReceiptService
+	candidateSvc             *usecaseSearch.CandidateExplanationService
+	scheduler                *usecaseScheduler.AutoFulfillScheduler
+	dlMgr                    *download.Manager
+	syncSvc                  *mediaserver.SyncService
+	notifySvc                *notify.Dispatcher
+	deliveryManagementSvc    *notify.DeliveryManagementService
+	channelStateSvc          *notify.ChannelStateService
+	channelReplacementSvc    *notify.ChannelReplacementService
+	batchQuerySvc            *notify.BatchQueryService
+	deliverySkipSvc          *notify.DeliverySkipService
+	fileMappingSvc           *mediausecase.FileMappingService
+	statusSvc                *subscription.StatusService
+	feedSvc                  *usecaseSearch.FeedService
+	masterKey                []byte
 
 	completeTVAcquisitionSvc *acquisition.CompleteTVService
 	tvSelectionSvc           *acquisition.TVSelectionService
@@ -156,25 +155,40 @@ func NewServerHandler(
 	}); ok {
 		localMediaReader = provider.LocalMediaSearchReader()
 	}
+	var endpointConfigurationSvc *settings.EndpointConfigurationService
+	if provider, ok := a.(interface {
+		EndpointConfigurationService([]byte, ports.DownloadEndpointTester, ports.MediaEndpointTester) *settings.EndpointConfigurationService
+	}); ok {
+		var downloadTester ports.DownloadEndpointTester
+		if dlMgr != nil {
+			downloadTester = dlMgr
+		}
+		var mediaTester ports.MediaEndpointTester
+		if syncSvc != nil {
+			mediaTester = syncSvc
+		}
+		endpointConfigurationSvc = provider.EndpointConfigurationService(masterKey, downloadTester, mediaTester)
+	}
 	return &ServerHandler{
-		subscriptionListSvc: subscriptionListSvc,
-		libraryCatalogSvc:   libraryCatalogSvc,
-		submissionRetrySvc:  submissionRetrySvc,
-		operationSvc:        operationSvc,
-		app:                 a,
-		authSvc:             authSvc,
-		settingsSvc:         settingsSvc,
-		acqSvc:              acqSvc,
-		transferSvc:         transferSvc,
-		metaProvider:        metaProvider,
-		localMediaReader:    localMediaReader,
-		subSvc:              subSvc,
-		polSvc:              polSvc,
-		searchSvc:           searchSvc,
-		scheduler:           scheduler,
-		dlMgr:               dlMgr,
-		syncSvc:             syncSvc,
-		masterKey:           masterKey,
+		subscriptionListSvc:      subscriptionListSvc,
+		libraryCatalogSvc:        libraryCatalogSvc,
+		submissionRetrySvc:       submissionRetrySvc,
+		operationSvc:             operationSvc,
+		app:                      a,
+		authSvc:                  authSvc,
+		settingsSvc:              settingsSvc,
+		endpointConfigurationSvc: endpointConfigurationSvc,
+		acqSvc:                   acqSvc,
+		transferSvc:              transferSvc,
+		metaProvider:             metaProvider,
+		localMediaReader:         localMediaReader,
+		subSvc:                   subSvc,
+		polSvc:                   polSvc,
+		searchSvc:                searchSvc,
+		scheduler:                scheduler,
+		dlMgr:                    dlMgr,
+		syncSvc:                  syncSvc,
+		masterKey:                masterKey,
 	}
 }
 
@@ -1019,347 +1033,6 @@ func (s *ServerHandler) RecheckSubscriptionSearch(ctx context.Context, request R
 	matched := false
 	msg := "找到同名资源，但尚未核验影视身份与季集；未创建下载任务。"
 	return RecheckSubscriptionSearch200JSONResponse{Matched: &matched, Message: &msg}, nil
-}
-
-// ListDownloadClients handles GET /api/v1/download-clients
-func (s *ServerHandler) ListDownloadClients(ctx context.Context, request ListDownloadClientsRequestObject) (ListDownloadClientsResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil {
-		return ListDownloadClients401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
-	}
-
-	rows, err := s.app.Queries().ListDownloadClients(ctx)
-	if err != nil {
-		return ListDownloadClients200JSONResponse{Items: []DownloadClientDetails{}}, nil
-	}
-
-	items := make([]DownloadClientDetails, len(rows))
-	for i, r := range rows {
-		items[i] = DownloadClientDetails{
-			Id:         r.ID,
-			Name:       r.Name,
-			ClientType: r.ClientType,
-			Url:        endpointDisplayURL(r.Url),
-			UpdatedAt:  r.UpdatedAt.Time,
-			Username:   r.Username,
-		}
-	}
-	return ListDownloadClients200JSONResponse{Items: items}, nil
-}
-
-// CreateDownloadClient handles POST /api/v1/download-clients
-func (s *ServerHandler) CreateDownloadClient(ctx context.Context, request CreateDownloadClientRequestObject) (CreateDownloadClientResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return CreateDownloadClient401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	encPass, err := crypto.Encrypt(s.masterKey, []byte(request.Body.Password))
-	if err != nil {
-		return CreateDownloadClient400JSONResponse{Code: "ENCRYPTION_FAILED", Message: "credential encryption unavailable", RequestId: reqID}, nil
-	}
-	if endpointURLHasMask(request.Body.Url) {
-		return CreateDownloadClient400JSONResponse{Code: "INVALID_ENDPOINT_URL", Message: "provide a complete endpoint URL", RequestId: reqID}, nil
-	}
-	pathMapBytes, _ := json.Marshal(request.Body.RemotePathMap)
-	clientID := s.app.IDGen().NewUUID()
-
-	row, err := s.app.Queries().CreateDownloadClient(ctx, db.CreateDownloadClientParams{
-		ID:                clientID,
-		Name:              request.Body.Name,
-		ClientType:        string(request.Body.ClientType),
-		Url:               request.Body.Url,
-		Username:          request.Body.Username,
-		PasswordEncrypted: encPass,
-		RemotePathMap:     pathMapBytes,
-	})
-	if err != nil {
-		return CreateDownloadClient400JSONResponse{Code: "CREATE_FAILED", Message: "request could not be completed", RequestId: reqID}, nil
-	}
-
-	return CreateDownloadClient201JSONResponse{
-		Id:         row.ID,
-		Name:       row.Name,
-		ClientType: row.ClientType,
-		Url:        endpointDisplayURL(row.Url),
-		UpdatedAt:  row.UpdatedAt.Time,
-		Username:   row.Username,
-	}, nil
-}
-
-// DeleteDownloadClient handles DELETE /api/v1/download-clients/{id}
-func (s *ServerHandler) DeleteDownloadClient(ctx context.Context, request DeleteDownloadClientRequestObject) (DeleteDownloadClientResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return DeleteDownloadClient401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	if s.dlMgr == nil {
-		return DeleteDownloadClient409JSONResponse{Code: "SERVICE_UNAVAILABLE", Message: "download manager unavailable", RequestId: reqID}, nil
-	}
-	if err := s.dlMgr.DeleteClient(ctx, request.Id); err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return DeleteDownloadClient404JSONResponse{Code: "NOT_FOUND", Message: "download client not found", RequestId: reqID}, nil
-		}
-		if errors.Is(err, download.ErrClientInUse) {
-			return DeleteDownloadClient409JSONResponse{Code: "CLIENT_IN_USE", Message: "download client is referenced by tasks or subscriptions; resolve them before removal", RequestId: reqID}, nil
-		}
-		return nil, err
-	}
-	return DeleteDownloadClient204Response{}, nil
-}
-
-// UpdateDownloadClient handles PUT /api/v1/download-clients/{id}
-func (s *ServerHandler) UpdateDownloadClient(ctx context.Context, request UpdateDownloadClientRequestObject) (UpdateDownloadClientResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return UpdateDownloadClient401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	var encPass []byte
-	if request.Body.Password != "" {
-		var err error
-		encPass, err = crypto.Encrypt(s.masterKey, []byte(request.Body.Password))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	tx, q, err := s.beginEndpointEdit(ctx)
-	if errors.Is(err, ports.ErrForbidden) {
-		return UpdateDownloadClient401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = tx.Rollback(ctx) }()
-	current, err := q.LockDownloadClientForEdit(ctx, request.Id)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return UpdateDownloadClient404JSONResponse{Code: "NOT_FOUND", Message: "endpoint not found", RequestId: reqID}, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	if request.Body.Password == "" {
-		encPass = current.PasswordEncrypted
-	}
-	endpointURL, err := resolveEndpointEditURL(request.Body.Url, current.Url, request.Body.ExpectedUpdatedAt != nil, request.Body.ExpectedUpdatedAt != nil && request.Body.ExpectedUpdatedAt.Equal(current.UpdatedAt.Time))
-	if errors.Is(err, errEndpointRevision) {
-		return UpdateDownloadClient409JSONResponse{Code: "ENDPOINT_VERSION_CONFLICT", Message: "endpoint changed or preservation version missing; reload before editing", RequestId: reqID}, nil
-	}
-	if err != nil {
-		return UpdateDownloadClient400JSONResponse{Code: "INVALID_ENDPOINT_URL", Message: "provide a complete endpoint URL when changing the endpoint", RequestId: reqID}, nil
-	}
-	row, err := q.EditDownloadClient(ctx, db.EditDownloadClientParams{
-		ID:                request.Id,
-		Name:              request.Body.Name,
-		ClientType:        string(request.Body.ClientType),
-		Url:               endpointURL,
-		Username:          request.Body.Username,
-		PasswordEncrypted: encPass,
-	})
-	if err != nil {
-		return UpdateDownloadClient404JSONResponse{Code: "NOT_FOUND", Message: "download client not found", RequestId: reqID}, nil
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		return nil, err
-	}
-	return UpdateDownloadClient200JSONResponse{
-		Id:         row.ID,
-		Name:       row.Name,
-		ClientType: row.ClientType,
-		Url:        endpointDisplayURL(row.Url),
-		UpdatedAt:  row.UpdatedAt.Time,
-		Username:   row.Username,
-	}, nil
-}
-
-// TestDownloadClient handles POST /api/v1/download-clients/{id}/test
-func (s *ServerHandler) TestDownloadClient(ctx context.Context, request TestDownloadClientRequestObject) (TestDownloadClientResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return TestDownloadClient401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	if s.dlMgr == nil {
-		return TestDownloadClient200JSONResponse{Alive: false, Message: "download manager unavailable"}, nil
-	}
-
-	alive, msg, _ := s.dlMgr.TestClient(ctx, request.Id)
-	return TestDownloadClient200JSONResponse{
-		Alive:   alive,
-		Message: msg,
-	}, nil
-}
-
-// ListMediaServers handles GET /api/v1/media-servers
-func (s *ServerHandler) ListMediaServers(ctx context.Context, request ListMediaServersRequestObject) (ListMediaServersResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil {
-		return ListMediaServers401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
-	}
-
-	rows, err := s.app.Queries().ListMediaServers(ctx)
-	if err != nil {
-		return ListMediaServers200JSONResponse{Items: []MediaServerDetails{}}, nil
-	}
-
-	items := make([]MediaServerDetails, len(rows))
-	for i, r := range rows {
-		items[i] = MediaServerDetails{
-			Id:         r.ID,
-			Name:       r.Name,
-			ServerType: r.ServerType,
-			Url:        endpointDisplayURL(r.Url),
-			UpdatedAt:  r.UpdatedAt.Time,
-			Health:     r.Health,
-		}
-	}
-	return ListMediaServers200JSONResponse{Items: items}, nil
-}
-
-// CreateMediaServer handles POST /api/v1/media-servers
-func (s *ServerHandler) CreateMediaServer(ctx context.Context, request CreateMediaServerRequestObject) (CreateMediaServerResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return CreateMediaServer401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	encKey, err := crypto.Encrypt(s.masterKey, []byte(request.Body.ApiKey))
-	if err != nil {
-		return CreateMediaServer400JSONResponse{Code: "ENCRYPTION_FAILED", Message: "credential encryption unavailable", RequestId: reqID}, nil
-	}
-	if endpointURLHasMask(request.Body.Url) {
-		return CreateMediaServer400JSONResponse{Code: "INVALID_ENDPOINT_URL", Message: "provide a complete endpoint URL", RequestId: reqID}, nil
-	}
-	pathMapBytes, _ := json.Marshal(request.Body.PathMapping)
-	serverID := s.app.IDGen().NewUUID()
-
-	row, err := s.app.Queries().CreateMediaServer(ctx, db.CreateMediaServerParams{
-		ID:              serverID,
-		Name:            request.Body.Name,
-		ServerType:      string(request.Body.ServerType),
-		Url:             request.Body.Url,
-		ApiKeyEncrypted: encKey,
-		PathMapping:     pathMapBytes,
-	})
-	if err != nil {
-		return CreateMediaServer400JSONResponse{Code: "CREATE_FAILED", Message: "request could not be completed", RequestId: reqID}, nil
-	}
-
-	return CreateMediaServer201JSONResponse{
-		Id:         row.ID,
-		Name:       row.Name,
-		ServerType: row.ServerType,
-		Url:        endpointDisplayURL(row.Url),
-		UpdatedAt:  row.UpdatedAt.Time,
-		Health:     row.Health,
-	}, nil
-}
-
-// DeleteMediaServer handles DELETE /api/v1/media-servers/{id}
-func (s *ServerHandler) DeleteMediaServer(ctx context.Context, request DeleteMediaServerRequestObject) (DeleteMediaServerResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return DeleteMediaServer401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	_ = s.app.Queries().DeleteMediaServer(ctx, request.Id)
-	return DeleteMediaServer204Response{}, nil
-}
-
-// UpdateMediaServer handles PUT /api/v1/media-servers/{id}
-func (s *ServerHandler) UpdateMediaServer(ctx context.Context, request UpdateMediaServerRequestObject) (UpdateMediaServerResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return UpdateMediaServer401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	var encKey []byte
-	if request.Body.ApiKey != "" {
-		var err error
-		encKey, err = crypto.Encrypt(s.masterKey, []byte(request.Body.ApiKey))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	tx, q, err := s.beginEndpointEdit(ctx)
-	if errors.Is(err, ports.ErrForbidden) {
-		return UpdateMediaServer401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = tx.Rollback(ctx) }()
-	current, err := q.LockMediaServerForEdit(ctx, request.Id)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return UpdateMediaServer404JSONResponse{Code: "NOT_FOUND", Message: "endpoint not found", RequestId: reqID}, nil
-	}
-	if err != nil {
-		return nil, err
-	}
-	if request.Body.ApiKey == "" {
-		encKey = current.ApiKeyEncrypted
-	}
-	endpointURL, err := resolveEndpointEditURL(request.Body.Url, current.Url, request.Body.ExpectedUpdatedAt != nil, request.Body.ExpectedUpdatedAt != nil && request.Body.ExpectedUpdatedAt.Equal(current.UpdatedAt.Time))
-	if errors.Is(err, errEndpointRevision) {
-		return UpdateMediaServer409JSONResponse{Code: "ENDPOINT_VERSION_CONFLICT", Message: "endpoint changed or preservation version missing; reload before editing", RequestId: reqID}, nil
-	}
-	if err != nil {
-		return UpdateMediaServer400JSONResponse{Code: "INVALID_ENDPOINT_URL", Message: "provide a complete endpoint URL when changing the endpoint", RequestId: reqID}, nil
-	}
-	row, err := q.EditMediaServer(ctx, db.EditMediaServerParams{
-		ID:              request.Id,
-		Name:            request.Body.Name,
-		ServerType:      string(request.Body.ServerType),
-		Url:             endpointURL,
-		ApiKeyEncrypted: encKey,
-	})
-	if err != nil {
-		return UpdateMediaServer404JSONResponse{Code: "NOT_FOUND", Message: "media server not found", RequestId: reqID}, nil
-	}
-
-	if err := tx.Commit(ctx); err != nil {
-		return nil, err
-	}
-	return UpdateMediaServer200JSONResponse{
-		Id:         row.ID,
-		Name:       row.Name,
-		ServerType: row.ServerType,
-		Url:        endpointDisplayURL(row.Url),
-		UpdatedAt:  row.UpdatedAt.Time,
-		Health:     row.Health,
-	}, nil
-}
-
-// TestMediaServer handles POST /api/v1/media-servers/{id}/test
-func (s *ServerHandler) TestMediaServer(ctx context.Context, request TestMediaServerRequestObject) (TestMediaServerResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil || !actor.IsAdmin() {
-		return TestMediaServer401JSONResponse{Code: "UNAUTHORIZED", Message: "administrator access required", RequestId: reqID}, nil
-	}
-
-	if s.syncSvc == nil {
-		return TestMediaServer200JSONResponse{Alive: false, Message: "sync service unavailable"}, nil
-	}
-
-	alive, msg, _ := s.syncSvc.TestServer(ctx, request.Id)
-	return TestMediaServer200JSONResponse{
-		Alive:   alive,
-		Message: msg,
-	}, nil
 }
 
 // GetTMDBMovieDetails handles GET /api/v1/media/tmdb/movie/{id}
