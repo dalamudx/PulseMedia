@@ -693,8 +693,15 @@ func (s *ServerHandler) ListSubscriptions(ctx context.Context, request ListSubsc
 				value := item.CurrentFactStage
 				stage = &value
 			}
+			var air *openapi_types.Date
+			if item.AirDate != nil {
+				value := openapi_types.Date{Time: *item.AirDate}
+				air = &value
+			}
 			wanted[j] = WantedItemDetails{Id: item.ID, UnitId: item.UnitID, UnitKey: &item.UnitKey,
-				IsSkipped: item.IsSkipped, IsSatisfied: item.IsSatisfied, CurrentFactStage: stage}
+				IsSkipped: item.IsSkipped, IsSatisfied: item.IsSatisfied, CurrentFactStage: stage,
+				UserSkipped: &item.UserSkipped, ScopeExcluded: &item.ScopeExcluded, Retired: &item.Retired,
+				AirDate: air, AbsoluteNumber: item.AbsoluteNumber, MetadataVersion: &item.MetadataVersion}
 		}
 		items[i] = SubscriptionDetails{
 			Id: row.ID, UserId: row.UserID, MediaId: row.MediaID, RootId: row.RootID,

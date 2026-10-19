@@ -91,6 +91,9 @@ func (s *SubscriptionControlStore) ControlSubscription(ctx context.Context, a *p
 	sort.Slice(items, func(i, j int) bool { return items[i].UnitID.String() < items[j].UnitID.String() })
 	found := false
 	for _, w := range items {
+		if c.Action == "recheck" && (c.UnitID == nil || w.UnitID != *c.UnitID) {
+			continue
+		}
 		if _, e = q.LockAcquisitionUnit(ctx, w.UnitID); e != nil {
 			return nil, e
 		}
@@ -98,7 +101,7 @@ func (s *SubscriptionControlStore) ControlSubscription(ctx context.Context, a *p
 			found = true
 		}
 	}
-	if c.Action == "skip" && !found {
+	if (c.Action == "skip" || c.Action == "recheck") && !found {
 		return nil, ports.ErrNotFound
 	}
 	switch c.Action {
@@ -142,7 +145,21 @@ func (s *SubscriptionControlStore) ControlSubscription(ctx context.Context, a *p
 		if e != nil {
 			return nil, e
 		}
-	default:
+	case "recheck":
+		if sub.State != "active" {
+			return nil, ports.ErrSubscriptionBindingsConflict
+		}
+		changed, err := q.RecheckSubscriptionEpisode(ctx, db.RecheckSubscriptionEpisodeParams{SubscriptionID: id, UnitID: *c.UnitID, IntentVersion: sub.IntentVersion})
+		if err != nil {
+			return nil, err
+		}
+		if changed != 1 {
+			return nil, ports.ErrSubscriptionBindingsConflict
+		}
+	case "skip":
+		if c.Skipped == nil {
+			return nil, ports.ErrInvalidSubscriptionBindings
+		}
 		if _, e = q.SetUserWantedSkipped(ctx, db.SetUserWantedSkippedParams{SubscriptionID: id, UnitID: *c.UnitID, UserSkipped: *c.Skipped}); e != nil {
 			return nil, e
 		}
@@ -150,9 +167,13 @@ func (s *SubscriptionControlStore) ControlSubscription(ctx context.Context, a *p
 		if e != nil {
 			return nil, e
 		}
+	default:
+		return nil, ports.ErrInvalidSubscriptionBindings
 	}
-	if e = q.RefreshBindingWantedIntents(ctx, db.RefreshBindingWantedIntentsParams{SubscriptionID: id, IntentVersion: sub.IntentVersion}); e != nil {
-		return nil, e
+	if c.Action != "recheck" {
+		if e = q.RefreshBindingWantedIntents(ctx, db.RefreshBindingWantedIntentsParams{SubscriptionID: id, IntentVersion: sub.IntentVersion}); e != nil {
+			return nil, e
+		}
 	}
 	out = &ports.SubscriptionControlReceipt{ID: id, State: sub.State, IntentVersion: sub.IntentVersion, UnitID: c.UnitID, Skipped: c.Skipped, CandidateID: c.CandidateID, Blocked: c.Blocked}
 	safe, _ := json.Marshal(out)

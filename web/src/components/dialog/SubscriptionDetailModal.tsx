@@ -20,6 +20,7 @@ import {
 import type { paths } from "@/api/client";
 import { SubscriptionBindingEditor } from "@/features/configuration/SubscriptionBindingEditor";
 import { useSubscriptionStatus } from "@/features/configuration/useSubscriptionStatus";
+import { useEpisodeControl } from "@/features/configuration/useEpisodeControl";
 import { statusReason } from "@/features/configuration/statusReasons";
 import { TVMetadataRefreshPanel } from "@/features/configuration/TVMetadataRefreshPanel";
 import { EpisodeMappingPanel } from "@/features/configuration/EpisodeMappingPanel";
@@ -47,12 +48,12 @@ interface SubscriptionDetailModalProps {
 }
 
 function parseSeasonAndEpisode(unitKey?: string | null): { season: number; episode: number } {
-  if (!unitKey) return { season: 1, episode: 1 };
-  const match = unitKey.match(/^S(\d+)E(\d+)/i);
-  if (match) {
+  if (!unitKey) return { season: -1, episode: Number.MAX_SAFE_INTEGER };
+  const match = unitKey?.match(/^S(\d{2,3})E(\d{2,4})$/i);
+  if (match && Number(match[2]) > 0) {
     return { season: parseInt(match[1], 10), episode: parseInt(match[2], 10) };
   }
-  return { season: 1, episode: 1 };
+  return { season: -1, episode: Number.MAX_SAFE_INTEGER };
 }
 
 export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = ({
@@ -73,7 +74,9 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
   useDialogFocus(dialog, onClose);
   const status = useSubscriptionStatus(subscription,onUpdated);
   const observedSubscription = status.subscription;
-  const isTV = subscription.media_type === "tv" || (subscription.wanted_items && subscription.wanted_items.length > 1);
+  const episodeControl = useEpisodeControl({subscriptionId:subscription.id, expectedVersion:subscription.intent_version, onUpdated:(updated)=>{onUpdated(updated);status.invalidate();}});
+  const episodeLocked = !!operating || episodeControl.busy || episodeControl.blocked || episodeControl.pending !== null;
+  const isTV = subscription.media_type === "tv";
 
   // Group all wanted items strictly by season
   const seasonsMap = useMemo(() => {
@@ -102,18 +105,19 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
   }, [seasonsMap]);
 
   // Initial active season (first regular season > 0 or 1)
-  const [activeSeason, setActiveSeason] = useState<number>(() => {
+  const [selectedSeason, setActiveSeason] = useState<number>(() => {
     const sNums = Array.from(seasonsMap.keys()).sort((a, b) => a - b);
     const firstRegular = sNums.find((n) => n > 0);
     return firstRegular !== undefined ? firstRegular : sNums[0] || 1;
   });
+  const activeSeason = seasonsMap.has(selectedSeason) ? selectedSeason : seasonNumbers.find(n => n > 0) ?? seasonNumbers[0] ?? 1;
 
   // Filter option: show all or only missing
   const [onlyShowMissing, setOnlyShowMissing] = useState(false);
 
   // Stats for the whole subscription
   const activeWantedItems = useMemo(() => {
-    return observedSubscription.wanted_items?.filter((w) => !w.is_skipped) || [];
+    return observedSubscription.wanted_items?.filter((w) => !w.is_skipped && !w.retired) || [];
   }, [observedSubscription]);
 
   const explanationWanted = subscription.wanted_items?.find(w=>!w.retired);
@@ -128,13 +132,13 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
   const currentSeasonEps = useMemo(() => {
     const allInSeason = seasonsMap.get(activeSeason) || [];
     if (!onlyShowMissing) return allInSeason;
-    return allInSeason.filter((e) => !e.is_satisfied && !e.is_skipped);
+    return allInSeason.filter((e) => !e.is_satisfied && !e.is_skipped && !e.retired);
   }, [seasonsMap, activeSeason, onlyShowMissing]);
 
   // Active season stats
   const activeSeasonStats = useMemo(() => {
     const allInSeason = seasonsMap.get(activeSeason) || [];
-    const activeEps = allInSeason.filter((e) => !e.is_skipped);
+    const activeEps = allInSeason.filter((e) => !e.is_skipped && !e.retired);
     const targetCount = activeEps.length;
     const satCount = activeEps.filter((e) => e.is_satisfied).length;
     const pendingCount = activeEps.filter((e) => !e.is_satisfied).length;
@@ -266,10 +270,10 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
           <LibraryReusePanel key={`reuse-${subscription.id}-${subscription.intent_version}-${subscription.quality_policy_revision}`} subscription={observedSubscription} onUpdated={()=>void status.refresh()}/>
           {!isTV&&explanationWanted&&<CandidateReasonsPanel key={"candidates-"+subscription.id} subscriptionId={subscription.id} wantedId={explanationWanted.id} intentVersion={subscription.intent_version} onChanged={()=>void status.refresh()}/> }
           {!isTV&&<MovieUpgradePanel subscription={subscription} wantedId={explanationWanted?.id??""} onUpdated={()=>void status.refresh()}/>}
-          {isTV&&<TVMetadataRefreshPanel subscription={subscription} onUpdated={onUpdated} disabled={operating}/>}
-{isTV&&<EpisodeMappingPanel subscription={subscription} onUpdated={onUpdated} disabled={operating} discoveryCandidate={discoveryCandidate}/>}
-          <SubscriptionScopeEditor subscriptionId={subscription.id} onUpdated={onUpdated} disabled={operating}/>
-          <SubscriptionBindingEditor key={subscription.id} subscription={subscription} onUpdated={onUpdated} disabled={operating} />
+          {isTV&&<TVMetadataRefreshPanel subscription={subscription} onUpdated={onUpdated} disabled={episodeLocked}/>}
+{isTV&&<EpisodeMappingPanel subscription={subscription} onUpdated={onUpdated} disabled={episodeLocked} discoveryCandidate={discoveryCandidate}/>}
+          <SubscriptionScopeEditor subscriptionId={subscription.id} onUpdated={onUpdated} disabled={episodeLocked}/>
+          <SubscriptionBindingEditor key={subscription.id} subscription={subscription} onUpdated={onUpdated} disabled={episodeLocked} />
           {/* Season Pill Tabs (按季平铺导航药丸) */}
           {isTV && seasonNumbers.length > 1 && (
             <div className="season-pills-bar">
@@ -277,8 +281,8 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               <div className="season-pills-list">
                 {seasonNumbers.map((sNum) => {
                   const eps = seasonsMap.get(sNum)!;
-                  const activeEps = eps.filter((e) => !e.is_skipped);
-                  const targetCount = activeEps.length > 0 ? activeEps.length : eps.length;
+                  const activeEps = eps.filter((e) => !e.is_skipped && !e.retired);
+                  const targetCount = activeEps.length;
                   const satCount = activeEps.filter((e) => e.is_satisfied).length;
                   const sPct = targetCount > 0 ? Math.round((satCount / targetCount) * 100) : 0;
                   const isSpecials = sNum === 0;
@@ -292,12 +296,12 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
                       onClick={() => setActiveSeason(sNum)}
                     >
                       <span className="pill-title">
-                        {isSpecials ? "特别篇" : `第 ${sNum} 季`}
+                        {sNum === -1 ? "未识别编号" : isSpecials ? "特别篇" : `第 ${sNum} 季`}
                       </span>
                       <span className="pill-stat">
                         {isPartial
                           ? `已选 ${targetCount} 集 · ${sPct}%`
-                          : `${satCount}/${eps.length} 集 · ${sPct}%`}
+                          : targetCount === 0 ? `${eps.length} 集 · 无追更目标` : `${satCount}/${targetCount} 集 · ${sPct}%`}
                       </span>
                       {sPct === 100 && (
                         <span className="pill-done-dot">✓</span>
@@ -314,7 +318,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
             <div className="season-tiles-header">
               <div className="tiles-header-left">
                 <strong className="tiles-season-title">
-                  {isTV ? `${activeSeason === 0 ? "特别篇" : `第 ${activeSeason} 季`} · 剧集追踪状态` : "电影目标状态"}
+                  {isTV ? `${activeSeason === -1 ? "未识别编号" : activeSeason === 0 ? "特别篇" : `第 ${activeSeason} 季`} · 剧集追踪状态` : "电影目标状态"}
                 </strong>
                 <span className="tiles-season-summary">
                   共 {activeSeasonStats.allCount} 集 · 已选 <strong>{activeSeasonStats.targetCount} 集</strong> · 已入库 <strong>{activeSeasonStats.satCount} 集</strong> · 待处理 <strong>{activeSeasonStats.pendingCount} 集</strong>
@@ -334,6 +338,15 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               </div>
             </div>
 
+            {isTV && <section aria-label="逐集追更操作" className="config-section">
+              <p className="config-description">逐集跳过与范围排除分别保留。重新检查仅请求评估本集，播出日期、冷却、预算及占位保护继续有效。</p>
+              {episodeControl.message && <p role={episodeControl.feedbackKind === "error" ? "alert" : "status"}>{episodeControl.message}</p>}
+              <div className="config-actions">
+                {episodeControl.pending && <button type="button" className="btn-secondary" disabled={episodeControl.busy || !episodeControl.canRetry} onClick={() => void episodeControl.retryOriginal()}>重试同一逐集命令</button>}
+                {episodeControl.canResolveConflict && <button type="button" className="btn-secondary" disabled={episodeControl.busy} onClick={() => void episodeControl.resolveConflict()}>重新读取并结束冲突命令</button>}
+                <button type="button" className="btn-secondary" disabled={episodeControl.busy} onClick={() => void episodeControl.refresh()}>刷新逐集状态</button>
+              </div>
+            </section>}
             {/* Episode Tiles Grid */}
             {currentSeasonEps.length > 0 ? (
               <div className="episode-tiles-grid">
@@ -346,7 +359,11 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
                   let statusText = "未满足";
                   let StatusIcon = AlertCircle;
 
-                  if (isSkipped) {
+                  if (wi.retired || wi.scope_excluded) {
+                    statusClass = "tile-skipped";
+                    statusText = wi.retired ? "已退休" : "范围外";
+                    StatusIcon = SkipForward;
+                  } else if (isSkipped) {
                     statusClass = "tile-skipped";
                     statusText = "已跳过";
                     StatusIcon = SkipForward;
@@ -361,7 +378,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
                   }
 
                   return (
-                    <div key={wi.id} className={`episode-tile-card ${statusClass}`}>
+                    <div key={wi.id} role="group" aria-label={`${wi.unit_key || wi.unit_id} 追更状态`} className={`episode-tile-card ${statusClass}`}>
                       <div className="tile-top-row">
                         <strong className="tile-ep-code">{wi.unit_key || wi.unit_id.slice(0, 8)}</strong>
                         <span className={`tile-status-pill ${statusClass}`}>
@@ -378,11 +395,18 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
                             ? "未纳入本轮订阅"
                             : waitReason ? statusReason(waitReason)
                             : subscription.state === "paused" ? "订阅已暂停"
-                            : isTV ? "自动获取尚未启用"
+                            : isTV ? "等待当前条件核验与自动调度"
                             : !subscription.indexer_ids?.length ? "未绑定索引器"
                             : "等待核验与调度"}
                         </span>
                       </div>
+                      {isTV && <>
+                        <p className="tile-hint">播出日期：{wi.air_date ?? "未知"}</p>
+                        <div className="config-actions">
+                          <button type="button" className="btn-secondary btn-sm" disabled={episodeLocked || !!wi.retired || !!wi.scope_excluded || subscription.state !== "active"} onClick={() => void episodeControl.execute(wi.unit_id, wi.user_skipped ? "resume" : "skip")}>{wi.user_skipped ? "恢复追更" : "跳过本集"}</button>
+                          <button type="button" className="btn-secondary btn-sm" disabled={episodeLocked || !!wi.retired || !!wi.scope_excluded || wi.is_skipped || wi.is_satisfied || wi.status === "unknown" || subscription.state !== "active"} onClick={() => void episodeControl.execute(wi.unit_id, "recheck")}>重新检查本集</button>
+                        </div>
+                      </>}
                     </div>
                   );
                 })}
@@ -401,6 +425,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
             <button
               type="button"
               className="btn-danger-outline btn-sm"
+              disabled={episodeLocked}
               onClick={() => onDelete(subscription)}
               title="归档订阅，保留历史和已发送获取"
             >
@@ -414,7 +439,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               <button
                 type="button"
                 className="btn-secondary btn-sm"
-                disabled={operating}
+                disabled={episodeLocked}
                 onClick={() => onPause(subscription.id)}
               >
                 <Pause size={14} />
@@ -424,7 +449,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               <button
                 type="button"
                 className="btn-primary btn-sm"
-                disabled={operating}
+                disabled={episodeLocked}
                 onClick={() => onResume(subscription.id)}
               >
                 <Play size={14} />
@@ -437,7 +462,7 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               className="btn-primary btn-sm"
               onClick={() => onRecheck(subscription)}
               title="检索绑定端点并尝试安全获取"
-              disabled={operating || subscription.state !== "active"}
+              disabled={episodeLocked || subscription.state !== "active"}
             >
               <RefreshCw size={14} />
               <span>检索与获取</span>

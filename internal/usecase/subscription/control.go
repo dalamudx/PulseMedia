@@ -41,6 +41,10 @@ func (s *ControlService) Apply(ctx context.Context, a *ports.Actor, id uuid.UUID
 		if c.UnitID == nil || *c.UnitID == uuid.Nil || c.Skipped == nil || c.State != "" {
 			return nil, ports.ErrInvalidSubscriptionBindings
 		}
+	case "recheck":
+		if c.UnitID == nil || *c.UnitID == uuid.Nil || c.Skipped != nil || c.State != "" {
+			return nil, ports.ErrInvalidSubscriptionBindings
+		}
 	case "release_block":
 		if c.CandidateID == nil || *c.CandidateID == uuid.Nil || c.Blocked == nil || c.UnitID != nil || c.Skipped != nil || c.State != "" {
 			return nil, ports.ErrInvalidSubscriptionBindings

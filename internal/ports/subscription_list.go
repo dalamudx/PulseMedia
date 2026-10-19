@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -33,8 +34,12 @@ type SubscriptionListEntry struct {
 }
 
 type SubscriptionListWanted struct {
-	ID, UnitID             uuid.UUID
-	UnitKey                string
-	IsSkipped, IsSatisfied bool
-	CurrentFactStage       string
+	ID, UnitID                          uuid.UUID
+	UnitKey                             string
+	IsSkipped, IsSatisfied              bool
+	CurrentFactStage                    string
+	UserSkipped, ScopeExcluded, Retired bool
+	AirDate                             *time.Time
+	AbsoluteNumber                      *int
+	MetadataVersion                     int64
 }

@@ -690,6 +690,7 @@ func (e SubscriptionBindingsDetailsState) Valid() bool {
 
 // Defines values for SubscriptionControlCommandAction.
 const (
+	Recheck      SubscriptionControlCommandAction = "recheck"
 	ReleaseBlock SubscriptionControlCommandAction = "release_block"
 	Scope        SubscriptionControlCommandAction = "scope"
 	Skip         SubscriptionControlCommandAction = "skip"
@@ -699,6 +700,8 @@ const (
 // Valid indicates whether the value is a known member of the SubscriptionControlCommandAction enum.
 func (e SubscriptionControlCommandAction) Valid() bool {
 	switch e {
+	case Recheck:
+		return true
 	case ReleaseBlock:
 		return true
 	case Scope:

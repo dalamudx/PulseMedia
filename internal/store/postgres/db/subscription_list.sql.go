@@ -73,7 +73,7 @@ type ReadSubscriptionListEntriesRow struct {
 	TmdbExternalID        string
 }
 
-// Keep the legacy list order and TMDB namespace/identity selection.
+// Keep list order; expose only one identity in the actual media type's native namespace.
 func (q *Queries) ReadSubscriptionListEntries(ctx context.Context, arg ReadSubscriptionListEntriesParams) ([]ReadSubscriptionListEntriesRow, error) {
 	rows, err := q.db.Query(ctx, readSubscriptionListEntries, arg.IsAdmin, arg.UserID)
 	if err != nil {
@@ -120,7 +120,8 @@ SELECT w.id, w.subscription_id, w.unit_id, w.is_skipped,
        CASE WHEN p.inputs_current AND w.next_evaluate_at > clock_timestamp()
             AND (w.projection_valid_until IS NULL OR w.projection_valid_until > clock_timestamp())
             THEN COALESCE(w.current_fact_stage, '') ELSE '' END AS current_fact_stage,
-       u.unit_key
+       u.unit_key, u.air_date, u.absolute_number, u.retired, u.metadata_version,
+       w.user_skipped, w.scope_excluded
 FROM wanted_item w
 JOIN media_unit u ON u.id = w.unit_id
 JOIN wanted_projection_validity p ON p.id = w.id
@@ -136,6 +137,12 @@ type ReadSubscriptionListWantedRow struct {
 	IsSatisfied      bool
 	CurrentFactStage string
 	UnitKey          string
+	AirDate          pgtype.Date
+	AbsoluteNumber   pgtype.Int4
+	Retired          bool
+	MetadataVersion  int64
+	UserSkipped      bool
+	ScopeExcluded    bool
 }
 
 // Apply exactly the same validity and expiry rules as ListWantedItemsWithUnitDetails.
@@ -156,6 +163,12 @@ func (q *Queries) ReadSubscriptionListWanted(ctx context.Context, subscriptionId
 			&i.IsSatisfied,
 			&i.CurrentFactStage,
 			&i.UnitKey,
+			&i.AirDate,
+			&i.AbsoluteNumber,
+			&i.Retired,
+			&i.MetadataVersion,
+			&i.UserSkipped,
+			&i.ScopeExcluded,
 		); err != nil {
 			return nil, err
 		}

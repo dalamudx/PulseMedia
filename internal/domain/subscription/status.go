@@ -82,7 +82,7 @@ func deriveStatus(s Snapshot, automation bool) StatusReport {
 	add(s.RootHealth == "online" && !s.BaselineCompleted, "baseline_pending")
 	add(!s.PolicyAvailable, "policy_unavailable")
 	if automation {
-		add(s.MediaType != "movie", "automation_unavailable")
+		add(s.MediaType != "movie" && s.MediaType != "tv", "automation_unavailable")
 		add(s.BoundIndexers == 0, "no_indexers")
 		add(s.BoundIndexers > 0 && s.AvailableIndexers == 0, "endpoints_offline")
 		add(s.AvailableIndexers > 0 && !s.EndpointsReady, "endpoint_backoff")

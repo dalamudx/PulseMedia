@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"time"
 
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
@@ -103,9 +104,21 @@ func (s *SubscriptionListStore) ReadSubscriptionList(ctx context.Context, actor 
 			if !ok {
 				return nil, ports.ErrUnavailable
 			}
+			var air *time.Time
+			if row.AirDate.Valid {
+				value := row.AirDate.Time
+				air = &value
+			}
+			var absolute *int
+			if row.AbsoluteNumber.Valid {
+				value := int(row.AbsoluteNumber.Int32)
+				absolute = &value
+			}
 			items[pos].WantedItems = append(items[pos].WantedItems, ports.SubscriptionListWanted{
 				ID: row.ID, UnitID: row.UnitID, UnitKey: row.UnitKey, IsSkipped: row.IsSkipped,
 				IsSatisfied: row.IsSatisfied, CurrentFactStage: row.CurrentFactStage,
+				UserSkipped: row.UserSkipped, ScopeExcluded: row.ScopeExcluded, Retired: row.Retired,
+				AirDate: air, AbsoluteNumber: absolute, MetadataVersion: row.MetadataVersion,
 			})
 		}
 	}

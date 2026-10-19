@@ -5619,7 +5619,7 @@ components:
       required: [expected_version, action]
       properties:
         expected_version: {type: integer, format: int64, minimum: 1}
-        action: {type: string, enum: [state, skip, scope, release_block]}
+        action: {type: string, enum: [state, skip, scope, release_block, recheck]}
         state: {type: string, enum: [active, paused, archived]}
         unit_id: {type: string, format: uuid}
         skipped: {type: boolean}

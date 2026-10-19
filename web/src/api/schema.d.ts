@@ -3079,7 +3079,7 @@ export interface components {
             /** Format: int64 */
             expected_version: number;
             /** @enum {string} */
-            action: "state" | "skip" | "scope" | "release_block";
+            action: "state" | "skip" | "scope" | "release_block" | "recheck";
             /** @enum {string} */
             state?: "active" | "paused" | "archived";
             /** Format: uuid */

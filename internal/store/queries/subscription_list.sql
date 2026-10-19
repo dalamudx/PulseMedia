@@ -34,7 +34,8 @@ SELECT w.id, w.subscription_id, w.unit_id, w.is_skipped,
        CASE WHEN p.inputs_current AND w.next_evaluate_at > clock_timestamp()
             AND (w.projection_valid_until IS NULL OR w.projection_valid_until > clock_timestamp())
             THEN COALESCE(w.current_fact_stage, '') ELSE '' END AS current_fact_stage,
-       u.unit_key
+       u.unit_key, u.air_date, u.absolute_number, u.retired, u.metadata_version,
+       w.user_skipped, w.scope_excluded
 FROM wanted_item w
 JOIN media_unit u ON u.id = w.unit_id
 JOIN wanted_projection_validity p ON p.id = w.id
