@@ -11,6 +11,9 @@ import (
 // calls, progress writes or organization. Any surviving immutable evidence is
 // sufficient to fence the old path, even if another authority row is missing.
 func (m *Manager) requireGenericObservation(ctx context.Context, operation uuid.UUID) error {
+	if err := m.requireAutomaticTVIsolation(ctx, operation); err != nil {
+		return err
+	}
 	var dedicated bool
 	err := m.pool.QueryRow(ctx, `SELECT
  EXISTS(SELECT 1 FROM complete_tv_execution_authority WHERE operation_id=$1) OR

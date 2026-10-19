@@ -13,12 +13,15 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type EvaluationScheduleStore struct{ queries *db.Queries }
+type EvaluationScheduleStore struct {
+	queries *db.Queries
+	pool    *pgxpool.Pool
+}
 
 var _ ports.EvaluationScheduleRepository = (*EvaluationScheduleStore)(nil)
 
 func NewEvaluationScheduleStore(pool *pgxpool.Pool) *EvaluationScheduleStore {
-	return &EvaluationScheduleStore{queries: Queries(pool)}
+	return &EvaluationScheduleStore{queries: Queries(pool), pool: pool}
 }
 
 func (s *EvaluationScheduleStore) ListPendingEvaluations(ctx context.Context, limit int32) ([]ports.EvaluationScheduleWanted, error) {
@@ -67,10 +70,21 @@ func (s *EvaluationScheduleStore) ConsumeEvaluationRSS(ctx context.Context, id u
 
 func (s *EvaluationScheduleStore) HasActiveEvaluationRound(ctx context.Context, id uuid.UUID) (bool, error) {
 	_, err := s.queries.GetActiveSearchRoundForWanted(ctx, id)
-	if errors.Is(err, pgx.ErrNoRows) {
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return err == nil, err
+	}
+	// Historical repository fixtures retain their original schema. Production
+	// requires the current schema, while every actual read error remains fatal.
+	var available bool
+	if err := s.pool.QueryRow(ctx, `SELECT to_regclass('automatic_tv_round') IS NOT NULL`).Scan(&available); err != nil {
+		return false, err
+	}
+	if !available {
 		return false, nil
 	}
-	return err == nil, err
+	var active bool
+	err = s.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM automatic_tv_round WHERE wanted_id=$1 AND state='running')`, id).Scan(&active)
+	return active, err
 }
 
 func (s *EvaluationScheduleStore) RescheduleEvaluation(ctx context.Context, id uuid.UUID, delay time.Duration) error {

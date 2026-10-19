@@ -9,6 +9,9 @@ import (
 // prove the directory still occupies that name when external writers rename it.
 // This observation stays outside the transaction and while original slots are held.
 func (s *Service) checkStepNamespace(ctx context.Context, plan db.TransferPlan, step db.TransferStep, marker string) error {
+	if err := s.guardAutomaticTVNamespace(ctx, plan, step); err != nil {
+		return err
+	}
 	target, err := s.files.OpenRoot(ctx, plan.RootPath.String)
 	if err != nil {
 		return err

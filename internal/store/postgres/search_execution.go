@@ -81,6 +81,9 @@ type searchExecutionPermit struct {
 }
 
 func searchQueryType(spec ports.SearchQuerySpec) string {
+	if spec.AutomaticTV != nil {
+		return "tv_episode"
+	}
 	if spec.Interactive != nil {
 		return "interactive"
 	}
@@ -99,6 +102,16 @@ func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.Search
 			frozen.Scopes = append(make([]string, 0, len(spec.Actor.Scopes)), spec.Actor.Scopes...)
 		}
 		spec.Actor = &frozen
+	}
+	if spec.AutomaticTV != nil {
+		if spec.Interactive != nil || spec.Actor != nil || spec.HealthJob != nil || spec.ProbeOnly || spec.RSSJobID != uuid.Nil {
+			return ports.SearchQueryAdmission{}, nil, ports.ErrBadResponse
+		}
+		frozen := *spec.AutomaticTV
+		if frozen.Query.Categories != nil {
+			frozen.Query.Categories = append(make([]int32, 0, len(frozen.Query.Categories)), frozen.Query.Categories...)
+		}
+		spec.AutomaticTV = &frozen
 	}
 	if spec.Interactive != nil {
 		frozen := *spec.Interactive
@@ -136,7 +149,7 @@ func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.Search
 		}
 	}
 	var active db.IndexerQuery
-	if spec.Interactive == nil {
+	if spec.Interactive == nil && spec.AutomaticTV == nil {
 		active, e = s.queries.GetActiveQuery(ctx, db.GetActiveQueryParams{QueryType: searchQueryType(spec), IndexerID: spec.IndexerID, Keyword: spec.Keyword, Page: spec.Page, ConfigVersion: spec.ConfigVersion})
 		if e != nil && !errors.Is(e, pgx.ErrNoRows) {
 			return out, nil, e
@@ -144,6 +157,9 @@ func (s *SearchExecutionStore) AdmitQuery(ctx context.Context, spec ports.Search
 	}
 	release, e := AcquireIndexerPermit(ctx, s.pool, spec.IndexerID)
 	if e != nil {
+		if spec.AutomaticTV != nil && errors.Is(e, ports.ErrUnavailable) {
+			return out, nil, ports.ErrAutomaticTVSearchDeferred
+		}
 		if spec.Interactive != nil && errors.Is(e, ports.ErrUnavailable) {
 			return out, nil, ports.ErrInteractiveSearchDeferred
 		}
@@ -175,6 +191,9 @@ func (p *searchExecutionPermit) Close() {
 	}
 }
 func (p *searchExecutionPermit) reserve(ctx context.Context, second bool) (db.Indexer, error) {
+	if p.spec.AutomaticTV != nil {
+		return p.reserveAutomaticTV(ctx)
+	}
 	spec := p.spec
 	tx, e := p.store.pool.Begin(ctx)
 	if e != nil {
@@ -252,6 +271,9 @@ func (p *searchExecutionPermit) BeginQuery(ctx context.Context) (*ports.IndexerQ
 		return nil, ports.ErrUnavailable
 	}
 	s := p.spec
+	if s.AutomaticTV != nil {
+		return p.beginAutomaticTVQuery(ctx)
+	}
 	if s.Interactive != nil {
 		return p.beginInteractiveQuery(ctx)
 	}
@@ -290,6 +312,9 @@ func (p *searchExecutionPermit) CommitQuery(ctx context.Context, commit ports.Se
 		return nil, ports.ErrUnavailable
 	}
 	s := p.spec
+	if s.AutomaticTV != nil {
+		return p.commitAutomaticTVQuery(ctx, commit)
+	}
 	tx, e := p.store.pool.Begin(ctx)
 	if e != nil {
 		return nil, e
@@ -372,6 +397,9 @@ func (p *searchExecutionPermit) FailQuery(ctx context.Context, failure ports.Sea
 	defer p.mu.Unlock()
 	if p.closed || !p.begun || p.terminal {
 		return ports.ErrUnavailable
+	}
+	if p.spec.AutomaticTV != nil {
+		return p.failAutomaticTVQuery(ctx, failure, retry)
 	}
 	message := "indexer search failed"
 	switch failure {

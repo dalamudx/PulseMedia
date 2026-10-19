@@ -278,6 +278,12 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var searchSvc *usecaseSearch.Service
 	var interactiveSearchRepo ports.InteractiveSearchRepository
 	var interactiveSearchSvc *usecaseSearch.InteractiveSearchService
+	var automaticTVRounds ports.AutomaticTVRoundRepository
+	var automaticTVFinalizer ports.AutomaticTVAcquisitionRepository
+	var automaticTVSender ports.AutomaticTVSendJobExecutor
+	var automaticTVRecovery ports.AutomaticTVSubmissionRecoveryRepository
+	var automaticTVObservationRepo ports.AutomaticTVObservationRepository
+	var automaticTVObserver automaticTVObservationExecutor
 	var feedSvc *usecaseSearch.FeedService
 	var healthSvc *usecaseSearch.HealthService
 	var scheduler *usecaseScheduler.AutoFulfillScheduler
@@ -336,6 +342,11 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		}, torrent.Inspector{})
 		completeSubmission := postgres.NewCompleteTVSubmissionStore(a.dbPool, a.idgen)
 		downloadRepo.SetCompleteTVServices(completeSubmission, completeSubmission, torznab.CompleteTVFetcher{}, torrent.Inspector{})
+		automaticSubmission := postgres.NewAutomaticTVSubmissionStore(a.dbPool, a.idgen, a.indexerDecoder)
+		downloadRepo.SetAutomaticTVServices(automaticSubmission, torznab.NewAutomaticTVTorrentFetcher(nil), torrent.Inspector{})
+		automaticTVSender, automaticTVRecovery = downloadRepo, automaticSubmission
+		automaticTVObservationRepo = postgres.NewAutomaticTVObservationStore(a.dbPool, a.idgen)
+		automaticTVObserver = downloadRepo
 		completeTV = downloadRepo
 		dlMgr = download.NewManager(downloadRepo)
 		dlMgr.SetSubmissionRepository(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen))
@@ -379,6 +390,9 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 
 		searchSvc = usecaseSearch.NewService(postgres.NewSearchExecutionStore(a.dbPool, a.indexerDecoder), a.idgen, crypto.NewSecretProtector(masterKey))
 		searchSvc.SetEndpointRepository(postgres.NewSearchEndpointStore(a.dbPool))
+		automaticTVRounds = postgres.NewAutomaticTVRoundStore(a.dbPool, a.idgen)
+		automaticTVFinalizer = postgres.NewAutomaticTVAcquisitionStore(a.dbPool, a.idgen, acquisition.SelectAutomaticTVEpisode)
+		searchSvc.SetAutomaticTVRoundRepository(automaticTVRounds)
 		searchSvc.SetClientFactory(newIndexerClient)
 		searchSvc.SetConfiguredClientFactory(newConfiguredIndexerClient)
 		interactiveSearchRepo = postgres.NewInteractiveSearchStore(a.dbPool, a.idgen)
@@ -395,7 +409,8 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		healthSvc = usecaseSearch.NewHealthService(healthStore, searchSvc)
 		evaluator := subscription.NewEvaluator(postgres.NewWantedProjectionStore(a.dbPool))
 		coord := usecaseSearch.NewRoundCoordinator(postgres.NewSearchRoundStore(a.dbPool, a.idgen), a.clock, acqSvc)
-		scheduler = usecaseScheduler.NewAutoFulfillScheduler(postgres.NewEvaluationScheduleStore(a.dbPool), evaluator, coord, polSvc)
+		automaticCoord := usecaseSearch.NewAutomaticRoundCoordinator(coord, automaticTVRounds)
+		scheduler = usecaseScheduler.NewAutoFulfillScheduler(postgres.NewEvaluationScheduleStore(a.dbPool), evaluator, automaticCoord, polSvc)
 	}
 
 	metaProvider := &dynamicTMDBProvider{settingsSvc: settingsSvc, httpClient: a.metadataHTTPClient, budget: budget.NewMetadataBudget(a.clock)}
@@ -476,6 +491,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	workerCtx, cancelWorker := context.WithCancel(ctx)
 	workerDone := make(chan struct{})
 	completeTVDone := make(chan struct{})
+	automaticTVDownloadDone := make(chan struct{})
 	upgradeObservationDone := make(chan struct{})
 	upgradeTrackingDone := make(chan struct{})
 	upgradeSendDone := make(chan struct{})
@@ -485,6 +501,10 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	searchDone := make(chan struct{})
 	libraryDone := make(chan struct{})
 	if queue != nil {
+		go func() {
+			defer close(automaticTVDownloadDone)
+			a.runAutomaticTVDownloadWorkers(workerCtx, queue, automaticTVRecovery, automaticTVSender, automaticTVObservationRepo, automaticTVObserver)
+		}()
 		go func() {
 			defer close(upgradeOrganizationDone)
 			a.runMovieUpgradeOrganizationWorker(workerCtx, queue, upgradeOrganization)
@@ -516,12 +536,13 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		go func() { defer close(outboxDone); a.runOutboxWorkers(workerCtx, ob, syncSvc, notifySvc) }()
 		go func() {
 			defer close(searchDone)
-			a.runAllSearchWorkers(workerCtx, queue, scheduler, searchSvc, feedSvc, healthSvc, interactiveSearchRepo)
+			a.runAllSearchWorkers(workerCtx, queue, scheduler, searchSvc, feedSvc, healthSvc, interactiveSearchRepo, automaticTVRounds, automaticTVFinalizer)
 		}()
 		go func() { defer close(libraryDone); a.runLibraryWorkers(workerCtx, queue, metaProvider) }()
 	} else {
 		close(workerDone)
 		close(completeTVDone)
+		close(automaticTVDownloadDone)
 		close(upgradeObservationDone)
 		close(upgradeTrackingDone)
 		close(upgradeSendDone)
@@ -535,7 +556,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		cancelWorker()
 		budget, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		waitRuntime(budget, a.logger, workerDone, completeTVDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, outboxDone, searchDone, libraryDone)
+		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, outboxDone, searchDone, libraryDone)
 	}
 	defer stopWorker()
 

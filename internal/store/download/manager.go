@@ -44,6 +44,7 @@ type Manager struct {
 	inspector       ports.TorrentMetainfoInspector
 	indexerDecoder  ports.CredentialDecoder
 	completeTV      *completeTVServices
+	automaticTV     *automaticTVServices
 }
 
 func NewManager(pool *pgxpool.Pool, idgen ports.IDGen, masterKey []byte) *Manager {

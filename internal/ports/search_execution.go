@@ -61,6 +61,7 @@ type SearchQuerySpec struct {
 	HealthJob       *IndexerHealthJob
 	Actor           *Actor                        `json:"-"`
 	Interactive     *InteractiveSearchSourceLease `json:"-"`
+	AutomaticTV     *AutomaticTVQueryBinding      `json:"-"`
 	ProbeOnly       bool
 	MinimumInterval time.Duration
 }

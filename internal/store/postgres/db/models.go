@@ -67,6 +67,227 @@ type AuditLog struct {
 	CreatedAt  pgtype.Timestamptz
 }
 
+type AutomaticTvDecision struct {
+	RoundID       uuid.UUID
+	FinalizeJobID uuid.UUID
+	LeaseOwner    string
+	LeaseToken    int64
+	OperationID   pgtype.UUID
+	CandidateID   pgtype.UUID
+	State         string
+	BestScore     int32
+	Decision      []byte
+}
+
+type AutomaticTvExecutionAuthority struct {
+	OperationID    uuid.UUID
+	RoundID        uuid.UUID
+	OwnerID        uuid.UUID
+	SubscriptionID uuid.UUID
+	UnitID         uuid.UUID
+	RootID         uuid.UUID
+	CandidateID    uuid.UUID
+	IndexerID      uuid.UUID
+	ClientID       uuid.UUID
+	QueryID        uuid.UUID
+	Snapshot       []byte
+	DecisionStamp  string
+}
+
+type AutomaticTvObservationJob struct {
+	JobID         uuid.UUID
+	OperationID   uuid.UUID
+	TaskID        uuid.UUID
+	SendAttemptID uuid.UUID
+	CreatedAt     pgtype.Timestamptz
+}
+
+type AutomaticTvObservationPermit struct {
+	ID            uuid.UUID
+	OperationID   uuid.UUID
+	TaskID        uuid.UUID
+	JobID         uuid.UUID
+	LeaseOwner    string
+	LeaseToken    int64
+	SendAttemptID uuid.UUID
+	BackendPid    int32
+	AdvisoryKey   int64
+	CreatedAt     pgtype.Timestamptz
+	FinishedAt    pgtype.Timestamptz
+}
+
+type AutomaticTvObservationResult struct {
+	JobID          uuid.UUID
+	OperationID    uuid.UUID
+	TaskID         uuid.UUID
+	PermitID       uuid.UUID
+	SendAttemptID  uuid.UUID
+	LeaseOwner     string
+	LeaseToken     int64
+	AuthorityHash  string
+	ProofHash      string
+	State          string
+	Complete       bool
+	ReviewRequired bool
+	EvidenceStamp  string
+	Statement      string
+	Inventory      []byte
+	CreatedAt      pgtype.Timestamptz
+	NextPollAt     pgtype.Timestamptz
+}
+
+type AutomaticTvOrganizationCompletion struct {
+	PlanID         uuid.UUID
+	StepID         uuid.UUID
+	FileID         uuid.UUID
+	JobID          uuid.UUID
+	LeaseOwner     string
+	LeaseToken     int64
+	LeaseUntil     pgtype.Timestamptz
+	PlanLeaseUntil pgtype.Timestamptz
+	ObservationID  uuid.UUID
+	Result         []byte
+	CreatedAt      pgtype.Timestamptz
+}
+
+type AutomaticTvOrganizationObservation struct {
+	ID             uuid.UUID
+	PlanID         uuid.UUID
+	StepID         uuid.UUID
+	ExecutionOwner string
+	ExecutionToken int64
+	JobID          uuid.UUID
+	LeaseOwner     string
+	LeaseToken     int64
+	ObservedAt     pgtype.Timestamptz
+	CreatedAt      pgtype.Timestamptz
+}
+
+type AutomaticTvOrganizationPlan struct {
+	PlanID                uuid.UUID
+	OperationID           uuid.UUID
+	TaskID                uuid.UUID
+	ObservationJobID      uuid.UUID
+	OrganizationJobID     uuid.UUID
+	StepID                uuid.UUID
+	AuthorityHash         string
+	ProofHash             string
+	InventoryStamp        string
+	SourceRoot            string
+	SourceRel             string
+	SourceDirectory       string
+	SourceRootDevice      int64
+	SourceRootInode       int64
+	SourceDirectoryDevice int64
+	SourceDirectoryInode  int64
+	SourceDevice          int64
+	SourceInode           int64
+	SourceSize            int64
+	SourceMtime           int64
+	RootID                uuid.UUID
+	RootPath              string
+	RootGeneration        int64
+	RootDevice            int64
+	RootInode             int64
+	BaselineDevice        int64
+	BaselineInode         int64
+	MarkerFilename        string
+	MarkerDevice          int64
+	MarkerInode           int64
+	MarkerSize            int64
+	MarkerMtime           int64
+	QualityProfile        []byte
+	TargetEvidence        []byte
+	ClientSnapshot        []byte
+	ObservedAt            pgtype.Timestamptz
+	CreatedAt             pgtype.Timestamptz
+}
+
+type AutomaticTvPhysicalAttempt struct {
+	ID          uuid.UUID
+	OperationID uuid.UUID
+	JobID       uuid.UUID
+	LeaseOwner  string
+	LeaseToken  int64
+	BackendPid  int32
+	AdvisoryKey int64
+	CreatedAt   pgtype.Timestamptz
+	FinishedAt  pgtype.Timestamptz
+}
+
+type AutomaticTvQuery struct {
+	RoundID        uuid.UUID
+	IndexerID      uuid.UUID
+	Page           int32
+	QueryID        uuid.UUID
+	SourceJobID    uuid.UUID
+	SourceToken    int64
+	Parameters     []byte
+	ParametersHash string
+}
+
+type AutomaticTvQueryCandidate struct {
+	QueryID             uuid.UUID
+	CandidateID         uuid.UUID
+	SourceStamp         string
+	Title               string
+	Guid                string
+	InfoHash            pgtype.Text
+	LinkEncrypted       []byte
+	QualityProfile      []byte
+	SizeBytes           int64
+	SourceConfigVersion int64
+}
+
+type AutomaticTvRound struct {
+	ID             uuid.UUID
+	WantedID       uuid.UUID
+	SubscriptionID uuid.UUID
+	OwnerID        uuid.UUID
+	Snapshot       []byte
+	SnapshotHash   string
+	FinalizeJobID  uuid.UUID
+	CreatedAt      pgtype.Timestamptz
+	Deadline       pgtype.Timestamptz
+	State          string
+}
+
+type AutomaticTvSource struct {
+	RoundID        uuid.UUID
+	IndexerID      uuid.UUID
+	ConfigVersion  int64
+	JobID          uuid.UUID
+	Parameters     []byte
+	ParametersHash string
+	State          string
+}
+
+type AutomaticTvSubmissionPreparation struct {
+	OperationID       uuid.UUID
+	TaskID            uuid.UUID
+	PhysicalAttemptID uuid.UUID
+	JobID             uuid.UUID
+	LeaseOwner        string
+	LeaseToken        int64
+	AuthorityHash     string
+	InfoHash          string
+	TorrentSha256     []byte
+	ProofHash         string
+	Proof             []byte
+	CreatedAt         pgtype.Timestamptz
+}
+
+type AutomaticTvSubmissionResult struct {
+	OperationID       uuid.UUID
+	TaskID            uuid.UUID
+	PhysicalAttemptID uuid.UUID
+	JobID             uuid.UUID
+	LeaseOwner        string
+	LeaseToken        int64
+	State             string
+	CreatedAt         pgtype.Timestamptz
+}
+
 type CandidateRuleCache struct {
 	InputDigest string
 	Decision    []byte

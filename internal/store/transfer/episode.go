@@ -85,7 +85,7 @@ func transferEvidenceMediaType(raw []byte) string {
 	if json.Unmarshal(raw, &f) != nil {
 		return ""
 	}
-	if (f.EpisodeOperationID != uuid.Nil || f.CompleteTVPlanID != uuid.Nil) && f.InventoryTaskID != uuid.Nil {
+	if (f.AutomaticTVOperationID != nil || f.EpisodeOperationID != uuid.Nil || f.CompleteTVPlanID != uuid.Nil) && f.InventoryTaskID != uuid.Nil {
 		return "tv"
 	}
 	return "movie"
@@ -93,6 +93,9 @@ func transferEvidenceMediaType(raw []byte) string {
 
 // Before job/plan/root locks: account -> policy -> subscription -> root.
 func prelockEpisodeTransfer(ctx context.Context, q *db.Queries, op uuid.UUID) (*ports.EpisodeExecutionSnapshot, error) {
+	if handled, e := prelockAutomaticTVTransfer(ctx, q, op); handled || e != nil {
+		return nil, e
+	}
 	if handled, e := postgres.PrelockCompleteTVOrganization(ctx, q, op); handled || e != nil {
 		return nil, e
 	}

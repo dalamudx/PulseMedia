@@ -30,6 +30,7 @@ type Service struct {
 	minimumInterval   time.Duration
 	healthStore       ports.IndexerHealthRepository
 	endpointStore     ports.SearchEndpointRepository
+	automaticTVStore  ports.AutomaticTVRoundRepository
 }
 
 func NewService(repo ports.SearchRepository, idgen ports.IDGen, secrets ports.SearchSecrets, minimum ...time.Duration) *Service {
@@ -110,6 +111,20 @@ func (s *Service) execute(ctx context.Context, indexerID uuid.UUID, keyword stri
 	return s.executeWithInteractive(ctx, indexerID, keyword, page, rssJob, expected, healthJob, probeOnly, chain, nil, actors...)
 }
 func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUID, keyword string, page int32, rssJob uuid.UUID, expected int64, healthJob *ports.IndexerHealthJob, probeOnly bool, chain *pageChain, interactive *ports.InteractiveSearchSourceLease, actors ...*ports.Actor) (*SearchResult, error) {
+	return s.executeCore(ctx, indexerID, keyword, page, rssJob, expected, healthJob, probeOnly, chain, interactive, nil, actors...)
+}
+
+func (s *Service) executeCore(ctx context.Context, indexerID uuid.UUID, keyword string, page int32, rssJob uuid.UUID, expected int64, healthJob *ports.IndexerHealthJob, probeOnly bool, chain *pageChain, interactive *ports.InteractiveSearchSourceLease, automatic *ports.AutomaticTVQueryBinding, actors ...*ports.Actor) (*SearchResult, error) {
+	if automatic != nil {
+		if rssJob != uuid.Nil || healthJob != nil || probeOnly || interactive != nil || len(actors) != 0 {
+			return nil, ports.ErrBadResponse
+		}
+		frozen, err := freezeAutomaticTVBinding(*automatic, indexerID, keyword, page)
+		if err != nil {
+			return nil, err
+		}
+		automatic = &frozen
+	}
 	if page < 0 || page > math.MaxInt32/50 {
 		return nil, ports.ErrBadResponse
 	}
@@ -127,11 +142,14 @@ func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUI
 	if len(actors) > 0 {
 		actor = actors[0]
 	}
-	admission, permit, err := s.repo.AdmitQuery(ctx, ports.SearchQuerySpec{ID: s.idgen.NewUUID(), IndexerID: indexerID, Keyword: keyword, Page: page, ConfigVersion: expected, RSSJobID: rssJob, HealthJob: healthJob, Actor: actor, Interactive: interactive, ProbeOnly: probeOnly, MinimumInterval: s.minimumInterval})
+	admission, permit, err := s.repo.AdmitQuery(ctx, ports.SearchQuerySpec{ID: s.idgen.NewUUID(), IndexerID: indexerID, Keyword: keyword, Page: page, ConfigVersion: expected, RSSJobID: rssJob, HealthJob: healthJob, Actor: actor, Interactive: interactive, AutomaticTV: cloneAutomaticTVBinding(automatic), ProbeOnly: probeOnly, MinimumInterval: s.minimumInterval})
 	if err != nil {
 		return nil, err
 	}
 	if admission.Shared != nil {
+		if automatic != nil && admission.Shared.State != "succeeded" {
+			return nil, ports.ErrAutomaticTVSearchDeferred
+		}
 		return admission.Shared, nil
 	}
 	if permit == nil {
@@ -178,29 +196,72 @@ func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUI
 	if err != nil {
 		return nil, err
 	}
+	if automatic != nil && run == nil {
+		return nil, ports.ErrBadResponse
+	}
 	if run.FromShared {
+		if automatic != nil && run.State != "succeeded" {
+			return nil, ports.ErrAutomaticTVSearchDeferred
+		}
 		return run, nil
 	}
+	if automatic != nil && (run.State != "running" || run.QueryID == uuid.Nil) {
+		return nil, ports.ErrBadResponse
+	}
 	queryID := run.QueryID
-	fail := func(f ports.SearchQueryFailure, retry time.Duration) { _ = permit.FailQuery(ctx, f, retry) }
+	var failureErr error
+	fail := func(f ports.SearchQueryFailure, retry time.Duration) {
+		if automatic != nil {
+			failureErr = failAutomaticTVQuery(ctx, permit, f, retry)
+			return
+		}
+		_ = permit.FailQuery(ctx, f, retry)
+	}
 	if client == nil {
 		fail(ports.SearchFailureUnavailable, 0)
+		if automatic != nil {
+			return nil, automaticTVFirstError(failureErr, ports.ErrUnavailable)
+		}
 		return nil, ports.ErrUnavailable
 	}
 	var categories []int32
 	if json.Unmarshal(indexer.Categories, &categories) != nil {
 		fail(ports.SearchFailureBadResponse, 0)
+		if automatic != nil {
+			return nil, automaticTVFirstError(failureErr, ports.ErrBadResponse)
+		}
 		return nil, ports.ErrBadResponse
+	}
+	if automatic != nil {
+		if err = validateAutomaticTVCategories(automatic.Query, categories); err != nil {
+			fail(ports.SearchFailureBadResponse, 0)
+			return nil, automaticTVFirstError(failureErr, err)
+		}
+		if _, ok := client.(ports.TVEpisodePageClient); !ok {
+			fail(ports.SearchFailureUnsupported, 0)
+			return nil, automaticTVFirstError(failureErr, ports.ErrRejected)
+		}
 	}
 	networkCtx := ctx
 	networkCancel := func() {}
-	if interactive != nil {
+	if interactive != nil || automatic != nil {
 		networkCtx, networkCancel = context.WithTimeout(ctx, 2*time.Second)
 	}
 	defer networkCancel()
 	var releases []*ports.ReleaseItem
 	var pageProof *ports.IndexerPage
-	if probe, ok := client.(ports.IndexerCapabilitiesProvider); probeOnly && ok {
+	if automatic != nil {
+		query := automatic.Query
+		query.Categories = slices.Clone(query.Categories)
+		pageProof, err = client.(ports.TVEpisodePageClient).SearchTVEpisodePage(networkCtx, query)
+		if err == nil {
+			if !validPageProof(pageProof, page*50, 50) || (chain != nil && !chain.accepts(pageProof)) {
+				err = ports.ErrBadResponse
+			} else {
+				releases = pageProof.Items
+			}
+		}
+	} else if probe, ok := client.(ports.IndexerCapabilitiesProvider); probeOnly && ok {
 		var caps ports.IndexerCapabilities
 		caps, err = probe.Capabilities(networkCtx)
 		if err == nil && (!caps.MovieSearch.Available || !slices.Contains(caps.MovieSearch.SupportedParams, "q")) {
@@ -232,7 +293,7 @@ func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUI
 	networkCancel()
 	if err != nil {
 		failure := ports.SearchFailureUnavailable
-		if probeOnly {
+		if probeOnly || automatic != nil {
 			switch {
 			case errors.Is(err, ports.ErrAuthRequired):
 				failure = ports.SearchFailureAuth
@@ -244,7 +305,10 @@ func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUI
 				failure = ports.SearchFailureUnsupported
 			}
 		}
-		if interactive != nil && (errors.Is(err, ports.ErrTimeout) || errors.Is(err, context.DeadlineExceeded)) {
+		if (interactive != nil || automatic != nil) && (errors.Is(err, ports.ErrTimeout) || errors.Is(err, context.DeadlineExceeded)) {
+			failure = ports.SearchFailureTimeout
+		}
+		if automatic != nil && errors.Is(err, context.Canceled) {
 			failure = ports.SearchFailureTimeout
 		}
 		var retry time.Duration
@@ -253,17 +317,26 @@ func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUI
 			retry = rate.RetryAfter
 		}
 		fail(failure, retry)
+		if automatic != nil && failureErr != nil {
+			return nil, failureErr
+		}
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
 		}
-		if interactive != nil && (errors.Is(err, ports.ErrTimeout) || errors.Is(err, context.DeadlineExceeded)) {
+		if (interactive != nil || automatic != nil) && (errors.Is(err, ports.ErrTimeout) || errors.Is(err, context.DeadlineExceeded)) {
 			return &SearchResult{QueryID: queryID, State: "failed"}, ports.ErrTimeout
+		}
+		if automatic != nil {
+			return &SearchResult{QueryID: queryID, State: "failed"}, automaticTVSafeError(err)
 		}
 		return &SearchResult{QueryID: queryID, State: "failed"}, ports.ErrUnavailable
 	}
 	prepared, e := s.prepareCandidates(releases, indexerID, expected)
 	if e != nil {
 		fail(ports.SearchFailureInvalidResult, 0)
+		if automatic != nil {
+			return nil, automaticTVFirstError(failureErr, e)
+		}
 		return nil, e
 	}
 	if !probeOnly {
@@ -272,6 +345,10 @@ func (s *Service) executeWithInteractive(ctx context.Context, indexerID uuid.UUI
 			prepared.Page.OffsetVerified = pageProof.OffsetVerified
 			prepared.Page.Total = pageProof.Total
 		}
+	}
+	if automatic != nil && ctx.Err() != nil {
+		fail(ports.SearchFailureTimeout, 0)
+		return nil, automaticTVFirstError(failureErr, ctx.Err())
 	}
 	return permit.CommitQuery(ctx, prepared)
 }

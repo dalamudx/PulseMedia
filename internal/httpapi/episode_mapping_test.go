@@ -8,6 +8,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/app"
 	"github.com/dalamudx/PulseMedia/internal/httpapi"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
+	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
 	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
@@ -47,6 +48,10 @@ func setupEpisodeMappingFixture(t *testing.T) *episodeMappingFixture {
 			return
 		}
 		switch r.URL.Path {
+		case "/tv/100":
+			_, _ = io.WriteString(w, `{"id":100,"name":"Mapping Browser Show","original_name":"Mapping Browser Show","overview":"Owned mapping fixture","first_air_date":"2020-01-01","number_of_seasons":1,"number_of_episodes":2,"seasons":[{"season_number":1,"episode_count":2}]}`)
+		case "/tv/100/season/1":
+			_, _ = io.WriteString(w, `{"season_number":1,"episodes":[{"id":1001,"season_number":1,"episode_number":1,"air_date":"2020-01-01"},{"id":1002,"season_number":1,"episode_number":2,"air_date":"2020-01-01"}]}`)
 		case "/tv/100/episode_groups":
 			_, _ = io.WriteString(w, `{"results":[{"id":"group1","name":"Fixture absolute","type":2,"episode_count":2,"group_count":1}]}`)
 		case "/tv/episode_group/group1":
@@ -58,8 +63,10 @@ func setupEpisodeMappingFixture(t *testing.T) *episodeMappingFixture {
 	t.Cleanup(provider.Close)
 	a, admin, member, _, _, _, router, _ := setupOperationHTTP(t, func(h *httpapi.ServerHandler, a *app.App) {
 		repo := postgres.NewEpisodeSourceStore(postgres.NewTVRefreshStore(a.DBPool(), idgen.New()))
-		source := subscription.NewEpisodeSourceService(repo, tmdb.NewClient("fixture-mapping-key", tmdb.WithBaseURL(provider.URL)))
+		metadata := tmdb.NewClient("fixture-mapping-key", tmdb.WithBaseURL(provider.URL))
+		source := subscription.NewEpisodeSourceService(repo, metadata)
 		h.SetEpisodeSourceService(source)
+		h.SetSubscriptionCreationService(subscription.NewSubscriptionCreationService(postgres.NewSubscriptionCreationStore(a.DBPool(), idgen.New()), metadata, metadata, crypto.NewSecretProtector(make([]byte, 32))))
 		h.SetEpisodeMappingService(subscription.NewEpisodeMappingService(postgres.NewEpisodeMappingStore(repo, idgen.New()), source))
 		h.SetEpisodeCandidateReviewService(subscription.NewEpisodeCandidateReviewService(postgres.NewEpisodeMappingStore(repo, idgen.New())))
 		h.SetTVCoverageCandidateReviewService(subscription.NewTVCoverageCandidateReviewService(postgres.NewTVCoverageCandidateReviewStore(postgres.NewEpisodeMappingStore(repo, idgen.New()))))
@@ -87,7 +94,7 @@ func setupEpisodeMappingFixture(t *testing.T) *episodeMappingFixture {
 		}
 	}
 	f := &episodeMappingFixture{a: a, admin: admin, member: member, units: units, router: router, calls: counter}
-	w := f.call(admin, "POST", "/api/v1/subscriptions", "", httpapi.CreateSubscriptionRequest{MediaId: &m, RootId: &root})
+	w := f.call(admin, "POST", "/api/v1/subscriptions", "mapping-subscription", httpapi.CreateSubscriptionRequest{MediaId: &m, RootId: &root})
 	if w.Code != 201 || json.Unmarshal(w.Body.Bytes(), &f.sub) != nil {
 		t.Fatal(w.Code, w.Body.String())
 	}
@@ -95,6 +102,8 @@ func setupEpisodeMappingFixture(t *testing.T) *episodeMappingFixture {
 	if paused.Code != 200 {
 		t.Fatal(paused.Code)
 	}
+	// Mapping-source I/O assertions start after trusted catalog creation.
+	counter.Store(0)
 	return f
 }
 func (f *episodeMappingFixture) call(token, method, path, key string, body any) *httptest.ResponseRecorder {

@@ -675,6 +675,21 @@ func (s *Service) commitObservedStep(ctx context.Context, plan db.TransferPlan, 
 	if !fresh.Valid || !fresh.Bool {
 		return ErrReviewRequired
 	}
+	if err = s.finishAutomaticTVImportedStep(ctx, q, plan, step, file, authority); err != nil {
+		return err
+	}
+	if fullEvidence.AutomaticTVOperationID != nil {
+		if _, err = tx.Exec(ctx, "SET CONSTRAINTS ALL IMMEDIATE"); err != nil {
+			return err
+		}
+		valid, e := q.AutomaticTVOrganizationTail(ctx, plan.ID)
+		if e != nil {
+			return e
+		}
+		if !valid.Valid || !valid.Bool {
+			return ErrExecutionRejected
+		}
+	}
 	return tx.Commit(ctx)
 }
 

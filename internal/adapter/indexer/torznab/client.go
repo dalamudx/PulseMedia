@@ -124,63 +124,7 @@ func (c *Client) SearchPage(ctx context.Context, query string, categories []int3
 	if err != nil {
 		return nil, err
 	}
-	releases := make([]*ports.ReleaseItem, 0, len(items))
-	for _, item := range items {
-		rel := &ports.ReleaseItem{
-			Title: strings.TrimSpace(item.Title),
-			GUID:  strings.TrimSpace(item.GUID),
-		}
-
-		// Download URL preference: enclosure url > link
-		if item.Enclosure != nil && item.Enclosure.URL != "" {
-			rel.DownloadURL = item.Enclosure.URL
-			if item.Enclosure.Length > 0 {
-				rel.SizeBytes = item.Enclosure.Length
-			}
-		} else if item.Link != "" {
-			rel.DownloadURL = item.Link
-		}
-
-		if rel.SizeBytes == 0 && item.Size > 0 {
-			rel.SizeBytes = item.Size
-		}
-
-		if item.PubDate != "" {
-			if t, err := time.Parse(time.RFC1123Z, item.PubDate); err == nil {
-				rel.PublishDate = &t
-			} else if t, err := time.Parse(time.RFC1123, item.PubDate); err == nil {
-				rel.PublishDate = &t
-			}
-		}
-
-		// Parse Torznab attributes
-		for _, attr := range item.Attrs {
-			switch strings.ToLower(attr.Name) {
-			case "infohash":
-				rel.InfoHash = strings.ToLower(strings.TrimSpace(attr.Value))
-			case "seeders":
-				if s, err := strconv.Atoi(attr.Value); err == nil {
-					rel.Seeders = int32(s)
-				}
-			case "peers", "leechers":
-				if l, err := strconv.Atoi(attr.Value); err == nil {
-					rel.Leechers = int32(l)
-				}
-			case "size":
-				if sz, err := strconv.ParseInt(attr.Value, 10, 64); err == nil && sz > 0 {
-					rel.SizeBytes = sz
-				}
-			case "category":
-				if cat, err := strconv.Atoi(attr.Value); err == nil {
-					rel.Categories = append(rel.Categories, int32(cat))
-				}
-			}
-		}
-
-		releases = append(releases, rel)
-	}
-
-	proof.Items = releases
+	proof.Items = releaseItems(items)
 	return proof, nil
 }
 

@@ -63,24 +63,32 @@ func guardOrganization(ctx context.Context, q *db.Queries, authority []ports.Job
 
 // Called only after root locking: unit then acquisition, matching the global UoW order.
 type transferTargetEvidence struct {
-	CompleteTVPlanID    uuid.UUID           `json:"complete_tv_plan_id,omitempty"`
-	ParserVersion       string              `json:"parser_version"`
-	UnitID              uuid.UUID           `json:"unit_id"`
-	UnitKey             string              `json:"unit_key"`
-	UnitVersion         int64               `json:"unit_version"`
-	MediaID             uuid.UUID           `json:"media_id"`
-	MediaVersion        int64               `json:"media_version"`
-	EpisodeOperationID  uuid.UUID           `json:"episode_operation_id,omitempty"`
-	InventoryTaskID     uuid.UUID           `json:"inventory_task_id,omitempty"`
-	InventorySourcePath string              `json:"inventory_source_path,omitempty"`
-	InventorySizeBytes  int64               `json:"inventory_size_bytes,omitempty"`
-	FileAction          *fileActionEvidence `json:"file_action,omitempty"`
+	AutomaticTVOperationID    *uuid.UUID          `json:"automatic_tv_operation_id,omitempty"`
+	AutomaticTVInventoryStamp string              `json:"automatic_tv_inventory_stamp,omitempty"`
+	CompleteTVPlanID          uuid.UUID           `json:"complete_tv_plan_id,omitempty"`
+	ParserVersion             string              `json:"parser_version"`
+	UnitID                    uuid.UUID           `json:"unit_id"`
+	UnitKey                   string              `json:"unit_key"`
+	UnitVersion               int64               `json:"unit_version"`
+	MediaID                   uuid.UUID           `json:"media_id"`
+	MediaVersion              int64               `json:"media_version"`
+	EpisodeOperationID        uuid.UUID           `json:"episode_operation_id,omitempty"`
+	InventoryTaskID           uuid.UUID           `json:"inventory_task_id,omitempty"`
+	InventorySourcePath       string              `json:"inventory_source_path,omitempty"`
+	InventorySizeBytes        int64               `json:"inventory_size_bytes,omitempty"`
+	FileAction                *fileActionEvidence `json:"file_action,omitempty"`
 }
 
 func lockTransferAcquisition(ctx context.Context, q *db.Queries, op, unit uuid.UUID, evidence []byte) error {
 	var frozen transferTargetEvidence
-	if len(evidence) == 0 || json.Unmarshal(evidence, &frozen) != nil || frozen.ParserVersion != media.EpisodeParserVersion || frozen.UnitID != unit || (frozen.EpisodeOperationID == uuid.Nil && frozen.CompleteTVPlanID == uuid.Nil && frozen.UnitKey != "movie") || frozen.UnitVersion < 1 || frozen.MediaID == uuid.Nil || frozen.MediaVersion < 1 {
+	if len(evidence) == 0 || json.Unmarshal(evidence, &frozen) != nil || frozen.ParserVersion != media.EpisodeParserVersion || frozen.UnitID != unit || (frozen.AutomaticTVOperationID == nil && frozen.EpisodeOperationID == uuid.Nil && frozen.CompleteTVPlanID == uuid.Nil && frozen.UnitKey != "movie") || frozen.UnitVersion < 1 || frozen.MediaID == uuid.Nil || frozen.MediaVersion < 1 {
 		return ErrReviewRequired
+	}
+	if frozen.AutomaticTVOperationID != nil {
+		if frozen.EpisodeOperationID != uuid.Nil || frozen.CompleteTVPlanID != uuid.Nil {
+			return ErrReviewRequired
+		}
+		return validateAutomaticTVTransfer(ctx, q, op, frozen)
 	}
 	if frozen.CompleteTVPlanID != uuid.Nil {
 		return validateCompleteTVTransfer(ctx, q, op, frozen.CompleteTVPlanID)
@@ -170,6 +178,11 @@ func (s *Service) OrganizeDownload(ctx context.Context, lease ports.JobLease) er
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return err
+	}
+	if handled, e := s.hasAutomaticTVOrganization(ctx, task.OperationID); e != nil {
+		return e
+	} else if handled {
+		return s.organizeAutomaticTVEpisode(ctx, lease, task, client)
 	}
 	if _, e := s.queries.GetEpisodeExecutionAuthority(ctx, task.OperationID); e == nil {
 		return s.organizeReviewedEpisode(ctx, lease, task, client)
@@ -277,6 +290,9 @@ func (s *Service) reviewOrganization(ctx context.Context, lease ports.JobLease, 
 	return tx.Commit(ctx)
 }
 func (s *Service) finishOrganization(ctx context.Context, lease ports.JobLease, plan db.TransferPlan, alreadyDone bool) error {
+	if handled, e := s.confirmAutomaticTVOrganization(ctx, lease, plan); handled || e != nil {
+		return e
+	}
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return err
