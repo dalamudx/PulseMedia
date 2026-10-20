@@ -259,7 +259,7 @@ func m7PreparedSidecar(t *testing.T, kind, scenario string) {
 	}
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
 	version, err := postgres.Migrate(t.Context(), dsn, "../../migrations")
-	if err != nil || version != 93 {
+	if err != nil || version != postgres.CurrentMigrationVersion {
 		t.Fatalf("schema93 required: %d %v", version, err)
 	}
 	pool, err := pgxpool.New(t.Context(), dsn)

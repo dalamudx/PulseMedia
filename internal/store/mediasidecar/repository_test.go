@@ -35,7 +35,7 @@ func newFixture(t *testing.T, kind string) fixture {
 	t.Helper()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
 	version, err := postgres.Migrate(t.Context(), dsn, "../../../migrations")
-	if err != nil || version != 93 {
+	if err != nil || version != postgres.CurrentMigrationVersion {
 		t.Fatalf("schema93 required: %d %v", version, err)
 	}
 	cfg, err := pgxpool.ParseConfig(dsn)

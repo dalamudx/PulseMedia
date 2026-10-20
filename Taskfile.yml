@@ -229,6 +229,17 @@ tasks:
     cmds:
       - bash scripts/verify_m6_journey_ui.sh
 
+  test-m7-media-scrape:
+    desc: Verify batch scraping receipts, current authorization and native NFO/artwork with PG18
+    cmds:
+      - go test -race -count=1 ./internal/usecase/mediascrape
+      - bash scripts/with_podman_test_postgres.sh go test -race -count=1 -timeout=180s ./internal/store/mediascrape
+      - bash scripts/verify_m7_media_scrape.sh
+
+  test-m7-media-scrape-ui:
+    desc: Verify explicit batch scraping and original receipt recovery in real Chrome
+    cmds:
+      - bash scripts/verify_m7_media_scrape_ui.sh
   test-m7-sidecar:
     desc: Verify automatic TV ingestion through sidecar jobs and confined NFO/artwork publication with PG18 and Chrome
     cmds:

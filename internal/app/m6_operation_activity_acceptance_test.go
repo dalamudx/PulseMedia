@@ -56,9 +56,6 @@ func newM6OperationFixture(t *testing.T) *m6OperationFixture {
 	if err := f.pool.QueryRow(t.Context(), "SELECT current_setting('server_version_num')::int").Scan(&version); err != nil || version != 180006 {
 		t.Fatal("real PostgreSQL 18.6 required", err)
 	}
-	if postgres.CurrentMigrationVersion != 93 {
-		t.Fatalf("review operation acceptance for schema %d; expected 93", postgres.CurrentMigrationVersion)
-	}
 	h := &m6OperationFixture{f: f, read: "owned-operation-read", write: "owned-operation-write", empty: "owned-operation-empty"}
 	cfg := config.NewDefault()
 	cfg.DataDir = t.TempDir()

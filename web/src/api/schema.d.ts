@@ -1963,10 +1963,14 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Read scrape preview and the latest batch progress */
+        get: operations["readMediaScrape"];
         put?: never;
-        /** Trigger metadata rescraping and NFO generation */
-        post: operations["rescrapeMedia"];
+        /**
+         * Queue library-wide NFO/poster gap filling
+         * @description Queues protected sidecar checks for eligible already-imported files. Queued, running and review-required jobs are skipped. Completed jobs may be explicitly checked again to fill missing artifacts. Existing files are always preserved; a recorded success is not proof of current file existence.
+         */
+        post: operations["startMediaScrape"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3992,10 +3996,32 @@ export interface components {
             success?: boolean;
             message?: string;
         };
-        MediaScrapeResponse: {
-            success?: boolean;
-            updated_count?: number;
-            message?: string;
+        MediaScrapePreview: {
+            total: number;
+            missing: number;
+            queued: number;
+            running: number;
+            complete: number;
+            review: number;
+        };
+        MediaScrapeBatch: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            created_at: string;
+            total: number;
+            queued: number;
+            running: number;
+            succeeded: number;
+            review: number;
+        };
+        MediaScrapeStatus: {
+            preview: components["schemas"]["MediaScrapePreview"];
+            batch?: components["schemas"]["MediaScrapeBatch"] | null;
+        };
+        StartMediaScrapeRequest: {
+            /** @description Queue every file that still misses NFO/poster work. */
+            all: boolean;
         };
         ScanReorganizeItem: {
             filename?: string;
@@ -10029,40 +10055,123 @@ export interface operations {
             };
         };
     };
-    rescrapeMedia: {
+    readMediaScrape: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Read only the current account original batch receipt for this command. */
+                command_key?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    media_id?: string;
-                    all?: boolean;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description Rescrape completed */
+            /** @description Preview counts and the latest batch, if any */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MediaScrapeResponse"];
+                    "application/json": components["schemas"]["MediaScrapeStatus"];
                 };
             };
-            /** @description Unauthorized */
+            /** @description Invalid original command key */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
             401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
-                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description State unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    startMediaScrape: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartMediaScrapeRequest"];
+            };
+        };
+        responses: {
+            /** @description Batch receipt (the original one for a repeated command key) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaScrapeBatch"];
+                };
+            };
+            /** @description Invalid command or nothing to queue */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description State unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

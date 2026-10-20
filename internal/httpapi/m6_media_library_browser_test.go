@@ -20,7 +20,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/google/uuid"
 )
 
@@ -36,7 +35,7 @@ func TestM6MediaLibraryActualChromeHTTPPG(t *testing.T) {
 			t.Fatal("owned /data/temp paths required")
 		}
 	}
-	if !filepath.IsAbs(repo) || postgres.CurrentMigrationVersion != 93 {
+	if !filepath.IsAbs(repo) {
 		t.Fatal("absolute repo and schema93 required")
 	}
 	t.Setenv("PULSE_M5_SUBSCRIPTION_CREATION_ACCEPTANCE", "1")

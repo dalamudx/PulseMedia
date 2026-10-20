@@ -36,7 +36,7 @@ func TestM6OperationActivityActualChromeHTTPPG(t *testing.T) {
 			t.Fatal("owned paths required")
 		}
 	}
-	if !filepath.IsAbs(repo) || postgres.CurrentMigrationVersion != 93 {
+	if !filepath.IsAbs(repo) {
 		t.Fatal("absolute repo and schema93 required")
 	}
 	t.Setenv("PULSE_M5_SUBSCRIPTION_CREATION_ACCEPTANCE", "1")

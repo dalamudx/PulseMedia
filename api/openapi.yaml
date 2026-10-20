@@ -4651,36 +4651,91 @@ paths:
 
   /api/v1/media/scrape:
     post:
-      summary: Trigger metadata rescraping and NFO generation
-      operationId: rescrapeMedia
+      summary: Queue library-wide NFO/poster gap filling
+      operationId: startMediaScrape
+      description: >-
+        Queues protected sidecar checks for eligible already-imported files.
+        Queued, running and review-required jobs are skipped. Completed jobs may
+        be explicitly checked again to fill missing artifacts. Existing files
+        are always preserved; a recorded success is not proof of current file existence.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                media_id:
-                  type: string
-                  format: uuid
-                all:
-                  type: boolean
+              $ref: '#/components/schemas/StartMediaScrapeRequest'
       responses:
         '200':
-          description: Rescrape completed
+          description: Batch receipt (the original one for a repeated command key)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MediaScrapeResponse'
-        '401':
-          description: Unauthorized
+                $ref: '#/components/schemas/MediaScrapeBatch'
+        '400':
+          description: Invalid command or nothing to queue
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-            application/json:
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
+        '403':
+          description: Current administrator session required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: State unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Read scrape preview and the latest batch progress
+      operationId: readMediaScrape
+      parameters:
+        - name: command_key
+          in: query
+          schema: {type: string, maxLength: 128}
+          description: Read only the current account original batch receipt for this command.
+      responses:
+        '200':
+          description: Preview counts and the latest batch, if any
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaScrapeStatus'
+        '400':
+          description: Invalid original command key
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Current administrator session required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: State unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/transfer/scan:
     post:
       summary: Scan directory and recognize media files for reorganization
@@ -7366,15 +7421,49 @@ components:
         message:
           type: string
 
-    MediaScrapeResponse:
+    MediaScrapePreview:
       type: object
+      additionalProperties: false
+      required: [total, missing, queued, running, complete, review]
       properties:
-        success:
+        total: {type: integer}
+        missing: {type: integer}
+        queued: {type: integer}
+        running: {type: integer}
+        complete: {type: integer}
+        review: {type: integer}
+
+    MediaScrapeBatch:
+      type: object
+      additionalProperties: false
+      required: [id, created_at, total, queued, running, succeeded, review]
+      properties:
+        id: {type: string, format: uuid}
+        created_at: {type: string, format: date-time}
+        total: {type: integer}
+        queued: {type: integer}
+        running: {type: integer}
+        succeeded: {type: integer}
+        review: {type: integer}
+
+    MediaScrapeStatus:
+      type: object
+      additionalProperties: false
+      required: [preview]
+      properties:
+        preview: {$ref: '#/components/schemas/MediaScrapePreview'}
+        batch:
+          allOf: [{$ref: '#/components/schemas/MediaScrapeBatch'}]
+          nullable: true
+
+    StartMediaScrapeRequest:
+      type: object
+      additionalProperties: false
+      required: [all]
+      properties:
+        all:
           type: boolean
-        updated_count:
-          type: integer
-        message:
-          type: string
+          description: Queue every file that still misses NFO/poster work.
 
     ScanReorganizeItem:
       type: object

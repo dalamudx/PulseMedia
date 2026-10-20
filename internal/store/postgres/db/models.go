@@ -700,6 +700,32 @@ type MediaIdentity struct {
 	CreatedAt  pgtype.Timestamptz
 }
 
+type MediaScrapeBatch struct {
+	ID          uuid.UUID
+	CommandKey  string
+	RequestedBy uuid.UUID
+	CreatedAt   pgtype.Timestamptz
+}
+
+type MediaScrapeCandidate struct {
+	FileID        uuid.UUID
+	UnitID        uuid.UUID
+	SourceEventID uuid.UUID
+	MediaID       uuid.UUID
+	MediaType     string
+	Title         string
+	RelPath       string
+	Status        string
+}
+
+type MediaScrapeItem struct {
+	BatchID       uuid.UUID
+	JobID         uuid.UUID
+	FileID        uuid.UUID
+	UnitID        uuid.UUID
+	SourceEventID uuid.UUID
+}
+
 type MediaServer struct {
 	ID              uuid.UUID
 	Name            string

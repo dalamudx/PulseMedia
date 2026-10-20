@@ -3056,11 +3056,31 @@ type MappedReleaseExplanationIdentityDecision string
 // MappedReleaseExplanationQualityDecision defines model for MappedReleaseExplanation.QualityDecision.
 type MappedReleaseExplanationQualityDecision string
 
-// MediaScrapeResponse defines model for MediaScrapeResponse.
-type MediaScrapeResponse struct {
-	Message      *string `json:"message,omitempty"`
-	Success      *bool   `json:"success,omitempty"`
-	UpdatedCount *int    `json:"updated_count,omitempty"`
+// MediaScrapeBatch defines model for MediaScrapeBatch.
+type MediaScrapeBatch struct {
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Queued    int                `json:"queued"`
+	Review    int                `json:"review"`
+	Running   int                `json:"running"`
+	Succeeded int                `json:"succeeded"`
+	Total     int                `json:"total"`
+}
+
+// MediaScrapePreview defines model for MediaScrapePreview.
+type MediaScrapePreview struct {
+	Complete int `json:"complete"`
+	Missing  int `json:"missing"`
+	Queued   int `json:"queued"`
+	Review   int `json:"review"`
+	Running  int `json:"running"`
+	Total    int `json:"total"`
+}
+
+// MediaScrapeStatus defines model for MediaScrapeStatus.
+type MediaScrapeStatus struct {
+	Batch   *MediaScrapeBatch  `json:"batch,omitempty"`
+	Preview MediaScrapePreview `json:"preview"`
 }
 
 // MediaServerDetails defines model for MediaServerDetails.
@@ -3407,6 +3427,12 @@ type SettingsListResponse struct {
 type SetupRequest struct {
 	Password string `json:"password"`
 	Username string `json:"username"`
+}
+
+// StartMediaScrapeRequest defines model for StartMediaScrapeRequest.
+type StartMediaScrapeRequest struct {
+	// All Queue every file that still misses NFO/poster work.
+	All bool `json:"all"`
 }
 
 // SubmissionRetryPreview defines model for SubmissionRetryPreview.
@@ -4468,10 +4494,15 @@ type ConfirmLibraryReuseParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
-// RescrapeMediaJSONBody defines parameters for RescrapeMedia.
-type RescrapeMediaJSONBody struct {
-	All     *bool               `json:"all,omitempty"`
-	MediaId *openapi_types.UUID `json:"media_id,omitempty"`
+// ReadMediaScrapeParams defines parameters for ReadMediaScrape.
+type ReadMediaScrapeParams struct {
+	// CommandKey Read only the current account original batch receipt for this command.
+	CommandKey *string `form:"command_key,omitempty" json:"command_key,omitempty"`
+}
+
+// StartMediaScrapeParams defines parameters for StartMediaScrape.
+type StartMediaScrapeParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
 
 // GetTMDBMediaCreditsParamsMediaType defines parameters for GetTMDBMediaCredits.
@@ -4885,8 +4916,8 @@ type CreateMediaServerJSONRequestBody = CreateMediaServerRequest
 // UpdateMediaServerJSONRequestBody defines body for UpdateMediaServer for application/json ContentType.
 type UpdateMediaServerJSONRequestBody = UpdateMediaServerRequest
 
-// RescrapeMediaJSONRequestBody defines body for RescrapeMedia for application/json ContentType.
-type RescrapeMediaJSONRequestBody RescrapeMediaJSONBody
+// StartMediaScrapeJSONRequestBody defines body for StartMediaScrape for application/json ContentType.
+type StartMediaScrapeJSONRequestBody = StartMediaScrapeRequest
 
 // AcquireMovieJSONRequestBody defines body for AcquireMovie for application/json ContentType.
 type AcquireMovieJSONRequestBody = AcquireMovieRequest
@@ -5264,9 +5295,12 @@ type ServerInterface interface {
 	// TestMediaServer Test connection to a media server
 	// (POST /api/v1/media-servers/{id}/test)
 	TestMediaServer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
-	// RescrapeMedia Trigger metadata rescraping and NFO generation
+	// ReadMediaScrape Read scrape preview and the latest batch progress
+	// (GET /api/v1/media/scrape)
+	ReadMediaScrape(w http.ResponseWriter, r *http.Request, params ReadMediaScrapeParams)
+	// StartMediaScrape Queue library-wide NFO/poster gap filling
 	// (POST /api/v1/media/scrape)
-	RescrapeMedia(w http.ResponseWriter, r *http.Request)
+	StartMediaScrape(w http.ResponseWriter, r *http.Request, params StartMediaScrapeParams)
 	// GetTMDBMovieDetails Get movie details from TMDB
 	// (GET /api/v1/media/tmdb/movie/{id})
 	GetTMDBMovieDetails(w http.ResponseWriter, r *http.Request, id int64)
@@ -6952,11 +6986,75 @@ func (siw *ServerInterfaceWrapper) TestMediaServer(w http.ResponseWriter, r *htt
 	handler.ServeHTTP(w, r)
 }
 
-// RescrapeMedia operation middleware
-func (siw *ServerInterfaceWrapper) RescrapeMedia(w http.ResponseWriter, r *http.Request) {
+// ReadMediaScrape operation middleware
+func (siw *ServerInterfaceWrapper) ReadMediaScrape(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ReadMediaScrapeParams
+
+	// ------------- Optional query parameter "command_key" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "command_key", r.URL.Query(), &params.CommandKey, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "command_key"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		}
+		return
+	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.RescrapeMedia(w, r)
+		siw.Handler.ReadMediaScrape(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// StartMediaScrape operation middleware
+func (siw *ServerInterfaceWrapper) StartMediaScrape(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params StartMediaScrapeParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.StartMediaScrape(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -10270,7 +10368,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover/douban", wrapper.GetDoubanRanking)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/sync/douban", wrapper.SyncDoubanWishlist)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/indexers/{id}/checkin", wrapper.CheckinIndexer)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/media/scrape", wrapper.RescrapeMedia)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/scrape", wrapper.ReadMediaScrape)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/media/scrape", wrapper.StartMediaScrape)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/transfer/scan", wrapper.ScanDirectoryReorganize)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/notification-channels", wrapper.ListNotificationChannels)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/notification-channels", wrapper.CreateNotificationChannel)
@@ -14835,17 +14934,17 @@ func (response TestMediaServer503ApplicationProblemPlusJSONResponse) VisitTestMe
 	return err
 }
 
-type RescrapeMediaRequestObject struct {
-	Body *RescrapeMediaJSONRequestBody
+type ReadMediaScrapeRequestObject struct {
+	Params ReadMediaScrapeParams
 }
 
-type RescrapeMediaResponseObject interface {
-	VisitRescrapeMediaResponse(w http.ResponseWriter) error
+type ReadMediaScrapeResponseObject interface {
+	VisitReadMediaScrapeResponse(w http.ResponseWriter) error
 }
 
-type RescrapeMedia200JSONResponse MediaScrapeResponse
+type ReadMediaScrape200JSONResponse MediaScrapeStatus
 
-func (response RescrapeMedia200JSONResponse) VisitRescrapeMediaResponse(w http.ResponseWriter) error {
+func (response ReadMediaScrape200JSONResponse) VisitReadMediaScrapeResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -14857,23 +14956,23 @@ func (response RescrapeMedia200JSONResponse) VisitRescrapeMediaResponse(w http.R
 	return err
 }
 
-type RescrapeMedia401JSONResponse ErrorResponse
+type ReadMediaScrape400ApplicationProblemPlusJSONResponse ErrorResponse
 
-func (response RescrapeMedia401JSONResponse) VisitRescrapeMediaResponse(w http.ResponseWriter) error {
+func (response ReadMediaScrape400ApplicationProblemPlusJSONResponse) VisitReadMediaScrapeResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
 		return err
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
 	_, err := buf.WriteTo(w)
 	return err
 }
 
-type RescrapeMedia401ApplicationProblemPlusJSONResponse ErrorResponse
+type ReadMediaScrape401ApplicationProblemPlusJSONResponse ErrorResponse
 
-func (response RescrapeMedia401ApplicationProblemPlusJSONResponse) VisitRescrapeMediaResponse(w http.ResponseWriter) error {
+func (response ReadMediaScrape401ApplicationProblemPlusJSONResponse) VisitReadMediaScrapeResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -14881,6 +14980,113 @@ func (response RescrapeMedia401ApplicationProblemPlusJSONResponse) VisitRescrape
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadMediaScrape403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadMediaScrape403ApplicationProblemPlusJSONResponse) VisitReadMediaScrapeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadMediaScrape503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadMediaScrape503ApplicationProblemPlusJSONResponse) VisitReadMediaScrapeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type StartMediaScrapeRequestObject struct {
+	Params StartMediaScrapeParams
+	Body   *StartMediaScrapeJSONRequestBody
+}
+
+type StartMediaScrapeResponseObject interface {
+	VisitStartMediaScrapeResponse(w http.ResponseWriter) error
+}
+
+type StartMediaScrape200JSONResponse MediaScrapeBatch
+
+func (response StartMediaScrape200JSONResponse) VisitStartMediaScrapeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type StartMediaScrape400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response StartMediaScrape400ApplicationProblemPlusJSONResponse) VisitStartMediaScrapeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type StartMediaScrape401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response StartMediaScrape401ApplicationProblemPlusJSONResponse) VisitStartMediaScrapeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type StartMediaScrape403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response StartMediaScrape403ApplicationProblemPlusJSONResponse) VisitStartMediaScrapeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type StartMediaScrape503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response StartMediaScrape503ApplicationProblemPlusJSONResponse) VisitStartMediaScrapeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -23628,9 +23834,12 @@ type StrictServerInterface interface {
 	// TestMediaServer Test connection to a media server
 	// (POST /api/v1/media-servers/{id}/test)
 	TestMediaServer(ctx context.Context, request TestMediaServerRequestObject) (TestMediaServerResponseObject, error)
-	// RescrapeMedia Trigger metadata rescraping and NFO generation
+	// ReadMediaScrape Read scrape preview and the latest batch progress
+	// (GET /api/v1/media/scrape)
+	ReadMediaScrape(ctx context.Context, request ReadMediaScrapeRequestObject) (ReadMediaScrapeResponseObject, error)
+	// StartMediaScrape Queue library-wide NFO/poster gap filling
 	// (POST /api/v1/media/scrape)
-	RescrapeMedia(ctx context.Context, request RescrapeMediaRequestObject) (RescrapeMediaResponseObject, error)
+	StartMediaScrape(ctx context.Context, request StartMediaScrapeRequestObject) (StartMediaScrapeResponseObject, error)
 	// GetTMDBMovieDetails Get movie details from TMDB
 	// (GET /api/v1/media/tmdb/movie/{id})
 	GetTMDBMovieDetails(ctx context.Context, request GetTMDBMovieDetailsRequestObject) (GetTMDBMovieDetailsResponseObject, error)
@@ -25253,33 +25462,58 @@ func (sh *strictHandler) TestMediaServer(w http.ResponseWriter, r *http.Request,
 	}
 }
 
-// RescrapeMedia operation middleware
-func (sh *strictHandler) RescrapeMedia(w http.ResponseWriter, r *http.Request) {
-	var request RescrapeMediaRequestObject
+// ReadMediaScrape operation middleware
+func (sh *strictHandler) ReadMediaScrape(w http.ResponseWriter, r *http.Request, params ReadMediaScrapeParams) {
+	var request ReadMediaScrapeRequestObject
 
-	var body RescrapeMediaJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		if !errors.Is(err, io.EOF) {
-			sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-			return
-		}
-	} else {
-		request.Body = &body
-	}
+	request.Params = params
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.RescrapeMedia(ctx, request.(RescrapeMediaRequestObject))
+		return sh.ssi.ReadMediaScrape(ctx, request.(ReadMediaScrapeRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "RescrapeMedia")
+		handler = middleware(handler, "ReadMediaScrape")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(RescrapeMediaResponseObject); ok {
-		if err := validResponse.VisitRescrapeMediaResponse(w); err != nil {
+	} else if validResponse, ok := response.(ReadMediaScrapeResponseObject); ok {
+		if err := validResponse.VisitReadMediaScrapeResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// StartMediaScrape operation middleware
+func (sh *strictHandler) StartMediaScrape(w http.ResponseWriter, r *http.Request, params StartMediaScrapeParams) {
+	var request StartMediaScrapeRequestObject
+
+	request.Params = params
+
+	var body StartMediaScrapeJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.StartMediaScrape(ctx, request.(StartMediaScrapeRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "StartMediaScrape")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(StartMediaScrapeResponseObject); ok {
+		if err := validResponse.VisitStartMediaScrapeResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

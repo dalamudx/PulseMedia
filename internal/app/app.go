@@ -33,6 +33,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	downloadstore "github.com/dalamudx/PulseMedia/internal/store/download"
+	scrapestore "github.com/dalamudx/PulseMedia/internal/store/mediascrape"
 	sidecarstore "github.com/dalamudx/PulseMedia/internal/store/mediasidecar"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
@@ -42,6 +43,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/download"
 	"github.com/dalamudx/PulseMedia/internal/usecase/library"
 	mediausecase "github.com/dalamudx/PulseMedia/internal/usecase/media"
+	"github.com/dalamudx/PulseMedia/internal/usecase/mediascrape"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediaserver"
 	metadatausecase "github.com/dalamudx/PulseMedia/internal/usecase/metadata"
 	"github.com/dalamudx/PulseMedia/internal/usecase/metadatasidecar"
@@ -440,6 +442,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		serverHandler.SetTransferRevisionService(transfer.NewRevisionService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem())))
 		reuseSvc = transfer.NewLibraryReuseService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem()))
 		serverHandler.SetLibraryReuseService(reuseSvc)
+		serverHandler.SetMediaScrapeService(mediascrape.NewService(scrapestore.NewRepository(a.dbPool), a.idgen))
 		serverHandler.SetRootSelectionService(subscription.NewRootSelectionService(postgres.NewLibraryRootSelectionStore(a.dbPool)))
 		serverHandler.SetSubscriptionCreationService(subscription.NewSubscriptionCreationService(postgres.NewSubscriptionCreationStore(a.dbPool, a.idgen), metaProvider, metaProvider, crypto.NewSecretProtector(masterKey)))
 		serverHandler.SetCandidateExplanationService(usecaseSearch.NewCandidateExplanationService(postgres.NewCandidateExplanationStore(a.dbPool)))

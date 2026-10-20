@@ -22,6 +22,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/download"
 	mediausecase "github.com/dalamudx/PulseMedia/internal/usecase/media"
 	"github.com/dalamudx/PulseMedia/internal/usecase/media_library"
+	"github.com/dalamudx/PulseMedia/internal/usecase/mediascrape"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediaserver"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
 	"github.com/dalamudx/PulseMedia/internal/usecase/operation"
@@ -60,6 +61,7 @@ type ServerHandler struct {
 	submissionRetrySvc       *operation.SubmissionRetryService
 	activityHub              *SSEHub
 	logHub                   *SSEHub
+	mediaScrapeSvc           *mediascrape.Service
 	tokenManagementSvc       *auth.TokenManagementService
 	authSvc                  *auth.Service
 	settingsSvc              *settings.Service
@@ -1217,27 +1219,6 @@ func (s *ServerHandler) CheckinIndexer(ctx context.Context, request CheckinIndex
 	return CheckinIndexer200JSONResponse{
 		Success: &succ,
 		Message: &msg,
-	}, nil
-}
-
-// RescrapeMedia handles POST /api/v1/media/scrape
-func (s *ServerHandler) RescrapeMedia(ctx context.Context, request RescrapeMediaRequestObject) (RescrapeMediaResponseObject, error) {
-	reqID := GetRequestID(ctx)
-	actor := GetActor(ctx)
-	if actor == nil {
-		return RescrapeMedia401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
-	}
-
-	// This endpoint has no file-scoped scraper or verified output yet.
-	// Never report filesystem side effects that were not performed.
-	succ := false
-	count := 0
-	msg := "刮削任务尚未接入媒体文件与 NFO 写入流程；未修改任何文件"
-
-	return RescrapeMedia200JSONResponse{
-		Success:      &succ,
-		UpdatedCount: &count,
-		Message:      &msg,
 	}, nil
 }
 
