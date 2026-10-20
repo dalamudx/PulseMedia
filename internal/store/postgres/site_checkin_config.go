@@ -266,6 +266,13 @@ func (s *SiteCheckinConfigStore) SaveSiteCheckinConfig(ctx context.Context, acto
 		return nil, ports.ErrRejected
 	}
 	if in.Enabled {
+		conflict, e := q.SiteCheckinConflictingCalendar(ctx, db.SiteCheckinConflictingCalendarParams{IndexerID: id, ExpectedAccountID: in.ExpectedAccountID, Timezone: in.Timezone})
+		if e != nil {
+			return nil, e
+		}
+		if conflict {
+			return nil, ports.ErrEndpointVersionConflict
+		}
 		if s.decoder == nil {
 			return nil, ports.ErrUnavailable
 		}

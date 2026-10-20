@@ -991,6 +991,75 @@ func (e SiteCheckinConfigInputProfile) Valid() bool {
 	}
 }
 
+// Defines values for SiteCheckinDayProfile.
+const (
+	SiteCheckinDayProfileNexusphp1103AttendanceV1 SiteCheckinDayProfile = "nexusphp_1103_attendance_v1"
+)
+
+// Valid indicates whether the value is a known member of the SiteCheckinDayProfile enum.
+func (e SiteCheckinDayProfile) Valid() bool {
+	switch e {
+	case SiteCheckinDayProfileNexusphp1103AttendanceV1:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteCheckinDaySafeFailureCode.
+const (
+	SiteCheckinDaySafeFailureCodeAuthRequired SiteCheckinDaySafeFailureCode = "auth_required"
+	SiteCheckinDaySafeFailureCodeBadResponse  SiteCheckinDaySafeFailureCode = "bad_response"
+	SiteCheckinDaySafeFailureCodeBlocked      SiteCheckinDaySafeFailureCode = "blocked"
+	SiteCheckinDaySafeFailureCodeEmpty        SiteCheckinDaySafeFailureCode = ""
+	SiteCheckinDaySafeFailureCodeRateLimited  SiteCheckinDaySafeFailureCode = "rate_limited"
+	SiteCheckinDaySafeFailureCodeUnavailable  SiteCheckinDaySafeFailureCode = "unavailable"
+)
+
+// Valid indicates whether the value is a known member of the SiteCheckinDaySafeFailureCode enum.
+func (e SiteCheckinDaySafeFailureCode) Valid() bool {
+	switch e {
+	case SiteCheckinDaySafeFailureCodeAuthRequired:
+		return true
+	case SiteCheckinDaySafeFailureCodeBadResponse:
+		return true
+	case SiteCheckinDaySafeFailureCodeBlocked:
+		return true
+	case SiteCheckinDaySafeFailureCodeEmpty:
+		return true
+	case SiteCheckinDaySafeFailureCodeRateLimited:
+		return true
+	case SiteCheckinDaySafeFailureCodeUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteCheckinDayState.
+const (
+	SiteCheckinDayStateAttendedObserved SiteCheckinDayState = "attended_observed"
+	SiteCheckinDayStateOpen             SiteCheckinDayState = "open"
+	SiteCheckinDayStatePrepared         SiteCheckinDayState = "prepared"
+	SiteCheckinDayStateReviewRequired   SiteCheckinDayState = "review_required"
+)
+
+// Valid indicates whether the value is a known member of the SiteCheckinDayState enum.
+func (e SiteCheckinDayState) Valid() bool {
+	switch e {
+	case SiteCheckinDayStateAttendedObserved:
+		return true
+	case SiteCheckinDayStateOpen:
+		return true
+	case SiteCheckinDayStatePrepared:
+		return true
+	case SiteCheckinDayStateReviewRequired:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SubmissionRetryReceiptState.
 const (
 	SubmissionRetryReceiptStateQueued SubmissionRetryReceiptState = "queued"
@@ -3810,6 +3879,43 @@ type SiteCheckinConfigReceipt struct {
 	Config SiteCheckinConfig `json:"config"`
 }
 
+// SiteCheckinDay defines model for SiteCheckinDay.
+type SiteCheckinDay struct {
+	CalendarDay   string    `json:"calendar_day"`
+	ConfigVersion int64     `json:"config_version"`
+	DayEnd        time.Time `json:"day_end"`
+	DayStart      time.Time `json:"day_start"`
+
+	// ExpectedAccountId Canonical positive uint64 account ID
+	ExpectedAccountId   string                        `json:"expected_account_id"`
+	Id                  openapi_types.UUID            `json:"id"`
+	IndexerId           openapi_types.UUID            `json:"indexer_id"`
+	ObservedAt          *time.Time                    `json:"observed_at"`
+	Prepared            bool                          `json:"prepared"`
+	Profile             SiteCheckinDayProfile         `json:"profile"`
+	RestoreAcknowledged bool                          `json:"restore_acknowledged"`
+	SafeFailureCode     SiteCheckinDaySafeFailureCode `json:"safe_failure_code"`
+	SourceVersion       int64                         `json:"source_version"`
+	State               SiteCheckinDayState           `json:"state"`
+	Timezone            string                        `json:"timezone"`
+}
+
+// SiteCheckinDayProfile defines model for SiteCheckinDay.Profile.
+type SiteCheckinDayProfile string
+
+// SiteCheckinDaySafeFailureCode defines model for SiteCheckinDay.SafeFailureCode.
+type SiteCheckinDaySafeFailureCode string
+
+// SiteCheckinDayState defines model for SiteCheckinDay.State.
+type SiteCheckinDayState string
+
+// SiteCheckinHistory defines model for SiteCheckinHistory.
+type SiteCheckinHistory struct {
+	Config     *SiteCheckinConfig `json:"config"`
+	NextCursor *string            `json:"next_cursor"`
+	Rows       []SiteCheckinDay   `json:"rows"`
+}
+
 // StartMediaScrapeRequest defines model for StartMediaScrapeRequest.
 type StartMediaScrapeRequest struct {
 	// All Queue every file that still misses NFO/poster work.
@@ -4813,6 +4919,12 @@ type SaveSiteCheckinConfigParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
+// ReadSiteCheckinHistoryParams defines parameters for ReadSiteCheckinHistory.
+type ReadSiteCheckinHistoryParams struct {
+	Limit  *int32  `form:"limit,omitempty" json:"limit,omitempty"`
+	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+}
+
 // ReplayIntegrationDeliveryJSONBody defines parameters for ReplayIntegrationDelivery.
 type ReplayIntegrationDeliveryJSONBody struct {
 	AcceptDuplicateRisk bool      `json:"accept_duplicate_risk"`
@@ -5667,6 +5779,9 @@ type ServerInterface interface {
 	// ReadSiteCheckinConfigReceipt Read original saved site checkin configuration receipt
 	// (GET /api/v1/indexers/{indexer_id}/checkin/config/commands/{command_key})
 	ReadSiteCheckinConfigReceipt(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, commandKey string)
+	// ReadSiteCheckinHistory Read persisted site checkin history
+	// (GET /api/v1/indexers/{indexer_id}/checkin/history)
+	ReadSiteCheckinHistory(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, params ReadSiteCheckinHistoryParams)
 	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
 	ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request)
@@ -7150,6 +7265,61 @@ func (siw *ServerInterfaceWrapper) ReadSiteCheckinConfigReceipt(w http.ResponseW
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.ReadSiteCheckinConfigReceipt(w, r, indexerId, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadSiteCheckinHistory operation middleware
+func (siw *ServerInterfaceWrapper) ReadSiteCheckinHistory(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "indexer_id" -------------
+	var indexerId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "indexer_id", r.PathValue("indexer_id"), &indexerId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "indexer_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ReadSiteCheckinHistoryParams
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: "int32"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadSiteCheckinHistory(w, r, indexerId, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -11143,6 +11313,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover", wrapper.GetDiscoverFeed)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover/douban", wrapper.GetDoubanRanking)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats", wrapper.ReadSiteAccountStats)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/history", wrapper.ReadSiteCheckinHistory)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/config", wrapper.ReadSiteCheckinConfig)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/config", wrapper.SaveSiteCheckinConfig)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/config/commands/{command_key}", wrapper.ReadSiteCheckinConfigReceipt)
@@ -14588,6 +14759,99 @@ func (response ReadSiteCheckinConfigReceipt404ApplicationProblemPlusJSONResponse
 type ReadSiteCheckinConfigReceipt503ApplicationProblemPlusJSONResponse ErrorResponse
 
 func (response ReadSiteCheckinConfigReceipt503ApplicationProblemPlusJSONResponse) VisitReadSiteCheckinConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteCheckinHistoryRequestObject struct {
+	IndexerId openapi_types.UUID `json:"indexer_id"`
+	Params    ReadSiteCheckinHistoryParams
+}
+
+type ReadSiteCheckinHistoryResponseObject interface {
+	VisitReadSiteCheckinHistoryResponse(w http.ResponseWriter) error
+}
+
+type ReadSiteCheckinHistory200JSONResponse SiteCheckinHistory
+
+func (response ReadSiteCheckinHistory200JSONResponse) VisitReadSiteCheckinHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteCheckinHistory400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteCheckinHistory400ApplicationProblemPlusJSONResponse) VisitReadSiteCheckinHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteCheckinHistory401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteCheckinHistory401ApplicationProblemPlusJSONResponse) VisitReadSiteCheckinHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteCheckinHistory403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteCheckinHistory403ApplicationProblemPlusJSONResponse) VisitReadSiteCheckinHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteCheckinHistory404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteCheckinHistory404ApplicationProblemPlusJSONResponse) VisitReadSiteCheckinHistoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteCheckinHistory503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteCheckinHistory503ApplicationProblemPlusJSONResponse) VisitReadSiteCheckinHistoryResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -25597,6 +25861,9 @@ type StrictServerInterface interface {
 	// ReadSiteCheckinConfigReceipt Read original saved site checkin configuration receipt
 	// (GET /api/v1/indexers/{indexer_id}/checkin/config/commands/{command_key})
 	ReadSiteCheckinConfigReceipt(ctx context.Context, request ReadSiteCheckinConfigReceiptRequestObject) (ReadSiteCheckinConfigReceiptResponseObject, error)
+	// ReadSiteCheckinHistory Read persisted site checkin history
+	// (GET /api/v1/indexers/{indexer_id}/checkin/history)
+	ReadSiteCheckinHistory(ctx context.Context, request ReadSiteCheckinHistoryRequestObject) (ReadSiteCheckinHistoryResponseObject, error)
 	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
 	ListIntegrationDeliveries(ctx context.Context, request ListIntegrationDeliveriesRequestObject) (ListIntegrationDeliveriesResponseObject, error)
@@ -26976,6 +27243,33 @@ func (sh *strictHandler) ReadSiteCheckinConfigReceipt(w http.ResponseWriter, r *
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(ReadSiteCheckinConfigReceiptResponseObject); ok {
 		if err := validResponse.VisitReadSiteCheckinConfigReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadSiteCheckinHistory operation middleware
+func (sh *strictHandler) ReadSiteCheckinHistory(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, params ReadSiteCheckinHistoryParams) {
+	var request ReadSiteCheckinHistoryRequestObject
+
+	request.IndexerId = indexerId
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadSiteCheckinHistory(ctx, request.(ReadSiteCheckinHistoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadSiteCheckinHistory")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadSiteCheckinHistoryResponseObject); ok {
+		if err := validResponse.VisitReadSiteCheckinHistoryResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

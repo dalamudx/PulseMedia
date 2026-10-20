@@ -4619,6 +4619,46 @@ paths:
           content:
             application/problem+json:
               schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/indexers/{indexer_id}/checkin/history:
+    get:
+      operationId: readSiteCheckinHistory
+      summary: Read persisted site checkin history
+      description: Current active administrator session only. No upstream I/O. Rejects request bodies and Idempotency-Key headers.
+      parameters:
+        - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: limit, in: query, schema: {type: integer, format: int32, minimum: 1, maximum: 100, default: 20}}
+        - {name: cursor, in: query, schema: {type: string, minLength: 1, maxLength: 512}}
+      responses:
+        '200':
+          description: Persisted history page
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteCheckinHistory'}
+        '400':
+          description: Invalid history request
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Administrator session required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Source not found
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: History unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
   /api/v1/indexers/{indexer_id}/checkin/config:
     parameters:
       - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
@@ -5456,6 +5496,40 @@ components:
           - properties:
               indexer_ids: {minItems: 1}
             not: {required: [downloader_id]}
+    SiteCheckinHistory:
+      type: object
+      additionalProperties: false
+      required: [config, rows, next_cursor]
+      properties:
+        config:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/SiteCheckinConfig'}
+        rows:
+          type: array
+          minItems: 0
+          items: {$ref: '#/components/schemas/SiteCheckinDay'}
+        next_cursor: {type: string, nullable: true}
+    SiteCheckinDay:
+      type: object
+      additionalProperties: false
+      required: [id, indexer_id, expected_account_id, profile, timezone, calendar_day, day_start, day_end, state, safe_failure_code, observed_at, prepared, config_version, source_version, restore_acknowledged]
+      properties:
+        id: {type: string, format: uuid}
+        indexer_id: {type: string, format: uuid}
+        expected_account_id: {type: string, pattern: '^[1-9][0-9]{0,19}$', description: Canonical positive uint64 account ID}
+        profile: {type: string, enum: [nexusphp_1103_attendance_v1]}
+        timezone: {type: string, minLength: 1, maxLength: 96}
+        calendar_day: {type: string, format: date, x-go-type: string, pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'}
+        day_start: {type: string, format: date-time, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        day_end: {type: string, format: date-time, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        state: {type: string, enum: [open, prepared, attended_observed, review_required]}
+        safe_failure_code: {type: string, enum: ['', auth_required, blocked, rate_limited, bad_response, unavailable]}
+        observed_at: {type: string, format: date-time, nullable: true}
+        prepared: {type: boolean}
+        config_version: {type: integer, format: int64, minimum: 1}
+        source_version: {type: integer, format: int64, minimum: 1}
+        restore_acknowledged: {type: boolean}
     SiteCheckinConfigInput:
       type: object
       additionalProperties: false

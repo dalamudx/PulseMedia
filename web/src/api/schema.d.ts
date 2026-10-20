@@ -1944,6 +1944,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/indexers/{indexer_id}/checkin/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read persisted site checkin history
+         * @description Current active administrator session only. No upstream I/O. Rejects request bodies and Idempotency-Key headers.
+         */
+        get: operations["readSiteCheckinHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/indexers/{indexer_id}/checkin/config": {
         parameters: {
             query?: never;
@@ -2227,6 +2247,40 @@ export interface components {
             indexer_ids: string[];
             /** Format: uuid */
             downloader_id?: string;
+        };
+        SiteCheckinHistory: {
+            config: components["schemas"]["SiteCheckinConfig"] | null;
+            rows: components["schemas"]["SiteCheckinDay"][];
+            next_cursor: string | null;
+        };
+        SiteCheckinDay: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            indexer_id: string;
+            /** @description Canonical positive uint64 account ID */
+            expected_account_id: string;
+            /** @enum {string} */
+            profile: "nexusphp_1103_attendance_v1";
+            timezone: string;
+            /** Format: date */
+            calendar_day: string;
+            /** Format: date-time */
+            day_start: string;
+            /** Format: date-time */
+            day_end: string;
+            /** @enum {string} */
+            state: "open" | "prepared" | "attended_observed" | "review_required";
+            /** @enum {string} */
+            safe_failure_code: "" | "auth_required" | "blocked" | "rate_limited" | "bad_response" | "unavailable";
+            /** Format: date-time */
+            observed_at: string | null;
+            prepared: boolean;
+            /** Format: int64 */
+            config_version: number;
+            /** Format: int64 */
+            source_version: number;
+            restore_acknowledged: boolean;
         };
         /** @description Configuration intent for NexusPHP 1.10.3 only. Explicit site timezone is required and never inferred from PHP defaults. No captcha bypass, daily execution command, unknown-result retry, or manual side-effect endpoint. */
         SiteCheckinConfigInput: {
@@ -10350,6 +10404,76 @@ export interface operations {
                 };
             };
             /** @description Statistics temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSiteCheckinHistory: {
+        parameters: {
+            query?: {
+                limit?: number;
+                cursor?: string;
+            };
+            header?: never;
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted history page */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteCheckinHistory"];
+                };
+            };
+            /** @description Invalid history request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Source not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description History unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;

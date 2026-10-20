@@ -85,6 +85,7 @@ type ServerHandler struct {
 	doubanSyncConfigSvc       *watchlist.ConfigService
 	siteAccountStatsConfigSvc siteAccountStatsConfigApplication
 	siteCheckinConfigSvc      siteCheckinConfigApplication
+	siteCheckinHistorySvc     siteCheckinHistoryApplication
 	siteAccountStatsSvc       siteAccountStatsApplication
 	localMediaReader          ports.LocalMediaSearchReader
 	subSvc                    *subscription.Service

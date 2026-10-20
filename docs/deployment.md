@@ -147,6 +147,22 @@ bin/pulsebackup reconcile \
 
 存在可重启的 job、delivery、通知批次、下载任务或升级观察/跟踪工作时拒绝解除；不能只填写说明就清除旧任务或 unknown 保护。解除成功后再切换应用 DSN，使用恢复的数据目录启动。恢复历史与审计保留，不能通过降级移除。
 
+签到执行启用后，未决的每日发送许可也会阻止释放隔离，即使原job已dead。先逐项核对原始DayID、账号、冻结日期和实际外部状态；仍不能确认的许可只可明确保留未知。例如在上述JSON中另加`"CheckinDecisions": [{"DayID": "历史读取返回的真实日UUID", "Evidence": "原始许可及外部状态核对记录位置；结果未知，保留人工复核"}]`。这不是重试许可，不表示已签到，不会清除或重绑原prepared指针；任何其他未决工作仍会使整笔对账回滚。当前日已人工接管后不自动排入旧观察任务，不能利用修改配置或重启再次发送。运行中的相关job必须先按实际执行结果处理，不可用对账JSON强制越过。
+
+恢复隔离期间App不启动；若没有先前导出的历史DayID，可在恢复库的只读管理会话核对以下安全字段，再将真实UUID填入逐项决定。该查询不请求PT，也不暴露Cookie或执行nonce：
+
+```sql
+SELECT d.id AS day_id, d.indexer_id, d.expected_account_id,
+       d.calendar_day, d.timezone, d.day_start, d.day_end, d.status,
+       d.prepared_execution_id IS NOT NULL AS prepared
+FROM site_checkin_day d
+WHERE d.status <> 'attended_observed' AND d.restore_id IS NULL
+  AND (d.prepared_execution_id IS NOT NULL OR EXISTS (
+      SELECT 1 FROM site_checkin_execution e
+      WHERE e.day_id = d.id AND e.finished_at IS NULL))
+ORDER BY d.calendar_day, d.id;
+```
+
 可复验：`mise exec -- task test-backup` 覆盖真实 PG18 TLS、错误身份/篡改/配对错误、恢复清理、隔离及大归档流式处理。已启动独立 M4 服务时，运行 `mise exec -- task m4-restore-drill -- /data/temp/pulse-m4-services.oKhyfu`，验证 qBittorrent/Transmission 恢复点后的真实外部孤儿、人工移除任务而保留文件、未决旧任务拒绝解除及最终审计。演练通过 SQL 准备任务/映射和记录离线完成决定，不覆盖获取、整理或缺失映射修复；真实传输另有服务联调证据。M4-01 与 M4-03 的前置及本地验收已收齐；当前 Beta 总验收状态见开发计划。
 
 ## 4. 环境变量与安全

@@ -423,11 +423,15 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var doubanWishSvc *watchlist.SyncService
 	var statsRepo ports.SiteAccountStatsRepository
 	var siteStatsSvc mediaSidecarExecutor
+	var checkinRepo ports.SiteCheckinRepository
+	var siteCheckinSvc mediaSidecarExecutor
 	if a.dbPool != nil {
 		statsRepo = postgres.NewSiteAccountStatsStore(a.dbPool, a.idgen, a.indexerDecoder)
+		checkinRepo = postgres.NewSiteCheckinStore(a.dbPool, a.idgen, a.indexerDecoder)
 	}
 	if queue != nil && len(masterKey) > 0 {
 		siteStatsSvc = siteusecase.NewAccountStatsCollector(statsRepo, &siteAccountStatsClientBuilder{httpClient: a.metadataHTTPClient, clock: a.clock})
+		siteCheckinSvc = siteusecase.NewCheckinRunner(checkinRepo, &siteCheckinClientBuilder{httpClient: a.metadataHTTPClient, clock: a.clock})
 	}
 	if queue != nil && len(masterKey) > 0 {
 		doubanWishRepo = postgres.NewDoubanWishSyncStore(a.dbPool, a.idgen)
@@ -445,6 +449,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	serverHandler.SetDoubanSyncConfigService(watchlist.NewConfigService(postgres.NewDoubanSyncConfigStore(a.dbPool, a.idgen)))
 	serverHandler.SetSiteAccountStatsConfigService(siteusecase.NewAccountStatsConfigService(postgres.NewSiteAccountStatsConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
 	serverHandler.SetSiteCheckinConfigService(siteusecase.NewCheckinConfigService(postgres.NewSiteCheckinConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
+	serverHandler.SetSiteCheckinHistoryService(siteusecase.NewCheckinHistoryReader(postgres.NewSiteCheckinHistoryStore(a.dbPool)))
 	serverHandler.SetSiteAccountStatsService(siteusecase.NewAccountStatsReader(statsRepo))
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
 	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient, douban.WithCredentialSource(doubanCredentials(settingsSvc)), douban.WithClock(a.clock)), metaProvider, a.clock))
@@ -540,6 +545,15 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	} else {
 		close(siteStatsDone)
 	}
+	siteCheckinDone := make(chan struct{})
+	if siteCheckinSvc != nil {
+		go func() {
+			defer close(siteCheckinDone)
+			a.runSiteCheckinWorker(workerCtx, queue, checkinRepo, siteCheckinSvc)
+		}()
+	} else {
+		close(siteCheckinDone)
+	}
 	if doubanWishSvc != nil {
 		go func() {
 			defer close(doubanWishDone)
@@ -617,7 +631,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		cancelWorker()
 		budget, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, siteStatsDone, outboxDone, searchDone, libraryDone)
+		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, siteStatsDone, siteCheckinDone, outboxDone, searchDone, libraryDone)
 	}
 	defer stopWorker()
 

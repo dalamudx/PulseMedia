@@ -1537,6 +1537,56 @@ type SiteCheckinConfigReceipt struct {
 	Snapshot    []byte
 }
 
+type SiteCheckinDay struct {
+	ID                  uuid.UUID
+	IndexerID           uuid.UUID
+	ExpectedAccountID   string
+	Profile             string
+	Timezone            string
+	CalendarDay         pgtype.Date
+	DayStart            pgtype.Timestamptz
+	DayEnd              pgtype.Timestamptz
+	OriginalJobID       uuid.UUID
+	ConfigSnapshot      []byte
+	ConfigVersion       int64
+	SourceVersion       int64
+	BindingDigest       string
+	PreparedExecutionID pgtype.UUID
+	ObservationJobID    pgtype.UUID
+	Status              string
+	SafeCode            string
+	ObservedAt          pgtype.Timestamptz
+	RestoreID           pgtype.UUID
+	RestoreOperator     pgtype.Text
+	RestoreEvidence     pgtype.Text
+	RestoreRecordedAt   pgtype.Timestamptz
+	RestoreDecision     pgtype.Text
+}
+
+type SiteCheckinExecution struct {
+	ID                uuid.UUID
+	DayID             uuid.UUID
+	JobID             uuid.UUID
+	Owner             string
+	Token             int64
+	Nonce             uuid.UUID
+	BackendPid        int32
+	BackendStart      pgtype.Timestamptz
+	Mode              string
+	ConfigVersion     int64
+	SourceVersion     int64
+	SourceFingerprint string
+	State             string
+	CreatedAt         pgtype.Timestamptz
+	ObserveStartedAt  pgtype.Timestamptz
+	PreparedAt        pgtype.Timestamptz
+	PermissionID      pgtype.UUID
+	ValidUntil        pgtype.Timestamptz
+	FinishedAt        pgtype.Timestamptz
+	Result            []byte
+	SafeCode          string
+}
+
 type Subscription struct {
 	ID                     uuid.UUID
 	UserID                 uuid.UUID

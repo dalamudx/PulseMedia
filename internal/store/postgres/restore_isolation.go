@@ -2,9 +2,11 @@ package postgres
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 
+	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -64,12 +66,18 @@ func ActivateRestoreIsolation(ctx context.Context, pool *pgxpool.Pool, restoreID
 	return tx.Commit(ctx)
 }
 
+// CheckinRestoreDecision acknowledges an unresolved day without resetting its send authority.
+type CheckinRestoreDecision struct {
+	DayID    uuid.UUID
+	Evidence string
+}
 type RestoreReconciliation struct {
 	RestoreID          uuid.UUID
 	Operator           string
 	DownloaderEvidence string
 	FilesystemEvidence string
 	OrphanEvidence     string
+	CheckinDecisions   []CheckinRestoreDecision `json:",omitempty"`
 }
 
 // ReconcileRestoreIsolation is an offline operator action under the data-dir
@@ -92,6 +100,10 @@ func ReconcileRestoreIsolation(ctx context.Context, pool *pgxpool.Pool, r Restor
 	}
 	if !isolated || id == nil || *id != r.RestoreID {
 		return errors.New("restore isolation version mismatch")
+	}
+	q := db.New(tx)
+	if err = reconcileCheckinDecisions(ctx, q, r); err != nil {
+		return err
 	}
 	// Include work that periodic schedulers can create without a runnable job.
 	// Tracking results remain eligible after the 30-second delay, so do not
@@ -116,10 +128,22 @@ func ReconcileRestoreIsolation(ctx context.Context, pool *pgxpool.Pool, r Restor
    AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_job b WHERE b.operation_id=p.operation_id AND b.prior_observation_id IS NOT DISTINCT FROM tip.observation_id))`).Scan(&pending); err != nil {
 		return err
 	}
+	checkinPending, err := q.SiteCheckinRestoreBlocked(ctx)
+	if err != nil {
+		return err
+	}
+	pending = pending || checkinPending
 	if pending {
-		return errors.New("unreconciled runnable jobs, deliveries, notification batches, download tasks or upgrade observations remain; resolve individually before release")
+		return errors.New("unreconciled runnable jobs, deliveries, notification batches, download tasks, upgrade observations or check-in authorities remain; resolve individually before release")
 	}
 	evidence := "downloaders: " + r.DownloaderEvidence + "\nfiles: " + r.FilesystemEvidence + "\norphans: " + r.OrphanEvidence
+	if len(r.CheckinDecisions) != 0 {
+		decisions, e := json.Marshal(r.CheckinDecisions)
+		if e != nil {
+			return e
+		}
+		evidence += "\ncheck-in decisions: " + string(decisions)
+	}
 	if _, err = tx.Exec(ctx, `INSERT INTO restore_isolation_audit(restore_id,action,operator_name,evidence) VALUES($1,'reconcile',$2,$3)`, r.RestoreID, r.Operator, evidence); err != nil {
 		return err
 	}

@@ -388,12 +388,16 @@ func TestSiteCheckinConfigMigrationPG(t *testing.T) {
 	if e != nil || v != 99 {
 		t.Fatal(v, e)
 	}
-	f.save(t, f.input(), "history")
+	// Seed only the historical 99 row; current production writers also require schema100.
+	f.exec(t, `INSERT INTO site_checkin_config(indexer_id,expected_account_id,profile,enabled,timezone,daily_at,version,source_config_version) VALUES($1,'42','nexusphp_1103_attendance_v1',true,'UTC','09:00',1,1)`, f.id)
 	_, e = postgres.Rollback(t.Context(), f.dsn, history99)
 	if e == nil {
 		t.Fatal("history downgrade allowed")
 	}
-	f.counts(t, 1)
+	var preserved int
+	if e = f.p.QueryRow(t.Context(), `SELECT count(*) FROM site_checkin_config WHERE indexer_id=$1`, f.id).Scan(&preserved); e != nil || preserved != 1 {
+		t.Fatal("historical configuration lost", preserved, e)
+	}
 }
 
 type checkinSecrets struct{ key []byte }
