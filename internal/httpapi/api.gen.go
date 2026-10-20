@@ -802,6 +802,48 @@ func (e RequirementWithdrawalReceiptState) Valid() bool {
 	}
 }
 
+// Defines values for SiteAccountStatsAmountApproximate.
+const (
+	SiteAccountStatsAmountApproximateTrue SiteAccountStatsAmountApproximate = true
+)
+
+// Valid indicates whether the value is a known member of the SiteAccountStatsAmountApproximate enum.
+func (e SiteAccountStatsAmountApproximate) Valid() bool {
+	switch e {
+	case SiteAccountStatsAmountApproximateTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteAccountStatsAmountUnit.
+const (
+	GB SiteAccountStatsAmountUnit = "GB"
+	KB SiteAccountStatsAmountUnit = "KB"
+	MB SiteAccountStatsAmountUnit = "MB"
+	PB SiteAccountStatsAmountUnit = "PB"
+	TB SiteAccountStatsAmountUnit = "TB"
+)
+
+// Valid indicates whether the value is a known member of the SiteAccountStatsAmountUnit enum.
+func (e SiteAccountStatsAmountUnit) Valid() bool {
+	switch e {
+	case GB:
+		return true
+	case KB:
+		return true
+	case MB:
+		return true
+	case PB:
+		return true
+	case TB:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SiteAccountStatsConfigProfile.
 const (
 	SiteAccountStatsConfigProfileNexusphpClassicInfoBlockV1 SiteAccountStatsConfigProfile = "nexusphp_classic_info_block_v1"
@@ -826,6 +868,93 @@ const (
 func (e SiteAccountStatsConfigInputProfile) Valid() bool {
 	switch e {
 	case SiteAccountStatsConfigInputProfileNexusphpClassicInfoBlockV1:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteAccountStatsObservationCollectionState.
+const (
+	SiteAccountStatsObservationCollectionStateDisabled       SiteAccountStatsObservationCollectionState = "disabled"
+	SiteAccountStatsObservationCollectionStateFailed         SiteAccountStatsObservationCollectionState = "failed"
+	SiteAccountStatsObservationCollectionStateNeverCollected SiteAccountStatsObservationCollectionState = "never_collected"
+	SiteAccountStatsObservationCollectionStateQueued         SiteAccountStatsObservationCollectionState = "queued"
+	SiteAccountStatsObservationCollectionStateReviewRequired SiteAccountStatsObservationCollectionState = "review_required"
+	SiteAccountStatsObservationCollectionStateRunning        SiteAccountStatsObservationCollectionState = "running"
+	SiteAccountStatsObservationCollectionStateSucceeded      SiteAccountStatsObservationCollectionState = "succeeded"
+)
+
+// Valid indicates whether the value is a known member of the SiteAccountStatsObservationCollectionState enum.
+func (e SiteAccountStatsObservationCollectionState) Valid() bool {
+	switch e {
+	case SiteAccountStatsObservationCollectionStateDisabled:
+		return true
+	case SiteAccountStatsObservationCollectionStateFailed:
+		return true
+	case SiteAccountStatsObservationCollectionStateNeverCollected:
+		return true
+	case SiteAccountStatsObservationCollectionStateQueued:
+		return true
+	case SiteAccountStatsObservationCollectionStateReviewRequired:
+		return true
+	case SiteAccountStatsObservationCollectionStateRunning:
+		return true
+	case SiteAccountStatsObservationCollectionStateSucceeded:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteAccountStatsObservationFailureCode.
+const (
+	SiteAccountStatsObservationFailureCodeAuthRequired SiteAccountStatsObservationFailureCode = "auth_required"
+	SiteAccountStatsObservationFailureCodeBadResponse  SiteAccountStatsObservationFailureCode = "bad_response"
+	SiteAccountStatsObservationFailureCodeBlocked      SiteAccountStatsObservationFailureCode = "blocked"
+	SiteAccountStatsObservationFailureCodeInterrupted  SiteAccountStatsObservationFailureCode = "interrupted"
+	SiteAccountStatsObservationFailureCodeRateLimited  SiteAccountStatsObservationFailureCode = "rate_limited"
+	SiteAccountStatsObservationFailureCodeUnavailable  SiteAccountStatsObservationFailureCode = "unavailable"
+)
+
+// Valid indicates whether the value is a known member of the SiteAccountStatsObservationFailureCode enum.
+func (e SiteAccountStatsObservationFailureCode) Valid() bool {
+	switch e {
+	case SiteAccountStatsObservationFailureCodeAuthRequired:
+		return true
+	case SiteAccountStatsObservationFailureCodeBadResponse:
+		return true
+	case SiteAccountStatsObservationFailureCodeBlocked:
+		return true
+	case SiteAccountStatsObservationFailureCodeInterrupted:
+		return true
+	case SiteAccountStatsObservationFailureCodeRateLimited:
+		return true
+	case SiteAccountStatsObservationFailureCodeUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteAccountStatsRatioState.
+const (
+	SiteAccountStatsRatioStateFinite    SiteAccountStatsRatioState = "finite"
+	SiteAccountStatsRatioStateInfinite  SiteAccountStatsRatioState = "infinite"
+	SiteAccountStatsRatioStateUndefined SiteAccountStatsRatioState = "undefined"
+	SiteAccountStatsRatioStateUnknown   SiteAccountStatsRatioState = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the SiteAccountStatsRatioState enum.
+func (e SiteAccountStatsRatioState) Valid() bool {
+	switch e {
+	case SiteAccountStatsRatioStateFinite:
+		return true
+	case SiteAccountStatsRatioStateInfinite:
+		return true
+	case SiteAccountStatsRatioStateUndefined:
+		return true
+	case SiteAccountStatsRatioStateUnknown:
 		return true
 	default:
 		return false
@@ -3502,6 +3631,28 @@ type SetupRequest struct {
 	Username string `json:"username"`
 }
 
+// SiteAccountStats defines model for SiteAccountStats.
+type SiteAccountStats struct {
+	AccountId  string                  `json:"account_id"`
+	Bonus      *string                 `json:"bonus"`
+	Downloaded *SiteAccountStatsAmount `json:"downloaded"`
+	Ratio      SiteAccountStatsRatio   `json:"ratio"`
+	Uploaded   *SiteAccountStatsAmount `json:"uploaded"`
+}
+
+// SiteAccountStatsAmount Rounded source display with original decimal precision and unit; never an exact byte counter.
+type SiteAccountStatsAmount struct {
+	Approximate SiteAccountStatsAmountApproximate `json:"approximate"`
+	Unit        SiteAccountStatsAmountUnit        `json:"unit"`
+	Value       string                            `json:"value"`
+}
+
+// SiteAccountStatsAmountApproximate defines model for SiteAccountStatsAmount.Approximate.
+type SiteAccountStatsAmountApproximate bool
+
+// SiteAccountStatsAmountUnit defines model for SiteAccountStatsAmount.Unit.
+type SiteAccountStatsAmountUnit string
+
 // SiteAccountStatsConfig Saved configuration intent only, not proof of collected statistics or download success.
 type SiteAccountStatsConfig struct {
 	CreatedAt           time.Time                     `json:"created_at"`
@@ -3545,6 +3696,41 @@ type SiteAccountStatsConfigReceipt struct {
 	// Config Saved configuration intent only, not proof of collected statistics or download success.
 	Config SiteAccountStatsConfig `json:"config"`
 }
+
+// SiteAccountStatsCurrent defines model for SiteAccountStatsCurrent.
+type SiteAccountStatsCurrent struct {
+	Observation *SiteAccountStatsObservation `json:"observation"`
+}
+
+// SiteAccountStatsObservation defines model for SiteAccountStatsObservation.
+type SiteAccountStatsObservation struct {
+	CollectionState SiteAccountStatsObservationCollectionState `json:"collection_state"`
+
+	// Config Saved configuration intent only, not proof of collected statistics or download success.
+	Config              SiteAccountStatsConfig                  `json:"config"`
+	FailureCode         *SiteAccountStatsObservationFailureCode `json:"failure_code,omitempty"`
+	LastAttemptAt       *time.Time                              `json:"last_attempt_at"`
+	ObservedAt          *time.Time                              `json:"observed_at"`
+	SampleConfigVersion int64                                   `json:"sample_config_version"`
+	SampleSourceVersion int64                                   `json:"sample_source_version"`
+	Stale               bool                                    `json:"stale"`
+	Stats               *SiteAccountStats                       `json:"stats"`
+}
+
+// SiteAccountStatsObservationCollectionState defines model for SiteAccountStatsObservation.CollectionState.
+type SiteAccountStatsObservationCollectionState string
+
+// SiteAccountStatsObservationFailureCode defines model for SiteAccountStatsObservation.FailureCode.
+type SiteAccountStatsObservationFailureCode string
+
+// SiteAccountStatsRatio defines model for SiteAccountStatsRatio.
+type SiteAccountStatsRatio struct {
+	State SiteAccountStatsRatioState `json:"state"`
+	Value *string                    `json:"value,omitempty"`
+}
+
+// SiteAccountStatsRatioState defines model for SiteAccountStatsRatio.State.
+type SiteAccountStatsRatioState string
 
 // StartMediaScrapeRequest defines model for StartMediaScrapeRequest.
 type StartMediaScrapeRequest struct {
@@ -5374,6 +5560,9 @@ type ServerInterface interface {
 	// TestIndexer Test connectivity and credentials of an indexer
 	// (POST /api/v1/indexers/{id}/test)
 	TestIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	// ReadSiteAccountStats Read persisted global source account statistics
+	// (GET /api/v1/indexers/{indexer_id}/account-stats)
+	ReadSiteAccountStats(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID)
 	// ReadSiteAccountStatsConfig Read saved global source account statistics configuration
 	// (GET /api/v1/indexers/{indexer_id}/account-stats/config)
 	ReadSiteAccountStatsConfig(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID)
@@ -6610,6 +6799,32 @@ func (siw *ServerInterfaceWrapper) TestIndexer(w http.ResponseWriter, r *http.Re
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.TestIndexer(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadSiteAccountStats operation middleware
+func (siw *ServerInterfaceWrapper) ReadSiteAccountStats(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "indexer_id" -------------
+	var indexerId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "indexer_id", r.PathValue("indexer_id"), &indexerId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "indexer_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadSiteAccountStats(w, r, indexerId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -10717,6 +10932,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/tv/{id}", wrapper.GetTMDBTVDetails)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover", wrapper.GetDiscoverFeed)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover/douban", wrapper.GetDoubanRanking)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats", wrapper.ReadSiteAccountStats)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats/config", wrapper.ReadSiteAccountStatsConfig)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats/config", wrapper.SaveSiteAccountStatsConfig)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats/config/commands/{command_key}", wrapper.ReadSiteAccountStatsConfigReceipt)
@@ -13487,6 +13703,98 @@ func (response TestIndexer503JSONResponse) VisitTestIndexerResponse(w http.Respo
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsRequestObject struct {
+	IndexerId openapi_types.UUID `json:"indexer_id"`
+}
+
+type ReadSiteAccountStatsResponseObject interface {
+	VisitReadSiteAccountStatsResponse(w http.ResponseWriter) error
+}
+
+type ReadSiteAccountStats200JSONResponse SiteAccountStatsCurrent
+
+func (response ReadSiteAccountStats200JSONResponse) VisitReadSiteAccountStatsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStats400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStats400ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStats401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStats401ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStats403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStats403ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStats404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStats404ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStats503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStats503ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -24762,6 +25070,9 @@ type StrictServerInterface interface {
 	// TestIndexer Test connectivity and credentials of an indexer
 	// (POST /api/v1/indexers/{id}/test)
 	TestIndexer(ctx context.Context, request TestIndexerRequestObject) (TestIndexerResponseObject, error)
+	// ReadSiteAccountStats Read persisted global source account statistics
+	// (GET /api/v1/indexers/{indexer_id}/account-stats)
+	ReadSiteAccountStats(ctx context.Context, request ReadSiteAccountStatsRequestObject) (ReadSiteAccountStatsResponseObject, error)
 	// ReadSiteAccountStatsConfig Read saved global source account statistics configuration
 	// (GET /api/v1/indexers/{indexer_id}/account-stats/config)
 	ReadSiteAccountStatsConfig(ctx context.Context, request ReadSiteAccountStatsConfigRequestObject) (ReadSiteAccountStatsConfigResponseObject, error)
@@ -25950,6 +26261,32 @@ func (sh *strictHandler) TestIndexer(w http.ResponseWriter, r *http.Request, id 
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(TestIndexerResponseObject); ok {
 		if err := validResponse.VisitTestIndexerResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadSiteAccountStats operation middleware
+func (sh *strictHandler) ReadSiteAccountStats(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID) {
+	var request ReadSiteAccountStatsRequestObject
+
+	request.IndexerId = indexerId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadSiteAccountStats(ctx, request.(ReadSiteAccountStatsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadSiteAccountStats")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadSiteAccountStatsResponseObject); ok {
+		if err := validResponse.VisitReadSiteAccountStatsResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

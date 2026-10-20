@@ -4581,6 +4581,44 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/indexers/{indexer_id}/account-stats:
+    parameters:
+      - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readSiteAccountStats
+      summary: Read persisted global source account statistics
+      description: Current active administrator session only. Reads persisted observations without collecting, reserving source budget, or contacting a site. Missing configuration returns observation null; missing samples remain unknown.
+      responses:
+        '200':
+          description: Persisted observation or explicit null
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteAccountStatsCurrent'}
+        '400':
+          description: Invalid statistics request
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Statistics access denied
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Source not found
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Statistics temporarily unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
   /api/v1/indexers/{indexer_id}/account-stats/config:
     parameters:
       - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
@@ -5302,6 +5340,64 @@ components:
         interval_seconds: {type: integer, format: int32, minimum: 900, maximum: 86400}
         expected_version: {type: integer, format: int64, minimum: 0}
         expected_source_version: {type: integer, format: int64, minimum: 1}
+    SiteAccountStatsCurrent:
+      type: object
+      additionalProperties: false
+      required: [observation]
+      properties:
+        observation:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/SiteAccountStatsObservation'}
+    SiteAccountStatsObservation:
+      type: object
+      additionalProperties: false
+      required: [config, stats, observed_at, sample_config_version, sample_source_version, last_attempt_at, collection_state, stale]
+      properties:
+        config: {$ref: '#/components/schemas/SiteAccountStatsConfig'}
+        stats:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/SiteAccountStats'}
+        observed_at: {type: string, format: date-time, nullable: true}
+        sample_config_version: {type: integer, format: int64, minimum: 0}
+        sample_source_version: {type: integer, format: int64, minimum: 0}
+        last_attempt_at: {type: string, format: date-time, nullable: true}
+        collection_state: {type: string, enum: [never_collected, queued, running, succeeded, failed, review_required, disabled]}
+        failure_code: {type: string, enum: [auth_required, blocked, rate_limited, bad_response, unavailable, interrupted]}
+        stale: {type: boolean}
+    SiteAccountStats:
+      type: object
+      additionalProperties: false
+      required: [account_id, uploaded, downloaded, ratio, bonus]
+      properties:
+        account_id: {type: string, pattern: '^[1-9][0-9]{0,19}$'}
+        uploaded:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/SiteAccountStatsAmount'}
+        downloaded:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/SiteAccountStatsAmount'}
+        ratio: {$ref: '#/components/schemas/SiteAccountStatsRatio'}
+        bonus: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)\.[0-9]$'}
+    SiteAccountStatsAmount:
+      type: object
+      additionalProperties: false
+      description: Rounded source display with original decimal precision and unit; never an exact byte counter.
+      required: [value, unit, approximate]
+      properties:
+        value: {type: string, pattern: '^(0|[1-9][0-9]*)\.[0-9]{2,3}$'}
+        unit: {type: string, enum: [KB, MB, GB, TB, PB]}
+        approximate: {type: boolean, enum: [true]}
+    SiteAccountStatsRatio:
+      type: object
+      additionalProperties: false
+      required: [state]
+      properties:
+        state: {type: string, enum: [finite, infinite, undefined, unknown]}
+        value: {type: string, pattern: '^(0|[1-9][0-9]*)\.[0-9]{3}$'}
     SiteAccountStatsConfig:
       type: object
       additionalProperties: false

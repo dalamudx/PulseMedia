@@ -5,7 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -30,11 +33,15 @@ type statsFixture struct {
 }
 
 func newStatsFixture(t *testing.T) *statsFixture {
+	return newStatsFixtureAt(t, "../../../migrations", postgres.CurrentMigrationVersion)
+}
+
+func newStatsFixtureAt(t *testing.T, migrationDir string, expectedVersion int64) *statsFixture {
 	t.Helper()
 	ctx := t.Context()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	v, e := postgres.Migrate(ctx, dsn, "../../../migrations")
-	if e != nil || v != 97 {
+	v, e := postgres.Migrate(ctx, dsn, migrationDir)
+	if e != nil || v != expectedVersion {
 		t.Fatal(v, e)
 	}
 	p, e := postgres.NewPool(ctx, dsn, postgres.DefaultPoolConfig())
@@ -334,17 +341,35 @@ func TestSiteAccountStatsConfigIntegrityPG(t *testing.T) {
 	statsErr(t, e, ports.ErrUnavailable)
 }
 func TestSiteAccountStatsConfigMigrationPG(t *testing.T) {
-	f := newStatsFixture(t)
-	v, e := postgres.Rollback(t.Context(), f.dsn, "../../../migrations")
+	// The historical 97 contract must execute independently of runtime tables.
+	history97 := t.TempDir()
+	entries, err := os.ReadDir("../../../migrations")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".sql") || len(entry.Name()) < 5 || entry.Name()[:5] > "00097" {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join("../../../migrations", entry.Name()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = os.WriteFile(filepath.Join(history97, entry.Name()), raw, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	f := newStatsFixtureAt(t, history97, 97)
+	v, e := postgres.Rollback(t.Context(), f.dsn, history97)
 	if e != nil || v != 96 {
 		t.Fatal(v, e)
 	}
-	v, e = postgres.Migrate(t.Context(), f.dsn, "../../../migrations")
+	v, e = postgres.Migrate(t.Context(), f.dsn, history97)
 	if e != nil || v != 97 {
 		t.Fatal(v, e)
 	}
 	f.save(t, f.input(), "history")
-	_, e = postgres.Rollback(t.Context(), f.dsn, "../../../migrations")
+	_, e = postgres.Rollback(t.Context(), f.dsn, history97)
 	if e == nil {
 		t.Fatal("history downgrade allowed")
 	}

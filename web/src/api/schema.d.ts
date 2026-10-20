@@ -1922,6 +1922,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/indexers/{indexer_id}/account-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Read persisted global source account statistics
+         * @description Current active administrator session only. Reads persisted observations without collecting, reserving source budget, or contacting a site. Missing configuration returns observation null; missing samples remain unknown.
+         */
+        get: operations["readSiteAccountStats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/indexers/{indexer_id}/account-stats/config": {
         parameters: {
             query?: never;
@@ -2172,6 +2194,46 @@ export interface components {
             expected_version: number;
             /** Format: int64 */
             expected_source_version: number;
+        };
+        SiteAccountStatsCurrent: {
+            observation: components["schemas"]["SiteAccountStatsObservation"] | null;
+        };
+        SiteAccountStatsObservation: {
+            config: components["schemas"]["SiteAccountStatsConfig"];
+            stats: components["schemas"]["SiteAccountStats"] | null;
+            /** Format: date-time */
+            observed_at: string | null;
+            /** Format: int64 */
+            sample_config_version: number;
+            /** Format: int64 */
+            sample_source_version: number;
+            /** Format: date-time */
+            last_attempt_at: string | null;
+            /** @enum {string} */
+            collection_state: "never_collected" | "queued" | "running" | "succeeded" | "failed" | "review_required" | "disabled";
+            /** @enum {string} */
+            failure_code?: "auth_required" | "blocked" | "rate_limited" | "bad_response" | "unavailable" | "interrupted";
+            stale: boolean;
+        };
+        SiteAccountStats: {
+            account_id: string;
+            uploaded: components["schemas"]["SiteAccountStatsAmount"] | null;
+            downloaded: components["schemas"]["SiteAccountStatsAmount"] | null;
+            ratio: components["schemas"]["SiteAccountStatsRatio"];
+            bonus: string | null;
+        };
+        /** @description Rounded source display with original decimal precision and unit; never an exact byte counter. */
+        SiteAccountStatsAmount: {
+            value: string;
+            /** @enum {string} */
+            unit: "KB" | "MB" | "GB" | "TB" | "PB";
+            /** @enum {boolean} */
+            approximate: true;
+        };
+        SiteAccountStatsRatio: {
+            /** @enum {string} */
+            state: "finite" | "infinite" | "undefined" | "unknown";
+            value?: string;
         };
         /** @description Saved configuration intent only, not proof of collected statistics or download success. */
         SiteAccountStatsConfig: {
@@ -10134,6 +10196,73 @@ export interface operations {
                 };
             };
             /** @description Ranking temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSiteAccountStats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted observation or explicit null */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteAccountStatsCurrent"];
+                };
+            };
+            /** @description Invalid statistics request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Statistics access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Source not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Statistics temporarily unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;

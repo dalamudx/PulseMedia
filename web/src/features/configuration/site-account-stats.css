@@ -1,0 +1,13 @@
+.site-account-stats {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  border-top: 1px solid var(--border);
+  padding-top: .75rem;
+}
+.site-account-stats button { min-height: 44px; min-width: 44px; }
+.site-account-stats-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; justify-content: space-between; }
+.site-account-stats p { margin: .5rem 0; overflow-wrap: anywhere; }
+.site-account-stats dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin: .75rem 0; }
+.site-account-stats dt { color: var(--text-secondary); }
+.site-account-stats dd { margin: .25rem 0 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }

@@ -421,6 +421,14 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var subtitleSvc *subtitle.Service
 	var doubanWishRepo ports.DoubanWishSyncRepository
 	var doubanWishSvc *watchlist.SyncService
+	var statsRepo ports.SiteAccountStatsRepository
+	var siteStatsSvc mediaSidecarExecutor
+	if a.dbPool != nil {
+		statsRepo = postgres.NewSiteAccountStatsStore(a.dbPool, a.idgen, a.indexerDecoder)
+	}
+	if queue != nil && len(masterKey) > 0 {
+		siteStatsSvc = siteusecase.NewAccountStatsCollector(statsRepo, &siteAccountStatsClientBuilder{httpClient: a.metadataHTTPClient, clock: a.clock})
+	}
 	if queue != nil && len(masterKey) > 0 {
 		doubanWishRepo = postgres.NewDoubanWishSyncStore(a.dbPool, a.idgen)
 		creator := &doubanWishSubscriptionCreator{pool: a.dbPool, ids: a.idgen, provider: metaProvider, episodes: metaProvider, protector: crypto.NewSecretProtector(masterKey)}
@@ -436,6 +444,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
 	serverHandler.SetDoubanSyncConfigService(watchlist.NewConfigService(postgres.NewDoubanSyncConfigStore(a.dbPool, a.idgen)))
 	serverHandler.SetSiteAccountStatsConfigService(siteusecase.NewAccountStatsConfigService(postgres.NewSiteAccountStatsConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
+	serverHandler.SetSiteAccountStatsService(siteusecase.NewAccountStatsReader(statsRepo))
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
 	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient, douban.WithCredentialSource(doubanCredentials(settingsSvc)), douban.WithClock(a.clock)), metaProvider, a.clock))
 	serverHandler.SetTokenManagementService(auth.NewTokenManagementService(postgres.NewTokenManagementStore(a.dbPool, a.idgen), crypto.ReadTokenIssuer{}, a.clock))
@@ -521,6 +530,15 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	mediaSidecarDone := make(chan struct{})
 	mediaSubtitleDone := make(chan struct{})
 	doubanWishDone := make(chan struct{})
+	siteStatsDone := make(chan struct{})
+	if siteStatsSvc != nil {
+		go func() {
+			defer close(siteStatsDone)
+			a.runSiteAccountStatsWorker(workerCtx, queue, statsRepo, siteStatsSvc)
+		}()
+	} else {
+		close(siteStatsDone)
+	}
 	if doubanWishSvc != nil {
 		go func() {
 			defer close(doubanWishDone)
@@ -598,7 +616,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		cancelWorker()
 		budget, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, outboxDone, searchDone, libraryDone)
+		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, siteStatsDone, outboxDone, searchDone, libraryDone)
 	}
 	defer stopWorker()
 

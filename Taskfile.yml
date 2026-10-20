@@ -245,6 +245,16 @@ tasks:
     cmds:
       - bash scripts/verify_m8_subtitle.sh
 
+  test-m8-site-account-stats-ui:
+    desc: Verify persisted account statistics cards with Cookie, native NexusPHP, PG18 and isolated Chrome
+    cmds:
+      - bash scripts/verify_m8_site_account_stats_ui.sh
+
+  test-m8-site-account-stats-runtime:
+    desc: Verify periodic persisted account observations with Cookie, native NexusPHP and PG18
+    cmds:
+      - bash scripts/verify_m8_site_account_stats_runtime.sh
+
   test-m8-site-account-stats-config:
     desc: Verify administrator account statistics settings and original receipts with Cookie and PG18
     cmds:

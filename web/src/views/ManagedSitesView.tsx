@@ -3,6 +3,7 @@ import { Loader2, Plus, RefreshCw, Trash2, Zap } from "lucide-react";
 import { api, type paths } from "@/api/client";
 import { useAuth } from "@/features/auth/AuthContext";
 import { RSSConfigEditor } from "@/features/configuration/RSSConfigEditor";
+import { SiteAccountStatsPanel } from "@/features/configuration/SiteAccountStatsPanel";
 import { useActivityInvalidation } from "@/features/configuration/useActivityInvalidation";
 import { parseSitePending, serializeSitePending, sitePendingStorageKey, type SitePendingRecord } from "@/features/configuration/managedSiteRecovery";
 import {createSiteProbeBatch, type SiteProbeBatchSnapshot, type SiteProbeEntry} from "@/features/configuration/siteProbeBatch";
@@ -398,6 +399,7 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
           <button type="button" className="btn-sm btn-primary" style={buttonStyle} disabled={mutationBlocked} onClick={() => void probe([site.id])}>测试连接</button>
           <button type="button" className="btn-sm btn-danger" style={buttonStyle} disabled={mutationBlocked} aria-label={`删除站点 ${site.name}`} onClick={() => { if (window.confirm(`确定删除站点「${site.name}」（配置版本 ${site.config_version}）？`)) void sendCommand({ action: "delete", id: site.id, version: site.config_version }); }}><Trash2 size={13} /><span>删除</span></button>
         </div>}
+        <SiteAccountStatsPanel sourceID={site.id} sourceVersion={site.config_version} />
       </div>)}</div>}
     </section>
     {admin && selectedRSS && !pending && <RSSConfigEditor key={selectedRSS.id} id={selectedRSS.id} name={selectedRSS.name} onClose={() => setRSSID(null)} />}

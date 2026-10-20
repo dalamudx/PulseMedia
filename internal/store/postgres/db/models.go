@@ -1468,6 +1468,21 @@ type Setting struct {
 	UpdatedAt pgtype.Timestamptz
 }
 
+type SiteAccountStatsAttempt struct {
+	JobID          uuid.UUID
+	IndexerID      uuid.UUID
+	ConfigVersion  int64
+	SourceVersion  int64
+	State          string
+	ExecutionOwner pgtype.Text
+	ExecutionToken pgtype.Int8
+	CreatedAt      pgtype.Timestamptz
+	StartedAt      pgtype.Timestamptz
+	FinishedAt     pgtype.Timestamptz
+	Sample         []byte
+	FailureCode    string
+}
+
 type SiteAccountStatsConfig struct {
 	IndexerID           uuid.UUID
 	ExpectedAccountID   string
@@ -1488,6 +1503,15 @@ type SiteAccountStatsConfigReceipt struct {
 	RequestHash string
 	Input       []byte
 	Snapshot    []byte
+}
+
+type SiteAccountStatsSchedule struct {
+	IndexerID     uuid.UUID
+	ConfigVersion int64
+	NextDueAt     pgtype.Timestamptz
+	ActiveJobID   pgtype.UUID
+	State         string
+	UpdatedAt     pgtype.Timestamptz
 }
 
 type Subscription struct {
