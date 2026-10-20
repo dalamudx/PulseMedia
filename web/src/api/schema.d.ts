@@ -1868,6 +1868,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/discover/douban": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a Douban ranking list as standard media items */
+        get: operations["getDoubanRanking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sync/douban": {
         parameters: {
             query?: never;
@@ -3892,6 +3909,25 @@ export interface components {
         };
         DiscoverFeedResponse: {
             results: components["schemas"]["DiscoverMediaItem"][];
+        };
+        DoubanRankingItem: {
+            douban_id: string;
+            /**
+             * Format: int64
+             * @description Present only when exactly one TMDB candidate matched title, year and media type. Items without it cannot be subscribed in one click.
+             */
+            tmdb_id?: number;
+            title: string;
+            original_title?: string;
+            year?: number;
+            rating?: number;
+            /** @description HTTPS image on a Douban image host, or omitted. */
+            poster_url?: string;
+            /** @enum {string} */
+            media_type: "movie" | "tv";
+        };
+        DoubanRankingResponse: {
+            results: components["schemas"]["DoubanRankingItem"][];
         };
         DoubanSyncResponse: {
             created_count?: number;
@@ -9702,6 +9738,66 @@ export interface operations {
                 };
             };
             /** @description Metadata feed temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getDoubanRanking: {
+        parameters: {
+            query: {
+                list: "hot_movie" | "hot_tv" | "weekly_best" | "top250";
+                /** @description Only top250 has more than one page. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ranking items */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DoubanRankingResponse"];
+                };
+            };
+            /** @description Invalid ranking list or page */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata read access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Ranking temporarily unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;

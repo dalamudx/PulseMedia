@@ -16,9 +16,10 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/nexusphp"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/torznab"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/universal_rss"
+	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/douban"
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/tmdb"
-	"github.com/dalamudx/PulseMedia/internal/adapter/torrent"
 	"github.com/dalamudx/PulseMedia/internal/adapter/tmdbartwork"
+	"github.com/dalamudx/PulseMedia/internal/adapter/torrent"
 	"github.com/dalamudx/PulseMedia/internal/config"
 	"github.com/dalamudx/PulseMedia/internal/httpapi"
 	"github.com/dalamudx/PulseMedia/internal/platform/budget"
@@ -46,6 +47,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/metadatasidecar"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
 	"github.com/dalamudx/PulseMedia/internal/usecase/policy"
+	"github.com/dalamudx/PulseMedia/internal/usecase/ranking"
 	usecaseScheduler "github.com/dalamudx/PulseMedia/internal/usecase/scheduler"
 	usecaseSearch "github.com/dalamudx/PulseMedia/internal/usecase/search"
 	"github.com/dalamudx/PulseMedia/internal/usecase/settings"
@@ -409,6 +411,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var reuseSvc *transfer.LibraryReuseService
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
+	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient), metaProvider, a.clock))
 	serverHandler.SetTokenManagementService(auth.NewTokenManagementService(postgres.NewTokenManagementStore(a.dbPool, a.idgen), crypto.ReadTokenIssuer{}, a.clock))
 	serverHandler.SetNotificationDispatcher(notifySvc)
 	serverHandler.SetFileMappingService(mediausecase.NewFileMappingService(postgres.NewFileMappingStore(a.dbPool, a.idgen)))

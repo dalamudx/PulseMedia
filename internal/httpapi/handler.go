@@ -78,6 +78,7 @@ type ServerHandler struct {
 	reuseSvc                 *transfer.LibraryReuseService
 	metaProvider             ports.MetadataProvider
 	metadataDetailSvc        metadataDetailApplication
+	doubanRankingSvc         doubanRankingApplication
 	localMediaReader         ports.LocalMediaSearchReader
 	subSvc                   *subscription.Service
 	subCreationSvc           subscriptionCreationApplication

@@ -4467,6 +4467,57 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/discover/douban:
+    get:
+      summary: Get a Douban ranking list as standard media items
+      operationId: getDoubanRanking
+      parameters:
+        - name: list
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [hot_movie, hot_tv, weekly_best, top250]
+        - name: page
+          in: query
+          required: false
+          description: Only top250 has more than one page.
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+            maximum: 13
+      responses:
+        '200':
+          description: Ranking items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoubanRankingResponse'
+        '400':
+          description: Invalid ranking list or page
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Metadata read access denied
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Ranking temporarily unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/sync/douban:
     post:
       summary: Sync user wishlist from Douban into PulseMedia subscriptions
@@ -7155,6 +7206,40 @@ components:
           items:
             $ref: '#/components/schemas/DiscoverMediaItem'
 
+
+    DoubanRankingItem:
+      type: object
+      required: [douban_id, title, media_type]
+      properties:
+        douban_id:
+          type: string
+        tmdb_id:
+          type: integer
+          format: int64
+          description: Present only when exactly one TMDB candidate matched title, year and media type. Items without it cannot be subscribed in one click.
+        title:
+          type: string
+        original_title:
+          type: string
+        year:
+          type: integer
+        rating:
+          type: number
+        poster_url:
+          type: string
+          description: HTTPS image on a Douban image host, or omitted.
+        media_type:
+          type: string
+          enum: [movie, tv]
+
+    DoubanRankingResponse:
+      type: object
+      required: [results]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DoubanRankingItem'
 
     DoubanSyncResponse:
       type: object

@@ -97,7 +97,7 @@ func TestFullM7EcosystemIntegration(t *testing.T) {
 	}
 
 	nfoBytes, err := media.GenerateMovieNFO(movieMeta)
-	if err != nil || !strings.Contains(string(nfoBytes), "<uniqueid>550</uniqueid>") {
+	if err != nil || !strings.Contains(string(nfoBytes), `<uniqueid type="tmdb" default="true">550</uniqueid>`) {
 		t.Fatalf("generate nfo failed: %v", err)
 	}
 

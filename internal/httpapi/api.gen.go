@@ -214,6 +214,24 @@ func (e DiscoverMediaItemMediaType) Valid() bool {
 	}
 }
 
+// Defines values for DoubanRankingItemMediaType.
+const (
+	DoubanRankingItemMediaTypeMovie DoubanRankingItemMediaType = "movie"
+	DoubanRankingItemMediaTypeTv    DoubanRankingItemMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the DoubanRankingItemMediaType enum.
+func (e DoubanRankingItemMediaType) Valid() bool {
+	switch e {
+	case DoubanRankingItemMediaTypeMovie:
+		return true
+	case DoubanRankingItemMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for EpisodeCandidateReviewReceiptStatus.
 const (
 	EpisodeCandidateReviewReceiptStatusReviewedNotExecutable EpisodeCandidateReviewReceiptStatus = "reviewed_not_executable"
@@ -1741,6 +1759,30 @@ func (e GetDiscoverFeedParamsCategory) Valid() bool {
 	}
 }
 
+// Defines values for GetDoubanRankingParamsList.
+const (
+	HotMovie   GetDoubanRankingParamsList = "hot_movie"
+	HotTv      GetDoubanRankingParamsList = "hot_tv"
+	Top250     GetDoubanRankingParamsList = "top250"
+	WeeklyBest GetDoubanRankingParamsList = "weekly_best"
+)
+
+// Valid indicates whether the value is a known member of the GetDoubanRankingParamsList enum.
+func (e GetDoubanRankingParamsList) Valid() bool {
+	switch e {
+	case HotMovie:
+		return true
+	case HotTv:
+		return true
+	case Top250:
+		return true
+	case WeeklyBest:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for GetIndexerCommandReceiptParamsAction.
 const (
 	GetIndexerCommandReceiptParamsActionCreate GetIndexerCommandReceiptParamsAction = "create"
@@ -2377,6 +2419,30 @@ type DiscoverMediaItem struct {
 
 // DiscoverMediaItemMediaType Client password. On update, an empty value preserves the existing encrypted password.
 type DiscoverMediaItemMediaType string
+
+// DoubanRankingItem defines model for DoubanRankingItem.
+type DoubanRankingItem struct {
+	DoubanId      string                     `json:"douban_id"`
+	MediaType     DoubanRankingItemMediaType `json:"media_type"`
+	OriginalTitle *string                    `json:"original_title,omitempty"`
+
+	// PosterUrl HTTPS image on a Douban image host, or omitted.
+	PosterUrl *string  `json:"poster_url,omitempty"`
+	Rating    *float32 `json:"rating,omitempty"`
+	Title     string   `json:"title"`
+
+	// TmdbId Present only when exactly one TMDB candidate matched title, year and media type. Items without it cannot be subscribed in one click.
+	TmdbId *int64 `json:"tmdb_id,omitempty"`
+	Year   *int   `json:"year,omitempty"`
+}
+
+// DoubanRankingItemMediaType defines model for DoubanRankingItem.MediaType.
+type DoubanRankingItemMediaType string
+
+// DoubanRankingResponse defines model for DoubanRankingResponse.
+type DoubanRankingResponse struct {
+	Results []DoubanRankingItem `json:"results"`
+}
 
 // DoubanSyncResponse defines model for DoubanSyncResponse.
 type DoubanSyncResponse struct {
@@ -4228,6 +4294,17 @@ type GetDiscoverFeedParams struct {
 // GetDiscoverFeedParamsCategory defines parameters for GetDiscoverFeed.
 type GetDiscoverFeedParamsCategory string
 
+// GetDoubanRankingParams defines parameters for GetDoubanRanking.
+type GetDoubanRankingParams struct {
+	List GetDoubanRankingParamsList `form:"list" json:"list"`
+
+	// Page Only top250 has more than one page.
+	Page *int `form:"page,omitempty" json:"page,omitempty"`
+}
+
+// GetDoubanRankingParamsList defines parameters for GetDoubanRanking.
+type GetDoubanRankingParamsList string
+
 // ConfirmCompleteTVOrganizationJSONBody defines parameters for ConfirmCompleteTVOrganization.
 type ConfirmCompleteTVOrganizationJSONBody struct {
 	OperationId   openapi_types.UUID `json:"operation_id"`
@@ -5022,6 +5099,9 @@ type ServerInterface interface {
 	// GetDiscoverFeed Get discover feeds from TMDB
 	// (GET /api/v1/discover)
 	GetDiscoverFeed(w http.ResponseWriter, r *http.Request, params GetDiscoverFeedParams)
+	// GetDoubanRanking Get a Douban ranking list as standard media items
+	// (GET /api/v1/discover/douban)
+	GetDoubanRanking(w http.ResponseWriter, r *http.Request, params GetDoubanRankingParams)
 	// ListDownloadClients List configured download clients
 	// (GET /api/v1/download-clients)
 	ListDownloadClients(w http.ResponseWriter, r *http.Request)
@@ -5705,6 +5785,52 @@ func (siw *ServerInterfaceWrapper) GetDiscoverFeed(w http.ResponseWriter, r *htt
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetDiscoverFeed(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetDoubanRanking operation middleware
+func (siw *ServerInterfaceWrapper) GetDoubanRanking(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetDoubanRankingParams
+
+	// ------------- Required query parameter "list" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "list", r.URL.Query(), &params.List, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "list"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "list", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "page", r.URL.Query(), &params.Page, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "page"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetDoubanRanking(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -10026,6 +10152,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/tv/{id}/seasons/{season}", wrapper.GetTMDBSeasonDetails)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/tv/{id}", wrapper.GetTMDBTVDetails)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover", wrapper.GetDiscoverFeed)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover/douban", wrapper.GetDoubanRanking)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/sync/douban", wrapper.SyncDoubanWishlist)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/indexers/{id}/checkin", wrapper.CheckinIndexer)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/media/scrape", wrapper.RescrapeMedia)
@@ -11033,6 +11160,84 @@ func (response GetDiscoverFeed403ApplicationProblemPlusJSONResponse) VisitGetDis
 type GetDiscoverFeed503ApplicationProblemPlusJSONResponse ErrorResponse
 
 func (response GetDiscoverFeed503ApplicationProblemPlusJSONResponse) VisitGetDiscoverFeedResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDoubanRankingRequestObject struct {
+	Params GetDoubanRankingParams
+}
+
+type GetDoubanRankingResponseObject interface {
+	VisitGetDoubanRankingResponse(w http.ResponseWriter) error
+}
+
+type GetDoubanRanking200JSONResponse DoubanRankingResponse
+
+func (response GetDoubanRanking200JSONResponse) VisitGetDoubanRankingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDoubanRanking400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDoubanRanking400ApplicationProblemPlusJSONResponse) VisitGetDoubanRankingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDoubanRanking401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDoubanRanking401ApplicationProblemPlusJSONResponse) VisitGetDoubanRankingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDoubanRanking403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDoubanRanking403ApplicationProblemPlusJSONResponse) VisitGetDoubanRankingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDoubanRanking503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDoubanRanking503ApplicationProblemPlusJSONResponse) VisitGetDoubanRankingResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -23061,6 +23266,9 @@ type StrictServerInterface interface {
 	// GetDiscoverFeed Get discover feeds from TMDB
 	// (GET /api/v1/discover)
 	GetDiscoverFeed(ctx context.Context, request GetDiscoverFeedRequestObject) (GetDiscoverFeedResponseObject, error)
+	// GetDoubanRanking Get a Douban ranking list as standard media items
+	// (GET /api/v1/discover/douban)
+	GetDoubanRanking(ctx context.Context, request GetDoubanRankingRequestObject) (GetDoubanRankingResponseObject, error)
 	// ListDownloadClients List configured download clients
 	// (GET /api/v1/download-clients)
 	ListDownloadClients(ctx context.Context, request ListDownloadClientsRequestObject) (ListDownloadClientsResponseObject, error)
@@ -23789,6 +23997,32 @@ func (sh *strictHandler) GetDiscoverFeed(w http.ResponseWriter, r *http.Request,
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetDiscoverFeedResponseObject); ok {
 		if err := validResponse.VisitGetDiscoverFeedResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetDoubanRanking operation middleware
+func (sh *strictHandler) GetDoubanRanking(w http.ResponseWriter, r *http.Request, params GetDoubanRankingParams) {
+	var request GetDoubanRankingRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDoubanRanking(ctx, request.(GetDoubanRankingRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDoubanRanking")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetDoubanRankingResponseObject); ok {
+		if err := validResponse.VisitGetDoubanRankingResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
