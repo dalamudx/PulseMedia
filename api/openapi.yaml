@@ -4581,6 +4581,140 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/sync/douban/config:
+    get:
+      operationId: readDoubanSyncConfig
+      summary: Read the current user's persisted Douban configuration
+      responses:
+        '200':
+          description: Configuration persistence only; not synchronization success
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DoubanSyncConfigCurrent'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+    put:
+      operationId: saveDoubanSyncConfig
+      summary: Save configuration without starting synchronization
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DoubanSyncConfigInput'}
+      responses:
+        '200':
+          description: Configuration persistence only; not synchronization success
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DoubanSyncConfigReceipt'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/sync/douban/config/commands/{command_key}:
+    get:
+      operationId: readDoubanSyncConfigReceipt
+      summary: Read the original configuration receipt without writing
+      parameters:
+        - name: command_key
+          in: path
+          required: true
+          schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}
+      responses:
+        '200':
+          description: Configuration persistence only; not synchronization success
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DoubanSyncConfigReceipt'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
   /api/v1/sync/douban:
     post:
       summary: Sync user wishlist from Douban into PulseMedia subscriptions
@@ -5003,6 +5137,46 @@ components:
         application/json:
           schema: {$ref: '#/components/schemas/ErrorResponse'}
   schemas:
+    DoubanSyncConfigInput:
+      type: object
+      additionalProperties: false
+      required: [douban_uid, enabled, expected_version]
+      properties:
+        douban_uid: {type: string, minLength: 1, maxLength: 64, pattern: '^[A-Za-z0-9][A-Za-z0-9_.-]*$'}
+        enabled: {type: boolean}
+        expected_version: {type: integer, format: int64, minimum: 0}
+        movie_root_id: {type: string, format: uuid}
+        tv_root_id: {type: string, format: uuid}
+    DoubanSyncConfig:
+      type: object
+      additionalProperties: false
+      required: [id, owner_id, douban_uid, enabled, version, created_at, updated_at]
+      properties:
+        id: {type: string, format: uuid, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        owner_id: {type: string, format: uuid, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        douban_uid: {type: string}
+        enabled: {type: boolean}
+        movie_root_id: {type: string, format: uuid}
+        tv_root_id: {type: string, format: uuid}
+        version: {type: integer, format: int64, minimum: 1, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        created_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        updated_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+    DoubanSyncConfigCurrent:
+      type: object
+      additionalProperties: false
+      required: [config]
+      properties:
+        config:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/DoubanSyncConfig'}
+    DoubanSyncConfigReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, config]
+      properties:
+        command_key: {type: string}
+        config: {$ref: '#/components/schemas/DoubanSyncConfig'}
     LibraryReuseTarget:
       type: object
       additionalProperties: false

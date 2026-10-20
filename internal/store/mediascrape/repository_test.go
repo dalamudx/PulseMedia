@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -25,9 +27,14 @@ type scrapeFixture struct {
 
 func newScrapeFixture(t *testing.T) scrapeFixture {
 	t.Helper()
+	return newScrapeFixtureAt(t, "../../../migrations", postgres.CurrentMigrationVersion)
+}
+
+func newScrapeFixtureAt(t *testing.T, migrationsDir string, expectedVersion int64) scrapeFixture {
+	t.Helper()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	version, err := postgres.Migrate(t.Context(), dsn, "../../../migrations")
-	if err != nil || version != postgres.CurrentMigrationVersion {
+	version, err := postgres.Migrate(t.Context(), dsn, migrationsDir)
+	if err != nil || version != expectedVersion {
 		t.Fatalf("migrate: version=%d err=%v", version, err)
 	}
 	cfg, err := pgxpool.ParseConfig(dsn)
@@ -477,19 +484,42 @@ func TestScrapeRevocationAfterSubmissionLockAndBeforeRead(t *testing.T) {
 	}
 }
 
-func TestScrapeSchema94RoundTripPreservesImportedHistory(t *testing.T) {
-	f := newScrapeFixture(t)
-	if postgres.CurrentMigrationVersion != 94 {
-		t.Skip("roundtrip is specific to migration94")
+// Pin this historical contract to its DDL rather than silently skipping it
+// whenever current App development adds a later migration.
+func scrapeSchema94Migrations(t *testing.T) string {
+	t.Helper()
+	dir := t.TempDir()
+	entries, err := os.ReadDir("../../../migrations")
+	if err != nil {
+		t.Fatal(err)
 	}
+	for _, entry := range entries {
+		name := entry.Name()
+		if entry.IsDir() || !strings.HasSuffix(name, ".sql") || len(name) < 6 || name[:5] > "00094" {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join("../../../migrations", name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, name), raw, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return dir
+}
+
+func TestScrapeSchema94RoundTripPreservesImportedHistory(t *testing.T) {
+	migrationsDir := scrapeSchema94Migrations(t)
+	f := newScrapeFixtureAt(t, migrationsDir, 94)
 	before := f.graph(t)
 	dsn := f.pool.Config().ConnConfig.ConnString()
-	v, err := postgres.Rollback(t.Context(), dsn, "../../../migrations")
+	v, err := postgres.Rollback(t.Context(), dsn, migrationsDir)
 	if err != nil || v != 93 {
 		t.Fatalf("rollback94: %d %v", v, err)
 	}
-	v, err = postgres.Migrate(t.Context(), dsn, "../../../migrations")
-	if err != nil || v != postgres.CurrentMigrationVersion {
+	v, err = postgres.Migrate(t.Context(), dsn, migrationsDir)
+	if err != nil || v != 94 {
 		t.Fatalf("reapply94: %d %v", v, err)
 	}
 	if f.graph(t) != before {
@@ -500,10 +530,10 @@ func TestScrapeSchema94RoundTripPreservesImportedHistory(t *testing.T) {
 	}
 	f.start(t, "preserved-history")
 	before = f.graph(t)
-	if _, err = postgres.Rollback(t.Context(), dsn, "../../../migrations"); err == nil {
+	if _, err = postgres.Rollback(t.Context(), dsn, migrationsDir); err == nil {
 		t.Fatal("downgrade dropped original-key receipts")
 	}
-	if err = postgres.CheckSchemaVersion(t.Context(), f.pool, postgres.CurrentMigrationVersion); err != nil {
+	if err = postgres.CheckSchemaVersion(t.Context(), f.pool, 94); err != nil {
 		t.Fatal(err)
 	}
 	if f.graph(t) != before {

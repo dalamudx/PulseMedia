@@ -2471,6 +2471,39 @@ type DoubanRankingResponse struct {
 	Results []DoubanRankingItem `json:"results"`
 }
 
+// DoubanSyncConfig defines model for DoubanSyncConfig.
+type DoubanSyncConfig struct {
+	CreatedAt   time.Time           `json:"created_at"`
+	DoubanUid   string              `json:"douban_uid"`
+	Enabled     bool                `json:"enabled"`
+	Id          openapi_types.UUID  `json:"id"`
+	MovieRootId *openapi_types.UUID `json:"movie_root_id,omitempty"`
+	OwnerId     openapi_types.UUID  `json:"owner_id"`
+	TvRootId    *openapi_types.UUID `json:"tv_root_id,omitempty"`
+	UpdatedAt   time.Time           `json:"updated_at"`
+	Version     int64               `json:"version"`
+}
+
+// DoubanSyncConfigCurrent defines model for DoubanSyncConfigCurrent.
+type DoubanSyncConfigCurrent struct {
+	Config *DoubanSyncConfig `json:"config"`
+}
+
+// DoubanSyncConfigInput defines model for DoubanSyncConfigInput.
+type DoubanSyncConfigInput struct {
+	DoubanUid       string              `json:"douban_uid"`
+	Enabled         bool                `json:"enabled"`
+	ExpectedVersion int64               `json:"expected_version"`
+	MovieRootId     *openapi_types.UUID `json:"movie_root_id,omitempty"`
+	TvRootId        *openapi_types.UUID `json:"tv_root_id,omitempty"`
+}
+
+// DoubanSyncConfigReceipt defines model for DoubanSyncConfigReceipt.
+type DoubanSyncConfigReceipt struct {
+	CommandKey string           `json:"command_key"`
+	Config     DoubanSyncConfig `json:"config"`
+}
+
 // DoubanSyncResponse defines model for DoubanSyncResponse.
 type DoubanSyncResponse struct {
 	CreatedCount *int    `json:"created_count,omitempty"`
@@ -4799,6 +4832,11 @@ type SyncDoubanWishlistJSONBody struct {
 	DoubanUid string `json:"douban_uid"`
 }
 
+// SaveDoubanSyncConfigParams defines parameters for SaveDoubanSyncConfig.
+type SaveDoubanSyncConfigParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
 // StreamSystemLogsParams defines parameters for StreamSystemLogs.
 type StreamSystemLogsParams struct {
 	// Level Minimum log level filter (DEBUG, INFO, WARN, ERROR).
@@ -5029,6 +5067,9 @@ type ConfirmSubscriptionUpgradeSendJSONRequestBody = UpgradeSendCommand
 
 // SyncDoubanWishlistJSONRequestBody defines body for SyncDoubanWishlist for application/json ContentType.
 type SyncDoubanWishlistJSONRequestBody SyncDoubanWishlistJSONBody
+
+// SaveDoubanSyncConfigJSONRequestBody defines body for SaveDoubanSyncConfig for application/json ContentType.
+type SaveDoubanSyncConfigJSONRequestBody = DoubanSyncConfigInput
 
 // CommitOriginalTransferRecoveryJSONRequestBody defines body for CommitOriginalTransferRecovery for application/json ContentType.
 type CommitOriginalTransferRecoveryJSONRequestBody CommitOriginalTransferRecoveryJSONBody
@@ -5530,6 +5571,15 @@ type ServerInterface interface {
 	// SyncDoubanWishlist Sync user wishlist from Douban into PulseMedia subscriptions
 	// (POST /api/v1/sync/douban)
 	SyncDoubanWishlist(w http.ResponseWriter, r *http.Request)
+	// ReadDoubanSyncConfig Read the current user's persisted Douban configuration
+	// (GET /api/v1/sync/douban/config)
+	ReadDoubanSyncConfig(w http.ResponseWriter, r *http.Request)
+	// SaveDoubanSyncConfig Save configuration without starting synchronization
+	// (PUT /api/v1/sync/douban/config)
+	SaveDoubanSyncConfig(w http.ResponseWriter, r *http.Request, params SaveDoubanSyncConfigParams)
+	// ReadDoubanSyncConfigReceipt Read the original configuration receipt without writing
+	// (GET /api/v1/sync/douban/config/commands/{command_key})
+	ReadDoubanSyncConfigReceipt(w http.ResponseWriter, r *http.Request, commandKey string)
 	// StreamSystemLogs Real-time system log stream
 	// (GET /api/v1/system/logs)
 	StreamSystemLogs(w http.ResponseWriter, r *http.Request, params StreamSystemLogsParams)
@@ -9849,6 +9899,91 @@ func (siw *ServerInterfaceWrapper) SyncDoubanWishlist(w http.ResponseWriter, r *
 	handler.ServeHTTP(w, r)
 }
 
+// ReadDoubanSyncConfig operation middleware
+func (siw *ServerInterfaceWrapper) ReadDoubanSyncConfig(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadDoubanSyncConfig(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SaveDoubanSyncConfig operation middleware
+func (siw *ServerInterfaceWrapper) SaveDoubanSyncConfig(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SaveDoubanSyncConfigParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SaveDoubanSyncConfig(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadDoubanSyncConfigReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadDoubanSyncConfigReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadDoubanSyncConfigReceipt(w, r, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // StreamSystemLogs operation middleware
 func (siw *ServerInterfaceWrapper) StreamSystemLogs(w http.ResponseWriter, r *http.Request) {
 
@@ -10366,6 +10501,9 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/tv/{id}", wrapper.GetTMDBTVDetails)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover", wrapper.GetDiscoverFeed)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover/douban", wrapper.GetDoubanRanking)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/sync/douban/config", wrapper.ReadDoubanSyncConfig)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/sync/douban/config", wrapper.SaveDoubanSyncConfig)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/sync/douban/config/commands/{command_key}", wrapper.ReadDoubanSyncConfigReceipt)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/sync/douban", wrapper.SyncDoubanWishlist)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/indexers/{id}/checkin", wrapper.CheckinIndexer)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/scrape", wrapper.ReadMediaScrape)
@@ -22980,6 +23118,324 @@ func (response SyncDoubanWishlist503ApplicationProblemPlusJSONResponse) VisitSyn
 	return err
 }
 
+type ReadDoubanSyncConfigRequestObject struct {
+}
+
+type ReadDoubanSyncConfigResponseObject interface {
+	VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error
+}
+
+type ReadDoubanSyncConfig200JSONResponse DoubanSyncConfigCurrent
+
+func (response ReadDoubanSyncConfig200JSONResponse) VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfig400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfig400ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfig401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfig401ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfig403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfig403ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfig404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfig404ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfig409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfig409ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfig503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfig503ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveDoubanSyncConfigRequestObject struct {
+	Params SaveDoubanSyncConfigParams
+	Body   *SaveDoubanSyncConfigJSONRequestBody
+}
+
+type SaveDoubanSyncConfigResponseObject interface {
+	VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error
+}
+
+type SaveDoubanSyncConfig200JSONResponse DoubanSyncConfigReceipt
+
+func (response SaveDoubanSyncConfig200JSONResponse) VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveDoubanSyncConfig400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveDoubanSyncConfig400ApplicationProblemPlusJSONResponse) VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveDoubanSyncConfig401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveDoubanSyncConfig401ApplicationProblemPlusJSONResponse) VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveDoubanSyncConfig403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveDoubanSyncConfig403ApplicationProblemPlusJSONResponse) VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveDoubanSyncConfig404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveDoubanSyncConfig404ApplicationProblemPlusJSONResponse) VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveDoubanSyncConfig409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveDoubanSyncConfig409ApplicationProblemPlusJSONResponse) VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveDoubanSyncConfig503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveDoubanSyncConfig503ApplicationProblemPlusJSONResponse) VisitSaveDoubanSyncConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfigReceiptRequestObject struct {
+	CommandKey string `json:"command_key"`
+}
+
+type ReadDoubanSyncConfigReceiptResponseObject interface {
+	VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadDoubanSyncConfigReceipt200JSONResponse DoubanSyncConfigReceipt
+
+func (response ReadDoubanSyncConfigReceipt200JSONResponse) VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfigReceipt400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfigReceipt400ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfigReceipt401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfigReceipt401ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfigReceipt403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfigReceipt403ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfigReceipt404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfigReceipt404ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfigReceipt409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfigReceipt409ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadDoubanSyncConfigReceipt503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadDoubanSyncConfigReceipt503ApplicationProblemPlusJSONResponse) VisitReadDoubanSyncConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type StreamSystemLogsRequestObject struct {
 	Params StreamSystemLogsParams
 }
@@ -24083,6 +24539,15 @@ type StrictServerInterface interface {
 	// SyncDoubanWishlist Sync user wishlist from Douban into PulseMedia subscriptions
 	// (POST /api/v1/sync/douban)
 	SyncDoubanWishlist(ctx context.Context, request SyncDoubanWishlistRequestObject) (SyncDoubanWishlistResponseObject, error)
+	// ReadDoubanSyncConfig Read the current user's persisted Douban configuration
+	// (GET /api/v1/sync/douban/config)
+	ReadDoubanSyncConfig(ctx context.Context, request ReadDoubanSyncConfigRequestObject) (ReadDoubanSyncConfigResponseObject, error)
+	// SaveDoubanSyncConfig Save configuration without starting synchronization
+	// (PUT /api/v1/sync/douban/config)
+	SaveDoubanSyncConfig(ctx context.Context, request SaveDoubanSyncConfigRequestObject) (SaveDoubanSyncConfigResponseObject, error)
+	// ReadDoubanSyncConfigReceipt Read the original configuration receipt without writing
+	// (GET /api/v1/sync/douban/config/commands/{command_key})
+	ReadDoubanSyncConfigReceipt(ctx context.Context, request ReadDoubanSyncConfigReceiptRequestObject) (ReadDoubanSyncConfigReceiptResponseObject, error)
 	// StreamSystemLogs Real-time system log stream
 	// (GET /api/v1/system/logs)
 	StreamSystemLogs(ctx context.Context, request StreamSystemLogsRequestObject) (StreamSystemLogsResponseObject, error)
@@ -27703,6 +28168,89 @@ func (sh *strictHandler) SyncDoubanWishlist(w http.ResponseWriter, r *http.Reque
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(SyncDoubanWishlistResponseObject); ok {
 		if err := validResponse.VisitSyncDoubanWishlistResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadDoubanSyncConfig operation middleware
+func (sh *strictHandler) ReadDoubanSyncConfig(w http.ResponseWriter, r *http.Request) {
+	var request ReadDoubanSyncConfigRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadDoubanSyncConfig(ctx, request.(ReadDoubanSyncConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadDoubanSyncConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadDoubanSyncConfigResponseObject); ok {
+		if err := validResponse.VisitReadDoubanSyncConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SaveDoubanSyncConfig operation middleware
+func (sh *strictHandler) SaveDoubanSyncConfig(w http.ResponseWriter, r *http.Request, params SaveDoubanSyncConfigParams) {
+	var request SaveDoubanSyncConfigRequestObject
+
+	request.Params = params
+
+	var body SaveDoubanSyncConfigJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SaveDoubanSyncConfig(ctx, request.(SaveDoubanSyncConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SaveDoubanSyncConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SaveDoubanSyncConfigResponseObject); ok {
+		if err := validResponse.VisitSaveDoubanSyncConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadDoubanSyncConfigReceipt operation middleware
+func (sh *strictHandler) ReadDoubanSyncConfigReceipt(w http.ResponseWriter, r *http.Request, commandKey string) {
+	var request ReadDoubanSyncConfigReceiptRequestObject
+
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadDoubanSyncConfigReceipt(ctx, request.(ReadDoubanSyncConfigReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadDoubanSyncConfigReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadDoubanSyncConfigReceiptResponseObject); ok {
+		if err := validResponse.VisitReadDoubanSyncConfigReceiptResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

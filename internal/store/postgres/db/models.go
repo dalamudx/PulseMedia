@@ -346,6 +346,28 @@ type CompleteTvTransferEvidence struct {
 	CreatedAt      pgtype.Timestamptz
 }
 
+type DoubanSyncConfig struct {
+	ID          uuid.UUID
+	OwnerID     uuid.UUID
+	DoubanUid   string
+	Enabled     bool
+	MovieRootID pgtype.UUID
+	TvRootID    pgtype.UUID
+	Version     int64
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+}
+
+type DoubanSyncConfigReceipt struct {
+	OwnerID     uuid.UUID
+	CommandKey  string
+	ConfigID    uuid.UUID
+	Version     int64
+	RequestHash string
+	Input       []byte
+	Snapshot    []byte
+}
+
 type DownloadClient struct {
 	ID                uuid.UUID
 	Name              string

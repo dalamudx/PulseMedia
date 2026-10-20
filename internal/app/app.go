@@ -57,6 +57,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subtitle"
 	"github.com/dalamudx/PulseMedia/internal/usecase/transfer"
+	"github.com/dalamudx/PulseMedia/internal/usecase/watchlist"
 )
 
 // App is the composition root managing subsystem lifecycles.
@@ -425,6 +426,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 
 	var reuseSvc *transfer.LibraryReuseService
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
+	serverHandler.SetDoubanSyncConfigService(watchlist.NewConfigService(postgres.NewDoubanSyncConfigStore(a.dbPool, a.idgen)))
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
 	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient, douban.WithCredentialSource(doubanCredentials(settingsSvc)), douban.WithClock(a.clock)), metaProvider, a.clock))
 	serverHandler.SetTokenManagementService(auth.NewTokenManagementService(postgres.NewTokenManagementStore(a.dbPool, a.idgen), crypto.ReadTokenIssuer{}, a.clock))

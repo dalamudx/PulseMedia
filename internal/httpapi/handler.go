@@ -31,6 +31,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/settings"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
 	"github.com/dalamudx/PulseMedia/internal/usecase/transfer"
+	"github.com/dalamudx/PulseMedia/internal/usecase/watchlist"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log/slog"
 )
@@ -81,6 +82,7 @@ type ServerHandler struct {
 	metaProvider             ports.MetadataProvider
 	metadataDetailSvc        metadataDetailApplication
 	doubanRankingSvc         doubanRankingApplication
+	doubanSyncConfigSvc      *watchlist.ConfigService
 	localMediaReader         ports.LocalMediaSearchReader
 	subSvc                   *subscription.Service
 	subCreationSvc           subscriptionCreationApplication
