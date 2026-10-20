@@ -11,6 +11,8 @@ export interface MediaItem {
   backdrop_url?: string;
   rating?: number;
   genres?: string[];
+  rating_source?: "tmdb" | "douban";
+  douban_id?: string;
 }
 
 interface MediaCardProps {
@@ -49,9 +51,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         </span>
 
         {ratingVal && (
-          <span className="badge-rating">
+          <span className={`badge-rating ${media.rating_source === "douban" ? "douban" : ""}`} title={media.rating_source === "douban" ? "豆瓣评分" : "TMDB评分"}>
             <Star size={11} className="star-icon" fill="currentColor" />
-            <span>{ratingVal}</span>
+            <span>{ratingVal}{media.rating_source === "douban" ? " 豆瓣" : ""}</span>
           </span>
         )}
 
@@ -71,15 +73,17 @@ export const MediaCard: React.FC<MediaCardProps> = ({
 
             <div className="hover-actions" onClick={(e) => e.stopPropagation()}>
               <button
+                type="button"
                 className="btn-action btn-sub"
-                disabled={subscribing}
+                disabled={subscribing || !media.tmdb_id}
                 onClick={() => onSubscribe(media)}
-                title="一键追更订阅"
+                title={media.tmdb_id ? "一键追更订阅" : "未匹配到 TMDB 身份，请先搜种"}
               >
                 <Rss size={13} />
-                <span>{subscribing ? "..." : "追更"}</span>
+                <span>{subscribing ? "..." : media.tmdb_id ? "追更" : "未匹配"}</span>
               </button>
               <button
+                type="button"
                 className="btn-action btn-search"
                 onClick={() => onSearch(media)}
                 title="检索站点种子"

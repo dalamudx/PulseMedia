@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/api/client";
 import type { MediaItem } from "@/components/cards/MediaCard";
-import { discoveryMediaItem, discoverySearchInput, type DiscoveryCategory, type DiscoverySearchType } from "./discoveryCatalog";
+import {
+  discoveryMediaItem,
+  discoverySearchInput,
+  doubanCategoryToList,
+  doubanMediaItem,
+  isDoubanCategory,
+  type DiscoveryCategory,
+  type DiscoverySearchType,
+} from "./discoveryCatalog";
 
 type Scope = {
   category: DiscoveryCategory;
@@ -36,8 +44,28 @@ export function useDiscoveryCatalog({ category, locationKey, userId, role }: {
     const owns = () => active() && scope.feed === controller && !controller.signal.aborted;
     setFeed(previous => ({ scope, items: previous.scope === scope ? previous.items : [], busy: true, error: "" }));
     try {
+      if (isDoubanCategory(scope.category)) {
+        const listName = doubanCategoryToList[scope.category];
+        const { data, error, response } = await api.GET("/api/v1/discover/douban", {
+          params: { query: { list: listName, page: 1 } },
+          signal: controller.signal,
+        });
+        if (!owns()) return false;
+        if (error || !data || !Array.isArray(data.results)) {
+          setFeed(previous => ({
+            ...previous,
+            items: response?.status === 401 || response?.status === 403 ? [] : previous.items,
+            error: "豆瓣榜单读取失败，请检查豆瓣配置或服务状态。",
+          }));
+          return false;
+        }
+        setFeed({ scope, items: data.results.map(doubanMediaItem), busy: false, error: "" });
+        return true;
+      }
+
       const { data, error, response } = await api.GET("/api/v1/discover", {
-        params: { query: { category: scope.category, page: 1 } }, signal: controller.signal,
+        params: { query: { category: scope.category, page: 1 } },
+        signal: controller.signal,
       });
       if (!owns()) return false;
       if (error || !data || !Array.isArray(data.results)) {

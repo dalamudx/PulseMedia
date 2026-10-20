@@ -18,6 +18,8 @@ case "$mode" in
  movie) pattern='^TestM5DiscoveryMoviePanelActualChromeHTTPPG$'; expected=1; receipts=M5_DISCOVERY_MOVIE_PASS;;
  boards) pattern='^TestM6DiscoveryBoardsActualChromeHTTPPG$'; expected=1; receipts=M6_DISCOVERY_BOARDS_PASS;;
  details) pattern='^TestM6MediaDetailActualChromeHTTPPG$'; expected=1; receipts=M6_MEDIA_DETAIL_PASS;;
+
+ douban) pattern='^TestM7DiscoveryDoubanActualChromeHTTPPG$'; expected=1; receipts=M7_DISCOVERY_DOUBAN_PASS;;
  *) echo 'Usage: verify_m5_discovery.sh [all|catalog|tv|movie|boards|details]' >&2; exit 2;;
 esac
 if [ "${PULSE_M5_DISCOVERY_OWNED_PG:-}" != 1 ]; then
@@ -76,12 +78,12 @@ if ! mise exec -- go test -race "${files[@]}" -run "$pattern" -count=1 -v -timeo
  tail -n 100 "$owned/acceptance.log"; exit 1
 fi
 if grep -q -- '--- SKIP:' "$owned/acceptance.log"; then echo M5_DISCOVERY_UNEXPECTED_SKIP >&2; exit 1; fi
-actual=$(grep -Ec '^--- PASS: TestM[56]' "$owned/acceptance.log")
+actual=$(grep -Ec '^--- PASS: TestM[567]' "$owned/acceptance.log")
 if [ "$actual" != "$expected" ]; then echo "M5_DISCOVERY_MISSING_EXECUTION expected=$expected actual=$actual" >&2; exit 1; fi
 for receipt in $receipts; do grep -q "$receipt" "$owned/acceptance.log" || exit 1; done
-if [ "$mode" = all ] || [ "$mode" = catalog ] || [ "$mode" = boards ] || [ "$mode" = details ]; then
+if [ "$mode" = all ] || [ "$mode" = catalog ] || [ "$mode" = boards ] || [ "$mode" = details ] || [ "$mode" = douban ]; then
  for screenshot in discovery-desktop discovery-375; do test -s "$owned/screenshots/$screenshot.png" || exit 1; done
  if [ "$mode" = boards ] || [ "$mode" = details ]; then test -s "$owned/screenshots/discovery-320.png" || exit 1; fi
 fi
-grep -E 'M[56]_(DISCOVERY_|MEDIA_DETAIL_)|--- PASS:|^ok[[:space:]]' "$owned/acceptance.log"
+grep -E 'M[567]_(DISCOVERY_|MEDIA_DETAIL_)|--- PASS:|^ok[[:space:]]' "$owned/acceptance.log"
 echo "M5_DISCOVERY_ACCEPTANCE_EXECUTED mode=$mode tests=$actual"

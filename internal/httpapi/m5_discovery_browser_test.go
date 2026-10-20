@@ -30,6 +30,8 @@ func TestM5DiscoveryTVHandoffActualChromeHTTPPG(t *testing.T)  { m5DiscoveryBrow
 func TestM5DiscoveryMoviePanelActualChromeHTTPPG(t *testing.T) { m5DiscoveryBrowser(t, "movie") }
 func TestM6DiscoveryBoardsActualChromeHTTPPG(t *testing.T)     { m5DiscoveryBrowser(t, "boards") }
 
+func TestM7DiscoveryDoubanActualChromeHTTPPG(t *testing.T) { m5DiscoveryBrowser(t, "douban") }
+
 func m5DiscoveryBrowser(t *testing.T, mode string) {
 	t.Helper()
 	if os.Getenv("PULSE_M5_DISCOVERY_BROWSER") != "1" {
@@ -292,6 +294,10 @@ func m5DiscoveryBrowser(t *testing.T, mode string) {
 	}
 	if mode == "details" {
 		receipt = "M6_MEDIA_DETAIL_PASS"
+
+	}
+	if mode == "douban" {
+		receipt = "M7_DISCOVERY_DOUBAN_PASS"
 	}
 	if !strings.Contains(string(out), receipt) {
 		t.Fatal("missing actual browser receipt")
@@ -372,6 +378,106 @@ try {
   await page.route(feed,delayMovie);await button('热门电影',group).click();await requested;await choose('热门剧集','tv','Native Automatic Series');const late=page.waitForResponse(r=>{const u=new URL(r.url());return u.pathname==='/api/v1/discover'&&u.searchParams.get('category')==='movie';});release();assert.equal((await late).status(),200);await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await card('Native trusted movie').count(),0,'ignored-abort late movie cannot replace TV');assert.equal(await button('热门剧集',group).getAttribute('aria-pressed'),'true');await page.unroute(feed,delayMovie);
   await choose('正在热映','now_playing','Native trusted movie');await shot('discovery-desktop',1440);await shot('discovery-375',375);await shot('discovery-320',320);
   const after=await evidence();assert.equal(after.tasks,before.tasks);assert.equal(after.jobs,before.jobs);assert.equal(after.reviews,before.reviews);assert.equal(after.subscriptions,before.subscriptions);assert.equal(writeCount(),0,'browsing cannot create review/acquisition');
+ } else if(mode==='douban'){
+  const before=await evidence();
+  await page.route('**/api/v1/discover/douban?*', async route => {
+    const u = new URL(route.request().url());
+    const list = u.searchParams.get('list');
+    let results = [];
+    if (list === 'hot_movie') {
+      results = [
+        { douban_id: '1292052', tmdb_id: 278, title: '肖申克的救赎', original_title: 'The Shawshank Redemption', media_type: 'movie', year: 1994, rating: 9.7, poster_url: 'https://img3.doubanio.com/p4807472.jpg' },
+        { douban_id: '99999', tmdb_id: null, title: '未匹配电影', media_type: 'movie', year: 2026, rating: 8.0, poster_url: 'https://img3.doubanio.com/p12345.jpg' }
+      ];
+    } else if (list === 'hot_tv') {
+      results = [
+        { douban_id: '1396', tmdb_id: 1396, title: '绝命毒师', original_title: 'Breaking Bad', media_type: 'tv', year: 2008, rating: 9.7, poster_url: 'https://img3.doubanio.com/p2561305377.jpg' }
+      ];
+    } else if (list === 'weekly_chinese') {
+      results = [
+        { douban_id: '37560173', tmdb_id: null, title: '余红旧事', media_type: 'tv', year: 2026, rating: 7.8, poster_url: 'https://img2.doubanio.com/p2936223841.webp' }
+      ];
+    } else if (list === 'weekly_global') {
+      results = [
+        { douban_id: '35000000', tmdb_id: null, title: '百年孤独 第二季', media_type: 'tv', year: 2026, rating: 8.5, poster_url: 'https://img1.doubanio.com/p2930000.webp' }
+      ];
+    } else if (list === 'top250') {
+      results = [
+        { douban_id: '1292052', tmdb_id: 278, title: '肖申克的救赎', original_title: 'The Shawshank Redemption', media_type: 'movie', year: 1994, rating: 9.7, poster_url: 'https://img3.doubanio.com/p4807472.jpg' },
+        { douban_id: '1291546', tmdb_id: 240, title: '霸王别姬', original_title: 'Farewell My Concubine', media_type: 'movie', year: 1993, rating: 9.6, poster_url: 'https://img3.doubanio.com/p2561716440.jpg' }
+      ];
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results }) });
+  });
+
+  await page.goto(base+'/discover');
+  await card('Native trusted movie').waitFor();
+
+  // 1. Switch to 豆瓣精选榜
+  const doubanSourceBtn = page.getByRole('button', { name: '豆瓣精选榜' });
+  assert.equal(await doubanSourceBtn.count(), 1, 'must have 豆瓣精选榜 button');
+  const doubanReply = page.waitForResponse(r => r.url().includes('/api/v1/discover/douban') && r.url().includes('list=hot_movie'));
+  await doubanSourceBtn.click();
+  assert.equal((await doubanReply).status(), 200);
+
+  // Verify Douban tab bar appears
+  const doubanGroup = page.getByRole('group', { name: '豆瓣榜单', exact: true });
+  await doubanGroup.waitFor();
+  assert.equal(await doubanGroup.getByRole('button').count(), 5, 'must have 5 Douban tabs');
+
+  // Verify Douban cards loaded
+  await card('肖申克的救赎').waitFor();
+  await card('未匹配电影').waitFor();
+
+  // Verify Douban badge text and style
+  const doubanCard = card('肖申克的救赎');
+  const badge = doubanCard.locator('.badge-rating.douban');
+  await badge.waitFor();
+  assert(await badge.innerText().then(t => t.includes('9.7') && t.includes('豆瓣')), 'must show 9.7 豆瓣 score badge');
+
+  // Verify 即览即订 (one-click subscribe button enabled when tmdb_id present)
+  await doubanCard.hover();
+  const subBtn = doubanCard.locator('.btn-sub');
+  assert(await subBtn.isEnabled(), 'matched Douban item must have enabled subscribe button');
+
+  // Unmatched item has disabled subscribe button
+  const unmatchedCard = card('未匹配电影');
+  await unmatchedCard.hover();
+  const unmatchedSubBtn = unmatchedCard.locator('.btn-sub');
+  assert(await unmatchedSubBtn.isDisabled(), 'unmatched Douban item must have disabled subscribe button');
+  assert.equal(await unmatchedSubBtn.innerText(), '未匹配');
+
+  // 2. Switch Douban tabs
+  const chooseDouban = async (name, list, expectedTitle) => {
+    const res = page.waitForResponse(r => r.url().includes('/api/v1/discover/douban') && r.url().includes('list=' + list));
+    await button(name, doubanGroup).click();
+    assert.equal((await res).status(), 200);
+    await card(expectedTitle).waitFor();
+    assert.equal(await button(name, doubanGroup).getAttribute('aria-pressed'), 'true');
+  };
+
+  await chooseDouban('豆瓣热门剧集', 'hot_tv', '绝命毒师');
+  await chooseDouban('华语口碑周榜', 'weekly_chinese', '余红旧事');
+  await chooseDouban('全球口碑周榜', 'weekly_global', '百年孤独 第二季');
+  await chooseDouban('豆瓣电影 Top 250', 'top250', '霸王别姬');
+
+  // 3. Switch back to TMDB 影视流
+  const tmdbSourceBtn = page.getByRole('button', { name: 'TMDB 影视流' });
+  const tmdbReply = page.waitForResponse(r => r.url().includes('/api/v1/discover?') && r.url().includes('category=trending'));
+  await tmdbSourceBtn.click();
+  assert.equal((await tmdbReply).status(), 200);
+  await card('Native trusted movie').waitFor();
+
+  // Return to Douban view for screenshot capture
+  await doubanSourceBtn.click();
+  await card('肖申克的救赎').waitFor();
+  await shot('discovery-desktop', 1440);
+  await shot('discovery-375', 375);
+
+  const after = await evidence();
+  assert.equal(after.tasks, before.tasks);
+  assert.equal(after.jobs, before.jobs);
+  assert.equal(writeCount(), 0, 'douban browsing creates no tasks or writes');
  } else if(mode==='catalog'){
   await page.goto(base+'/discover');await card('Native trusted movie').waitFor();assert.equal(await button('豆瓣高分').count(),0);await button('TMDB 高分').click();await card('Native trusted movie').waitFor();
   assert(requests.some(r=>r.path==='/api/v1/discover'));
@@ -443,6 +549,6 @@ try {
   assert.equal(requests.filter(r=>r.path==='/api/v1/acquisitions/selected-movie'&&r.method==='POST').length,0,'TV must never use movie acquisition');
   await privacy();
  }
- assert.deepEqual(errors,[]);console.log((mode==='boards'?'M6_DISCOVERY_BOARDS_PASS':'M5_DISCOVERY_'+mode.toUpperCase()+'_PASS')+' '+JSON.stringify({actualChrome:true,realCookieAppPG:true,nativeTMDB:true,nativeTorznab:true,ephemeralCDP:port,mode,acceptedMeansDurableOnly:true}));
+ assert.deepEqual(errors,[]);console.log((mode==='boards'?'M6_DISCOVERY_BOARDS_PASS':mode==='douban'?'M7_DISCOVERY_DOUBAN_PASS':'M5_DISCOVERY_'+mode.toUpperCase()+'_PASS')+' '+JSON.stringify({actualChrome:true,realCookieAppPG:true,nativeTMDB:true,nativeTorznab:true,ephemeralCDP:port,mode,acceptedMeansDurableOnly:true}));
 } finally {await context.close();}
 `

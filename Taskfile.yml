@@ -269,6 +269,11 @@ tasks:
     cmds:
       - bash scripts/verify_m5_discovery.sh boards
 
+  test-discovery-douban-ui:
+    desc: Verify discovery Douban feed, multi-source tabs, Douban badges, and one-click subscription with PG18 and Chrome
+    cmds:
+      - bash scripts/verify_m5_discovery.sh douban
+
   test-dashboard-facts:
     desc: Verify shared library facts, capacity and activity with Cookie, PG18 and isolated Chrome
     cmds:

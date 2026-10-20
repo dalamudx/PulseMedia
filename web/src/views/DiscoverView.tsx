@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Search, Loader2, Sparkles, Film, Tv, Trophy, Rss, RefreshCw } from "lucide-react";
 import { useAuth } from "@/features/auth/AuthContext";
 import { useDiscoveryCatalog } from "@/features/configuration/useDiscoveryCatalog";
-import { matchesDiscoveryGenre, type DiscoveryCategory } from "@/features/configuration/discoveryCatalog";
+import { matchesDiscoveryGenre, isDoubanCategory, type DiscoveryCategory } from "@/features/configuration/discoveryCatalog";
 import { useToast } from "@/features/toast/ToastContext";
 import { MediaCard, type MediaItem } from "@/components/cards/MediaCard";
 import { MediaDetailModal } from "@/components/dialog/MediaDetailModal";
@@ -294,6 +294,29 @@ export const DiscoverView: React.FC = () => {
 
       {/* Source Category Tabs (Trending / Movies / TV / Douban) */}
       {!searched && (
+        <div className="type-filter source-filter" role="tablist" aria-label="数据源选择" style={{ width: "fit-content", marginBottom: "1rem" }}>
+          <button
+            type="button"
+            className={`type-btn ${!isDoubanCategory(activeCategory) ? "active" : ""}`}
+            onClick={() => switchCategory("trending")}
+            aria-selected={!isDoubanCategory(activeCategory)}
+          >
+            <Sparkles size={14} style={{ marginRight: "0.35rem", verticalAlign: "middle" }} />
+            <span>TMDB 影视流</span>
+          </button>
+          <button
+            type="button"
+            className={`type-btn ${isDoubanCategory(activeCategory) ? "active" : ""}`}
+            onClick={() => switchCategory("douban_hot_movie")}
+            aria-selected={isDoubanCategory(activeCategory)}
+          >
+            <Trophy size={14} style={{ marginRight: "0.35rem", verticalAlign: "middle" }} />
+            <span>豆瓣精选榜</span>
+          </button>
+        </div>
+      )}
+
+      {!searched && !isDoubanCategory(activeCategory) && (
         <div className="tabs-bar" role="group" aria-label="TMDB榜单">
           <button
             className={`tab-btn ${activeCategory === "trending" ? "active" : ""}`}
@@ -335,6 +358,51 @@ export const DiscoverView: React.FC = () => {
           >
             <Trophy size={14} />
             <span>TMDB 高分</span>
+          </button>
+        </div>
+      )}
+
+      {!searched && isDoubanCategory(activeCategory) && (
+        <div className="tabs-bar" role="group" aria-label="豆瓣榜单">
+          <button
+            className={`tab-btn ${activeCategory === "douban_hot_movie" ? "active" : ""}`}
+            aria-pressed={activeCategory === "douban_hot_movie"}
+            onClick={() => switchCategory("douban_hot_movie")}
+          >
+            <Film size={14} />
+            <span>豆瓣热门电影</span>
+          </button>
+          <button
+            className={`tab-btn ${activeCategory === "douban_hot_tv" ? "active" : ""}`}
+            aria-pressed={activeCategory === "douban_hot_tv"}
+            onClick={() => switchCategory("douban_hot_tv")}
+          >
+            <Tv size={14} />
+            <span>豆瓣热门剧集</span>
+          </button>
+          <button
+            className={`tab-btn ${activeCategory === "douban_weekly_chinese" ? "active" : ""}`}
+            aria-pressed={activeCategory === "douban_weekly_chinese"}
+            onClick={() => switchCategory("douban_weekly_chinese")}
+          >
+            <Trophy size={14} />
+            <span>华语口碑周榜</span>
+          </button>
+          <button
+            className={`tab-btn ${activeCategory === "douban_weekly_global" ? "active" : ""}`}
+            aria-pressed={activeCategory === "douban_weekly_global"}
+            onClick={() => switchCategory("douban_weekly_global")}
+          >
+            <Trophy size={14} />
+            <span>全球口碑周榜</span>
+          </button>
+          <button
+            className={`tab-btn tab-calendar ${activeCategory === "douban_top250" ? "active" : ""}`}
+            aria-pressed={activeCategory === "douban_top250"}
+            onClick={() => switchCategory("douban_top250")}
+          >
+            <Trophy size={14} />
+            <span>豆瓣电影 Top 250</span>
           </button>
         </div>
       )}

@@ -1,6 +1,20 @@
 import type { MediaItem } from "@/components/cards/MediaCard";
 
-export type DiscoveryCategory = "trending" | "movie" | "tv" | "top_rated" | "now_playing";
+export type TMDBDiscoveryCategory = "trending" | "movie" | "tv" | "top_rated" | "now_playing";
+export type DoubanDiscoveryCategory = "douban_hot_movie" | "douban_hot_tv" | "douban_weekly_chinese" | "douban_weekly_global" | "douban_top250";
+export type DiscoveryCategory = TMDBDiscoveryCategory | DoubanDiscoveryCategory;
+
+export const doubanCategoryToList: Record<DoubanDiscoveryCategory, "hot_movie" | "hot_tv" | "weekly_chinese" | "weekly_global" | "top250"> = {
+  douban_hot_movie: "hot_movie",
+  douban_hot_tv: "hot_tv",
+  douban_weekly_chinese: "weekly_chinese",
+  douban_weekly_global: "weekly_global",
+  douban_top250: "top250",
+};
+
+export function isDoubanCategory(category: DiscoveryCategory): category is DoubanDiscoveryCategory {
+  return category in doubanCategoryToList;
+}
 export type DiscoverySearchType = "all" | "movie" | "tv";
 
 // TMDB TV labels combine genres that the discovery filters expose separately.
@@ -43,5 +57,29 @@ export function discoveryMediaItem(item: {
     year: item.year ?? undefined, overview: item.overview ?? undefined,
     poster_url: item.poster_url ?? undefined, backdrop_url: item.backdrop_url ?? undefined,
     rating: item.rating ?? undefined, genres: item.genres ?? undefined,
+  };
+
+}
+
+export function doubanMediaItem(item: {
+  douban_id: string;
+  tmdb_id?: number | null;
+  title: string;
+  original_title?: string | null;
+  media_type: "movie" | "tv";
+  year?: number | null;
+  rating?: number | null;
+  poster_url?: string | null;
+}): MediaItem {
+  return {
+    tmdb_id: item.tmdb_id ?? 0,
+    title: item.title,
+    media_type: item.media_type,
+    year: item.year ?? undefined,
+    overview: item.original_title ? `原名：${item.original_title}` : undefined,
+    poster_url: item.poster_url ?? undefined,
+    rating: item.rating ?? undefined,
+    rating_source: "douban",
+    douban_id: item.douban_id,
   };
 }
