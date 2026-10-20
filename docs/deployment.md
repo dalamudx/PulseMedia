@@ -156,6 +156,7 @@ bin/pulsebackup reconcile \
 | `PULSE_HTTP_ADDR` | HTTP 监听地址 | `127.0.0.1:8080` |
 | `PULSE_DATABASE_URL` | PostgreSQL 18 连接串 | — |
 | `PULSE_DATA_DIR` | 应用数据目录 (存放 secret.key 与 lockfile) | `/app/data` |
+| `PULSE_DOUBAN_API_KEY` / `PULSE_DOUBAN_API_SECRET` | 豆瓣榜单的 API key 与签名 secret；两者都缺失时榜单接口返回 503。仓库不带默认值，凭据取自豆瓣 Android 客户端而非官方授权，使用者自担条款与失效风险 | — |
 | `PULSE_LOG_LEVEL` | 日志级别 (debug, info, warn, error) | `info` |
 | `PULSE_SECRET_KEY` | 32位主密钥 (未提供时自动在数据目录生成) | — |
 

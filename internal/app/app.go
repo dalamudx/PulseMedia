@@ -411,7 +411,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var reuseSvc *transfer.LibraryReuseService
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
-	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient), metaProvider, a.clock))
+	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient, douban.WithCredentialSource(doubanCredentials(settingsSvc)), douban.WithClock(a.clock)), metaProvider, a.clock))
 	serverHandler.SetTokenManagementService(auth.NewTokenManagementService(postgres.NewTokenManagementStore(a.dbPool, a.idgen), crypto.ReadTokenIssuer{}, a.clock))
 	serverHandler.SetNotificationDispatcher(notifySvc)
 	serverHandler.SetFileMappingService(mediausecase.NewFileMappingService(postgres.NewFileMappingStore(a.dbPool, a.idgen)))
@@ -674,6 +674,24 @@ func (a *App) Queries() *db.Queries {
 }
 func ensureDefaultLibraryRoots(ctx context.Context, pool *pgxpool.Pool, gen ports.IDGen, dataDir string) error {
 	return library.EnsureDefaultRoots(ctx, postgres.NewLibraryBootstrapStore(pool), rootfs.NewFilesystem(), gen, dataDir)
+}
+
+// doubanCredentials reads the Douban API key and signing secret per request:
+// environment first, then the encrypted settings. Neither value is shipped
+// with the repository, and an unconfigured pair leaves the rankings unavailable.
+func doubanCredentials(settingsSvc *settings.Service) douban.CredentialSource {
+	return func(ctx context.Context) douban.Credentials {
+		creds := douban.Credentials{APIKey: os.Getenv("PULSE_DOUBAN_API_KEY"), Secret: os.Getenv("PULSE_DOUBAN_API_SECRET")}
+		if settingsSvc != nil {
+			if creds.APIKey == "" {
+				creds.APIKey, _ = settingsSvc.GetSecret(ctx, "douban.api_key")
+			}
+			if creds.Secret == "" {
+				creds.Secret, _ = settingsSvc.GetSecret(ctx, "douban.api_secret")
+			}
+		}
+		return creds
+	}
 }
 
 type tmdbMetadataClient interface {

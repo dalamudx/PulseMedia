@@ -4477,11 +4477,11 @@ paths:
           required: true
           schema:
             type: string
-            enum: [hot_movie, hot_tv, weekly_best, top250]
+            enum: [hot_movie, hot_tv, weekly_chinese, weekly_global, top250]
         - name: page
           in: query
           required: false
-          description: Only top250 has more than one page.
+          description: "Page size is 20. Maximum pages: top250 13, hot_movie and hot_tv 5, weekly boards 1."
           schema:
             type: integer
             default: 1

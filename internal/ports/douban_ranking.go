@@ -4,10 +4,11 @@ import "context"
 
 // Douban ranking list identifiers accepted by DoubanRankingProvider.
 const (
-	DoubanListHotMovie   = "hot_movie"
-	DoubanListHotTV      = "hot_tv"
-	DoubanListWeeklyBest = "weekly_best"
-	DoubanListTop250     = "top250"
+	DoubanListHotMovie      = "hot_movie"
+	DoubanListHotTV         = "hot_tv"
+	DoubanListWeeklyChinese = "weekly_chinese"
+	DoubanListWeeklyGlobal  = "weekly_global"
+	DoubanListTop250        = "top250"
 )
 
 // DoubanRankingItem is validated provider data. It deliberately carries no

@@ -17,10 +17,19 @@ import (
 
 const (
 	pageSize      = 20
-	top250Pages   = 13
 	cacheTTL      = 10 * time.Minute
 	lookupWorkers = 4
 )
+
+// maxPages bounds how far each ranking may be paged. Top250 is a fixed
+// 250-entry list; the weekly boards are a single short window.
+var maxPages = map[string]int{
+	ports.DoubanListTop250:        13,
+	ports.DoubanListHotMovie:      5,
+	ports.DoubanListHotTV:         5,
+	ports.DoubanListWeeklyChinese: 1,
+	ports.DoubanListWeeklyGlobal:  1,
+}
 
 // Item is one ranking row. TMDBID is zero when no unique match was proven.
 type Item struct {
@@ -48,17 +57,13 @@ func NewService(provider ports.DoubanRankingProvider, meta ports.MetadataProvide
 	return &Service{provider: provider, meta: meta, clock: clock, cache: make(map[string]entry)}
 }
 
-// List returns one page. Only top250 is paged; the other lists have page 1.
+// List returns one page. Pages are bounded per ranking by maxPages.
 func (s *Service) List(ctx context.Context, list string, page int) ([]Item, error) {
 	if s == nil || s.provider == nil || s.clock == nil {
 		return nil, ports.ErrUnavailable
 	}
-	maxPage := 1
-	switch list {
-	case ports.DoubanListTop250:
-		maxPage = top250Pages
-	case ports.DoubanListHotMovie, ports.DoubanListHotTV, ports.DoubanListWeeklyBest:
-	default:
+	maxPage, known := maxPages[list]
+	if !known {
 		return nil, ports.ErrRejected
 	}
 	if page < 1 || page > maxPage {

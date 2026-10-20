@@ -14,6 +14,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/douban"
 	transfer "github.com/dalamudx/PulseMedia/internal/adapter/transferlegacy"
 	"github.com/dalamudx/PulseMedia/internal/domain/media"
+	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
 )
@@ -60,7 +61,7 @@ func TestFullM7EcosystemIntegration(t *testing.T) {
 	doubanServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = fmt.Fprint(w, `{
-			"subjects": [
+			"subject_collection_items": [
 				{
 					"id": "26752088",
 					"title": "我不是药神",
@@ -73,8 +74,8 @@ func TestFullM7EcosystemIntegration(t *testing.T) {
 	}))
 	defer doubanServer.Close()
 
-	doubanClient := douban.NewClient(doubanServer.URL, doubanServer.Client())
-	hotMovies, err := doubanClient.GetHotMovies(ctx)
+	doubanClient := douban.NewClient(doubanServer.URL, doubanServer.Client(), douban.WithCredentials(douban.Credentials{APIKey: "e2e-key", Secret: "e2e-secret"}))
+	hotMovies, err := doubanClient.GetRanking(ctx, ports.DoubanListHotMovie, 0, 20)
 	if err != nil || len(hotMovies) != 1 || hotMovies[0].Title != "我不是药神" {
 		t.Fatalf("douban get hot movies failed: %v, %+v", err, hotMovies)
 	}

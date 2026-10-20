@@ -67,20 +67,20 @@ func TestM7DoubanRankingNativeHTTPPG(t *testing.T) {
 			return
 		}
 		switch r.URL.Path {
-		case "/movie/hot_gaia":
+		case "/subject_collection/movie_hot_gaia/items":
 			evil := `{"id":"7","title":"外链海报","year":"2021","rating":{"value":7},"pic":{"large":"https://evil.example/x.jpg"}}`
-			_, _ = fmt.Fprintf(w, `{"subjects":[%s,%s,%s,%s]}`, row("26752088", "我不是药神", "Dying to Survive", "2018", ""), row("5", "歧义片", "", "2020", ""), row("6", "无年份", "", "", ""), evil)
-		case "/tv/hot_gaia":
-			_, _ = fmt.Fprintf(w, `{"subjects":[%s]}`, row("26752089", "绝命毒师", "Breaking Bad", "2008", `,"type":"tv"`))
-		case "/subject_collection/movie_weekly_best/items":
-			_, _ = fmt.Fprintf(w, `{"subject_collection_items":[%s]}`, row("30000000", "我不是药神", "", "2018", ""))
-		case "/movie/top250":
+			_, _ = fmt.Fprintf(w, `{"subject_collection_items":[%s,%s,%s,%s]}`, row("26752088", "我不是药神", "Dying to Survive", "2018", ""), row("5", "歧义片", "", "2020", ""), row("6", "无年份", "", "", ""), evil)
+		case "/subject_collection/tv_hot/items":
+			_, _ = fmt.Fprintf(w, `{"subject_collection_items":[%s]}`, row("26752089", "绝命毒师", "Breaking Bad", "2008", `,"type":"tv"`))
+		case "/subject_collection/tv_chinese_best_weekly/items", "/subject_collection/tv_global_best_weekly/items":
+			_, _ = fmt.Fprintf(w, `{"subject_collection_items":[%s]}`, row("30000000", "绝命毒师", "Breaking Bad", "2008", `,"type":"tv"`))
+		case "/subject_collection/movie_top250/items":
 			var start int
 			_, _ = fmt.Sscanf(r.URL.Query().Get("start"), "%d", &start)
 			if r.URL.Query().Get("count") != "20" {
 				t.Errorf("top250 window %q", r.URL.RawQuery)
 			}
-			_, _ = fmt.Fprintf(w, `{"subjects":[%s]}`, row(fmt.Sprint(start+1), "我不是药神", "", "2018", ""))
+			_, _ = fmt.Fprintf(w, `{"subject_collection_items":[%s]}`, row(fmt.Sprint(start+1), "我不是药神", "", "2018", ""))
 		default:
 			t.Errorf("unexpected Douban route %s", r.URL.Path)
 			w.WriteHeader(http.StatusNotFound)
@@ -114,7 +114,7 @@ func TestM7DoubanRankingNativeHTTPPG(t *testing.T) {
 
 	provider := tmdb.NewClient("owned-rank-key", tmdb.WithBaseURL(tmdbServer.URL), tmdb.WithHTTPClient(tmdbServer.Client()))
 	handler := httpapi.NewServerHandler(a, authService, nil, nil, nil, provider, nil, nil, nil, nil, nil, nil, nil)
-	handler.SetDoubanRankingService(ranking.NewService(douban.NewClient(doubanServer.URL, doubanServer.Client()), provider, clock.New()))
+	handler.SetDoubanRankingService(ranking.NewService(douban.NewClient(doubanServer.URL, doubanServer.Client(), douban.WithCredentials(douban.Credentials{APIKey: "owned-douban-key", Secret: "owned-douban-secret"})), provider, clock.New()))
 	router := httpapi.NewRouter(a, handler, authService, nil)
 
 	loginBody, _ := json.Marshal(map[string]string{"username": "rank-admin", "password": password})
@@ -191,8 +191,10 @@ func TestM7DoubanRankingNativeHTTPPG(t *testing.T) {
 		if items := list(t, "/api/v1/discover/douban?list=hot_tv"); len(items) != 1 || items[0].MediaType != "tv" || items[0].TMDBID == nil || *items[0].TMDBID != 1396 {
 			t.Fatalf("%+v", items)
 		}
-		if items := list(t, "/api/v1/discover/douban?list=weekly_best"); len(items) != 1 || items[0].DoubanID != "30000000" || items[0].TMDBID == nil || *items[0].TMDBID != 100 {
-			t.Fatalf("%+v", items)
+		for _, board := range []string{"weekly_chinese", "weekly_global"} {
+			if items := list(t, "/api/v1/discover/douban?list="+board); len(items) != 1 || items[0].DoubanID != "30000000" || items[0].MediaType != "tv" || items[0].TMDBID == nil || *items[0].TMDBID != 1396 {
+				t.Fatalf("%+v", items)
+			}
 		}
 		for page, wantStart := range map[int]int{1: 0, 2: 20, 13: 240} {
 			items := list(t, fmt.Sprintf("/api/v1/discover/douban?list=top250&page=%d", page))
@@ -203,7 +205,7 @@ func TestM7DoubanRankingNativeHTTPPG(t *testing.T) {
 	})
 	t.Run("invalid input causes no upstream I/O", func(t *testing.T) {
 		d, m := calls()
-		for _, query := range []string{"list=unknown", "list=", "page=1", "list=top250&page=0", "list=top250&page=-1", "list=top250&page=14", "list=top250&page=broken", "list=hot_movie&page=2", "list=weekly_best&page=2"} {
+		for _, query := range []string{"list=unknown", "list=", "page=1", "list=top250&page=0", "list=top250&page=-1", "list=top250&page=14", "list=top250&page=broken", "list=hot_movie&page=6", "list=weekly_chinese&page=2", "list=weekly_global&page=2", "list=weekly_best"} {
 			if response := get("/api/v1/discover/douban?"+query, true); response.Code != http.StatusBadRequest {
 				t.Fatalf("%s admitted: %d %s", query, response.Code, response.Body.String())
 			}

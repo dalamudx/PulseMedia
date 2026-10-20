@@ -132,7 +132,7 @@ func TestListRejectsBadListAndPageWithoutIO(t *testing.T) {
 	for _, tc := range []struct {
 		list string
 		page int
-	}{{"nope", 1}, {"", 1}, {ports.DoubanListTop250, 0}, {ports.DoubanListTop250, 14}, {ports.DoubanListHotMovie, 2}, {ports.DoubanListWeeklyBest, 2}, {ports.DoubanListHotTV, -1}} {
+	}{{"nope", 1}, {"", 1}, {ports.DoubanListTop250, 0}, {ports.DoubanListTop250, 14}, {ports.DoubanListWeeklyChinese, 2}, {ports.DoubanListWeeklyGlobal, 2}, {ports.DoubanListHotMovie, 6}, {ports.DoubanListHotTV, -1}} {
 		if _, err := s.List(t.Context(), tc.list, tc.page); !errors.Is(err, ports.ErrRejected) {
 			t.Errorf("%+v: %v", tc, err)
 		}

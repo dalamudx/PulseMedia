@@ -9751,8 +9751,8 @@ export interface operations {
     getDoubanRanking: {
         parameters: {
             query: {
-                list: "hot_movie" | "hot_tv" | "weekly_best" | "top250";
-                /** @description Only top250 has more than one page. */
+                list: "hot_movie" | "hot_tv" | "weekly_chinese" | "weekly_global" | "top250";
+                /** @description Page size is 20. Maximum pages: top250 13, hot_movie and hot_tv 5, weekly boards 1. */
                 page?: number;
             };
             header?: never;

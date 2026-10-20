@@ -1761,10 +1761,11 @@ func (e GetDiscoverFeedParamsCategory) Valid() bool {
 
 // Defines values for GetDoubanRankingParamsList.
 const (
-	HotMovie   GetDoubanRankingParamsList = "hot_movie"
-	HotTv      GetDoubanRankingParamsList = "hot_tv"
-	Top250     GetDoubanRankingParamsList = "top250"
-	WeeklyBest GetDoubanRankingParamsList = "weekly_best"
+	HotMovie      GetDoubanRankingParamsList = "hot_movie"
+	HotTv         GetDoubanRankingParamsList = "hot_tv"
+	Top250        GetDoubanRankingParamsList = "top250"
+	WeeklyChinese GetDoubanRankingParamsList = "weekly_chinese"
+	WeeklyGlobal  GetDoubanRankingParamsList = "weekly_global"
 )
 
 // Valid indicates whether the value is a known member of the GetDoubanRankingParamsList enum.
@@ -1776,7 +1777,9 @@ func (e GetDoubanRankingParamsList) Valid() bool {
 		return true
 	case Top250:
 		return true
-	case WeeklyBest:
+	case WeeklyChinese:
+		return true
+	case WeeklyGlobal:
 		return true
 	default:
 		return false
@@ -4298,7 +4301,7 @@ type GetDiscoverFeedParamsCategory string
 type GetDoubanRankingParams struct {
 	List GetDoubanRankingParamsList `form:"list" json:"list"`
 
-	// Page Only top250 has more than one page.
+	// Page Page size is 20. Maximum pages: top250 13, hot_movie and hot_tv 5, weekly boards 1.
 	Page *int `form:"page,omitempty" json:"page,omitempty"`
 }
 
