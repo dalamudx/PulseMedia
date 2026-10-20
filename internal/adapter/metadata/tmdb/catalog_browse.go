@@ -29,6 +29,48 @@ func (c *Client) searchCatalogMedia(ctx context.Context, query, mediaType string
 	if year < 0 || (year > 0 && (year < 1800 || year > 9999)) {
 		return nil, ports.ErrRejected
 	}
+	results, _, err := c.searchCatalogPage(ctx, query, mediaType, year)
+	return results, err
+}
+
+var _ ports.WatchlistIdentityMetadata = (*Client)(nil)
+
+// SearchMediaIdentityCandidates requires complete, fixed-type evidence for identity writes.
+func (c *Client) SearchMediaIdentityCandidates(ctx context.Context, query, kind string, year int) (ports.MovieIdentitySearch, error) {
+	if err := ctx.Err(); err != nil {
+		return ports.MovieIdentitySearch{}, err
+	}
+	if strings.TrimSpace(query) == "" || len(query) > 512 || (kind != "movie" && kind != "tv") || year < 1800 || year > 9999 {
+		return ports.MovieIdentitySearch{}, ports.ErrRejected
+	}
+	results, raw, err := c.searchCatalogPage(ctx, query, kind, year)
+	// A transport may return a response after ignoring cancellation.
+	if contextErr := ctx.Err(); contextErr != nil {
+		return ports.MovieIdentitySearch{}, contextErr
+	}
+	if err != nil {
+		return ports.MovieIdentitySearch{}, err
+	}
+	var paging struct {
+		Page         *int `json:"page"`
+		TotalPages   *int `json:"total_pages"`
+		TotalResults *int `json:"total_results"`
+	}
+	if json.Unmarshal(raw, &paging) != nil {
+		return ports.MovieIdentitySearch{}, ports.ErrBadResponse
+	}
+	complete := false
+	if paging.Page != nil && paging.TotalPages != nil && paging.TotalResults != nil && *paging.Page == 1 && *paging.TotalResults == len(results) {
+		complete = *paging.TotalPages == 1 || (*paging.TotalPages == 0 && len(results) == 0)
+	}
+	if err := ctx.Err(); err != nil {
+		return ports.MovieIdentitySearch{}, err
+	}
+	return ports.MovieIdentitySearch{Candidates: results, Complete: complete}, nil
+}
+
+// searchCatalogPage shares request budgets and media validation without requiring paging.
+func (c *Client) searchCatalogPage(ctx context.Context, query, mediaType string, year int) ([]*ports.MovieMetadata, []byte, error) {
 	params := url.Values{"query": {query}, "language": {"zh-CN"}}
 	if year > 0 {
 		if mediaType == "movie" {
@@ -40,16 +82,16 @@ func (c *Client) searchCatalogMedia(ctx context.Context, query, mediaType string
 	}
 	raw, _, err := c.doGet(ctx, c.baseURL+"/search/"+mediaType+"?"+params.Encode(), "")
 	if errors.Is(err, errNotModified) {
-		return nil, ports.ErrBadResponse
+		return nil, nil, ports.ErrBadResponse
 	}
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	var response struct {
 		Results []json.RawMessage `json:"results"`
 	}
 	if json.Unmarshal(raw, &response) != nil || response.Results == nil {
-		return nil, ports.ErrBadResponse
+		return nil, nil, ports.ErrBadResponse
 	}
 	results := make([]*ports.MovieMetadata, 0, len(response.Results))
 	for _, item := range response.Results {
@@ -57,7 +99,7 @@ func (c *Client) searchCatalogMedia(ctx context.Context, query, mediaType string
 			MediaType string `json:"media_type"`
 		}
 		if json.Unmarshal(item, &kind) != nil {
-			return nil, ports.ErrBadResponse
+			return nil, nil, ports.ErrBadResponse
 		}
 		if mediaType == "multi" && kind.MediaType == "person" {
 			continue
@@ -67,7 +109,7 @@ func (c *Client) searchCatalogMedia(ctx context.Context, query, mediaType string
 			resolved = mediaType
 		}
 		if (resolved != "movie" && resolved != "tv") || (mediaType != "multi" && resolved != mediaType) {
-			return nil, ports.ErrBadResponse
+			return nil, nil, ports.ErrBadResponse
 		}
 		var r struct {
 			ID            int64   `json:"id"`
@@ -82,7 +124,7 @@ func (c *Client) searchCatalogMedia(ctx context.Context, query, mediaType string
 			BackdropPath  *string `json:"backdrop_path"`
 		}
 		if json.Unmarshal(item, &r) != nil || r.ID <= 0 {
-			return nil, ports.ErrBadResponse
+			return nil, nil, ports.ErrBadResponse
 		}
 		title, original, date := r.Title, r.OriginalTitle, r.ReleaseDate
 		if resolved == "tv" {
@@ -90,7 +132,7 @@ func (c *Client) searchCatalogMedia(ctx context.Context, query, mediaType string
 		}
 		itemYear, valid := catalogDateYear(date)
 		if strings.TrimSpace(title) == "" || !valid {
-			return nil, ports.ErrBadResponse
+			return nil, nil, ports.ErrBadResponse
 		}
 		// Validate before filtering so malformed media never becomes a false empty.
 		if mediaType == "multi" && year > 0 && itemYear != year {
@@ -102,7 +144,7 @@ func (c *Client) searchCatalogMedia(ctx context.Context, query, mediaType string
 			PosterURL: catalogImageURL(r.PosterPath), BackdropURL: catalogImageURL(r.BackdropPath),
 		})
 	}
-	return results, nil
+	return results, raw, nil
 }
 
 // decodeCatalogTVDetails validates the provider identity and the complete season

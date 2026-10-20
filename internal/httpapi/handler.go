@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 	"unicode/utf8"
@@ -1179,23 +1178,10 @@ func (s *ServerHandler) SyncDoubanWishlist(ctx context.Context, request SyncDoub
 		return SyncDoubanWishlist401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
 	}
 
-	if s.subSvc == nil {
-		cnt := 0
-		msg := "subscription service unavailable"
-		return SyncDoubanWishlist200JSONResponse{CreatedCount: &cnt, Message: &msg}, nil
-	}
-
-	rootID := s.soleConfiguredRoot(ctx, "movie")
-	syncSvc := subscription.NewDoubanSyncService(s.subSvc, s.metaProvider, nil)
-	count, err := syncSvc.SyncUserWishlist(ctx, request.Body.DoubanUid, actor, rootID)
-	msg := fmt.Sprintf("已成功从豆瓣同步 %d 部想看影视并转入追更订阅！", count)
-	if err != nil {
-		msg = fmt.Sprintf("同步部分完成 (%d 部): %v", count, err)
-	}
-
-	return SyncDoubanWishlist200JSONResponse{
-		CreatedCount: &count,
-		Message:      &msg,
+	// The legacy route used an unverified Frodo protocol and the first browse
+	// match. It cannot write until the persistent synchronization fences exist.
+	return SyncDoubanWishlist503ApplicationProblemPlusJSONResponse{
+		Code: "DOUBAN_SYNC_UNAVAILABLE", Message: "persistent Douban synchronization is unavailable", RequestId: reqID,
 	}, nil
 }
 

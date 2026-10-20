@@ -22966,6 +22966,20 @@ func (response SyncDoubanWishlist401ApplicationProblemPlusJSONResponse) VisitSyn
 	return err
 }
 
+type SyncDoubanWishlist503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SyncDoubanWishlist503ApplicationProblemPlusJSONResponse) VisitSyncDoubanWishlistResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type StreamSystemLogsRequestObject struct {
 	Params StreamSystemLogsParams
 }

@@ -4611,6 +4611,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Persistent, authorized Douban synchronization is unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/v1/indexers/{id}/checkin:
     post:

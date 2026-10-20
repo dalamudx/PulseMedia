@@ -760,6 +760,15 @@ func (p *dynamicTMDBProvider) SearchMovies(ctx context.Context, query string, ye
 func (p *dynamicTMDBProvider) SearchMovieIdentityCandidates(ctx context.Context, query string, year int) (ports.MovieIdentitySearch, error) {
 	return p.getClient(ctx).SearchMovieIdentityCandidates(ctx, query, year)
 }
+
+func (p *dynamicTMDBProvider) SearchMediaIdentityCandidates(ctx context.Context, query, mediaType string, year int) (ports.MovieIdentitySearch, error) {
+	provider, ok := p.getClient(ctx).(ports.WatchlistIdentityMetadata)
+	if !ok {
+		return ports.MovieIdentitySearch{}, ports.ErrUnavailable
+	}
+	return provider.SearchMediaIdentityCandidates(ctx, query, mediaType, year)
+}
+
 func (p *dynamicTMDBProvider) GetMovieDetails(ctx context.Context, tmdbID int64, language string) (*ports.MovieMetadata, error) {
 	return p.getClient(ctx).GetMovieDetails(ctx, tmdbID, language)
 }
