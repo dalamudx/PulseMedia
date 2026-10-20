@@ -312,6 +312,10 @@ func m6JourneyWait(t *testing.T, budget time.Duration, ready func() bool) {
 }
 
 func TestM6JourneyActualChromeHTTPPG(t *testing.T) {
+	runM6Journey(t, nil)
+}
+
+func runM6Journey(t *testing.T, afterImported func(*m6Journey)) {
 	if os.Getenv("PULSE_M6_JOURNEY_BROWSER") != "1" {
 		t.Skip("explicit Main-owned PG18.6 and Chrome runtime required")
 	}
@@ -491,6 +495,9 @@ func TestM6JourneyActualChromeHTTPPG(t *testing.T) {
 		t.Fatal("missing browser receipt")
 	}
 	h.assertImported(t)
+	if afterImported != nil {
+		afterImported(h)
+	}
 	if metadataCalls.Load() < 4 {
 		t.Fatal("native metadata path not exercised")
 	}

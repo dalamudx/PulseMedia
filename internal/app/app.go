@@ -18,6 +18,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/universal_rss"
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/tmdb"
 	"github.com/dalamudx/PulseMedia/internal/adapter/torrent"
+	"github.com/dalamudx/PulseMedia/internal/adapter/tmdbartwork"
 	"github.com/dalamudx/PulseMedia/internal/config"
 	"github.com/dalamudx/PulseMedia/internal/httpapi"
 	"github.com/dalamudx/PulseMedia/internal/platform/budget"
@@ -31,6 +32,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	downloadstore "github.com/dalamudx/PulseMedia/internal/store/download"
+	sidecarstore "github.com/dalamudx/PulseMedia/internal/store/mediasidecar"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	transferstore "github.com/dalamudx/PulseMedia/internal/store/transfer"
@@ -41,6 +43,7 @@ import (
 	mediausecase "github.com/dalamudx/PulseMedia/internal/usecase/media"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediaserver"
 	metadatausecase "github.com/dalamudx/PulseMedia/internal/usecase/metadata"
+	"github.com/dalamudx/PulseMedia/internal/usecase/metadatasidecar"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
 	"github.com/dalamudx/PulseMedia/internal/usecase/policy"
 	usecaseScheduler "github.com/dalamudx/PulseMedia/internal/usecase/scheduler"
@@ -397,6 +400,10 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	}
 
 	metaProvider := &dynamicTMDBProvider{settingsSvc: settingsSvc, httpClient: a.metadataHTTPClient, budget: budget.NewMetadataBudget(a.clock)}
+	var sidecarSvc *metadatasidecar.Service
+	if queue != nil {
+		sidecarSvc = metadatasidecar.NewService(sidecarstore.NewRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), metaProvider, tmdbartwork.New(a.metadataHTTPClient, metaProvider.budget))
+	}
 	sseHub := httpapi.NewSSEHub()
 
 	var reuseSvc *transfer.LibraryReuseService
@@ -481,6 +488,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	upgradeSendDone := make(chan struct{})
 	upgradeOrganizationDone := make(chan struct{})
 	organizationDone := make(chan struct{})
+	mediaSidecarDone := make(chan struct{})
 	outboxDone := make(chan struct{})
 	searchDone := make(chan struct{})
 	libraryDone := make(chan struct{})
@@ -517,6 +525,10 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 			defer close(organizationDone)
 			a.runOrganizationWorker(workerCtx, queue, transferSvc, reuseSvc)
 		}()
+		go func() {
+			defer close(mediaSidecarDone)
+			a.runMediaSidecarWorker(workerCtx, queue, sidecarSvc)
+		}()
 		go func() { defer close(outboxDone); a.runOutboxWorkers(workerCtx, ob, syncSvc, notifySvc) }()
 		go func() {
 			defer close(searchDone)
@@ -532,6 +544,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		close(upgradeSendDone)
 		close(upgradeOrganizationDone)
 		close(organizationDone)
+		close(mediaSidecarDone)
 		close(outboxDone)
 		close(searchDone)
 		close(libraryDone)
@@ -540,7 +553,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		cancelWorker()
 		budget, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, outboxDone, searchDone, libraryDone)
+		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, outboxDone, searchDone, libraryDone)
 	}
 	defer stopWorker()
 

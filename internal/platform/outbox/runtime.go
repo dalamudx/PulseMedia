@@ -30,19 +30,22 @@ func (o *Outbox) PublishImported(ctx context.Context, q *db.Queries, unit string
 	if err != nil {
 		return nil, err
 	}
-	if len(channels) == 0 {
-		return event, nil
-	}
-	raw, err := json.Marshal(payload)
-	if err != nil {
-		return nil, err
-	}
 	var ids struct {
 		FileID uuid.UUID `json:"file_id"`
 		UnitID uuid.UUID `json:"unit_id"`
 	}
-	if json.Unmarshal(raw, &ids) != nil || ids.UnitID.String() != unit || ids.FileID == uuid.Nil {
-		return nil, errors.New("invalid imported notification source")
+	if json.Unmarshal(event.Payload, &ids) != nil || ids.UnitID == uuid.Nil || ids.UnitID.String() != unit || ids.FileID == uuid.Nil {
+		return nil, errors.New("invalid imported metadata source")
+	}
+	// Metadata is a separate system continuation, even without external recipients.
+	// Keep its enqueue in the importing transaction; network/filesystem work is later.
+	if _, err = q.EnqueueMediaSidecarJob(ctx, db.EnqueueMediaSidecarJobParams{
+		JobID: o.idgen.NewUUID(), FileID: ids.FileID, UnitID: ids.UnitID, SourceEventID: event.ID,
+	}); err != nil {
+		return nil, err
+	}
+	if len(channels) == 0 {
+		return event, nil
 	}
 	input, err := q.GetImportedNotificationInput(ctx, db.GetImportedNotificationInputParams{FileID: ids.FileID, UnitID: ids.UnitID})
 	if err != nil {

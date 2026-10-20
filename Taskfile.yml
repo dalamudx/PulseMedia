@@ -229,6 +229,11 @@ tasks:
     cmds:
       - bash scripts/verify_m6_journey_ui.sh
 
+  test-m7-sidecar:
+    desc: Verify automatic TV ingestion through sidecar jobs and confined NFO/artwork publication with PG18 and Chrome
+    cmds:
+      - bash scripts/verify_m7_sidecar.sh
+
   test-compact-controls-ui:
     desc: Verify long token names and policy original-key recovery at four widths with Cookie, PG18 and Chrome
     cmds:
