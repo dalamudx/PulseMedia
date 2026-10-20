@@ -2643,6 +2643,12 @@ type HealthStatus struct {
 // IndexerCategories defines model for IndexerCategories.
 type IndexerCategories = []int
 
+// IndexerCategoryMapping defines model for IndexerCategoryMapping.
+type IndexerCategoryMapping struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 // IndexerCommandReceipt defines model for IndexerCommandReceipt.
 type IndexerCommandReceipt struct {
 	Action  IndexerCommandReceiptAction `json:"action"`
@@ -2717,6 +2723,24 @@ type IndexerRSSRequest struct {
 
 // IndexerRSSRequestKind defines model for IndexerRSSRequest.Kind.
 type IndexerRSSRequestKind string
+
+// IndexerTemplate defines model for IndexerTemplate.
+type IndexerTemplate struct {
+	CategoryMappings      []IndexerCategoryMapping `json:"category_mappings"`
+	CredentialHelp        string                   `json:"credential_help"`
+	DefaultUrl            string                   `json:"default_url"`
+	Description           string                   `json:"description"`
+	Domain                string                   `json:"domain"`
+	Id                    string                   `json:"id"`
+	Name                  string                   `json:"name"`
+	Protocol              IndexerProtocol          `json:"protocol"`
+	RecommendedCategories IndexerCategories        `json:"recommended_categories"`
+}
+
+// IndexerTemplateListResponse defines model for IndexerTemplateListResponse.
+type IndexerTemplateListResponse struct {
+	Templates []IndexerTemplate `json:"templates"`
+}
 
 // InteractiveReleaseSearchReceipt defines model for InteractiveReleaseSearchReceipt.
 type InteractiveReleaseSearchReceipt struct {
@@ -5126,6 +5150,9 @@ type ServerInterface interface {
 	// GetIndexerCommandReceipt Recover an actor-bound safe receipt without resubmitting secret configuration
 	// (GET /api/v1/indexer-commands/{key})
 	GetIndexerCommandReceipt(w http.ResponseWriter, r *http.Request, key string, params GetIndexerCommandReceiptParams)
+	// ListIndexerTemplates List builtin indexer preset templates
+	// (GET /api/v1/indexer-templates)
+	ListIndexerTemplates(w http.ResponseWriter, r *http.Request)
 	// ListIndexers List safe current indexer configurations
 	// (GET /api/v1/indexers)
 	ListIndexers(w http.ResponseWriter, r *http.Request)
@@ -6036,6 +6063,20 @@ func (siw *ServerInterfaceWrapper) GetIndexerCommandReceipt(w http.ResponseWrite
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetIndexerCommandReceipt(w, r, key, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListIndexerTemplates operation middleware
+func (siw *ServerInterfaceWrapper) ListIndexerTemplates(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListIndexerTemplates(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -10126,6 +10167,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/policies/{id}/revisions/{revision}", wrapper.GetPolicyRevision)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/policies/{id}/revisions", wrapper.PublishPolicyRevision)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/policies/preview", wrapper.PreviewPolicy)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexer-templates", wrapper.ListIndexerTemplates)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers", wrapper.ListIndexers)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/indexers", wrapper.CreateIndexer)
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/api/v1/indexers/{id}", wrapper.DeleteIndexer)
@@ -12164,6 +12206,55 @@ func (response GetIndexerCommandReceipt503JSONResponse) VisitGetIndexerCommandRe
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListIndexerTemplatesRequestObject struct {
+}
+
+type ListIndexerTemplatesResponseObject interface {
+	VisitListIndexerTemplatesResponse(w http.ResponseWriter) error
+}
+
+type ListIndexerTemplates200JSONResponse IndexerTemplateListResponse
+
+func (response ListIndexerTemplates200JSONResponse) VisitListIndexerTemplatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListIndexerTemplates401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListIndexerTemplates401ApplicationProblemPlusJSONResponse) VisitListIndexerTemplatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListIndexerTemplates403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListIndexerTemplates403ApplicationProblemPlusJSONResponse) VisitListIndexerTemplatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -23293,6 +23384,9 @@ type StrictServerInterface interface {
 	// GetIndexerCommandReceipt Recover an actor-bound safe receipt without resubmitting secret configuration
 	// (GET /api/v1/indexer-commands/{key})
 	GetIndexerCommandReceipt(ctx context.Context, request GetIndexerCommandReceiptRequestObject) (GetIndexerCommandReceiptResponseObject, error)
+	// ListIndexerTemplates List builtin indexer preset templates
+	// (GET /api/v1/indexer-templates)
+	ListIndexerTemplates(ctx context.Context, request ListIndexerTemplatesRequestObject) (ListIndexerTemplatesResponseObject, error)
 	// ListIndexers List safe current indexer configurations
 	// (GET /api/v1/indexers)
 	ListIndexers(ctx context.Context, request ListIndexersRequestObject) (ListIndexersResponseObject, error)
@@ -24227,6 +24321,30 @@ func (sh *strictHandler) GetIndexerCommandReceipt(w http.ResponseWriter, r *http
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetIndexerCommandReceiptResponseObject); ok {
 		if err := validResponse.VisitGetIndexerCommandReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListIndexerTemplates operation middleware
+func (sh *strictHandler) ListIndexerTemplates(w http.ResponseWriter, r *http.Request) {
+	var request ListIndexerTemplatesRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListIndexerTemplates(ctx, request.(ListIndexerTemplatesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListIndexerTemplates")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListIndexerTemplatesResponseObject); ok {
+		if err := validResponse.VisitListIndexerTemplatesResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

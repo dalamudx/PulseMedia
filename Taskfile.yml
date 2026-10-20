@@ -240,6 +240,15 @@ tasks:
       - go test -race -count=1 ./internal/adapter/metadata/douban ./internal/usecase/ranking
       - bash scripts/with_podman_test_postgres.sh go test -race -count=1 -timeout=280s -v ./internal/app -run '^TestM7DoubanRankingNativeHTTPPG$'
 
+  test-m7-templates:
+    desc: Verify builtin indexer preset templates, categories, and autofill with PG18 and race
+    cmds:
+      - go test -race -count=1 ./internal/domain/indexer
+      - go test -race -count=1 -run '^TestIndexerManagementListTemplates$' ./internal/usecase/search
+      - go test -race -count=1 -run '^TestListIndexerTemplatesHTTP$' ./internal/httpapi
+      - bash scripts/with_podman_test_postgres.sh go test -race -count=1 -timeout=280s -v ./internal/app -run '^TestM7IndexerTemplatesHTTPPG$'
+      - cd web && pnpm typecheck && node --test tests/indexer-templates.test.mjs
+
   test-compact-controls-ui:
     desc: Verify long token names and policy original-key recovery at four widths with Cookie, PG18 and Chrome
     cmds:

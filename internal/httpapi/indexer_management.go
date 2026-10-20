@@ -18,6 +18,52 @@ func (s *ServerHandler) SetIndexerManagementServices(commands *usecaseSearch.Ind
 	s.indexerManagementSvc, s.indexerReceiptSvc = commands, receipts
 }
 
+func (s *ServerHandler) ListIndexerTemplates(ctx context.Context, _ ListIndexerTemplatesRequestObject) (ListIndexerTemplatesResponseObject, error) {
+	if s.indexerManagementSvc == nil {
+		return ListIndexerTemplates403ApplicationProblemPlusJSONResponse(problemResponse(http.StatusForbidden, "FORBIDDEN", "indexer management unavailable", GetRequestID(ctx))), nil
+	}
+	actor := GetActor(ctx)
+	if actor == nil {
+		return ListIndexerTemplates401ApplicationProblemPlusJSONResponse(problemResponse(http.StatusUnauthorized, "UNAUTHORIZED", "authentication required", GetRequestID(ctx))), nil
+	}
+	templates, err := s.indexerManagementSvc.ListTemplates(ctx, actor)
+	if errors.Is(err, ports.ErrUnauthorized) {
+		return ListIndexerTemplates401ApplicationProblemPlusJSONResponse(problemResponse(http.StatusUnauthorized, "UNAUTHORIZED", "authentication required", GetRequestID(ctx))), nil
+	}
+	if errors.Is(err, ports.ErrForbidden) {
+		return ListIndexerTemplates403ApplicationProblemPlusJSONResponse(problemResponse(http.StatusForbidden, "FORBIDDEN", "access denied", GetRequestID(ctx))), nil
+	}
+	if err != nil {
+		return ListIndexerTemplates403ApplicationProblemPlusJSONResponse(problemResponse(http.StatusForbidden, "FORBIDDEN", "failed to list templates", GetRequestID(ctx))), nil
+	}
+
+	items := make([]IndexerTemplate, 0, len(templates))
+	for _, t := range templates {
+		mappings := make([]IndexerCategoryMapping, 0, len(t.CategoryMappings))
+		for _, m := range t.CategoryMappings {
+			mappings = append(mappings, IndexerCategoryMapping{
+				Id:   m.ID,
+				Name: m.Name,
+			})
+		}
+		items = append(items, IndexerTemplate{
+			Id:                    t.ID,
+			Name:                  t.Name,
+			Domain:                t.Domain,
+			Protocol:              IndexerProtocol(t.Protocol),
+			DefaultUrl:            t.DefaultURL,
+			RecommendedCategories: t.RecommendedCategories,
+			CategoryMappings:      mappings,
+			Description:           t.Description,
+			CredentialHelp:        t.CredentialHelp,
+		})
+	}
+
+	return ListIndexerTemplates200JSONResponse{
+		Templates: items,
+	}, nil
+}
+
 func (s *ServerHandler) ListIndexers(ctx context.Context, _ ListIndexersRequestObject) (ListIndexersResponseObject, error) {
 	if s.indexerManagementSvc == nil {
 		return indexerFailure(ctx, ports.ErrUnavailable), nil

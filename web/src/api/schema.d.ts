@@ -1479,6 +1479,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/indexer-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List builtin indexer preset templates */
+        get: operations["listIndexerTemplates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/indexers": {
         parameters: {
             query?: never;
@@ -3543,6 +3560,24 @@ export interface components {
             last_success_at?: string;
             /** Format: int64 */
             last_candidate_count?: number;
+        };
+        IndexerCategoryMapping: {
+            id: number;
+            name: string;
+        };
+        IndexerTemplate: {
+            id: string;
+            name: string;
+            domain: string;
+            protocol: components["schemas"]["IndexerProtocol"];
+            default_url: string;
+            recommended_categories: components["schemas"]["IndexerCategories"];
+            category_mappings: components["schemas"]["IndexerCategoryMapping"][];
+            description: string;
+            credential_help: string;
+        };
+        IndexerTemplateListResponse: {
+            templates: components["schemas"]["IndexerTemplate"][];
         };
         /** @enum {string} */
         IndexerProtocol: "torznab" | "nexusphp" | "rss";
@@ -7789,6 +7824,44 @@ export interface operations {
             };
             404: components["responses"]["PolicyNotFound"];
             503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    listIndexerTemplates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Builtin indexer preset templates with recommended categories */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndexerTemplateListResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     listIndexers: {

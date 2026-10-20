@@ -3032,6 +3032,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /api/v1/indexer-templates:
+    get:
+      summary: List builtin indexer preset templates
+      operationId: listIndexerTemplates
+      responses:
+        '200':
+          description: Builtin indexer preset templates with recommended categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexerTemplateListResponse'
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /api/v1/indexers:
     get:
       summary: List safe current indexer configurations
@@ -6609,6 +6633,52 @@ components:
         last_query_id: {type: string, format: uuid}
         last_success_at: {type: string, format: date-time}
         last_candidate_count: {type: integer, format: int64}
+
+    IndexerCategoryMapping:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    IndexerTemplate:
+      type: object
+      additionalProperties: false
+      required: [id, name, domain, protocol, default_url, recommended_categories, category_mappings, description, credential_help]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        domain:
+          type: string
+        protocol:
+          $ref: '#/components/schemas/IndexerProtocol'
+        default_url:
+          type: string
+        recommended_categories:
+          $ref: '#/components/schemas/IndexerCategories'
+        category_mappings:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndexerCategoryMapping'
+        description:
+          type: string
+        credential_help:
+          type: string
+
+    IndexerTemplateListResponse:
+      type: object
+      additionalProperties: false
+      required: [templates]
+      properties:
+        templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndexerTemplate'
 
     IndexerProtocol:
       type: string

@@ -400,3 +400,70 @@ func TestIndexerManagementFreezesInputBeforeCodec(t *testing.T) {
 		t.Fatal("request hash did not use system keyed digest")
 	}
 }
+
+func TestIndexerManagementListTemplates(t *testing.T) {
+	service := search.NewIndexerManagementService(nil, nil)
+
+	// 1. Unauthorized
+	if _, err := service.ListTemplates(t.Context(), nil); !errors.Is(err, ports.ErrUnauthorized) {
+		t.Fatalf("expected ErrUnauthorized, got %v", err)
+	}
+
+	// 2. Token caller rejected
+	tokenActor := &ports.Actor{ID: "00000000-0000-0000-0000-000000000001", Type: ports.ActorTypeUser, Role: ports.RoleAdmin, Scopes: []string{}}
+	if _, err := service.ListTemplates(t.Context(), tokenActor); !errors.Is(err, ports.ErrForbidden) {
+		t.Fatalf("expected ErrForbidden for token actor, got %v", err)
+	}
+
+	// 3. Non-user actor rejected
+	sysActor := &ports.Actor{ID: "00000000-0000-0000-0000-000000000001", Type: ports.ActorTypeSystem, Role: ports.RoleAdmin}
+	if _, err := service.ListTemplates(t.Context(), sysActor); !errors.Is(err, ports.ErrForbidden) {
+		t.Fatalf("expected ErrForbidden for system actor, got %v", err)
+	}
+
+	// 4. Unknown role rejected
+	guestActor := &ports.Actor{ID: "00000000-0000-0000-0000-000000000001", Type: ports.ActorTypeUser, Role: "guest"}
+	if _, err := service.ListTemplates(t.Context(), guestActor); !errors.Is(err, ports.ErrForbidden) {
+		t.Fatalf("expected ErrForbidden for guest role, got %v", err)
+	}
+
+	// 5. Admin succeeds
+	adminActor := &ports.Actor{ID: "00000000-0000-0000-0000-000000000001", Type: ports.ActorTypeUser, Role: ports.RoleAdmin}
+	templates, err := service.ListTemplates(t.Context(), adminActor)
+	if err != nil {
+		t.Fatalf("admin list failed: %v", err)
+	}
+	if len(templates) < 20 {
+		t.Fatalf("expected >= 20 templates, got %d", len(templates))
+	}
+
+	// Verify Prowlarr template structure
+	var foundProwlarr bool
+	for _, tmpl := range templates {
+		if tmpl.ID == "prowlarr" {
+			foundProwlarr = true
+			if tmpl.Protocol != ports.IndexerProtocolTorznab {
+				t.Errorf("prowlarr protocol: expected torznab, got %s", tmpl.Protocol)
+			}
+			if len(tmpl.RecommendedCategories) == 0 {
+				t.Errorf("prowlarr recommended categories empty")
+			}
+			if len(tmpl.CategoryMappings) == 0 {
+				t.Errorf("prowlarr category mappings empty")
+			}
+		}
+	}
+	if !foundProwlarr {
+		t.Error("prowlarr template not found in output")
+	}
+
+	// 6. Member succeeds
+	memberActor := &ports.Actor{ID: "00000000-0000-0000-0000-000000000002", Type: ports.ActorTypeUser, Role: ports.RoleMember}
+	memberTemplates, err := service.ListTemplates(t.Context(), memberActor)
+	if err != nil {
+		t.Fatalf("member list failed: %v", err)
+	}
+	if len(memberTemplates) != len(templates) {
+		t.Fatalf("member count mismatch: got %d, want %d", len(memberTemplates), len(templates))
+	}
+}

@@ -8,6 +8,7 @@ import { parseSitePending, serializeSitePending, sitePendingStorageKey, type Sit
 import {createSiteProbeBatch, type SiteProbeBatchSnapshot, type SiteProbeEntry} from "@/features/configuration/siteProbeBatch";
 import "@/features/configuration/site-probes.css";
 
+import { type IndexerTemplate, applyTemplateToDraft, groupTemplatesByProtocol } from "@/features/configuration/indexerTemplates";
 type Site = paths["/api/v1/indexers"]["get"]["responses"]["200"]["content"]["application/json"]["items"][number];
 type CreateBody = paths["/api/v1/indexers"]["post"]["requestBody"]["content"]["application/json"];
 type UpdateBody = paths["/api/v1/indexers/{id}"]["put"]["requestBody"]["content"]["application/json"];
@@ -72,6 +73,8 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const [templates, setTemplates] = useState<IndexerTemplate[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [editing, setEditing] = useState<{ id: string; version: number } | null>(null);
   const [conflict, setConflict] = useState(false);
   const [rssID, setRSSID] = useState<string | null>(null);
@@ -94,8 +97,27 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
   const formRef = useRef<HTMLFormElement>(null);
   const storageKey = sitePendingStorageKey(userID);
 
+  function applyTemplate(templateId: string) {
+    setSelectedTemplateId(templateId);
+    const tmpl = templates.find(t => t.id === templateId);
+    if (!tmpl) return;
+    setDraft(previous => applyTemplateToDraft(previous, tmpl, !!editing));
+    setMessage(`已载入「${tmpl.name}」模板，分类代码已自动填充。`);
+    setError("");
+  }
+  useEffect(() => {
+    if (!admin) return;
+    const controller = new AbortController();
+    api.GET("/api/v1/indexer-templates", { signal: controller.signal })
+      .then(({ data }) => {
+        if (!active.current || controller.signal.aborted) return;
+        if (data?.templates) setTemplates(data.templates);
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [admin]);
   function changePending(value: Pending | null) { pendingRef.current = value; setPending(value); }
-  function resetDraft() { setEditing(null); setDraft(emptyDraft()); setConflict(false); }
+  function resetDraft() { setEditing(null); setDraft(emptyDraft()); setConflict(false); setSelectedTemplateId(""); }
   const loadIndexers = useCallback(async () => {
     const sequence = ++listSequence.current;
     listReader.current?.abort();
@@ -333,6 +355,7 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
   const mutationBlocked = !admin || loading || busy || testing || recovering || !!storageError || !!pending || conflict;
   const formBlocked = !admin || loading || busy || testing || recovering || !!storageError || (!!pending && !reentry) || conflict;
   const selectedRSS = indexers.find(site => site.id === rssID);
+  const templateGroups = groupTemplatesByProtocol(templates);
   return <div className="sites-container" style={{ minWidth: 0 }}>
     {admin && <SiteLiveRefresh invalidate={invalidate} />}
     <div className="page-header" style={{ flexWrap: "wrap", gap: "1rem" }}>
@@ -383,6 +406,49 @@ function ManagedSitesPanel({ userID, admin }: { userID: string; admin: boolean }
       {editing && <p className="config-description">当前编辑配置版本：{editing.version}。保留现有地址和凭据时，服务器逐字节保留原内容。</p>}
       <form className="form" ref={formRef} onSubmit={submit} autoComplete="off">
         <fieldset className="config-fieldset" disabled={formBlocked}><legend>站点配置</legend>
+          {templates.length > 0 && (
+            <div className="form-group">
+              <label htmlFor="managed-site-template">内置站点模板（选择后自动填充推荐配置）</label>
+              <select
+                id="managed-site-template"
+                value={selectedTemplateId}
+                onChange={event => applyTemplate(event.target.value)}
+              >
+                <option value="">-- 选择预设模板 (共 {templates.length} 个内置站点) --</option>
+                <optgroup label="聚合器与通用 (Torznab)">
+                  {templateGroups.torznab.map(t => (
+                    <option key={t.id} value={t.id}>{t.name} ({t.domain})</option>
+                  ))}
+                </optgroup>
+                <optgroup label="国内主流 PT 站 (NexusPHP)">
+                  {templateGroups.nexusphp.map(t => (
+                    <option key={t.id} value={t.id}>{t.name} ({t.domain})</option>
+                  ))}
+                </optgroup>
+                <optgroup label="公开与订阅 (RSS)">
+                  {templateGroups.rss.map(t => (
+                    <option key={t.id} value={t.id}>{t.name} ({t.domain})</option>
+                  ))}
+                </optgroup>
+              </select>
+              {(() => {
+                const current = templates.find(t => t.id === selectedTemplateId);
+                if (!current) return null;
+                return (
+                  <div className="template-help-box" style={{ marginTop: "0.5rem", padding: "0.5rem 0.75rem", background: "var(--bg-secondary, rgba(255,255,255,0.04))", borderRadius: "4px", fontSize: "0.85rem" }}>
+                    <p style={{ margin: "0 0 0.25rem 0" }}><strong>{current.name}</strong> · {current.description}</p>
+                    <p style={{ margin: "0 0 0.25rem 0", color: "var(--text-muted, #888)" }}>认证提示：{current.credential_help}</p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", alignItems: "center" }}>
+                      <span style={{ color: "var(--text-muted, #888)" }}>推荐分类说明：</span>
+                      {current.category_mappings.map(m => (
+                        <span key={m.id} className="badge" style={{ fontSize: "0.75rem", padding: "0.15rem 0.35rem" }}>{m.id}: {m.name}</span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
           <div className="form-group"><label htmlFor="managed-site-name">站点名称 *</label><input id="managed-site-name" required value={draft.name} onChange={event => setDraft(previous => ({ ...previous, name: event.target.value }))} /></div>
           <div className="form-group"><label htmlFor="managed-site-protocol">协议 *</label><select id="managed-site-protocol" value={draft.protocol} onChange={event => { const protocol = event.target.value; if (protocol === "torznab" || protocol === "nexusphp" || protocol === "rss") setDraft(previous => ({ ...previous, protocol })); }}><option value="torznab">Torznab（Prowlarr / Jackett）</option><option value="nexusphp">NexusPHP（Cookie）</option><option value="rss">RSS（公开源可留空凭据）</option></select></div>
           {editing && <label className="config-check"><input type="checkbox" checked={draft.keepURL} onChange={event => setDraft(previous => ({ ...previous, keepURL: event.target.checked, url: "" }))} />保留现有地址</label>}

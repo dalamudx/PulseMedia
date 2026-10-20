@@ -9,6 +9,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/indexer"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/google/uuid"
 )
@@ -129,6 +130,38 @@ func (s *IndexerManagementService) List(ctx context.Context, actor *ports.Actor)
 		views = []ports.IndexerManagementView{}
 	}
 	return views, nil
+}
+
+func (s *IndexerManagementService) ListTemplates(ctx context.Context, actor *ports.Actor) ([]ports.IndexerTemplateView, error) {
+	if actor == nil {
+		return nil, ports.ErrUnauthorized
+	}
+	if actor.Type != ports.ActorTypeUser || actor.Scopes != nil {
+		return nil, ports.ErrForbidden
+	}
+	if actor.Role != ports.RoleAdmin && actor.Role != ports.RoleMember {
+		return nil, ports.ErrForbidden
+	}
+	domainTemplates := indexer.BuiltinTemplates()
+	out := make([]ports.IndexerTemplateView, len(domainTemplates))
+	for i, t := range domainTemplates {
+		mappings := make([]ports.IndexerCategoryMappingView, len(t.CategoryMappings))
+		for j, m := range t.CategoryMappings {
+			mappings[j] = ports.IndexerCategoryMappingView{ID: m.ID, Name: m.Name}
+		}
+		out[i] = ports.IndexerTemplateView{
+			ID:                    t.ID,
+			Name:                  t.Name,
+			Domain:                t.Domain,
+			Protocol:              ports.IndexerProtocol(t.Protocol),
+			DefaultURL:            t.DefaultURL,
+			RecommendedCategories: t.RecommendedCategories,
+			CategoryMappings:      mappings,
+			Description:           t.Description,
+			CredentialHelp:        t.CredentialHelp,
+		}
+	}
+	return out, nil
 }
 
 // This matches command.AuthorizeSession without importing another usecase
