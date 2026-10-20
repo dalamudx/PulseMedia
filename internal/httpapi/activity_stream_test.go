@@ -3,13 +3,15 @@ package httpapi
 import (
 	"bufio"
 	"context"
-	"github.com/dalamudx/PulseMedia/internal/ports"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"testing"
 	"time"
+
+	"github.com/dalamudx/PulseMedia/internal/ports"
 )
 
 func TestActivityStreamOnlyResetAndReconnectCleanup(t *testing.T) {
@@ -51,13 +53,42 @@ func TestActivityStreamOnlyResetAndReconnectCleanup(t *testing.T) {
 		}
 	}
 	read()
+
+	// A log line is not an activity change: it must neither reach this stream
+	// nor synthesize a reset hint for scoped GET requeries.
+	var mu sync.Mutex
+	frames := make(chan string, 8)
+	var readers sync.WaitGroup
+	readers.Add(1)
+	go func() {
+		defer readers.Done()
+		event, data := "", ""
+		for scanner.Scan() {
+			line := scanner.Text()
+			if strings.HasPrefix(line, "event: ") {
+				event = strings.TrimPrefix(line, "event: ")
+			}
+			if strings.HasPrefix(line, "data: ") {
+				data = strings.TrimPrefix(line, "data: ")
+			}
+			if line == "" {
+				mu.Lock()
+				frames <- event + "|" + data
+				mu.Unlock()
+				event, data = "", ""
+			}
+		}
+	}()
 	hub.BroadcastLog("PRIVATE-CREDENTIAL https://synthetic.invalid/?api_key=secret")
-	read()
-	hub.Close()
-	hub.Close()
-	if _, e = io.ReadAll(resp.Body); e != nil {
-		t.Fatal("owned stream failed to drain", e)
+	select {
+	case frame := <-frames:
+		t.Fatalf("log publication reached the activity stream: %q", frame)
+	case <-time.After(250 * time.Millisecond):
 	}
+
+	hub.Close()
+	hub.Close()
+	readers.Wait()
 	if e = resp.Body.Close(); e != nil {
 		t.Fatal(e)
 	}

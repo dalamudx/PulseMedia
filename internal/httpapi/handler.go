@@ -59,6 +59,7 @@ type ServerHandler struct {
 	dashboardActivitySvc     *operation.ActivityService
 	submissionRetrySvc       *operation.SubmissionRetryService
 	activityHub              *SSEHub
+	logHub                   *SSEHub
 	tokenManagementSvc       *auth.TokenManagementService
 	authSvc                  *auth.Service
 	settingsSvc              *settings.Service

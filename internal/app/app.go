@@ -66,6 +66,7 @@ type App struct {
 	version            string
 	dbPool             *pgxpool.Pool
 	metadataHTTPClient *http.Client
+	sseHub             *httpapi.SSEHub
 
 	mu        sync.RWMutex
 	ready     bool
@@ -144,9 +145,17 @@ func New(cfg *config.Config, opts ...Option) (*App, error) {
 	if a.idgen == nil {
 		a.idgen = idgen.New()
 	}
+	if a.sseHub == nil {
+		a.sseHub = httpapi.NewSSEHub()
+	}
 	if a.logger == nil {
 		a.logger = logging.NewLogger(os.Stdout, cfg.LogLevel)
 	}
+	// Always mirror accepted records into the live log hub, whichever logger the
+	// caller supplied. The sink receives an already redacted single line.
+	a.logger = logging.WithSink(a.logger, func(level slog.Level, line string) {
+		a.sseHub.PublishLog(level, line)
+	})
 
 	// Base readiness check for data directory
 	a.checks["datadir"] = true
@@ -406,7 +415,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	if queue != nil {
 		sidecarSvc = metadatasidecar.NewService(sidecarstore.NewRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), metaProvider, tmdbartwork.New(a.metadataHTTPClient, metaProvider.budget))
 	}
-	sseHub := httpapi.NewSSEHub()
+	sseHub := a.sseHub
 
 	var reuseSvc *transfer.LibraryReuseService
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)

@@ -2050,6 +2050,30 @@ func (e ReviewTVCoverageCandidateJSONBodyConfirmed) Valid() bool {
 	}
 }
 
+// Defines values for StreamSystemLogsParamsLevel.
+const (
+	DEBUG StreamSystemLogsParamsLevel = "DEBUG"
+	ERROR StreamSystemLogsParamsLevel = "ERROR"
+	INFO  StreamSystemLogsParamsLevel = "INFO"
+	WARN  StreamSystemLogsParamsLevel = "WARN"
+)
+
+// Valid indicates whether the value is a known member of the StreamSystemLogsParamsLevel enum.
+func (e StreamSystemLogsParamsLevel) Valid() bool {
+	switch e {
+	case DEBUG:
+		return true
+	case ERROR:
+		return true
+	case INFO:
+		return true
+	case WARN:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CommitOriginalTransferRecoveryJSONBodyConfirmed.
 const (
 	CommitOriginalTransferRecoveryJSONBodyConfirmedTrue CommitOriginalTransferRecoveryJSONBodyConfirmed = true
@@ -4744,6 +4768,15 @@ type SyncDoubanWishlistJSONBody struct {
 	DoubanUid string `json:"douban_uid"`
 }
 
+// StreamSystemLogsParams defines parameters for StreamSystemLogs.
+type StreamSystemLogsParams struct {
+	// Level Minimum log level filter (DEBUG, INFO, WARN, ERROR).
+	Level *StreamSystemLogsParamsLevel `form:"level,omitempty" json:"level,omitempty"`
+}
+
+// StreamSystemLogsParamsLevel defines parameters for StreamSystemLogs.
+type StreamSystemLogsParamsLevel string
+
 // CommitOriginalTransferRecoveryJSONBody defines parameters for CommitOriginalTransferRecovery.
 type CommitOriginalTransferRecoveryJSONBody struct {
 	Confirmed          CommitOriginalTransferRecoveryJSONBodyConfirmed `json:"confirmed"`
@@ -5463,6 +5496,9 @@ type ServerInterface interface {
 	// SyncDoubanWishlist Sync user wishlist from Douban into PulseMedia subscriptions
 	// (POST /api/v1/sync/douban)
 	SyncDoubanWishlist(w http.ResponseWriter, r *http.Request)
+	// StreamSystemLogs Real-time system log stream
+	// (GET /api/v1/system/logs)
+	StreamSystemLogs(w http.ResponseWriter, r *http.Request, params StreamSystemLogsParams)
 	// GetSystemStatus System status
 	// (GET /api/v1/system/status)
 	GetSystemStatus(w http.ResponseWriter, r *http.Request)
@@ -9715,6 +9751,39 @@ func (siw *ServerInterfaceWrapper) SyncDoubanWishlist(w http.ResponseWriter, r *
 	handler.ServeHTTP(w, r)
 }
 
+// StreamSystemLogs operation middleware
+func (siw *ServerInterfaceWrapper) StreamSystemLogs(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params StreamSystemLogsParams
+
+	// ------------- Optional query parameter "level" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "level", r.URL.Query(), &params.Level, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "level"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "level", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.StreamSystemLogs(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // GetSystemStatus operation middleware
 func (siw *ServerInterfaceWrapper) GetSystemStatus(w http.ResponseWriter, r *http.Request) {
 
@@ -10080,6 +10149,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/healthz", wrapper.GetHealthz)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/readyz", wrapper.GetReadyz)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/status", wrapper.GetSystemStatus)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/logs", wrapper.StreamSystemLogs)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/status", wrapper.GetAuthStatus)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/setup", wrapper.SetupAdmin)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/tokens", wrapper.ListOwnTokens)
@@ -22690,6 +22760,99 @@ func (response SyncDoubanWishlist401ApplicationProblemPlusJSONResponse) VisitSyn
 	return err
 }
 
+type StreamSystemLogsRequestObject struct {
+	Params StreamSystemLogsParams
+}
+
+type StreamSystemLogsResponseObject interface {
+	VisitStreamSystemLogsResponse(w http.ResponseWriter) error
+}
+
+type StreamSystemLogs200TexteventStreamResponse struct {
+	Body          io.Reader
+	ContentLength int64
+}
+
+func (response StreamSystemLogs200TexteventStreamResponse) VisitStreamSystemLogsResponse(w http.ResponseWriter) error {
+
+	w.Header().Set("Content-Type", "text/event-stream")
+	if response.ContentLength != 0 {
+		w.Header().Set("Content-Length", fmt.Sprint(response.ContentLength))
+	}
+	w.WriteHeader(200)
+
+	if closer, ok := response.Body.(io.ReadCloser); ok {
+		defer closer.Close()
+	}
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		// If w doesn't support flushing, fall back to io.Copy.
+		_, err := io.Copy(w, response.Body)
+		return err
+	}
+	// text/event-stream messages are typically small; use a
+	// modest buffer and flush after each chunk so clients see
+	// events immediately instead of waiting on OS buffering.
+	buf := make([]byte, 4096)
+	for {
+		n, err := response.Body.Read(buf)
+		if n > 0 {
+			if _, writeErr := w.Write(buf[:n]); writeErr != nil {
+				return writeErr
+			}
+			flusher.Flush()
+		}
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
+		}
+	}
+}
+
+type StreamSystemLogs401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response StreamSystemLogs401ApplicationProblemPlusJSONResponse) VisitStreamSystemLogsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type StreamSystemLogs403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response StreamSystemLogs403ApplicationProblemPlusJSONResponse) VisitStreamSystemLogsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type StreamSystemLogs503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response StreamSystemLogs503ApplicationProblemPlusJSONResponse) VisitStreamSystemLogsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type GetSystemStatusRequestObject struct {
 }
 
@@ -23697,6 +23860,9 @@ type StrictServerInterface interface {
 	// SyncDoubanWishlist Sync user wishlist from Douban into PulseMedia subscriptions
 	// (POST /api/v1/sync/douban)
 	SyncDoubanWishlist(ctx context.Context, request SyncDoubanWishlistRequestObject) (SyncDoubanWishlistResponseObject, error)
+	// StreamSystemLogs Real-time system log stream
+	// (GET /api/v1/system/logs)
+	StreamSystemLogs(ctx context.Context, request StreamSystemLogsRequestObject) (StreamSystemLogsResponseObject, error)
 	// GetSystemStatus System status
 	// (GET /api/v1/system/status)
 	GetSystemStatus(ctx context.Context, request GetSystemStatusRequestObject) (GetSystemStatusResponseObject, error)
@@ -27289,6 +27455,32 @@ func (sh *strictHandler) SyncDoubanWishlist(w http.ResponseWriter, r *http.Reque
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(SyncDoubanWishlistResponseObject); ok {
 		if err := validResponse.VisitSyncDoubanWishlistResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// StreamSystemLogs operation middleware
+func (sh *strictHandler) StreamSystemLogs(w http.ResponseWriter, r *http.Request, params StreamSystemLogsParams) {
+	var request StreamSystemLogsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.StreamSystemLogs(ctx, request.(StreamSystemLogsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "StreamSystemLogs")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(StreamSystemLogsResponseObject); ok {
+		if err := validResponse.VisitStreamSystemLogsResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

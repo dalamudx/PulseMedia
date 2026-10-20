@@ -6,6 +6,7 @@ import { EndpointConfigurationPanel } from "@/features/configuration/EndpointCon
 import {LibraryRootsPanel} from "@/features/configuration/LibraryRootsPanel";
 import { TMDBSettingsPanel } from "@/features/configuration/TMDBSettingsPanel";
 import { PolicyPanel } from "@/features/configuration/PolicyPanel";
+import { LiveLogPanel } from "@/features/configuration/LiveLogPanel";
 import { useToast } from "@/features/toast/ToastContext";
 import { useAuth } from "@/features/auth/AuthContext";
 import type { paths } from "@/api/client";
@@ -27,26 +28,14 @@ export const SettingsView: React.FC = () => {
 
   // System Status & Logs
   const [sysStatus, setSysStatus] = useState<SystemStatus | null>(null);
-  const [logLines, setLogLines] = useState<string[]>([]);
-  const [sseConnected, setSseConnected] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
     setSysStatus(null);
-    setLogLines([]);
-    setSseConnected(false);
     void api.GET("/api/v1/system/status", { signal: controller.signal }).then(({ data }) => {
       if (!controller.signal.aborted && data) setSysStatus(data);
     }).catch(() => {});
-    const es = user?.role === "admin" ? new EventSource("/api/v1/events") : null;
-    if (es) {
-      es.onopen = () => { if (!controller.signal.aborted) setSseConnected(true); };
-      es.onerror = () => { if (!controller.signal.aborted) setSseConnected(false); };
-      es.onmessage = (e) => {
-        if (!controller.signal.aborted) setLogLines(prev => [...prev.slice(-200), `[${new Date().toLocaleTimeString()}] ${e.data}`]);
-      };
-    }
-    return () => { controller.abort(); es?.close(); };
+    return () => { controller.abort(); };
   }, [user?.id, user?.role]);
 
 
@@ -174,33 +163,7 @@ export const SettingsView: React.FC = () => {
           )}
 
           {/* 9. Live Logs */}
-          {activeTab === "logs" && (
-            <div className="card logs-card">
-              <div className="card-header">
-                <div className="logs-header-left">
-                  <h3>📋 实时系统运行日志 (Live Log Viewer)</h3>
-                  <span className={`badge ${sseConnected ? "online" : "offline"}`}>
-                    {sseConnected ? "🟢 实时推送中" : "⚠️ 离线"}
-                  </span>
-                </div>
-                <div className="logs-actions">
-                  <button className="btn-sm btn-secondary" onClick={() => setLogLines([])}>清空屏幕</button>
-                </div>
-              </div>
-
-              <div className="terminal-box">
-                {logLines.length === 0 ? (
-                  <div className="log-empty">正在等待系统日志输出...</div>
-                ) : (
-                  logLines.map((line, idx) => (
-                    <div key={idx} className="log-line">
-                      {line}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
+          {activeTab === "logs" && <LiveLogPanel userID={user?.id ?? ""} role={user?.role ?? ""} />}
 
 
         </main>

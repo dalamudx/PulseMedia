@@ -154,3 +154,59 @@ func NewLogger(w io.Writer, levelStr string) *slog.Logger {
 	baseHandler := slog.NewJSONHandler(w, opts)
 	return slog.New(NewRedactingHandler(baseHandler))
 }
+
+// teeHandler forwards each record to a primary handler and an optional sink.
+// It is installed inside the redacting handler so the sink only ever observes
+// sanitized records.
+type teeHandler struct {
+	primary slog.Handler
+	sink    func(slog.Level, string)
+}
+
+func (h *teeHandler) Enabled(ctx context.Context, level slog.Level) bool {
+	return h.primary.Enabled(ctx, level)
+}
+
+func (h *teeHandler) Handle(ctx context.Context, record slog.Record) error {
+	if h.sink != nil {
+		h.sink(record.Level, RedactString(formatRecord(record)))
+	}
+	return h.primary.Handle(ctx, record)
+}
+
+func (h *teeHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return &teeHandler{primary: h.primary.WithAttrs(attrs), sink: h.sink}
+}
+
+func (h *teeHandler) WithGroup(name string) slog.Handler {
+	return &teeHandler{primary: h.primary.WithGroup(name), sink: h.sink}
+}
+
+// formatRecord renders one record as a single line: message plus attributes.
+func formatRecord(record slog.Record) string {
+	var b strings.Builder
+	b.WriteString(record.Message)
+	record.Attrs(func(attr slog.Attr) bool {
+		b.WriteByte(' ')
+		b.WriteString(attr.Key)
+		b.WriteByte('=')
+		b.WriteString(attr.Value.Resolve().String())
+		return true
+	})
+	return b.String()
+}
+
+// NewLoggerWithSink creates the process logger and mirrors every accepted
+// record, already redacted, into sink for user-visible live logs.
+func NewLoggerWithSink(w io.Writer, levelStr string, sink func(slog.Level, string)) *slog.Logger {
+	return WithSink(NewLogger(w, levelStr), sink)
+}
+
+// WithSink mirrors accepted records into sink. The sink always receives a
+// redacted single-line rendering, whatever handler the logger already has.
+func WithSink(logger *slog.Logger, sink func(slog.Level, string)) *slog.Logger {
+	if logger == nil || sink == nil {
+		return logger
+	}
+	return slog.New(&teeHandler{primary: logger.Handler(), sink: sink})
+}

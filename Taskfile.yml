@@ -249,6 +249,14 @@ tasks:
       - bash scripts/with_podman_test_postgres.sh go test -race -count=1 -timeout=280s -v ./internal/app -run '^TestM7IndexerTemplatesHTTPPG$'
       - cd web && pnpm typecheck && node --test tests/indexer-templates.test.mjs
 
+  test-m7-live-logs:
+    desc: Verify the live system log stream, redaction, level filter and viewer with PG18 and Chrome
+    cmds:
+      - go test -race -count=1 ./internal/platform/logging
+      - go test -race -count=1 -run 'TestStreamSystemLogs|TestParseLogLevel|TestLiveLogStream|TestPublishLogDoesNot|TestHubReplay|TestActivityStreamOnlyReset' ./internal/httpapi
+      - bash scripts/with_podman_test_postgres.sh go test -race -count=1 -timeout=200s -v ./internal/app -run '^TestM7LiveLogsAppHTTPPG$'
+      - bash scripts/verify_m7_live_logs.sh all
+
   test-compact-controls-ui:
     desc: Verify long token names and policy original-key recovery at four widths with Cookie, PG18 and Chrome
     cmds:

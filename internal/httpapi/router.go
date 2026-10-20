@@ -20,6 +20,7 @@ func NewRouter(a AppContext, server StrictServerInterface, authSvc *auth.Service
 	mux := http.NewServeMux()
 	if target, ok := server.(*ServerHandler); ok {
 		target.activityHub = sseHub
+		target.logHub = sseHub
 	}
 
 	// Never use the generated default callbacks: both strict handler errors and

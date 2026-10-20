@@ -3040,6 +3040,27 @@ button {
 
 .terminal-box { background-color: #030712; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-md); padding: 1.25rem; height: 480px; overflow-y: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem; line-height: 1.5; color: #e5e7eb; }
 .log-line { padding: 0.2rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
+.log-line { padding: 0.2rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.03); display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); gap: 0.55rem; align-items: baseline; min-width: 0; }
+.log-time { color: #64748b; flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+.log-level { flex: 0 0 auto; font-weight: 700; font-size: 0.75rem; padding: 0 0.35rem; border-radius: 3px; }
+.log-level-debug { color: #94a3b8; background-color: rgba(148, 163, 184, 0.12); }
+.log-level-info { color: #60a5fa; background-color: rgba(96, 165, 250, 0.12); }
+.log-level-warn { color: #fbbf24; background-color: rgba(251, 191, 36, 0.14); }
+.log-level-error { color: #f87171; background-color: rgba(248, 113, 113, 0.16); }
+.log-text { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+/* Narrow screens: give the log text the full row instead of a squeezed column. */
+@media (max-width: 640px) {
+  .logs-card .card-header { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+  .logs-actions { justify-content: flex-start; }
+  .log-line { display: flex; flex-wrap: wrap; gap: 0.15rem 0.5rem; }
+  .log-text { flex: 1 1 100%; }
+}
+
+.logs-header-left { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; min-width: 0; }
+.logs-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.logs-actions label { font-size: 0.82rem; color: var(--muted); }
+.logs-actions select { width: auto; min-width: 6.5rem; }
+.logs-actions button { white-space: nowrap; display: inline-flex; align-items: center; gap: 0.3rem; }
 .log-empty { color: var(--muted); text-align: center; padding: 4rem; }
 
 /* ==========================================================================
