@@ -84,7 +84,8 @@ type ServerHandler struct {
 	doubanRankingSvc          doubanRankingApplication
 	doubanSyncConfigSvc       *watchlist.ConfigService
 	siteAccountStatsConfigSvc siteAccountStatsConfigApplication
-	siteAccountStatsSvc siteAccountStatsApplication
+	siteCheckinConfigSvc      siteCheckinConfigApplication
+	siteAccountStatsSvc       siteAccountStatsApplication
 	localMediaReader          ports.LocalMediaSearchReader
 	subSvc                    *subscription.Service
 	subCreationSvc            subscriptionCreationApplication

@@ -1944,6 +1944,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/indexers/{indexer_id}/checkin/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Read saved global source site checkin configuration
+         * @description Current active administrator session only. Returns saved configuration intent, not attendance success. No upstream I/O.
+         */
+        get: operations["readSiteCheckinConfig"];
+        /**
+         * Save site checkin configuration without performing attendance
+         * @description Current active administrator session only. Records configuration intent only; does not observe, sign in, or enqueue tasks.
+         */
+        put: operations["saveSiteCheckinConfig"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/indexers/{indexer_id}/checkin/config/commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read original saved site checkin configuration receipt
+         * @description Current active administrator session only; read-only recovery does not perform attendance.
+         */
+        get: operations["readSiteCheckinConfigReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/indexers/{indexer_id}/account-stats/config": {
         parameters: {
             query?: never;
@@ -2181,6 +2227,47 @@ export interface components {
             indexer_ids: string[];
             /** Format: uuid */
             downloader_id?: string;
+        };
+        /** @description Configuration intent for NexusPHP 1.10.3 only. Explicit site timezone is required and never inferred from PHP defaults. No captcha bypass, daily execution command, unknown-result retry, or manual side-effect endpoint. */
+        SiteCheckinConfigInput: {
+            /** @description Canonical positive uint64 account ID */
+            expected_account_id: string;
+            /** @enum {string} */
+            profile: "nexusphp_1103_attendance_v1";
+            /** @description Explicit site timezone checked against the database timezone registry */
+            timezone: string;
+            daily_at: string;
+            enabled: boolean;
+            /** Format: int64 */
+            expected_version: number;
+            /** Format: int64 */
+            expected_source_version: number;
+        };
+        /** @description Saved intent only; saving is neither collection nor attendance success. Observational REST GET performs no native site I/O. */
+        SiteCheckinConfig: {
+            /** Format: uuid */
+            readonly indexer_id: string;
+            expected_account_id: string;
+            /** @enum {string} */
+            profile: "nexusphp_1103_attendance_v1";
+            timezone: string;
+            daily_at: string;
+            enabled: boolean;
+            /** Format: int64 */
+            readonly version: number;
+            /** Format: int64 */
+            readonly source_config_version: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        SiteCheckinConfigCurrent: {
+            config: components["schemas"]["SiteCheckinConfig"] | null;
+        };
+        SiteCheckinConfigReceipt: {
+            command_key: string;
+            config: components["schemas"]["SiteCheckinConfig"];
         };
         SiteAccountStatsConfigInput: {
             /** @description Canonical positive uint64 account ID */
@@ -10263,6 +10350,223 @@ export interface operations {
                 };
             };
             /** @description Statistics temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSiteCheckinConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Saved configuration or explicit null */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteCheckinConfigCurrent"];
+                };
+            };
+            /** @description Configuration request failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    saveSiteCheckinConfig: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SiteCheckinConfigInput"];
+            };
+        };
+        responses: {
+            /** @description Original saved configuration receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteCheckinConfigReceipt"];
+                };
+            };
+            /** @description Configuration request failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSiteCheckinConfigReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original saved configuration receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteCheckinConfigReceipt"];
+                };
+            };
+            /** @description Configuration request failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
             503: {
                 headers: {
                     [name: string]: unknown;

@@ -1514,6 +1514,29 @@ type SiteAccountStatsSchedule struct {
 	UpdatedAt     pgtype.Timestamptz
 }
 
+type SiteCheckinConfig struct {
+	IndexerID           uuid.UUID
+	ExpectedAccountID   string
+	Profile             string
+	Enabled             bool
+	Timezone            string
+	DailyAt             string
+	Version             int64
+	SourceConfigVersion int64
+	CreatedAt           pgtype.Timestamptz
+	UpdatedAt           pgtype.Timestamptz
+}
+
+type SiteCheckinConfigReceipt struct {
+	OwnerID     uuid.UUID
+	IndexerID   uuid.UUID
+	CommandKey  string
+	Version     int64
+	RequestHash string
+	Input       []byte
+	Snapshot    []byte
+}
+
 type Subscription struct {
 	ID                     uuid.UUID
 	UserID                 uuid.UUID

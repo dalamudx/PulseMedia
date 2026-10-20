@@ -4619,6 +4619,133 @@ paths:
           content:
             application/problem+json:
               schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/indexers/{indexer_id}/checkin/config:
+    parameters:
+      - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readSiteCheckinConfig
+      summary: Read saved global source site checkin configuration
+      description: Current active administrator session only. Returns saved configuration intent, not attendance success. No upstream I/O.
+      responses:
+        '200':
+          description: Saved configuration or explicit null
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteCheckinConfigCurrent'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+    put:
+      operationId: saveSiteCheckinConfig
+      summary: Save site checkin configuration without performing attendance
+      description: Current active administrator session only. Records configuration intent only; does not observe, sign in, or enqueue tasks.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SiteCheckinConfigInput'}
+      responses:
+        '200':
+          description: Original saved configuration receipt
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteCheckinConfigReceipt'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/indexers/{indexer_id}/checkin/config/commands/{command_key}:
+    get:
+      operationId: readSiteCheckinConfigReceipt
+      summary: Read original saved site checkin configuration receipt
+      description: Current active administrator session only; read-only recovery does not perform attendance.
+      parameters:
+        - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      responses:
+        '200':
+          description: Original saved configuration receipt
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteCheckinConfigReceipt'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
   /api/v1/indexers/{indexer_id}/account-stats/config:
     parameters:
       - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
@@ -5329,6 +5456,51 @@ components:
           - properties:
               indexer_ids: {minItems: 1}
             not: {required: [downloader_id]}
+    SiteCheckinConfigInput:
+      type: object
+      additionalProperties: false
+      description: Configuration intent for NexusPHP 1.10.3 only. Explicit site timezone is required and never inferred from PHP defaults. No captcha bypass, daily execution command, unknown-result retry, or manual side-effect endpoint.
+      required: [expected_account_id, profile, timezone, daily_at, enabled, expected_version, expected_source_version]
+      properties:
+        expected_account_id: {type: string, pattern: '^[1-9][0-9]{0,19}$', description: Canonical positive uint64 account ID}
+        profile: {type: string, enum: [nexusphp_1103_attendance_v1]}
+        timezone: {type: string, minLength: 1, maxLength: 96, description: Explicit site timezone checked against the database timezone registry}
+        daily_at: {type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'}
+        enabled: {type: boolean}
+        expected_version: {type: integer, format: int64, minimum: 0, maximum: 9223372036854775806}
+        expected_source_version: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775807}
+    SiteCheckinConfig:
+      type: object
+      additionalProperties: false
+      description: Saved intent only; saving is neither collection nor attendance success. Observational REST GET performs no native site I/O.
+      required: [indexer_id, expected_account_id, profile, timezone, daily_at, enabled, version, source_config_version, created_at, updated_at]
+      properties:
+        indexer_id: {type: string, format: uuid, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        expected_account_id: {type: string, pattern: '^[1-9][0-9]{0,19}$'}
+        profile: {type: string, enum: [nexusphp_1103_attendance_v1]}
+        timezone: {type: string, minLength: 1, maxLength: 96}
+        daily_at: {type: string, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'}
+        enabled: {type: boolean}
+        version: {type: integer, format: int64, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        source_config_version: {type: integer, format: int64, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        created_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        updated_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+    SiteCheckinConfigCurrent:
+      type: object
+      additionalProperties: false
+      required: [config]
+      properties:
+        config:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/SiteCheckinConfig'}
+    SiteCheckinConfigReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, config]
+      properties:
+        command_key: {type: string}
+        config: {$ref: '#/components/schemas/SiteCheckinConfig'}
     SiteAccountStatsConfigInput:
       type: object
       additionalProperties: false

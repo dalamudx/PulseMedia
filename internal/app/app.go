@@ -444,6 +444,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
 	serverHandler.SetDoubanSyncConfigService(watchlist.NewConfigService(postgres.NewDoubanSyncConfigStore(a.dbPool, a.idgen)))
 	serverHandler.SetSiteAccountStatsConfigService(siteusecase.NewAccountStatsConfigService(postgres.NewSiteAccountStatsConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
+	serverHandler.SetSiteCheckinConfigService(siteusecase.NewCheckinConfigService(postgres.NewSiteCheckinConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
 	serverHandler.SetSiteAccountStatsService(siteusecase.NewAccountStatsReader(statsRepo))
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
 	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient, douban.WithCredentialSource(doubanCredentials(settingsSvc)), douban.WithClock(a.clock)), metaProvider, a.clock))
