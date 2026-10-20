@@ -4581,6 +4581,133 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/indexers/{indexer_id}/account-stats/config:
+    parameters:
+      - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readSiteAccountStatsConfig
+      summary: Read saved global source account statistics configuration
+      description: Current active administrator session only. Returns saved configuration intent, not collected samples or download success. No upstream I/O.
+      responses:
+        '200':
+          description: Saved configuration or explicit null
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteAccountStatsConfigCurrent'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+    put:
+      operationId: saveSiteAccountStatsConfig
+      summary: Save account statistics configuration without starting collection
+      description: Current active administrator session only. Records configuration intent only; does not collect samples or enqueue tasks.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SiteAccountStatsConfigInput'}
+      responses:
+        '200':
+          description: Original saved configuration receipt
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteAccountStatsConfigReceipt'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/indexers/{indexer_id}/account-stats/config/commands/{command_key}:
+    get:
+      operationId: readSiteAccountStatsConfigReceipt
+      summary: Read original saved account statistics configuration receipt
+      description: Current active administrator session only; read-only recovery does not start collection.
+      parameters:
+        - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      responses:
+        '200':
+          description: Original saved configuration receipt
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SiteAccountStatsConfigReceipt'}
+        '400':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request failed
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
   /api/v1/sync/douban/config:
     get:
       operationId: readDoubanSyncConfig
@@ -5164,6 +5291,48 @@ components:
           - properties:
               indexer_ids: {minItems: 1}
             not: {required: [downloader_id]}
+    SiteAccountStatsConfigInput:
+      type: object
+      additionalProperties: false
+      required: [expected_account_id, profile, enabled, interval_seconds, expected_version, expected_source_version]
+      properties:
+        expected_account_id: {type: string, pattern: '^[1-9][0-9]{0,19}$', description: Canonical positive uint64 account ID}
+        profile: {type: string, enum: [nexusphp_classic_info_block_v1]}
+        enabled: {type: boolean}
+        interval_seconds: {type: integer, format: int32, minimum: 900, maximum: 86400}
+        expected_version: {type: integer, format: int64, minimum: 0}
+        expected_source_version: {type: integer, format: int64, minimum: 1}
+    SiteAccountStatsConfig:
+      type: object
+      additionalProperties: false
+      description: Saved configuration intent only, not proof of collected statistics or download success.
+      required: [indexer_id, expected_account_id, profile, enabled, interval_seconds, version, source_config_version, created_at, updated_at]
+      properties:
+        indexer_id: {type: string, format: uuid, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        expected_account_id: {type: string, pattern: '^[1-9][0-9]{0,19}$'}
+        profile: {type: string, enum: [nexusphp_classic_info_block_v1]}
+        enabled: {type: boolean}
+        interval_seconds: {type: integer, format: int32, minimum: 900, maximum: 86400}
+        version: {type: integer, format: int64, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        source_config_version: {type: integer, format: int64, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        created_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+        updated_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
+    SiteAccountStatsConfigCurrent:
+      type: object
+      additionalProperties: false
+      required: [config]
+      properties:
+        config:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/SiteAccountStatsConfig'}
+    SiteAccountStatsConfigReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, config]
+      properties:
+        command_key: {type: string}
+        config: {$ref: '#/components/schemas/SiteAccountStatsConfig'}
     DoubanSyncConfigInput:
       type: object
       additionalProperties: false

@@ -3,6 +3,9 @@ package postgres_test
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 
@@ -351,12 +354,30 @@ func TestDoubanWishTailRollbackAndRecovery(t *testing.T) {
 }
 func TestDoubanWishMigration96(t *testing.T) {
 	ctx := context.Background()
-	f := newDoubanSyncFixture(t)
-	v, e := postgres.Rollback(ctx, f.dsn, doubanSyncMigrationsDir)
+	// Keep the 96 contract independent of later migrations and runtime fixtures.
+	history96 := t.TempDir()
+	entries, err := os.ReadDir(doubanSyncMigrationsDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".sql") || len(entry.Name()) < 5 || entry.Name()[:5] > "00096" {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join(doubanSyncMigrationsDir, entry.Name()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = os.WriteFile(filepath.Join(history96, entry.Name()), raw, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	f := newDoubanSyncFixtureAt(t, history96, 96)
+	v, e := postgres.Rollback(ctx, f.dsn, history96)
 	if e != nil || v != 95 {
 		t.Fatal(v, e)
 	}
-	v, e = postgres.Migrate(ctx, f.dsn, doubanSyncMigrationsDir)
+	v, e = postgres.Migrate(ctx, f.dsn, history96)
 	if e != nil || v != 96 {
 		t.Fatal(v, e)
 	}
@@ -364,7 +385,7 @@ func TestDoubanWishMigration96(t *testing.T) {
 	f.save(t, in, "initial")
 	s := postgres.NewDoubanWishSyncStore(f.p, idgen.New())
 	wishNoError(t, s.EnqueueDue(ctx))
-	_, e = postgres.Rollback(ctx, f.dsn, doubanSyncMigrationsDir)
+	_, e = postgres.Rollback(ctx, f.dsn, history96)
 	wishError(t, e)
 	var version int64
 	wishNoError(t, f.p.QueryRow(ctx, `SELECT max(version_id) FROM goose_db_version WHERE is_applied`).Scan(&version))

@@ -54,6 +54,7 @@ import (
 	usecaseScheduler "github.com/dalamudx/PulseMedia/internal/usecase/scheduler"
 	usecaseSearch "github.com/dalamudx/PulseMedia/internal/usecase/search"
 	"github.com/dalamudx/PulseMedia/internal/usecase/settings"
+	siteusecase "github.com/dalamudx/PulseMedia/internal/usecase/site"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subtitle"
 	"github.com/dalamudx/PulseMedia/internal/usecase/transfer"
@@ -434,6 +435,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var reuseSvc *transfer.LibraryReuseService
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
 	serverHandler.SetDoubanSyncConfigService(watchlist.NewConfigService(postgres.NewDoubanSyncConfigStore(a.dbPool, a.idgen)))
+	serverHandler.SetSiteAccountStatsConfigService(siteusecase.NewAccountStatsConfigService(postgres.NewSiteAccountStatsConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
 	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient, douban.WithCredentialSource(doubanCredentials(settingsSvc)), douban.WithClock(a.clock)), metaProvider, a.clock))
 	serverHandler.SetTokenManagementService(auth.NewTokenManagementService(postgres.NewTokenManagementStore(a.dbPool, a.idgen), crypto.ReadTokenIssuer{}, a.clock))

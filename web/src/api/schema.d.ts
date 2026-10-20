@@ -1922,6 +1922,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/indexers/{indexer_id}/account-stats/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Read saved global source account statistics configuration
+         * @description Current active administrator session only. Returns saved configuration intent, not collected samples or download success. No upstream I/O.
+         */
+        get: operations["readSiteAccountStatsConfig"];
+        /**
+         * Save account statistics configuration without starting collection
+         * @description Current active administrator session only. Records configuration intent only; does not collect samples or enqueue tasks.
+         */
+        put: operations["saveSiteAccountStatsConfig"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/indexers/{indexer_id}/account-stats/config/commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read original saved account statistics configuration receipt
+         * @description Current active administrator session only; read-only recovery does not start collection.
+         */
+        get: operations["readSiteAccountStatsConfigReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sync/douban/config": {
         parameters: {
             query?: never;
@@ -2113,6 +2159,45 @@ export interface components {
             indexer_ids: string[];
             /** Format: uuid */
             downloader_id?: string;
+        };
+        SiteAccountStatsConfigInput: {
+            /** @description Canonical positive uint64 account ID */
+            expected_account_id: string;
+            /** @enum {string} */
+            profile: "nexusphp_classic_info_block_v1";
+            enabled: boolean;
+            /** Format: int32 */
+            interval_seconds: number;
+            /** Format: int64 */
+            expected_version: number;
+            /** Format: int64 */
+            expected_source_version: number;
+        };
+        /** @description Saved configuration intent only, not proof of collected statistics or download success. */
+        SiteAccountStatsConfig: {
+            /** Format: uuid */
+            readonly indexer_id: string;
+            expected_account_id: string;
+            /** @enum {string} */
+            profile: "nexusphp_classic_info_block_v1";
+            enabled: boolean;
+            /** Format: int32 */
+            interval_seconds: number;
+            /** Format: int64 */
+            readonly version: number;
+            /** Format: int64 */
+            readonly source_config_version: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        SiteAccountStatsConfigCurrent: {
+            config: components["schemas"]["SiteAccountStatsConfig"] | null;
+        };
+        SiteAccountStatsConfigReceipt: {
+            command_key: string;
+            config: components["schemas"]["SiteAccountStatsConfig"];
         };
         DoubanSyncConfigInput: {
             douban_uid: string;
@@ -10049,6 +10134,223 @@ export interface operations {
                 };
             };
             /** @description Ranking temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSiteAccountStatsConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Saved configuration or explicit null */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteAccountStatsConfigCurrent"];
+                };
+            };
+            /** @description Configuration request failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    saveSiteAccountStatsConfig: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                indexer_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SiteAccountStatsConfigInput"];
+            };
+        };
+        responses: {
+            /** @description Original saved configuration receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteAccountStatsConfigReceipt"];
+                };
+            };
+            /** @description Configuration request failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSiteAccountStatsConfigReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                indexer_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original saved configuration receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteAccountStatsConfigReceipt"];
+                };
+            };
+            /** @description Configuration request failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request failed */
             503: {
                 headers: {
                     [name: string]: unknown;

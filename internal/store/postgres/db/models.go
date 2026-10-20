@@ -1468,6 +1468,28 @@ type Setting struct {
 	UpdatedAt pgtype.Timestamptz
 }
 
+type SiteAccountStatsConfig struct {
+	IndexerID           uuid.UUID
+	ExpectedAccountID   string
+	Profile             string
+	Enabled             bool
+	IntervalSeconds     int32
+	Version             int64
+	SourceConfigVersion int64
+	CreatedAt           pgtype.Timestamptz
+	UpdatedAt           pgtype.Timestamptz
+}
+
+type SiteAccountStatsConfigReceipt struct {
+	OwnerID     uuid.UUID
+	IndexerID   uuid.UUID
+	CommandKey  string
+	Version     int64
+	RequestHash string
+	Input       []byte
+	Snapshot    []byte
+}
+
 type Subscription struct {
 	ID                     uuid.UUID
 	UserID                 uuid.UUID

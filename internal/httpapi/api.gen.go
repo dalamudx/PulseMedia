@@ -802,6 +802,36 @@ func (e RequirementWithdrawalReceiptState) Valid() bool {
 	}
 }
 
+// Defines values for SiteAccountStatsConfigProfile.
+const (
+	SiteAccountStatsConfigProfileNexusphpClassicInfoBlockV1 SiteAccountStatsConfigProfile = "nexusphp_classic_info_block_v1"
+)
+
+// Valid indicates whether the value is a known member of the SiteAccountStatsConfigProfile enum.
+func (e SiteAccountStatsConfigProfile) Valid() bool {
+	switch e {
+	case SiteAccountStatsConfigProfileNexusphpClassicInfoBlockV1:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteAccountStatsConfigInputProfile.
+const (
+	SiteAccountStatsConfigInputProfileNexusphpClassicInfoBlockV1 SiteAccountStatsConfigInputProfile = "nexusphp_classic_info_block_v1"
+)
+
+// Valid indicates whether the value is a known member of the SiteAccountStatsConfigInputProfile enum.
+func (e SiteAccountStatsConfigInputProfile) Valid() bool {
+	switch e {
+	case SiteAccountStatsConfigInputProfileNexusphpClassicInfoBlockV1:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SubmissionRetryReceiptState.
 const (
 	SubmissionRetryReceiptStateQueued SubmissionRetryReceiptState = "queued"
@@ -3472,6 +3502,50 @@ type SetupRequest struct {
 	Username string `json:"username"`
 }
 
+// SiteAccountStatsConfig Saved configuration intent only, not proof of collected statistics or download success.
+type SiteAccountStatsConfig struct {
+	CreatedAt           time.Time                     `json:"created_at"`
+	Enabled             bool                          `json:"enabled"`
+	ExpectedAccountId   string                        `json:"expected_account_id"`
+	IndexerId           openapi_types.UUID            `json:"indexer_id"`
+	IntervalSeconds     int32                         `json:"interval_seconds"`
+	Profile             SiteAccountStatsConfigProfile `json:"profile"`
+	SourceConfigVersion int64                         `json:"source_config_version"`
+	UpdatedAt           time.Time                     `json:"updated_at"`
+	Version             int64                         `json:"version"`
+}
+
+// SiteAccountStatsConfigProfile defines model for SiteAccountStatsConfig.Profile.
+type SiteAccountStatsConfigProfile string
+
+// SiteAccountStatsConfigCurrent defines model for SiteAccountStatsConfigCurrent.
+type SiteAccountStatsConfigCurrent struct {
+	Config *SiteAccountStatsConfig `json:"config"`
+}
+
+// SiteAccountStatsConfigInput defines model for SiteAccountStatsConfigInput.
+type SiteAccountStatsConfigInput struct {
+	Enabled bool `json:"enabled"`
+
+	// ExpectedAccountId Canonical positive uint64 account ID
+	ExpectedAccountId     string                             `json:"expected_account_id"`
+	ExpectedSourceVersion int64                              `json:"expected_source_version"`
+	ExpectedVersion       int64                              `json:"expected_version"`
+	IntervalSeconds       int32                              `json:"interval_seconds"`
+	Profile               SiteAccountStatsConfigInputProfile `json:"profile"`
+}
+
+// SiteAccountStatsConfigInputProfile defines model for SiteAccountStatsConfigInput.Profile.
+type SiteAccountStatsConfigInputProfile string
+
+// SiteAccountStatsConfigReceipt defines model for SiteAccountStatsConfigReceipt.
+type SiteAccountStatsConfigReceipt struct {
+	CommandKey string `json:"command_key"`
+
+	// Config Saved configuration intent only, not proof of collected statistics or download success.
+	Config SiteAccountStatsConfig `json:"config"`
+}
+
 // StartMediaScrapeRequest defines model for StartMediaScrapeRequest.
 type StartMediaScrapeRequest struct {
 	// All Queue every file that still misses NFO/poster work.
@@ -4465,6 +4539,11 @@ type ConfigureIndexerRSSParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
+// SaveSiteAccountStatsConfigParams defines parameters for SaveSiteAccountStatsConfig.
+type SaveSiteAccountStatsConfigParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
 // ReplayIntegrationDeliveryJSONBody defines parameters for ReplayIntegrationDelivery.
 type ReplayIntegrationDeliveryJSONBody struct {
 	AcceptDuplicateRisk bool      `json:"accept_duplicate_risk"`
@@ -4943,6 +5022,9 @@ type UpdateIndexerJSONRequestBody = UpdateIndexerRequest
 // ConfigureIndexerRSSJSONRequestBody defines body for ConfigureIndexerRSS for application/json ContentType.
 type ConfigureIndexerRSSJSONRequestBody = IndexerRSSRequest
 
+// SaveSiteAccountStatsConfigJSONRequestBody defines body for SaveSiteAccountStatsConfig for application/json ContentType.
+type SaveSiteAccountStatsConfigJSONRequestBody = SiteAccountStatsConfigInput
+
 // ReplayIntegrationDeliveryJSONRequestBody defines body for ReplayIntegrationDelivery for application/json ContentType.
 type ReplayIntegrationDeliveryJSONRequestBody ReplayIntegrationDeliveryJSONBody
 
@@ -5292,6 +5374,15 @@ type ServerInterface interface {
 	// TestIndexer Test connectivity and credentials of an indexer
 	// (POST /api/v1/indexers/{id}/test)
 	TestIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	// ReadSiteAccountStatsConfig Read saved global source account statistics configuration
+	// (GET /api/v1/indexers/{indexer_id}/account-stats/config)
+	ReadSiteAccountStatsConfig(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID)
+	// SaveSiteAccountStatsConfig Save account statistics configuration without starting collection
+	// (PUT /api/v1/indexers/{indexer_id}/account-stats/config)
+	SaveSiteAccountStatsConfig(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, params SaveSiteAccountStatsConfigParams)
+	// ReadSiteAccountStatsConfigReceipt Read original saved account statistics configuration receipt
+	// (GET /api/v1/indexers/{indexer_id}/account-stats/config/commands/{command_key})
+	ReadSiteAccountStatsConfigReceipt(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, commandKey string)
 	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
 	ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request)
@@ -6519,6 +6610,121 @@ func (siw *ServerInterfaceWrapper) TestIndexer(w http.ResponseWriter, r *http.Re
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.TestIndexer(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadSiteAccountStatsConfig operation middleware
+func (siw *ServerInterfaceWrapper) ReadSiteAccountStatsConfig(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "indexer_id" -------------
+	var indexerId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "indexer_id", r.PathValue("indexer_id"), &indexerId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "indexer_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadSiteAccountStatsConfig(w, r, indexerId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SaveSiteAccountStatsConfig operation middleware
+func (siw *ServerInterfaceWrapper) SaveSiteAccountStatsConfig(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "indexer_id" -------------
+	var indexerId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "indexer_id", r.PathValue("indexer_id"), &indexerId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "indexer_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SaveSiteAccountStatsConfigParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SaveSiteAccountStatsConfig(w, r, indexerId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadSiteAccountStatsConfigReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadSiteAccountStatsConfigReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "indexer_id" -------------
+	var indexerId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "indexer_id", r.PathValue("indexer_id"), &indexerId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "indexer_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadSiteAccountStatsConfigReceipt(w, r, indexerId, commandKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -10511,6 +10717,9 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media/tmdb/tv/{id}", wrapper.GetTMDBTVDetails)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover", wrapper.GetDiscoverFeed)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover/douban", wrapper.GetDoubanRanking)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats/config", wrapper.ReadSiteAccountStatsConfig)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats/config", wrapper.SaveSiteAccountStatsConfig)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats/config/commands/{command_key}", wrapper.ReadSiteAccountStatsConfigReceipt)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/sync/douban/config", wrapper.ReadDoubanSyncConfig)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/sync/douban/config", wrapper.SaveDoubanSyncConfig)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/sync/douban/config/commands/{command_key}", wrapper.ReadDoubanSyncConfigReceipt)
@@ -13278,6 +13487,299 @@ func (response TestIndexer503JSONResponse) VisitTestIndexerResponse(w http.Respo
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfigRequestObject struct {
+	IndexerId openapi_types.UUID `json:"indexer_id"`
+}
+
+type ReadSiteAccountStatsConfigResponseObject interface {
+	VisitReadSiteAccountStatsConfigResponse(w http.ResponseWriter) error
+}
+
+type ReadSiteAccountStatsConfig200JSONResponse SiteAccountStatsConfigCurrent
+
+func (response ReadSiteAccountStatsConfig200JSONResponse) VisitReadSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfig400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfig400ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfig401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfig401ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfig403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfig403ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfig404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfig404ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfig503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfig503ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSiteAccountStatsConfigRequestObject struct {
+	IndexerId openapi_types.UUID `json:"indexer_id"`
+	Params    SaveSiteAccountStatsConfigParams
+	Body      *SaveSiteAccountStatsConfigJSONRequestBody
+}
+
+type SaveSiteAccountStatsConfigResponseObject interface {
+	VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error
+}
+
+type SaveSiteAccountStatsConfig200JSONResponse SiteAccountStatsConfigReceipt
+
+func (response SaveSiteAccountStatsConfig200JSONResponse) VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSiteAccountStatsConfig400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveSiteAccountStatsConfig400ApplicationProblemPlusJSONResponse) VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSiteAccountStatsConfig401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveSiteAccountStatsConfig401ApplicationProblemPlusJSONResponse) VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSiteAccountStatsConfig403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveSiteAccountStatsConfig403ApplicationProblemPlusJSONResponse) VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSiteAccountStatsConfig404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveSiteAccountStatsConfig404ApplicationProblemPlusJSONResponse) VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSiteAccountStatsConfig409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveSiteAccountStatsConfig409ApplicationProblemPlusJSONResponse) VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSiteAccountStatsConfig503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveSiteAccountStatsConfig503ApplicationProblemPlusJSONResponse) VisitSaveSiteAccountStatsConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfigReceiptRequestObject struct {
+	IndexerId  openapi_types.UUID `json:"indexer_id"`
+	CommandKey string             `json:"command_key"`
+}
+
+type ReadSiteAccountStatsConfigReceiptResponseObject interface {
+	VisitReadSiteAccountStatsConfigReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadSiteAccountStatsConfigReceipt200JSONResponse SiteAccountStatsConfigReceipt
+
+func (response ReadSiteAccountStatsConfigReceipt200JSONResponse) VisitReadSiteAccountStatsConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfigReceipt400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfigReceipt400ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfigReceipt401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfigReceipt401ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfigReceipt403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfigReceipt403ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfigReceipt404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfigReceipt404ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSiteAccountStatsConfigReceipt503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSiteAccountStatsConfigReceipt503ApplicationProblemPlusJSONResponse) VisitReadSiteAccountStatsConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -24260,6 +24762,15 @@ type StrictServerInterface interface {
 	// TestIndexer Test connectivity and credentials of an indexer
 	// (POST /api/v1/indexers/{id}/test)
 	TestIndexer(ctx context.Context, request TestIndexerRequestObject) (TestIndexerResponseObject, error)
+	// ReadSiteAccountStatsConfig Read saved global source account statistics configuration
+	// (GET /api/v1/indexers/{indexer_id}/account-stats/config)
+	ReadSiteAccountStatsConfig(ctx context.Context, request ReadSiteAccountStatsConfigRequestObject) (ReadSiteAccountStatsConfigResponseObject, error)
+	// SaveSiteAccountStatsConfig Save account statistics configuration without starting collection
+	// (PUT /api/v1/indexers/{indexer_id}/account-stats/config)
+	SaveSiteAccountStatsConfig(ctx context.Context, request SaveSiteAccountStatsConfigRequestObject) (SaveSiteAccountStatsConfigResponseObject, error)
+	// ReadSiteAccountStatsConfigReceipt Read original saved account statistics configuration receipt
+	// (GET /api/v1/indexers/{indexer_id}/account-stats/config/commands/{command_key})
+	ReadSiteAccountStatsConfigReceipt(ctx context.Context, request ReadSiteAccountStatsConfigReceiptRequestObject) (ReadSiteAccountStatsConfigReceiptResponseObject, error)
 	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
 	ListIntegrationDeliveries(ctx context.Context, request ListIntegrationDeliveriesRequestObject) (ListIntegrationDeliveriesResponseObject, error)
@@ -25439,6 +25950,93 @@ func (sh *strictHandler) TestIndexer(w http.ResponseWriter, r *http.Request, id 
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(TestIndexerResponseObject); ok {
 		if err := validResponse.VisitTestIndexerResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadSiteAccountStatsConfig operation middleware
+func (sh *strictHandler) ReadSiteAccountStatsConfig(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID) {
+	var request ReadSiteAccountStatsConfigRequestObject
+
+	request.IndexerId = indexerId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadSiteAccountStatsConfig(ctx, request.(ReadSiteAccountStatsConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadSiteAccountStatsConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadSiteAccountStatsConfigResponseObject); ok {
+		if err := validResponse.VisitReadSiteAccountStatsConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SaveSiteAccountStatsConfig operation middleware
+func (sh *strictHandler) SaveSiteAccountStatsConfig(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, params SaveSiteAccountStatsConfigParams) {
+	var request SaveSiteAccountStatsConfigRequestObject
+
+	request.IndexerId = indexerId
+	request.Params = params
+
+	var body SaveSiteAccountStatsConfigJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SaveSiteAccountStatsConfig(ctx, request.(SaveSiteAccountStatsConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SaveSiteAccountStatsConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SaveSiteAccountStatsConfigResponseObject); ok {
+		if err := validResponse.VisitSaveSiteAccountStatsConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadSiteAccountStatsConfigReceipt operation middleware
+func (sh *strictHandler) ReadSiteAccountStatsConfigReceipt(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, commandKey string) {
+	var request ReadSiteAccountStatsConfigReceiptRequestObject
+
+	request.IndexerId = indexerId
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadSiteAccountStatsConfigReceipt(ctx, request.(ReadSiteAccountStatsConfigReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadSiteAccountStatsConfigReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadSiteAccountStatsConfigReceiptResponseObject); ok {
+		if err := validResponse.VisitReadSiteAccountStatsConfigReceiptResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
