@@ -240,7 +240,7 @@ func TestDownloadRateStoragePG(t *testing.T) {
 }
 
 func TestDownloadRateTransactionsAndRoundtripPG(t *testing.T) {
-	f := newDashboardActivityFixture(t)
+	f := newDashboardActivityFixture(t, 93)
 	op := f.add(t, f.actor.ID, "tracking", time.Now().UTC())
 	task, stamp := rateTask(t, f.pool, op)
 	before := dashboardActivityGraph(t, f.pool)

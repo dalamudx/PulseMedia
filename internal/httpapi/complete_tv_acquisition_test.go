@@ -31,7 +31,7 @@ func newCompleteTVFixture(t *testing.T) *completeTVFixture {
 	t.Helper()
 	f := newCoverageFixture(t)
 	client := uuid.New()
-	f.exec(t, `INSERT INTO download_client(id,name,client_type,url,username,password_encrypted,remote_path_map) VALUES($1,'complete TV','qbittorrent','http://fixture.invalid','fixture',$2,'[]')`, client, []byte("encrypted-fixture"))
+	f.exec(t, `INSERT INTO download_client(id,name,client_type,url,username,password_encrypted,remote_path_map) VALUES($1,'complete TV','qbittorrent','http://fixture.invalid','fixture',$2,'{}')`, client, []byte("encrypted-fixture"))
 	f.exec(t, `UPDATE subscription SET state='active',downloader_id=$1 WHERE id=$2`, client, f.f.sub.Id)
 	f.exec(t, `UPDATE library_root SET health='online',baseline_completed=true WHERE id=(SELECT root_id FROM subscription WHERE id=$1)`, f.f.sub.Id)
 	ctx := context.Background()

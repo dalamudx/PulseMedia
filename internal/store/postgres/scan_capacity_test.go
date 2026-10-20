@@ -21,8 +21,8 @@ func capacityFixture(t *testing.T) (observationFixture, ports.ScanSeal) {
 	ctx := t.Context()
 	// Capacity tests exercise the current schema, without changing historical helpers.
 	var version, server int
-	if err := f.pool.QueryRow(ctx, "SELECT max(version_id) FROM goose_db_version WHERE is_applied").Scan(&version); err != nil || version != 92 {
-		t.Fatalf("capacity requires schema 92: version=%d err=%v", version, err)
+	if err := f.pool.QueryRow(ctx, "SELECT max(version_id) FROM goose_db_version WHERE is_applied").Scan(&version); err != nil || version != postgres.CurrentMigrationVersion {
+		t.Fatalf("capacity requires current schema %d: version=%d err=%v", postgres.CurrentMigrationVersion, version, err)
 	}
 	if err := f.pool.QueryRow(ctx, "SELECT current_setting('server_version_num')::integer").Scan(&server); err != nil || server != 180006 {
 		t.Fatalf("capacity requires PG18.6: version=%d err=%v", server, err)

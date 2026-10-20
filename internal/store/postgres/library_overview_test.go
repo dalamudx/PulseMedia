@@ -28,11 +28,11 @@ type overviewFixture struct {
 	store *postgres.LibraryOverviewStore
 }
 
-func newOverviewFixture(t *testing.T) overviewFixture {
+func newOverviewFixture(t *testing.T, through ...int64) overviewFixture {
 	t.Helper()
 	ctx := context.Background()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	if _, err := postgres.Migrate(ctx, dsn, migrationsDir); err != nil {
+	if _, err := postgres.Migrate(ctx, dsn, repositoryMigrationsThrough(t, through...)); err != nil {
 		t.Fatal(err)
 	}
 	pool, err := pgxpool.New(ctx, dsn)
@@ -464,17 +464,18 @@ func TestLibraryOverviewAuthorizationSnapshotAndStorageErrors(t *testing.T) {
 }
 
 func TestLibraryOverviewMigrationRoundtrip(t *testing.T) {
-	f := newOverviewFixture(t)
+	f := newOverviewFixture(t, 92)
+	dir := repositoryMigrationsThrough(t, 92)
 	_, u := f.media(t, "movie")
 	f.file(t, f.root, u, "imported", f.now(t))
 	before := f.read(t, 0)
-	if version, err := postgres.Rollback(context.Background(), f.dsn, migrationsDir); err != nil || version != 91 {
+	if version, err := postgres.Rollback(context.Background(), f.dsn, dir); err != nil || version != 91 {
 		t.Fatalf("rollback: %d %v", version, err)
 	}
 	if out, err := f.store.ReadLibraryOverview(context.Background(), f.actor, ports.LibraryOverviewRequest{}); out != nil || err != ports.ErrUnavailable {
 		t.Fatal("missing observation schema", out, err)
 	}
-	if version, err := postgres.Migrate(context.Background(), f.dsn, migrationsDir); err != nil || version != 92 {
+	if version, err := postgres.Migrate(context.Background(), f.dsn, dir); err != nil || version != 92 {
 		t.Fatalf("migrate: %d %v", version, err)
 	}
 	after := f.read(t, 0)

@@ -19,7 +19,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"syscall"
 	"testing"
 	"time"
@@ -39,9 +38,8 @@ func TestLibraryCatalogNativeAndCookie(t *testing.T) {
 			if e = f.pool.QueryRow(ctx, "SELECT id,path FROM library_root WHERE media_type='tv' LIMIT 1").Scan(&root, &path); e != nil {
 				t.Fatal(e)
 			}
-			rel, e := filepath.Rel(os.Getenv("TMPDIR"), path)
-			if e != nil || strings.HasPrefix(rel, "..") {
-				t.Fatal("unowned TV fixture root", path, e)
+			if filepath.Clean(path) != filepath.Join(a.Config().DataDir, "media", "tv") {
+				t.Fatal("TV fixture root outside App data directory", path)
 			}
 			media := uuid.New()
 			if _, e = f.pool.Exec(ctx, "INSERT INTO media(id,title,media_type) VALUES($1,'Native Series','tv')", media); e != nil {

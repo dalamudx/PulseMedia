@@ -33,9 +33,9 @@ type dashboardActivityFixture struct {
 	unit, candidate, client uuid.UUID
 }
 
-func newDashboardActivityFixture(t *testing.T) dashboardActivityFixture {
+func newDashboardActivityFixture(t *testing.T, through ...int64) dashboardActivityFixture {
 	t.Helper()
-	base := newCreationFixture(t)
+	base := newCreationFixture(t, through...)
 	f := dashboardActivityFixture{creationFixture: base, store: postgres.NewDashboardActivityStore(base.pool), unit: uuid.New(), candidate: uuid.New(), client: uuid.New()}
 	media, source := uuid.New(), uuid.New()
 	execIntent(t, f.pool, `INSERT INTO media(id,title,media_type) VALUES($1,'Activity movie','movie')`, media)
