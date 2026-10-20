@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -54,9 +56,10 @@ func (s *SubscriptionCreationStore) wishCreationLease(ctx context.Context, q *db
 }
 
 type wishCreationBinding struct {
-	item   db.DoubanWishSyncItem
-	source ports.DoubanWishItem
-	match  ports.DoubanWishMatch
+	item     db.DoubanWishSyncItem
+	source   ports.DoubanWishItem
+	match    ports.DoubanWishMatch
+	bindings *ports.DoubanSyncBindings
 }
 
 // The rows, rather than the factory DTO, carry source and identity authority.
@@ -74,6 +77,18 @@ func (s *SubscriptionCreationStore) wishCreationBinding(ctx context.Context, q *
 	if c.ID != f.ConfigID || !c.Enabled || c.Version != f.ConfigVersion || c.OwnerID != owner || in.UserID != nil && *in.UserID != owner {
 		return out, invalid
 	}
+	config, err := doubanSyncConfigSnapshot(ctx, q, c)
+	if err != nil {
+		return out, err
+	}
+	var bindings *ports.DoubanSyncBindings
+	if in.IndexerIDs != nil || in.DownloaderID != nil {
+		bindings = &ports.DoubanSyncBindings{IndexerIDs: in.IndexerIDs, DownloaderID: in.DownloaderID}
+	}
+	if !doubanSyncBindingsEqual(config.Bindings, bindings) {
+		return out, invalid
+	}
+	out.bindings = doubanSyncCloneBindings(config.Bindings)
 	run, err := q.LockDoubanWishCreationRun(ctx, f.RunID)
 	if err != nil {
 		return out, err
@@ -114,7 +129,7 @@ func (s *SubscriptionCreationStore) wishCreationBinding(ctx context.Context, q *
 	if item.MediaType == "tv" {
 		root = c.TvRootID
 	}
-	if !root.Valid || in.RootID == nil || root.Bytes != *in.RootID || in.MediaID != nil || in.TMDBID == nil || *in.TMDBID != out.match.TMDBID || in.MediaType != out.match.MediaType || in.ScopeType != "all" || in.QualityPolicyID != "" && in.QualityPolicyID != "default" || in.IndexerIDs != nil || in.DownloaderID != nil || len(in.Seasons) != 0 || in.IncludeSpecials || len(in.SelectedUnitIDs) != 0 || len(in.EpisodeKeys) != 0 || in.ExpectedIntentVersion != nil {
+	if !root.Valid || in.RootID == nil || root.Bytes != *in.RootID || in.MediaID != nil || in.TMDBID == nil || *in.TMDBID != out.match.TMDBID || in.MediaType != out.match.MediaType || in.ScopeType != "all" || in.QualityPolicyID != "" && in.QualityPolicyID != "default" || len(in.Seasons) != 0 || in.IncludeSpecials || len(in.SelectedUnitIDs) != 0 || len(in.EpisodeKeys) != 0 || in.ExpectedIntentVersion != nil {
 		return out, invalid
 	}
 	stable := "douban-wish:" + uuid.NewSHA1(uuid.NameSpaceOID, []byte(c.ID.String()+":"+fmt.Sprint(c.Version)+":"+item.MediaType+":"+in.RootID.String()+":"+item.DoubanID)).String()
@@ -122,7 +137,7 @@ func (s *SubscriptionCreationStore) wishCreationBinding(ctx context.Context, q *
 		return out, invalid
 	}
 	var observedPage ports.DoubanWishPage
-	work := ports.DoubanWishSyncWork{RunID: run.ID, Config: doubanSyncConfig(c), Actor: *a, MediaType: page.MediaType, Start: int(page.PageStart), ExecutionID: f.ExecutionID}
+	work := ports.DoubanWishSyncWork{RunID: run.ID, Config: config, Actor: *a, MediaType: page.MediaType, Start: int(page.PageStart), ExecutionID: f.ExecutionID}
 	if !creationStrictJSON(page.Page, &observedPage) || !wishValidPage(work, observedPage) || !run.CanonicalID.Valid || run.CanonicalID.String != observedPage.CanonicalID || run.ProfileNumber.Valid && run.ProfileNumber.String != observedPage.ProfileNumber {
 		return out, invalid
 	}
@@ -149,6 +164,24 @@ func (s *SubscriptionCreationStore) wishCreationBinding(ctx context.Context, q *
 	}
 	if r.ID != *in.RootID {
 		return out, invalid
+	}
+	if config.Bindings != nil && len(config.Bindings.IndexerIDs) == 0 {
+		m, _, e := creationMedia(ctx, q, in)
+		if e != nil {
+			return out, e
+		}
+		if m.ID != uuid.Nil {
+			sub, e := q.GetSubscriptionByUserMediaRoot(ctx, db.GetSubscriptionByUserMediaRootParams{UserID: owner, MediaID: m.ID, RootID: r.ID})
+			if e != nil && !errors.Is(e, pgx.ErrNoRows) {
+				return out, e
+			}
+			if e == nil {
+				var indexers []uuid.UUID
+				if json.Unmarshal(sub.IndexerIds, &indexers) != nil || len(indexers) != 0 || sub.DownloaderID.Valid {
+					return out, invalid
+				}
+			}
+		}
 	}
 	isolated, err := q.GuardDoubanSyncIsolation(ctx)
 	if err != nil {
@@ -235,6 +268,9 @@ func (s *SubscriptionCreationStore) wishCreationFinish(ctx context.Context, q *d
 		return err
 	}
 	if err = s.wishCreationAuthorize(ctx, q, a, in, id, nil, false); err != nil {
+		return err
+	}
+	if err = doubanSyncLockBindings(ctx, q, b.bindings, true); err != nil {
 		return err
 	}
 	// Keep the database wall-clock check as the final statement before COMMIT;

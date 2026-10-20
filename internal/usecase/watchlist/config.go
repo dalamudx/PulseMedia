@@ -1,9 +1,11 @@
 package watchlist
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"math"
+	"slices"
 
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/google/uuid"
@@ -52,7 +54,10 @@ func (s *ConfigService) Save(ctx context.Context, actor *ports.Actor, input port
 		return nil, err
 	}
 	in := cloneSyncInput(input)
-	if !validUID(in.DoubanUID) || in.ExpectedVersion < 0 || in.ExpectedVersion == math.MaxInt64 || !validSyncKey(key) || !validRoots(in.Enabled, in.MovieRootID, in.TVRootID) {
+	if in.Bindings != nil {
+		slices.SortFunc(in.Bindings.IndexerIDs, func(a, b uuid.UUID) int { return bytes.Compare(a[:], b[:]) })
+	}
+	if !validBindings(in.Bindings) || !validUID(in.DoubanUID) || in.ExpectedVersion < 0 || in.ExpectedVersion == math.MaxInt64 || !validSyncKey(key) || !validRoots(in.Enabled, in.MovieRootID, in.TVRootID) {
 		return nil, ports.ErrRejected
 	}
 	if err = ctx.Err(); err != nil {
@@ -72,7 +77,7 @@ func (s *ConfigService) Save(ctx context.Context, actor *ports.Actor, input port
 	if err != nil {
 		return nil, configError(err)
 	}
-	if !validReceipt(r, key, owner) || r.Config.Version != in.ExpectedVersion+1 || r.Config.DoubanUID != in.DoubanUID || r.Config.Enabled != in.Enabled || !equalRoot(r.Config.MovieRootID, in.MovieRootID) || !equalRoot(r.Config.TVRootID, in.TVRootID) {
+	if !validReceipt(r, key, owner) || in.Bindings != nil && !equalBindings(in.Bindings, r.Config.Bindings) || r.Config.Version != in.ExpectedVersion+1 || r.Config.DoubanUID != in.DoubanUID || r.Config.Enabled != in.Enabled || !equalRoot(r.Config.MovieRootID, in.MovieRootID) || !equalRoot(r.Config.TVRootID, in.TVRootID) {
 		return nil, ports.ErrUnavailable
 	}
 	out := *r
@@ -154,7 +159,7 @@ func validRoots(enabled bool, movie, tv *uuid.UUID) bool {
 }
 
 func validConfig(c ports.DoubanSyncConfig, owner string) bool {
-	return c.ID != uuid.Nil && c.OwnerID.String() == owner && validUID(c.DoubanUID) && c.Version > 0 && !c.CreatedAt.IsZero() && !c.UpdatedAt.Before(c.CreatedAt) && validRoots(c.Enabled, c.MovieRootID, c.TVRootID)
+	return validBindings(c.Bindings) && c.ID != uuid.Nil && c.OwnerID.String() == owner && validUID(c.DoubanUID) && c.Version > 0 && !c.CreatedAt.IsZero() && !c.UpdatedAt.Before(c.CreatedAt) && validRoots(c.Enabled, c.MovieRootID, c.TVRootID)
 }
 
 func validReceipt(r *ports.DoubanSyncConfigReceipt, key, owner string) bool {
@@ -170,10 +175,12 @@ func cloneRoot(id *uuid.UUID) *uuid.UUID {
 }
 func cloneConfig(c ports.DoubanSyncConfig) ports.DoubanSyncConfig {
 	c.MovieRootID, c.TVRootID = cloneRoot(c.MovieRootID), cloneRoot(c.TVRootID)
+	c.Bindings = cloneBindings(c.Bindings)
 	return c
 }
 func cloneSyncInput(in ports.DoubanSyncInput) ports.DoubanSyncInput {
 	in.MovieRootID, in.TVRootID = cloneRoot(in.MovieRootID), cloneRoot(in.TVRootID)
+	in.Bindings = cloneBindings(in.Bindings)
 	return in
 }
 func configError(err error) error {

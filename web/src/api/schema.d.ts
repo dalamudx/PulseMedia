@@ -1931,7 +1931,10 @@ export interface paths {
         };
         /** Read the current user's persisted Douban configuration */
         get: operations["readDoubanSyncConfig"];
-        /** Save configuration without starting synchronization */
+        /**
+         * Save configuration without starting synchronization
+         * @description Saves explicit endpoint intent only. Saving does not prove synchronization or download success. During subsequent sync, existing subscriptions retain their state and bindings; a different existing subscription intent is a conflict for review, never an implicit overwrite. Omitted bindings retain the whole existing configuration binding on edit; no endpoints are selected automatically.
+         */
         put: operations["saveDoubanSyncConfig"];
         post?: never;
         delete?: never;
@@ -2105,6 +2108,12 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Explicit endpoint intent. Empty indexer_ids clears bindings and forbids downloader_id; 1–64 unique nonzero indexer UUIDs require a nonzero downloader_id. Null is never accepted. No endpoints are selected automatically. */
+        DoubanSyncBindings: {
+            indexer_ids: string[];
+            /** Format: uuid */
+            downloader_id?: string;
+        };
         DoubanSyncConfigInput: {
             douban_uid: string;
             enabled: boolean;
@@ -2114,6 +2123,8 @@ export interface components {
             movie_root_id?: string;
             /** Format: uuid */
             tv_root_id?: string;
+            /** @description Omit on create for no bindings; omit on edit to retain the entire existing binding. An explicit object replaces the whole binding; indexer_ids must be present, and an empty list clears it. */
+            bindings?: components["schemas"]["DoubanSyncBindings"];
         };
         DoubanSyncConfig: {
             /** Format: uuid */
@@ -2126,6 +2137,7 @@ export interface components {
             movie_root_id?: string;
             /** Format: uuid */
             tv_root_id?: string;
+            bindings?: components["schemas"]["DoubanSyncBindings"];
             /** Format: int64 */
             readonly version: number;
             /** Format: date-time */

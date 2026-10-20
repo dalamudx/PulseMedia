@@ -106,8 +106,24 @@ func (s *DoubanWishSyncStore) enqueue(ctx context.Context, id, owner uuid.UUID) 
 	if e != nil || !due {
 		return e
 	}
-	cfg := doubanSyncConfig(c)
+	cfg, e := doubanSyncConfigSnapshot(ctx, q, c)
+	if e != nil {
+		return e
+	}
 	if e = wishRoots(ctx, tx, cfg); e != nil {
+		return nil
+	}
+	if e = doubanSyncLockBindings(ctx, q, cfg.Bindings, true); e != nil {
+		if e == ports.ErrNotFound || e == ports.ErrRejected {
+			return nil
+		}
+		return e
+	}
+	u, e = q.LockDoubanSyncOwner(ctx, owner)
+	if e != nil {
+		return e
+	}
+	if !u.IsActive || (u.Role != "admin" && u.Role != "member") {
 		return nil
 	}
 	run := s.ids.NewUUID()
@@ -166,6 +182,7 @@ func (p *doubanWishPermit) Snapshot() ports.DoubanWishSyncWork {
 	w := p.work
 	w.Config.MovieRootID = doubanSyncCopyID(w.Config.MovieRootID)
 	w.Config.TVRootID = doubanSyncCopyID(w.Config.TVRootID)
+	w.Config.Bindings = doubanSyncCloneBindings(w.Config.Bindings)
 	return w
 }
 func (p *doubanWishPermit) Close() {
@@ -270,7 +287,10 @@ func (p *doubanWishPermit) authorize(ctx context.Context, tx pgx.Tx, initial boo
 	if e != nil || c.ID != b.ConfigID || c.Version != b.ConfigVersion || !c.Enabled {
 		return ports.ErrUnavailable
 	}
-	cfg := doubanSyncConfig(c)
+	cfg, e := doubanSyncConfigSnapshot(ctx, q, c)
+	if e != nil {
+		return e
+	}
 	if !initial && (p.work.Actor.Role != u.Role || doubanWishDigest(p.work.Config) != doubanWishDigest(cfg)) {
 		return ports.ErrUnavailable
 	}
@@ -285,6 +305,13 @@ func (p *doubanWishPermit) authorize(ctx context.Context, tx pgx.Tx, initial boo
 	}
 	if e = wishRoots(ctx, tx, cfg); e != nil {
 		return e
+	}
+	if e = doubanSyncLockBindings(ctx, q, cfg.Bindings, true); e != nil {
+		return e
+	}
+	currentActor, e := q.LockDoubanWishAccount(ctx, b.OwnerID)
+	if e != nil || !currentActor.IsActive || currentActor.Role != u.Role {
+		return ports.ErrForbidden
 	}
 	if b.MediaType == "movie" && cfg.MovieRootID == nil || b.MediaType == "tv" && cfg.TVRootID == nil {
 		return ports.ErrUnavailable

@@ -87,7 +87,7 @@ func strictDoubanSyncConfigJSON(next http.Handler) http.Handler {
 		}
 		d := json.NewDecoder(bytes.NewReader(raw))
 		d.UseNumber()
-		fields := map[string]bool{"douban_uid": true, "enabled": true, "expected_version": true, "movie_root_id": false, "tv_root_id": false}
+		fields := map[string]bool{"douban_uid": true, "enabled": true, "expected_version": true, "movie_root_id": false, "tv_root_id": false, "bindings": false}
 		if !uniqueEndpointJSONValue(d, 0, fields) {
 			fail()
 			return
@@ -96,10 +96,21 @@ func strictDoubanSyncConfigJSON(next http.Handler) http.Handler {
 			fail()
 			return
 		}
+		var nested struct {
+			Bindings json.RawMessage `json:"bindings"`
+		}
+		if json.Unmarshal(raw, &nested) != nil {
+			fail()
+			return
+		}
+		if nested.Bindings != nil && !uniqueEndpointJSONValue(json.NewDecoder(bytes.NewReader(nested.Bindings)), 0, map[string]bool{"indexer_ids": true, "downloader_id": false}) {
+			fail()
+			return
+		}
 		var in ports.DoubanSyncInput
 		d = json.NewDecoder(bytes.NewReader(raw))
 		d.DisallowUnknownFields()
-		if d.Decode(&in) != nil || in.ExpectedVersion < 0 || in.ExpectedVersion == math.MaxInt64 || !validDoubanSyncUID(in.DoubanUID) || in.MovieRootID != nil && *in.MovieRootID == [16]byte{} || in.TVRootID != nil && *in.TVRootID == [16]byte{} {
+		if d.Decode(&in) != nil || in.ExpectedVersion < 0 || in.ExpectedVersion == math.MaxInt64 || !validDoubanSyncUID(in.DoubanUID) || !validDoubanSyncConfigBindings(in.Bindings) || in.MovieRootID != nil && *in.MovieRootID == [16]byte{} || in.TVRootID != nil && *in.TVRootID == [16]byte{} {
 			fail()
 			return
 		}
@@ -112,6 +123,23 @@ func strictDoubanSyncConfigJSON(next http.Handler) http.Handler {
 		r.ContentLength = int64(len(canonical))
 		next.ServeHTTP(w, r)
 	}))
+}
+
+func validDoubanSyncConfigBindings(b *ports.DoubanSyncBindings) bool {
+	if b == nil {
+		return true
+	}
+	if b.IndexerIDs == nil || len(b.IndexerIDs) > 64 || (len(b.IndexerIDs) == 0) != (b.DownloaderID == nil) || b.DownloaderID != nil && *b.DownloaderID == [16]byte{} {
+		return false
+	}
+	seen := make(map[[16]byte]bool, len(b.IndexerIDs))
+	for _, id := range b.IndexerIDs {
+		if id == [16]byte{} || seen[id] {
+			return false
+		}
+		seen[id] = true
+	}
+	return true
 }
 
 func validDoubanSyncUID(uid string) bool {

@@ -51,7 +51,11 @@ func (s *ServerHandler) SaveDoubanSyncConfig(ctx context.Context, request SaveDo
 		return doubanSyncConfigProblem(ctx, ports.ErrRejected), nil
 	}
 	b := request.Body
-	receipt, err := s.doubanSyncConfigSvc.Save(ctx, actor, ports.DoubanSyncInput{DoubanUID: b.DoubanUid, Enabled: b.Enabled, ExpectedVersion: b.ExpectedVersion, MovieRootID: b.MovieRootId, TVRootID: b.TvRootId}, request.Params.IdempotencyKey)
+	in := ports.DoubanSyncInput{DoubanUID: b.DoubanUid, Enabled: b.Enabled, ExpectedVersion: b.ExpectedVersion, MovieRootID: b.MovieRootId, TVRootID: b.TvRootId}
+	if b.Bindings != nil {
+		in.Bindings = &ports.DoubanSyncBindings{IndexerIDs: b.Bindings.IndexerIds, DownloaderID: b.Bindings.DownloaderId}
+	}
+	receipt, err := s.doubanSyncConfigSvc.Save(ctx, actor, in, request.Params.IdempotencyKey)
 	if err != nil {
 		return doubanSyncConfigProblem(ctx, err), nil
 	}
@@ -71,7 +75,11 @@ func (s *ServerHandler) ReadDoubanSyncConfigReceipt(ctx context.Context, request
 }
 
 func doubanSyncConfigResponse(c ports.DoubanSyncConfig) DoubanSyncConfig {
-	return DoubanSyncConfig{Id: c.ID, OwnerId: c.OwnerID, DoubanUid: c.DoubanUID, Enabled: c.Enabled, MovieRootId: c.MovieRootID, TvRootId: c.TVRootID, Version: c.Version, CreatedAt: c.CreatedAt, UpdatedAt: c.UpdatedAt}
+	out := DoubanSyncConfig{Id: c.ID, OwnerId: c.OwnerID, DoubanUid: c.DoubanUID, Enabled: c.Enabled, MovieRootId: c.MovieRootID, TvRootId: c.TVRootID, Version: c.Version, CreatedAt: c.CreatedAt, UpdatedAt: c.UpdatedAt}
+	if c.Bindings != nil {
+		out.Bindings = &DoubanSyncBindings{IndexerIds: append([]uuid.UUID{}, c.Bindings.IndexerIDs...), DownloaderId: c.Bindings.DownloaderID}
+	}
+	return out
 }
 
 type doubanSyncConfigErrorResponse struct{ problem ErrorResponse }

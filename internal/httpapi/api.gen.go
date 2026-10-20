@@ -2471,8 +2471,16 @@ type DoubanRankingResponse struct {
 	Results []DoubanRankingItem `json:"results"`
 }
 
+// DoubanSyncBindings Explicit endpoint intent. Empty indexer_ids clears bindings and forbids downloader_id; 1–64 unique nonzero indexer UUIDs require a nonzero downloader_id. Null is never accepted. No endpoints are selected automatically.
+type DoubanSyncBindings struct {
+	DownloaderId *openapi_types.UUID  `json:"downloader_id,omitempty"`
+	IndexerIds   []openapi_types.UUID `json:"indexer_ids"`
+}
+
 // DoubanSyncConfig defines model for DoubanSyncConfig.
 type DoubanSyncConfig struct {
+	// Bindings Explicit endpoint intent. Empty indexer_ids clears bindings and forbids downloader_id; 1–64 unique nonzero indexer UUIDs require a nonzero downloader_id. Null is never accepted. No endpoints are selected automatically.
+	Bindings    *DoubanSyncBindings `json:"bindings,omitempty"`
 	CreatedAt   time.Time           `json:"created_at"`
 	DoubanUid   string              `json:"douban_uid"`
 	Enabled     bool                `json:"enabled"`
@@ -2491,6 +2499,8 @@ type DoubanSyncConfigCurrent struct {
 
 // DoubanSyncConfigInput defines model for DoubanSyncConfigInput.
 type DoubanSyncConfigInput struct {
+	// Bindings Omit on create for no bindings; omit on edit to retain the entire existing binding. An explicit object replaces the whole binding; indexer_ids must be present, and an empty list clears it.
+	Bindings        *DoubanSyncBindings `json:"bindings,omitempty"`
 	DoubanUid       string              `json:"douban_uid"`
 	Enabled         bool                `json:"enabled"`
 	ExpectedVersion int64               `json:"expected_version"`

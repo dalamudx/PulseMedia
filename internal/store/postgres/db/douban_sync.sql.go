@@ -144,6 +144,30 @@ func (q *Queries) GetDoubanSyncReceipt(ctx context.Context, arg GetDoubanSyncRec
 	return i, err
 }
 
+const getDoubanSyncReceiptByVersion = `-- name: GetDoubanSyncReceiptByVersion :one
+SELECT owner_id, command_key, config_id, version, request_hash, input, snapshot FROM douban_sync_config_receipt WHERE config_id=$1 AND version=$2
+`
+
+type GetDoubanSyncReceiptByVersionParams struct {
+	ConfigID uuid.UUID
+	Version  int64
+}
+
+func (q *Queries) GetDoubanSyncReceiptByVersion(ctx context.Context, arg GetDoubanSyncReceiptByVersionParams) (DoubanSyncConfigReceipt, error) {
+	row := q.db.QueryRow(ctx, getDoubanSyncReceiptByVersion, arg.ConfigID, arg.Version)
+	var i DoubanSyncConfigReceipt
+	err := row.Scan(
+		&i.OwnerID,
+		&i.CommandKey,
+		&i.ConfigID,
+		&i.Version,
+		&i.RequestHash,
+		&i.Input,
+		&i.Snapshot,
+	)
+	return i, err
+}
+
 const guardDoubanSyncIsolation = `-- name: GuardDoubanSyncIsolation :one
 SELECT isolated FROM restore_isolation WHERE singleton FOR SHARE
 `
@@ -153,6 +177,17 @@ func (q *Queries) GuardDoubanSyncIsolation(ctx context.Context) (bool, error) {
 	var isolated bool
 	err := row.Scan(&isolated)
 	return isolated, err
+}
+
+const lockDoubanSyncDownloadClient = `-- name: LockDoubanSyncDownloadClient :one
+SELECT id FROM download_client WHERE id=$1 FOR SHARE
+`
+
+func (q *Queries) LockDoubanSyncDownloadClient(ctx context.Context, id uuid.UUID) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, lockDoubanSyncDownloadClient, id)
+	var id_2 uuid.UUID
+	err := row.Scan(&id_2)
+	return id_2, err
 }
 
 const lockDoubanSyncOwner = `-- name: LockDoubanSyncOwner :one

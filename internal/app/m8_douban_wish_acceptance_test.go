@@ -275,7 +275,8 @@ func (v *m8WishFixture) due(t *testing.T) {
 
 func TestM8DoubanWishPositivePG(t *testing.T) {
 	v := m8NewWishFixture(t, "positive")
-	body := v.input(0, true, true)
+	qbState := v.prepareAutomaticTV(t)
+	body := v.boundInput(qbState)
 	first := m8ConfigReceipt(t, v.request(t, "PUT", m8ConfigPath, body, "wish-original", 200))
 	v.terminal(t, "succeeded")
 	v.check(t, "two items and page jobs", `SELECT (SELECT count(*) FROM douban_wish_sync_item WHERE state='created')=2 AND (SELECT count(*) FROM job WHERE kind='douban_wish_sync')=2 AND (SELECT count(*) FROM job WHERE kind='douban_wish_sync' AND state='succeeded' AND attempts=1)=2 AND (SELECT count(*) FROM subscription)=2 AND (SELECT count(*) FROM media)=2`)
@@ -289,6 +290,7 @@ func TestM8DoubanWishPositivePG(t *testing.T) {
 	if json.Unmarshal(pages, &page) != nil || !page.WindowComplete || len(page.Items) != 1 {
 		t.Fatal("native page evidence mismatch")
 	}
+	v.automaticTVIngestion(t, qbState)
 	before := v.graph(t)
 	calls, metadataCalls := v.wishCalls.Load(), v.metadataCalls.Load()
 	replay := m8ConfigReceipt(t, v.request(t, "PUT", m8ConfigPath, body, "wish-original", 200))
@@ -314,7 +316,6 @@ func TestM8DoubanWishPositivePG(t *testing.T) {
 	}
 	v.check(t, "one period only", `SELECT (SELECT count(*) FROM douban_wish_sync_run)=1 AND (SELECT count(*) FROM job WHERE kind='douban_wish_sync')=2`)
 	v.check(t, "Wanted not duplicated", `SELECT count(*)=5 AND bool_and(u.media_id=s.media_id AND s.user_id=$1) FROM wanted_item w JOIN subscription s ON s.id=w.subscription_id JOIN media_unit u ON u.id=w.unit_id`, v.f.admin)
-	v.automaticTVIngestion(t)
 	t.Logf("M8_DOUBAN_WISH_POSITIVE_PASS runs=1 items_created=2 page_jobs=2 inventory=SQL_PREPARED_ACCOUNT_ONLY roots=NATIVE_SCAN native_HTML_GET=%d native_TMDB_GET=%d Add=1 hardlink=true ingestion=IMPORTED", v.wishCalls.Load(), v.metadataCalls.Load())
 }
 
@@ -383,9 +384,8 @@ func TestM8DoubanWishDisableLatePG(t *testing.T) {
 	t.Log("M8_DOUBAN_WISH_DISABLE_LATE_PASS metadata_returned=true authoritative_config_version=2 subscriptions=0 wanted=0 creation_receipts=0")
 }
 
-// Endpoint binding explicitly authorizes the imported subscription. App.Run
-// owns the native query, original-byte Add, observation and hard-link ingestion.
-func (v *m8WishFixture) automaticTVIngestion(t *testing.T) {
+// All endpoints are explicitly configured before the wish configuration is saved.
+func (v *m8WishFixture) prepareAutomaticTV(t *testing.T) *m6Journey {
 	t.Helper()
 	qbState := &m6Journey{application: v.runtime.app, root: v.tv}
 	if err := v.f.pool.QueryRow(v.ctx, `SELECT path FROM library_root WHERE id=$1`, v.tv).Scan(&qbState.rootPath); err != nil {
@@ -412,17 +412,25 @@ func (v *m8WishFixture) automaticTVIngestion(t *testing.T) {
 	idx := parseID(v.request(t, "POST", "/api/v1/indexers", fmt.Sprintf(`{"name":"Owned wish source","protocol":"torznab","url":%q,"api_key":"owned-tv-source-key","categories":[5000]}`, source.URL), "wish-source", 201))
 	v.request(t, "POST", "/api/v1/indexers/"+idx.String()+"/test", `{}`, "wish-source-probe", 200)
 	downloader := parseID(v.request(t, "POST", "/api/v1/download-clients", fmt.Sprintf(`{"name":"Owned wish qB","client_type":"qbittorrent","url":%q,"username":"owned-tv","password":"owned-tv-client-key","remote_path_map":{}}`, qb.URL), "wish-client", 201))
+	qbState.client, qbState.indexer = downloader, idx
+	return qbState
+}
+
+func (v *m8WishFixture) boundInput(qbState *m6Journey) string {
+	return strings.TrimSuffix(v.input(0, true, true), "}") + fmt.Sprintf(`,"bindings":{"indexer_ids":[%q],"downloader_id":%q}}`, qbState.indexer, qbState.client)
+}
+
+func (v *m8WishFixture) automaticTVIngestion(t *testing.T, qbState *m6Journey) {
+	t.Helper()
 	var sub uuid.UUID
-	var version int64
-	if v.f.pool.QueryRow(v.ctx, `SELECT id,intent_version FROM subscription WHERE root_id=$1 AND user_id=$2`, v.tv, v.f.admin).Scan(&sub, &version) != nil {
+	if v.f.pool.QueryRow(v.ctx, `SELECT id FROM subscription WHERE root_id=$1 AND user_id=$2`, v.tv, v.f.admin).Scan(&sub) != nil {
 		t.Fatal("imported TV subscription unavailable")
 	}
-	v.request(t, "PUT", "/api/v1/subscriptions/"+sub.String()+"/bindings", fmt.Sprintf(`{"indexer_ids":[%q],"downloader_id":%q,"expected_version":%d}`, idx, downloader, version), "wish-bind", 200)
+	v.check(t, "config-bound automatic intent", `SELECT count(*)=2 AND bool_and(downloader_id=$1 AND indexer_ids=to_jsonb(ARRAY[$2::uuid])) FROM subscription`, qbState.client, qbState.indexer)
 	v.wait(t, "automatic TV native query", func() bool {
 		var ok bool
-		return v.f.pool.QueryRow(v.ctx, `SELECT EXISTS(SELECT 1 FROM automatic_tv_query q JOIN indexer_query i ON i.id=q.query_id JOIN automatic_tv_round r ON r.id=q.round_id JOIN wanted_item w ON w.id=r.wanted_id JOIN media_unit u ON u.id=w.unit_id JOIN automatic_tv_source src ON src.round_id=q.round_id AND src.indexer_id=q.indexer_id JOIN job j ON j.id=src.job_id WHERE r.subscription_id=$1 AND r.owner_id=$2 AND q.indexer_id=$3 AND i.query_type='tv_episode' AND i.state='succeeded' AND j.attempts=1 AND u.season_number=1 AND u.episode_number=3)`, sub, v.f.admin, idx).Scan(&ok) == nil && ok
+		return v.f.pool.QueryRow(v.ctx, `SELECT EXISTS(SELECT 1 FROM automatic_tv_query q JOIN indexer_query i ON i.id=q.query_id JOIN automatic_tv_round r ON r.id=q.round_id JOIN wanted_item w ON w.id=r.wanted_id JOIN media_unit u ON u.id=w.unit_id JOIN automatic_tv_source src ON src.round_id=q.round_id AND src.indexer_id=q.indexer_id JOIN job j ON j.id=src.job_id WHERE r.subscription_id=$1 AND r.owner_id=$2 AND q.indexer_id=$3 AND i.query_type='tv_episode' AND i.state='succeeded' AND j.attempts=1 AND u.season_number=1 AND u.episode_number=3)`, sub, v.f.admin, qbState.indexer).Scan(&ok) == nil && ok
 	})
-	qbState.client, qbState.indexer = downloader, idx
 	v.wait(t, "automatic TV physical import", func() bool {
 		var imported bool
 		return v.f.pool.QueryRow(v.ctx, `SELECT EXISTS(SELECT 1 FROM download_task d JOIN download_requirement r ON r.operation_id=d.operation_id JOIN wanted_item w ON w.unit_id=r.unit_id JOIN subscription s ON s.id=w.subscription_id AND s.root_id=r.root_id JOIN unit_fact f ON f.unit_id=r.unit_id AND f.root_id=r.root_id AND f.stage='imported' AND f.revoked_at IS NULL WHERE s.id=$1 AND r.state='imported' AND d.state='completed' AND d.organization_state='completed')`, sub).Scan(&imported) == nil && imported
@@ -430,12 +438,12 @@ func (v *m8WishFixture) automaticTVIngestion(t *testing.T) {
 	qbState.assertImported(t)
 	v.check(t, "single automatic TV operation", `SELECT (SELECT count(*) FROM download_task)=1 AND (SELECT count(*) FROM outbox_event WHERE event_type='media.imported')=1 AND (SELECT count(*) FROM douban_wish_sync_run)=1 AND (SELECT count(*) FROM douban_wish_sync_item WHERE state='created')=2`)
 	before, calls := v.graph(t), v.wishCalls.Load()
-	v.request(t, "PUT", m8ConfigPath, v.input(0, true, true), "wish-original", 200)
+	v.request(t, "PUT", m8ConfigPath, v.boundInput(qbState), "wish-original", 200)
 	v.request(t, "GET", m8ConfigPath+"/commands/wish-original", "", "", 200)
 	if before != v.graph(t) || calls != v.wishCalls.Load() || qbState.adds.Load() != 1 {
 		t.Fatal("post-ingestion original-key replay changed business graph")
 	}
-	t.Log("M8_DOUBAN_WISH_TV_INGESTION_PASS origin=IMPORTED_WANTED authorization=PUBLIC_BINDINGS scheduler=NATIVE TV_query=1 torrent_fetch=1 Add=1 hardlink=true ingestion=IMPORTED")
+	t.Log("M8_DOUBAN_WISH_TV_INGESTION_PASS origin=IMPORTED_WANTED authorization=FROZEN_CONFIG_BINDINGS scheduler=NATIVE TV_query=1 torrent_fetch=1 Add=1 hardlink=true ingestion=IMPORTED")
 }
 
 func (v *m8WishFixture) httpReady() bool {

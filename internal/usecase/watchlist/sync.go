@@ -109,6 +109,10 @@ func (s *SyncService) Execute(ctx context.Context, lease ports.JobLease) error {
 		}
 		rootID, tmdbID := *root, identity.TMDBID
 		input := ports.SubscriptionCreationInput{TMDBID: &tmdbID, MediaType: work.MediaType, RootID: &rootID, QualityPolicyID: "default", ScopeType: "all"}
+		if work.Config.Bindings != nil {
+			bindings := cloneBindings(work.Config.Bindings)
+			input.IndexerIDs, input.DownloaderID = bindings.IndexerIDs, bindings.DownloaderID
+		}
 		fence := ports.DoubanWishCreationFence{Lease: lease, RunID: work.RunID, ConfigID: work.Config.ID, ConfigVersion: work.Config.Version, ItemID: item.ID, ExecutionID: work.ExecutionID}
 		actor := work.Actor
 		receipt, createErr := s.creator.CreateDoubanWishSubscription(ctx, fence, &actor, input, item.CommandKey)

@@ -31,3 +31,9 @@ VALUES($1,'user',$2,'douban.sync.config.saved','douban_sync_config',$3,$4);
 -- name: PublishDoubanSyncConfig :exec
 INSERT INTO outbox_event(id,aggregate_type,aggregate_id,event_type,payload,seq)
 VALUES($1,'douban_sync_config',$2,'douban.sync.config.saved',$3,$4);
+
+-- name: GetDoubanSyncReceiptByVersion :one
+SELECT * FROM douban_sync_config_receipt WHERE config_id=$1 AND version=$2;
+
+-- name: LockDoubanSyncDownloadClient :one
+SELECT id FROM download_client WHERE id=$1 FOR SHARE;

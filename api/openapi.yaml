@@ -4624,6 +4624,7 @@ paths:
     put:
       operationId: saveDoubanSyncConfig
       summary: Save configuration without starting synchronization
+      description: Saves explicit endpoint intent only. Saving does not prove synchronization or download success. During subsequent sync, existing subscriptions retain their state and bindings; a different existing subscription intent is a conflict for review, never an implicit overwrite. Omitted bindings retain the whole existing configuration binding on edit; no endpoints are selected automatically.
       parameters:
         - name: Idempotency-Key
           in: header
@@ -5137,6 +5138,32 @@ components:
         application/json:
           schema: {$ref: '#/components/schemas/ErrorResponse'}
   schemas:
+    DoubanSyncBindings:
+      type: object
+      additionalProperties: false
+      required: [indexer_ids]
+      description: Explicit endpoint intent. Empty indexer_ids clears bindings and forbids downloader_id; 1–64 unique nonzero indexer UUIDs require a nonzero downloader_id. Null is never accepted. No endpoints are selected automatically.
+      properties:
+        indexer_ids:
+          type: array
+          maxItems: 64
+          uniqueItems: true
+          items:
+            type: string
+            format: uuid
+            not: {enum: ['00000000-0000-0000-0000-000000000000']}
+        downloader_id:
+          type: string
+          format: uuid
+          not: {enum: ['00000000-0000-0000-0000-000000000000']}
+      not:
+        anyOf:
+          - required: [downloader_id]
+            properties:
+              indexer_ids: {maxItems: 0}
+          - properties:
+              indexer_ids: {minItems: 1}
+            not: {required: [downloader_id]}
     DoubanSyncConfigInput:
       type: object
       additionalProperties: false
@@ -5147,6 +5174,9 @@ components:
         expected_version: {type: integer, format: int64, minimum: 0}
         movie_root_id: {type: string, format: uuid}
         tv_root_id: {type: string, format: uuid}
+        bindings:
+          allOf: [{$ref: '#/components/schemas/DoubanSyncBindings'}]
+          description: Omit on create for no bindings; omit on edit to retain the entire existing binding. An explicit object replaces the whole binding; indexer_ids must be present, and an empty list clears it.
     DoubanSyncConfig:
       type: object
       additionalProperties: false
@@ -5158,6 +5188,7 @@ components:
         enabled: {type: boolean}
         movie_root_id: {type: string, format: uuid}
         tv_root_id: {type: string, format: uuid}
+        bindings: {$ref: '#/components/schemas/DoubanSyncBindings'}
         version: {type: integer, format: int64, minimum: 1, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
         created_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}
         updated_at: {type: string, format: date-time, readOnly: true, x-go-type-skip-optional-pointer: true, x-omitempty: false}

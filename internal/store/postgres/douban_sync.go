@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -70,7 +69,7 @@ func doubanSyncASCII(s string, max int, uid bool) bool {
 func doubanSyncValid(in ports.DoubanSyncInput) bool {
 	return doubanSyncASCII(in.DoubanUID, 64, true) && in.ExpectedVersion >= 0 && in.ExpectedVersion < math.MaxInt64 &&
 		(in.MovieRootID == nil || *in.MovieRootID != uuid.Nil) && (in.TVRootID == nil || *in.TVRootID != uuid.Nil) &&
-		(!in.Enabled || in.MovieRootID != nil || in.TVRootID != nil)
+		(!in.Enabled || in.MovieRootID != nil || in.TVRootID != nil) && doubanSyncValidBindings(in.Bindings)
 }
 func doubanSyncHash(in ports.DoubanSyncInput) string {
 	raw, _ := json.Marshal(struct {
@@ -141,7 +140,10 @@ func (s *DoubanSyncConfigStore) ReadDoubanSyncConfig(ctx context.Context, actor 
 	if err != nil {
 		return nil, ports.ErrUnavailable
 	}
-	c := doubanSyncConfig(row)
+	c, err := doubanSyncConfigSnapshot(ctx, q, row)
+	if err != nil {
+		return nil, err
+	}
 	return &c, nil
 }
 
@@ -156,38 +158,16 @@ func doubanSyncReceipt(ctx context.Context, q *db.Queries, owner uuid.UUID, key 
 	if err != nil {
 		return nil, "", ports.ErrUnavailable
 	}
-	var in ports.DoubanSyncInput
-	var c ports.DoubanSyncConfig
-	inputDecoder := json.NewDecoder(bytes.NewReader(row.Input))
-	inputDecoder.DisallowUnknownFields()
-	snapshotDecoder := json.NewDecoder(bytes.NewReader(row.Snapshot))
-	snapshotDecoder.DisallowUnknownFields()
-	if inputDecoder.Decode(&in) != nil || snapshotDecoder.Decode(&c) != nil || !doubanSyncValid(in) ||
-		row.OwnerID != owner || row.CommandKey != doubanSyncNamespace+key || row.RequestHash != doubanSyncHash(in) ||
-		c.ID == uuid.Nil || c.ID != row.ConfigID || c.OwnerID != owner || c.Version != row.Version || c.Version != in.ExpectedVersion+1 ||
-		c.DoubanUID != in.DoubanUID || c.Enabled != in.Enabled || !doubanSyncSameID(c.MovieRootID, in.MovieRootID) || !doubanSyncSameID(c.TVRootID, in.TVRootID) ||
-		c.CreatedAt.IsZero() || c.UpdatedAt.Before(c.CreatedAt) {
-		return nil, "", ports.ErrSubscriptionBindingsConflict
-	}
 	current, err := q.GetDoubanSyncConfig(ctx, owner)
 	if err != nil {
 		return nil, "", ports.ErrUnavailable
 	}
-	if current.ID != c.ID || current.OwnerID != owner || current.Version < c.Version || !current.CreatedAt.Time.Equal(c.CreatedAt) || current.UpdatedAt.Time.Before(c.UpdatedAt) {
+	if row.OwnerID != owner || row.CommandKey != doubanSyncNamespace+key {
 		return nil, "", ports.ErrSubscriptionBindingsConflict
 	}
-	if current.Version == c.Version {
-		currentConfig := doubanSyncConfig(current)
-		if !currentConfig.CreatedAt.Equal(c.CreatedAt) || !currentConfig.UpdatedAt.Equal(c.UpdatedAt) {
-			return nil, "", ports.ErrSubscriptionBindingsConflict
-		}
-		// Equal instants may have different offsets in the immutable JSON snapshot.
-		currentConfig.CreatedAt, currentConfig.UpdatedAt = c.CreatedAt, c.UpdatedAt
-		original, _ := json.Marshal(c)
-		actual, _ := json.Marshal(currentConfig)
-		if !bytes.Equal(original, actual) {
-			return nil, "", ports.ErrSubscriptionBindingsConflict
-		}
+	c, err := doubanSyncVerifiedReceipt(ctx, q, row, current)
+	if err != nil {
+		return nil, "", err
 	}
 	return &ports.DoubanSyncConfigReceipt{CommandKey: key, Config: c}, row.RequestHash, nil
 }
@@ -215,6 +195,8 @@ func (s *DoubanSyncConfigStore) SaveDoubanSyncConfig(ctx context.Context, actor 
 	// Copy caller-owned pointers before any blocking database operation.
 	in.MovieRootID = doubanSyncCopyID(in.MovieRootID)
 	in.TVRootID = doubanSyncCopyID(in.TVRootID)
+	in.Bindings = doubanSyncCloneBindings(in.Bindings)
+	doubanSyncSortBindings(in.Bindings)
 	a, err := doubanSyncCopyActor(actor)
 	if err != nil {
 		return nil, err
@@ -255,6 +237,16 @@ func (s *DoubanSyncConfigStore) SaveDoubanSyncConfig(ctx context.Context, actor 
 	if exists && current.Version != in.ExpectedVersion || !exists && in.ExpectedVersion != 0 {
 		return nil, ports.ErrSubscriptionBindingsConflict
 	}
+	effective := doubanSyncCloneBindings(in.Bindings)
+	if exists {
+		snapshot, snapshotErr := doubanSyncConfigSnapshot(ctx, q, current)
+		if snapshotErr != nil {
+			return nil, snapshotErr
+		}
+		if in.Bindings == nil {
+			effective = doubanSyncCloneBindings(snapshot.Bindings)
+		}
+	}
 	roots := []uuid.UUID{}
 	if in.MovieRootID != nil {
 		roots = append(roots, *in.MovieRootID)
@@ -287,6 +279,12 @@ func (s *DoubanSyncConfigStore) SaveDoubanSyncConfig(ctx context.Context, actor 
 			return nil, ports.ErrNotFound
 		}
 	}
+	if err = doubanSyncLockBindings(ctx, q, effective, in.Enabled); err != nil {
+		return nil, err
+	}
+	if _, err = s.lockOwner(ctx, tx, a); err != nil {
+		return nil, err
+	}
 	var row db.DoubanSyncConfig
 	if exists {
 		row, err = q.UpdateDoubanSyncConfig(ctx, db.UpdateDoubanSyncConfigParams{OwnerID: owner, DoubanUid: in.DoubanUID, Enabled: in.Enabled, MovieRootID: doubanSyncNullable(in.MovieRootID), TvRootID: doubanSyncNullable(in.TVRootID)})
@@ -297,6 +295,7 @@ func (s *DoubanSyncConfigStore) SaveDoubanSyncConfig(ctx context.Context, actor 
 		return nil, doubanSyncError(err)
 	}
 	c := doubanSyncConfig(row)
+	c.Bindings = effective
 	raw, _ := json.Marshal(c)
 	input, _ := json.Marshal(in)
 	err = q.CreateDoubanSyncReceipt(ctx, db.CreateDoubanSyncReceiptParams{OwnerID: owner, CommandKey: doubanSyncNamespace + key, ConfigID: c.ID, Version: c.Version, RequestHash: doubanSyncHash(in), Input: input, Snapshot: raw})
