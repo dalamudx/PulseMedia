@@ -240,6 +240,11 @@ tasks:
     desc: Verify explicit batch scraping and original receipt recovery in real Chrome
     cmds:
       - bash scripts/verify_m7_media_scrape_ui.sh
+  test-m8-subtitle:
+    desc: Verify isolated subtitle jobs, native Shooter protocol and protected SRT publication with PG18
+    cmds:
+      - bash scripts/verify_m8_subtitle.sh
+
   test-m7-sidecar:
     desc: Verify automatic TV ingestion through sidecar jobs and confined NFO/artwork publication with PG18 and Chrome
     cmds:

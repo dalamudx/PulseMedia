@@ -58,6 +58,7 @@ func (r *Root) PublishSidecar(ctx context.Context, req SidecarRequest) (SidecarR
 
 // Per-call seams keep fault tests deterministic without global mutable hooks.
 type sidecarOps struct {
+	subtitle   bool
 	write      func(int, []byte) (int, error)
 	sync       func(int) error
 	checkpoint func(string)
@@ -111,7 +112,11 @@ func (r *Root) publishSidecar(ctx context.Context, req SidecarRequest, ops sidec
 	if err = ctx.Err(); err != nil {
 		return out, err
 	}
-	if req.Name != "movie.nfo" && req.Name != "tvshow.nfo" && req.Name != "poster.jpg" {
+	if ops.subtitle {
+		if !validSubtitleRequest(req) {
+			return out, ErrSidecarRequest
+		}
+	} else if req.Name != "movie.nfo" && req.Name != "tvshow.nfo" && req.Name != "poster.jpg" {
 		return out, ErrSidecarRequest
 	}
 	if len(req.Content) == 0 || len(req.Content) > MaxSidecarBytes {

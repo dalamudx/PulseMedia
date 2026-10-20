@@ -3,175 +3,191 @@ package shooter
 import (
 	"bytes"
 	"context"
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
-	"mime/multipart"
+	"net"
 	"net/http"
-	"os"
-	"path/filepath"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/media"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 )
 
-type SubtitleFile struct {
-	Ext  string
-	Data []byte
-}
+const (
+	defaultAPIURL = "https://www.shooter.cn/api/subapi.php"
+	maxAPIBytes   = 128 * 1024
+	maxPackages   = 64
+	maxFiles      = 256
+)
+
+var _ ports.ChineseSubtitleProvider = (*Client)(nil)
 
 type Client struct {
 	httpClient *http.Client
-	apiURL     string
+	apiURL     *url.URL
 }
 
 func NewClient(apiURL string, httpClient *http.Client) *Client {
-	if httpClient == nil {
-		httpClient = &http.Client{Timeout: 10 * time.Second}
-	}
 	if apiURL == "" {
-		apiURL = "https://www.shooter.cn/api/subapi.php"
+		apiURL = defaultAPIURL
 	}
-	return &Client{
-		httpClient: httpClient,
-		apiURL:     apiURL,
+	cloned := http.Client{Timeout: 10 * time.Second}
+	if httpClient != nil {
+		cloned = *httpClient
 	}
+	if cloned.Timeout <= 0 {
+		cloned.Timeout = 10 * time.Second
+	}
+	cloned.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	cloned.Jar = nil
+	base, err := url.Parse(apiURL)
+	if err != nil || strings.Contains(apiURL, "#") || !safeURL(base) {
+		base = nil
+	}
+	return &Client{httpClient: &cloned, apiURL: base}
 }
 
-// ComputeFileHash calculates the Shooter API video file hash.
-func ComputeFileHash(filePath string) (string, error) {
-	f, err := os.Open(filePath)
-	if err != nil {
-		return "", err
-	}
-	defer func() { _ = f.Close() }()
-
-	stat, err := f.Stat()
-	if err != nil {
-		return "", err
-	}
-	size := stat.Size()
-	if size < 8192*2 {
-		return "", errors.New("file too small for shooter hash")
-	}
-
-	offsets := []int64{
-		4096,
-		size / 3 * 2,
-		size / 3,
-		size - 8192,
-	}
-
-	var hashes []string
-	buf := make([]byte, 4096)
-	for _, offset := range offsets {
-		if _, err := f.Seek(offset, io.SeekStart); err != nil {
-			return "", err
-		}
-		if _, err := io.ReadFull(f, buf); err != nil {
-			return "", err
-		}
-		h := md5.Sum(buf)
-		hashes = append(hashes, hex.EncodeToString(h[:]))
-	}
-
-	return strings.Join(hashes, ";"), nil
+func safeURL(u *url.URL) bool {
+	return u != nil && (u.Scheme == "https" || u.Scheme == "http") && u.Host != "" && u.Hostname() != "" && u.User == nil && u.Fragment == "" && u.Opaque == ""
 }
 
-// DownloadSubtitle searches and downloads Chinese subtitles for the video file.
-func (c *Client) DownloadSubtitle(ctx context.Context, videoFilePath string) (string, error) {
-	fileHash, err := ComputeFileHash(videoFilePath)
-	if err != nil {
-		// Fallback hash
-		fileHash = "dummy_hash_for_lookup"
-	}
-
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	_ = writer.WriteField("filehash", fileHash)
-	_ = writer.WriteField("pathinfo", filepath.Base(videoFilePath))
-	_ = writer.WriteField("format", "json")
-	_ = writer.Close()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.apiURL, body)
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-			return "", ports.ErrTimeout
+func sameOrigin(a, b *url.URL) bool {
+	port := func(u *url.URL) string {
+		if p := u.Port(); p != "" {
+			return p
 		}
-		return "", fmt.Errorf("%w: %v", ports.ErrUnavailable, err)
+		if u.Scheme == "https" {
+			return "443"
+		}
+		return "80"
 	}
-	defer func() { _ = resp.Body.Close() }()
+	return a.Scheme == b.Scheme && strings.EqualFold(a.Hostname(), b.Hostname()) && port(a) == port(b)
+}
 
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("%w: status %d", ports.ErrBadResponse, resp.StatusCode)
+// FindChineseSubtitle uses the historic Shooter form/direct-link protocol. Only
+// the configured API origin is trusted; this is not a list of current CDN hosts.
+func (c *Client) FindChineseSubtitle(ctx context.Context, hash ports.SubtitleVideoHash) ([]byte, error) {
+	if !media.ValidShooterHash(hash.Hash, hash.SizeBytes) || c.apiURL == nil {
+		return nil, ports.ErrRejected
 	}
-
-	var res []struct {
-		Files []struct {
-			Ext  string `json:"Ext"`
-			Link string `json:"Link"`
-		} `json:"Files"`
+	if err := ctx.Err(); err != nil {
+		return nil, networkError(ctx, err)
 	}
-
-	respBytes, _ := io.ReadAll(resp.Body)
-	if err := json.Unmarshal(respBytes, &res); err != nil || len(res) == 0 {
-		return "", errors.New("no subtitle found")
+	form := url.Values{"filehash": {hash.Hash}, "pathinfo": {""}, "format": {"json"}, "lang": {"chn"}}
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.apiURL.String(), strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, ports.ErrRejected
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	body, err := c.readResponse(ctx, req, maxAPIBytes)
+	if err != nil {
+		return nil, err
+	}
+	if bytes.Equal(body, []byte{0xff}) {
+		return nil, nil
+	}
+	link, err := c.subtitleLink(body)
+	if err != nil || link == "" {
+		return nil, err
+	}
+	req, err = http.NewRequestWithContext(ctx, http.MethodGet, link, nil)
+	if err != nil {
+		return nil, ports.ErrBadResponse
+	}
+	body, err = c.readResponse(ctx, req, ports.MaxSubtitleBytes)
+	if err != nil {
+		return nil, err
+	}
+	normalized, err := media.NormalizeChineseSRT(body)
+	if err != nil {
+		return nil, ports.ErrBadResponse
+	}
+	return normalized, nil
+}
 
-	// Pick first subtitle
-	var subLink, subExt string
-	for _, pkg := range res {
-		for _, f := range pkg.Files {
-			if f.Link != "" {
-				subLink = f.Link
-				subExt = f.Ext
-				if subExt == "" {
-					subExt = "srt"
-				}
-				break
+func (c *Client) subtitleLink(body []byte) (string, error) {
+	var packages []*struct{ Files json.RawMessage }
+	if err := json.Unmarshal(body, &packages); err != nil || packages == nil || len(packages) > maxPackages {
+		return "", ports.ErrBadResponse
+	}
+	selected, count := "", 0
+	for _, pkg := range packages {
+		if pkg == nil {
+			return "", ports.ErrBadResponse
+		}
+		var files []*struct {
+			Ext  *string
+			Link *string
+		}
+		if err := json.Unmarshal(pkg.Files, &files); err != nil || files == nil {
+			return "", ports.ErrBadResponse
+		}
+		count += len(files)
+		if len(files) > 64 || count > maxFiles {
+			return "", ports.ErrBadResponse
+		}
+		for _, f := range files {
+			if f == nil || f.Ext == nil || f.Link == nil || *f.Ext == "" || *f.Link == "" {
+				return "", ports.ErrBadResponse
+			}
+			u, err := url.Parse(*f.Link)
+			if err != nil || strings.Contains(*f.Link, "#") || !safeURL(u) || !sameOrigin(c.apiURL, u) {
+				return "", ports.ErrBadResponse
+			}
+			ext := strings.TrimPrefix(strings.ToLower(*f.Ext), ".")
+			if selected == "" && ext == "srt" {
+				selected = u.String()
 			}
 		}
-		if subLink != "" {
-			break
+	}
+	return selected, nil
+}
+
+func (c *Client) readResponse(ctx context.Context, req *http.Request, limit int64) ([]byte, error) {
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, networkError(ctx, err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+	if resp.StatusCode == http.StatusTooManyRequests {
+		var retry time.Duration
+		// Only bounded integer retry advice is needed; never echo an upstream header.
+		if seconds, e := strconv.ParseInt(resp.Header.Get("Retry-After"), 10, 32); e == nil && seconds > 0 {
+			retry = time.Duration(seconds) * time.Second
 		}
+		return nil, ports.NewRateLimitError(retry, "shooter")
 	}
-
-	if subLink == "" {
-		return "", fmt.Errorf("no subtitle found, response=%q, err=%v", string(respBytes), err)
+	if resp.StatusCode != http.StatusOK {
+		return nil, ports.ErrBadResponse
 	}
-
-	// Target subtitle path: videoName.zh-cn.default.ext
-	dir := filepath.Dir(videoFilePath)
-	base := strings.TrimSuffix(filepath.Base(videoFilePath), filepath.Ext(videoFilePath))
-	destSubPath := filepath.Join(dir, fmt.Sprintf("%s.zh-cn.default.%s", base, subExt))
-
-	// Fetch subtitle content
-	subReq, err := http.NewRequestWithContext(ctx, http.MethodGet, subLink, nil)
+	if resp.ContentLength > limit {
+		return nil, ports.ErrBadResponse
+	}
+	body, err := io.ReadAll(io.LimitReader(resp.Body, limit+1))
 	if err != nil {
-		return "", fmt.Errorf("invalid subtitle link %q: %w", subLink, err)
+		return nil, networkError(ctx, err)
 	}
-	subResp, err := c.httpClient.Do(subReq)
-	if err != nil {
-		return "", err
+	if err := ctx.Err(); err != nil {
+		return nil, networkError(ctx, err)
 	}
-	defer func() { _ = subResp.Body.Close() }()
+	if int64(len(body)) > limit {
+		return nil, ports.ErrBadResponse
+	}
+	return body, nil
+}
 
-	out, err := os.Create(destSubPath)
-	if err != nil {
-		return "", err
+// Return only native error contracts: URL errors can contain signed links.
+func networkError(ctx context.Context, err error) error {
+	if errors.Is(ctx.Err(), context.Canceled) || errors.Is(err, context.Canceled) {
+		return context.Canceled
 	}
-	defer func() { _ = out.Close() }()
-
-	_, _ = io.Copy(out, subResp.Body)
-	return destSubPath, nil
+	var timeout net.Error
+	if errors.Is(ctx.Err(), context.DeadlineExceeded) || errors.Is(err, context.DeadlineExceeded) || (errors.As(err, &timeout) && timeout.Timeout()) {
+		return ports.ErrTimeout
+	}
+	return ports.ErrUnavailable
 }

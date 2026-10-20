@@ -17,15 +17,27 @@ type mediaSidecarExecutor interface {
 // runMediaSidecarWorker is owned and awaited by App.Run. Failed attempts are not
 // automatically replayed: max_attempts=1 and expiry requires manual observation.
 func (a *App) runMediaSidecarWorker(ctx context.Context, queue *jobs.Queue, svc mediaSidecarExecutor) {
+	a.runMediaAttachmentWorker(ctx, queue, svc, ports.MediaSidecarJobKind)
+}
+
+func (a *App) runMediaSubtitleWorker(ctx context.Context, queue *jobs.Queue, svc mediaSidecarExecutor) {
+	a.runMediaAttachmentWorker(ctx, queue, svc, ports.MediaSubtitleJobKind)
+}
+
+func (a *App) runMediaAttachmentWorker(ctx context.Context, queue *jobs.Queue, svc mediaSidecarExecutor, kind string) {
 	owner := a.idgen.NewUUID().String()
 	q := db.New(a.dbPool)
+	recoverJobs := q.RecoverExpiredMediaSidecarJobs
+	if kind == ports.MediaSubtitleJobKind {
+		recoverJobs = q.RecoverExpiredMediaSubtitleJobs
+	}
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 	for ctx.Err() == nil {
-		if _, err := q.RecoverExpiredMediaSidecarJobs(ctx); err != nil && ctx.Err() == nil {
+		if _, err := recoverJobs(ctx); err != nil && ctx.Err() == nil {
 			a.logger.Error("metadata job recovery unavailable")
 		}
-		job, err := queue.Claim(ctx, []string{ports.MediaSidecarJobKind}, owner, 2*time.Minute)
+		job, err := queue.Claim(ctx, []string{kind}, owner, 2*time.Minute)
 		if err != nil && ctx.Err() == nil {
 			a.logger.Error("metadata job claim unavailable")
 		}

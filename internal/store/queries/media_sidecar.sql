@@ -23,7 +23,7 @@ SET LOCAL TIME ZONE 'UTC';
 SELECT * FROM job WHERE id=sqlc.arg(job_id)::uuid FOR UPDATE;
 
 -- name: GuardMediaSidecarLease :one
-SELECT id FROM job WHERE id=sqlc.arg(job_id)::uuid AND kind='media_sidecar'
+SELECT id FROM job WHERE id=sqlc.arg(job_id)::uuid AND kind=sqlc.arg(kind)::text
  AND state='running' AND lease_owner=sqlc.arg(owner)::text
  AND lease_token=sqlc.arg(token)::bigint AND lease_until>clock_timestamp();
 
@@ -87,7 +87,7 @@ WITH current_snapshot AS (
  JOIN library_root r ON r.id=f.root_id
  JOIN media_unit u ON u.id=sqlc.arg(unit_id)::uuid
  JOIN media m ON m.id=u.media_id
- WHERE j.id=sqlc.arg(job_id)::uuid AND j.kind='media_sidecar'
+ WHERE j.id=sqlc.arg(job_id)::uuid AND j.kind=sqlc.arg(kind)::text
   AND j.payload=jsonb_build_object('version',1,'source_event_id',e.id,'file_id',f.id,'unit_id',u.id)
   AND e.aggregate_type='media' AND e.aggregate_id=u.id::text AND e.event_type='media.imported'
   AND e.payload->>'file_id'=f.id::text AND e.payload->>'unit_id'=u.id::text
@@ -105,7 +105,7 @@ UPDATE job SET state=CASE WHEN sqlc.arg(review_required)::boolean THEN 'dead' EL
  result=sqlc.arg(result)::jsonb,
  error=CASE WHEN sqlc.arg(review_required)::boolean THEN 'review_required' ELSE NULL END,
  finished_at=clock_timestamp(),updated_at=clock_timestamp(),lease_owner=NULL,lease_until=NULL
-WHERE id=sqlc.arg(job_id)::uuid AND kind='media_sidecar' AND state='running'
+WHERE id=sqlc.arg(job_id)::uuid AND kind=sqlc.arg(kind)::text AND state='running'
  AND lease_owner=sqlc.arg(owner)::text AND lease_token=sqlc.arg(token)::bigint
  AND lease_until>clock_timestamp() AND payload=sqlc.arg(expected_payload)::jsonb
  AND EXISTS(SELECT 1 FROM restore_isolation WHERE singleton AND NOT isolated)

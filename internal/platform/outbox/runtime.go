@@ -44,6 +44,14 @@ func (o *Outbox) PublishImported(ctx context.Context, q *db.Queries, unit string
 	}); err != nil {
 		return nil, err
 	}
+	if _, err = q.LockMediaSubtitleEnqueue(ctx, ids.FileID); err != nil {
+		return nil, err
+	}
+	if err = q.EnqueueMediaSubtitleJob(ctx, db.EnqueueMediaSubtitleJobParams{
+		JobID: o.idgen.NewUUID(), FileID: ids.FileID, UnitID: ids.UnitID, SourceEventID: event.ID,
+	}); err != nil {
+		return nil, err
+	}
 	if len(channels) == 0 {
 		return event, nil
 	}

@@ -24,10 +24,11 @@ import (
 type Repository struct {
 	pool *pgxpool.Pool
 	ids  ports.IDGen
+	kind string
 }
 
 func NewRepository(pool *pgxpool.Pool, ids ports.IDGen) *Repository {
-	return &Repository{pool: pool, ids: ids}
+	return &Repository{pool: pool, ids: ids, kind: ports.MediaSidecarJobKind}
 }
 
 var _ ports.MediaSidecarRepository = (*Repository)(nil)
@@ -36,7 +37,7 @@ func (r *Repository) Load(ctx context.Context, lease ports.JobLease) (ports.Medi
 	var out ports.MediaSidecarSnapshot
 	err := r.transact(ctx, lease, func(q *db.Queries, payload ports.MediaSidecarPayload) error {
 		var err error
-		out, err = snapshot(ctx, q, lease, payload)
+		out, err = snapshot(ctx, q, lease, payload, r.kind)
 		return err
 	})
 	if err != nil {
@@ -47,13 +48,13 @@ func (r *Repository) Load(ctx context.Context, lease ports.JobLease) (ports.Medi
 
 func (r *Repository) Validate(ctx context.Context, lease ports.JobLease, expected ports.MediaSidecarSnapshot) error {
 	return r.transact(ctx, lease, func(q *db.Queries, payload ports.MediaSidecarPayload) error {
-		return compare(ctx, q, lease, payload, expected)
+		return compare(ctx, q, lease, payload, expected, r.kind)
 	})
 }
 
 func (r *Repository) Complete(ctx context.Context, lease ports.JobLease, expected ports.MediaSidecarSnapshot, result ports.MediaSidecarCompletion) error {
 	return r.transact(ctx, lease, func(q *db.Queries, payload ports.MediaSidecarPayload) error {
-		if err := compare(ctx, q, lease, payload, expected); err != nil {
+		if err := compare(ctx, q, lease, payload, expected, r.kind); err != nil {
 			return err
 		}
 		review, err := validateResult(expected, result)
@@ -75,7 +76,7 @@ func (r *Repository) Complete(ctx context.Context, lease ports.JobLease, expecte
 		if _, err = q.InsertAuditLog(ctx, db.InsertAuditLogParams{ID: r.ids.NewUUID(), ActorType: "system", ActorID: "media_sidecar", Action: "media.sidecar.completed", TargetType: "job", TargetID: lease.ID.String(), Payload: encoded}); err != nil {
 			return err
 		}
-		_, err = q.CompleteMediaSidecarJob(ctx, db.CompleteMediaSidecarJobParams{ReviewRequired: review, Result: encoded, JobID: lease.ID, Owner: lease.Owner, Token: lease.Token, ExpectedPayload: body})
+		_, err = q.CompleteMediaSidecarJob(ctx, db.CompleteMediaSidecarJobParams{ReviewRequired: review, Result: encoded, JobID: lease.ID, Owner: lease.Owner, Token: lease.Token, ExpectedPayload: body, Kind: r.kind})
 		return staleOrUnavailable(err)
 	})
 }
@@ -103,7 +104,7 @@ func (r *Repository) transact(ctx context.Context, lease ports.JobLease, work fu
 	if err != nil {
 		return safeError(ctx, staleOrUnavailable(err))
 	}
-	if err = guard(ctx, q, lease); err != nil {
+	if err = guard(ctx, q, lease, r.kind); err != nil {
 		return safeError(ctx, err)
 	}
 	isolated, err := q.LockMediaSidecarRestoreState(ctx)
@@ -126,15 +127,15 @@ func (r *Repository) transact(ctx context.Context, lease ports.JobLease, work fu
 		return safeError(ctx, err)
 	}
 	if current.State == "running" {
-		if err = guard(ctx, q, lease); err != nil {
+		if err = guard(ctx, q, lease, r.kind); err != nil {
 			return safeError(ctx, err)
 		}
 	}
 	return safeError(ctx, tx.Commit(ctx))
 }
 
-func guard(ctx context.Context, q *db.Queries, lease ports.JobLease) error {
-	_, err := q.GuardMediaSidecarLease(ctx, db.GuardMediaSidecarLeaseParams{JobID: lease.ID, Owner: lease.Owner, Token: lease.Token})
+func guard(ctx context.Context, q *db.Queries, lease ports.JobLease, kind string) error {
+	_, err := q.GuardMediaSidecarLease(ctx, db.GuardMediaSidecarLeaseParams{JobID: lease.ID, Owner: lease.Owner, Token: lease.Token, Kind: kind})
 	return staleOrUnavailable(err)
 }
 func staleOrUnavailable(err error) error {
@@ -166,8 +167,8 @@ func parsePayload(raw []byte) (ports.MediaSidecarPayload, error) {
 	}
 	return p, nil
 }
-func compare(ctx context.Context, q *db.Queries, lease ports.JobLease, p ports.MediaSidecarPayload, want ports.MediaSidecarSnapshot) error {
-	got, err := snapshot(ctx, q, lease, p)
+func compare(ctx context.Context, q *db.Queries, lease ports.JobLease, p ports.MediaSidecarPayload, want ports.MediaSidecarSnapshot, kind string) error {
+	got, err := snapshot(ctx, q, lease, p, kind)
 	if err != nil {
 		return err
 	}
@@ -199,7 +200,7 @@ type snapshotEvidence struct {
 
 var posterPattern = regexp.MustCompile(`^/[A-Za-z0-9_-]+\.(jpg|jpeg|png|webp)$`)
 
-func snapshot(ctx context.Context, q *db.Queries, lease ports.JobLease, p ports.MediaSidecarPayload) (ports.MediaSidecarSnapshot, error) {
+func snapshot(ctx context.Context, q *db.Queries, lease ports.JobLease, p ports.MediaSidecarPayload, kind string) (ports.MediaSidecarSnapshot, error) {
 	var out ports.MediaSidecarSnapshot
 	root, err := q.LockMediaSidecarRoot(ctx, p.FileID)
 	if err != nil {
@@ -256,7 +257,7 @@ func snapshot(ctx context.Context, q *db.Queries, lease ports.JobLease, p ports.
 	if !safeRelative(file.RelPath) || !safeRelative(root.MarkerFilename) || strings.Contains(root.MarkerFilename, "/") || !strings.HasPrefix(root.Path, "/") || path.Clean(root.Path) != root.Path || strings.ContainsAny(root.Path, "\\\x00") {
 		return out, ports.ErrMediaSidecarUnavailable
 	}
-	row, err := q.GetMediaSidecarSnapshot(ctx, db.GetMediaSidecarSnapshotParams{SourceEventID: p.SourceEventID, FileID: p.FileID, UnitID: p.UnitID, JobID: lease.ID})
+	row, err := q.GetMediaSidecarSnapshot(ctx, db.GetMediaSidecarSnapshotParams{SourceEventID: p.SourceEventID, FileID: p.FileID, UnitID: p.UnitID, JobID: lease.ID, Kind: kind})
 	if errors.Is(err, pgx.ErrNoRows) {
 		return out, ports.ErrMediaSidecarUnavailable
 	}

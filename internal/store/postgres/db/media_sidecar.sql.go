@@ -16,9 +16,9 @@ UPDATE job SET state=CASE WHEN $1::boolean THEN 'dead' ELSE 'succeeded' END,
  result=$2::jsonb,
  error=CASE WHEN $1::boolean THEN 'review_required' ELSE NULL END,
  finished_at=clock_timestamp(),updated_at=clock_timestamp(),lease_owner=NULL,lease_until=NULL
-WHERE id=$3::uuid AND kind='media_sidecar' AND state='running'
- AND lease_owner=$4::text AND lease_token=$5::bigint
- AND lease_until>clock_timestamp() AND payload=$6::jsonb
+WHERE id=$3::uuid AND kind=$4::text AND state='running'
+ AND lease_owner=$5::text AND lease_token=$6::bigint
+ AND lease_until>clock_timestamp() AND payload=$7::jsonb
  AND EXISTS(SELECT 1 FROM restore_isolation WHERE singleton AND NOT isolated)
 RETURNING id, kind, dedupe_key, priority, state, payload, result, error, attempts, max_attempts, not_before, lease_owner, lease_token, lease_until, created_at, updated_at, finished_at
 `
@@ -27,6 +27,7 @@ type CompleteMediaSidecarJobParams struct {
 	ReviewRequired  bool
 	Result          []byte
 	JobID           uuid.UUID
+	Kind            string
 	Owner           string
 	Token           int64
 	ExpectedPayload []byte
@@ -37,6 +38,7 @@ func (q *Queries) CompleteMediaSidecarJob(ctx context.Context, arg CompleteMedia
 		arg.ReviewRequired,
 		arg.Result,
 		arg.JobID,
+		arg.Kind,
 		arg.Owner,
 		arg.Token,
 		arg.ExpectedPayload,
@@ -147,7 +149,7 @@ WITH current_snapshot AS (
  JOIN library_root r ON r.id=f.root_id
  JOIN media_unit u ON u.id=$3::uuid
  JOIN media m ON m.id=u.media_id
- WHERE j.id=$4::uuid AND j.kind='media_sidecar'
+ WHERE j.id=$4::uuid AND j.kind=$5::text
   AND j.payload=jsonb_build_object('version',1,'source_event_id',e.id,'file_id',f.id,'unit_id',u.id)
   AND e.aggregate_type='media' AND e.aggregate_id=u.id::text AND e.event_type='media.imported'
   AND e.payload->>'file_id'=f.id::text AND e.payload->>'unit_id'=u.id::text
@@ -166,6 +168,7 @@ type GetMediaSidecarSnapshotParams struct {
 	FileID        uuid.UUID
 	UnitID        uuid.UUID
 	JobID         uuid.UUID
+	Kind          string
 }
 
 type GetMediaSidecarSnapshotRow struct {
@@ -182,6 +185,7 @@ func (q *Queries) GetMediaSidecarSnapshot(ctx context.Context, arg GetMediaSidec
 		arg.FileID,
 		arg.UnitID,
 		arg.JobID,
+		arg.Kind,
 	)
 	var i GetMediaSidecarSnapshotRow
 	err := row.Scan(&i.Snapshot, &i.Binding)
@@ -189,19 +193,25 @@ func (q *Queries) GetMediaSidecarSnapshot(ctx context.Context, arg GetMediaSidec
 }
 
 const guardMediaSidecarLease = `-- name: GuardMediaSidecarLease :one
-SELECT id FROM job WHERE id=$1::uuid AND kind='media_sidecar'
- AND state='running' AND lease_owner=$2::text
- AND lease_token=$3::bigint AND lease_until>clock_timestamp()
+SELECT id FROM job WHERE id=$1::uuid AND kind=$2::text
+ AND state='running' AND lease_owner=$3::text
+ AND lease_token=$4::bigint AND lease_until>clock_timestamp()
 `
 
 type GuardMediaSidecarLeaseParams struct {
 	JobID uuid.UUID
+	Kind  string
 	Owner string
 	Token int64
 }
 
 func (q *Queries) GuardMediaSidecarLease(ctx context.Context, arg GuardMediaSidecarLeaseParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, guardMediaSidecarLease, arg.JobID, arg.Owner, arg.Token)
+	row := q.db.QueryRow(ctx, guardMediaSidecarLease,
+		arg.JobID,
+		arg.Kind,
+		arg.Owner,
+		arg.Token,
+	)
 	var id uuid.UUID
 	err := row.Scan(&id)
 	return id, err
