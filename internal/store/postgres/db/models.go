@@ -368,6 +368,48 @@ type DoubanSyncConfigReceipt struct {
 	Snapshot    []byte
 }
 
+type DoubanWishSyncItem struct {
+	ID             uuid.UUID
+	RunID          uuid.UUID
+	PageJobID      uuid.UUID
+	DoubanID       string
+	MediaType      string
+	Source         []byte
+	SourceHash     string
+	Match          []byte
+	MatchHash      pgtype.Text
+	CommandKey     string
+	State          string
+	SubscriptionID pgtype.UUID
+	Receipt        []byte
+}
+
+type DoubanWishSyncPage struct {
+	JobID          uuid.UUID
+	RunID          uuid.UUID
+	MediaType      string
+	PageStart      int32
+	ExecutionID    pgtype.UUID
+	ExecutionPid   pgtype.Int4
+	ExecutionOwner pgtype.Text
+	ExecutionToken pgtype.Int8
+	Page           []byte
+	Finished       bool
+}
+
+type DoubanWishSyncRun struct {
+	ID            uuid.UUID
+	ConfigID      uuid.UUID
+	ConfigVersion int64
+	OwnerID       uuid.UUID
+	Status        string
+	CanonicalID   pgtype.Text
+	ProfileNumber pgtype.Text
+	Incomplete    bool
+	CreatedAt     pgtype.Timestamptz
+	FinishedAt    pgtype.Timestamptz
+}
+
 type DownloadClient struct {
 	ID                uuid.UUID
 	Name              string

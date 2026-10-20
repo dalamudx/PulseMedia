@@ -33,10 +33,15 @@ type doubanSyncFixture struct {
 
 func newDoubanSyncFixture(t *testing.T) *doubanSyncFixture {
 	t.Helper()
+	return newDoubanSyncFixtureAt(t, doubanSyncMigrationsDir, postgres.CurrentMigrationVersion)
+}
+
+func newDoubanSyncFixtureAt(t *testing.T, migrationDir string, expectedVersion int64) *doubanSyncFixture {
+	t.Helper()
 	ctx := context.Background()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	version, err := postgres.Migrate(ctx, dsn, doubanSyncMigrationsDir)
-	if err != nil || version != postgres.CurrentMigrationVersion {
+	version, err := postgres.Migrate(ctx, dsn, migrationDir)
+	if err != nil || version != expectedVersion {
 		t.Fatal("migrate", version, err)
 	}
 	p, err := postgres.NewPool(ctx, dsn, postgres.DefaultPoolConfig())
@@ -644,6 +649,24 @@ func TestDoubanSyncRestoreAndReadFailure(t *testing.T) {
 
 func TestDoubanSyncMigration95(t *testing.T) {
 	ctx := context.Background()
+	// This is the historical 95 contract, independent of newer migrations.
+	history95 := t.TempDir()
+	entries, err := os.ReadDir(doubanSyncMigrationsDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".sql") || len(entry.Name()) < 5 || entry.Name()[:5] > "00095" {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join(doubanSyncMigrationsDir, entry.Name()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err = os.WriteFile(filepath.Join(history95, entry.Name()), raw, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
 	t.Run("94 to 95 to 94 empty", func(t *testing.T) {
 		dsn := pgtest.GetCluster(t).NewTestDB(t)
 		dir := t.TempDir()
@@ -667,33 +690,33 @@ func TestDoubanSyncMigration95(t *testing.T) {
 		if e != nil || v != 94 {
 			t.Fatal(v, e)
 		}
-		v, e = postgres.Migrate(ctx, dsn, doubanSyncMigrationsDir)
-		if e != nil || v != postgres.CurrentMigrationVersion {
+		v, e = postgres.Migrate(ctx, dsn, history95)
+		if e != nil || v != 95 {
 			t.Fatal(v, e)
 		}
-		v, e = postgres.Rollback(ctx, dsn, doubanSyncMigrationsDir)
+		v, e = postgres.Rollback(ctx, dsn, history95)
 		if e != nil || v != 94 {
 			t.Fatal(v, e)
 		}
 	})
 	t.Run("nonempty downgrade refuses history loss", func(t *testing.T) {
-		f := newDoubanSyncFixture(t)
+		f := newDoubanSyncFixtureAt(t, history95, 95)
 		f.save(t, f.input(), "original")
-		if _, e := postgres.Rollback(ctx, f.dsn, doubanSyncMigrationsDir); e == nil {
+		if _, e := postgres.Rollback(ctx, f.dsn, history95); e == nil {
 			t.Fatal("history lost")
 		}
 		r, e := f.s.ReadDoubanSyncConfigReceipt(ctx, f.a, "original")
 		if e != nil || r.Config.Version != 1 {
 			t.Fatal(r, e)
 		}
-		if e = postgres.CheckSchemaVersion(ctx, f.p, postgres.CurrentMigrationVersion); e != nil {
+		if e = postgres.CheckSchemaVersion(ctx, f.p, 95); e != nil {
 			t.Fatal(e)
 		}
 	})
 	t.Run("configuration without receipt also blocks downgrade", func(t *testing.T) {
-		f := newDoubanSyncFixture(t)
+		f := newDoubanSyncFixtureAt(t, history95, 95)
 		f.exec(t, "INSERT INTO douban_sync_config(id,owner_id,douban_uid,enabled,version) VALUES($1,$2,'x',false,1)", uuid.New(), f.a.ID)
-		if _, e := postgres.Rollback(ctx, f.dsn, doubanSyncMigrationsDir); e == nil {
+		if _, e := postgres.Rollback(ctx, f.dsn, history95); e == nil {
 			t.Fatal("config lost")
 		}
 	})

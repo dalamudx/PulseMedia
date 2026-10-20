@@ -7,11 +7,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode"
-	"unicode/utf8"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/media"
 	"github.com/dalamudx/PulseMedia/internal/ports"
-	"golang.org/x/text/unicode/norm"
 )
 
 type IdentityState string
@@ -145,19 +143,7 @@ func (r *IdentityResolver) Resolve(ctx context.Context, item ports.DoubanWishIte
 	return out, nil
 }
 
-func identityTitle(title string) string {
-	if !utf8.ValidString(title) || len(title) > 512 {
-		return ""
-	}
-	for _, r := range title {
-		if unicode.IsControl(r) && !unicode.IsSpace(r) {
-			return ""
-		}
-	}
-	// Punctuation and symbols distinguish titles; only Unicode composition,
-	// case and whitespace are normalized for automatic identity selection.
-	return strings.ToLower(norm.NFC.String(strings.Join(strings.Fields(title), " ")))
-}
+func identityTitle(title string) string { return media.WatchlistTitleKey(title) }
 
 func identityError(err error) error {
 	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, ports.ErrTimeout, ports.ErrAuthRequired, ports.ErrBlocked, ports.ErrBadResponse, ports.ErrNotFound} {

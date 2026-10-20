@@ -418,6 +418,13 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	metaProvider := &dynamicTMDBProvider{settingsSvc: settingsSvc, httpClient: a.metadataHTTPClient, budget: budget.NewMetadataBudget(a.clock)}
 	var sidecarSvc *metadatasidecar.Service
 	var subtitleSvc *subtitle.Service
+	var doubanWishRepo ports.DoubanWishSyncRepository
+	var doubanWishSvc *watchlist.SyncService
+	if queue != nil && len(masterKey) > 0 {
+		doubanWishRepo = postgres.NewDoubanWishSyncStore(a.dbPool, a.idgen)
+		creator := &doubanWishSubscriptionCreator{pool: a.dbPool, ids: a.idgen, provider: metaProvider, episodes: metaProvider, protector: crypto.NewSecretProtector(masterKey)}
+		doubanWishSvc = watchlist.NewSyncService(doubanWishRepo, douban.NewWishClient("", a.metadataHTTPClient), metaProvider, creator)
+	}
 	if queue != nil {
 		sidecarSvc = metadatasidecar.NewService(sidecarstore.NewRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), metaProvider, tmdbartwork.New(a.metadataHTTPClient, metaProvider.budget))
 		subtitleSvc = subtitle.NewService(sidecarstore.NewSubtitleRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), shooter.NewClient("", a.metadataHTTPClient))
@@ -511,6 +518,15 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	organizationDone := make(chan struct{})
 	mediaSidecarDone := make(chan struct{})
 	mediaSubtitleDone := make(chan struct{})
+	doubanWishDone := make(chan struct{})
+	if doubanWishSvc != nil {
+		go func() {
+			defer close(doubanWishDone)
+			a.runDoubanWishWorker(workerCtx, queue, doubanWishRepo, doubanWishSvc)
+		}()
+	} else {
+		close(doubanWishDone)
+	}
 	outboxDone := make(chan struct{})
 	searchDone := make(chan struct{})
 	libraryDone := make(chan struct{})
@@ -580,7 +596,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		cancelWorker()
 		budget, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, outboxDone, searchDone, libraryDone)
+		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, outboxDone, searchDone, libraryDone)
 	}
 	defer stopWorker()
 

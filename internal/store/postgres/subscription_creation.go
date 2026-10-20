@@ -28,8 +28,9 @@ import (
 // SubscriptionCreationStore publishes provider observations and subscription
 // intent in one transaction. Provider calls belong to its caller.
 type SubscriptionCreationStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool      *pgxpool.Pool
+	ids       ports.IDGen
+	wishFence *ports.DoubanWishCreationFence
 }
 
 func NewSubscriptionCreationStore(pool *pgxpool.Pool, ids ports.IDGen) *SubscriptionCreationStore {
@@ -283,12 +284,22 @@ func (s *SubscriptionCreationStore) ReadSubscriptionCreationContext(ctx context.
 	defer creationRollback(ctx, tx)
 	q := db.New(tx)
 	actor := creationClone(a)
+	if s.wishFence != nil {
+		if err = s.wishCreationLockJob(ctx, q); err != nil {
+			return out, nil, err
+		}
+	}
 	if err = lockAcquisitionUser(ctx, q, actor); err != nil {
 		return out, nil, err
 	}
 	owner, err := creationOwner(actor, in)
 	if err != nil {
 		return out, nil, err
+	}
+	if s.wishFence != nil {
+		if err = s.wishCreationAuthorize(ctx, q, actor, in, id, nil, false); err != nil {
+			return out, nil, err
+		}
 	}
 	key, err := creationKey(id.Key)
 	if err != nil {
@@ -299,6 +310,14 @@ func (s *SubscriptionCreationStore) ReadSubscriptionCreationContext(ctx context.
 	}
 	receipt, err = creationReceipt(ctx, q, actor, key, id.RequestHash, &owner)
 	if err != nil || receipt != nil {
+		if err == nil && receipt != nil && s.wishFence != nil {
+			if err = s.wishCreationFinish(ctx, q, actor, in, id, receipt); err != nil {
+				return out, nil, err
+			}
+			if err = tx.Commit(ctx); err != nil {
+				return out, nil, err
+			}
+		}
 		return out, receipt, err
 	}
 	in, err = creationInput(in)
@@ -432,12 +451,22 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	defer creationRollback(ctx, tx)
 	q := db.New(tx)
 	t := &subscriptionIntentTx{tx: tx, q: q, ids: s.ids, actor: actor}
+	if s.wishFence != nil {
+		if err = s.wishCreationLockJob(ctx, q); err != nil {
+			return nil, err
+		}
+	}
 	if err = lockAcquisitionUser(ctx, q, actor); err != nil {
 		return nil, err
 	}
 	owner, err := creationOwner(actor, in)
 	if err != nil {
 		return nil, err
+	}
+	if s.wishFence != nil {
+		if err = s.wishCreationAuthorize(ctx, q, actor, in, id, nil, false); err != nil {
+			return nil, err
+		}
 	}
 	key, err := creationKey(id.Key)
 	if err != nil {
@@ -451,6 +480,14 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 		return nil, err
 	}
 	if old, e := creationReceipt(ctx, q, actor, key, id.RequestHash, &owner); e != nil || old != nil {
+		if e == nil && old != nil && s.wishFence != nil {
+			if err = s.wishCreationFinish(ctx, q, actor, in, id, old); err != nil {
+				return nil, err
+			}
+			if err = tx.Commit(ctx); err != nil {
+				return nil, err
+			}
+		}
 		return old, e
 	}
 	if preparedErr != nil {
@@ -459,6 +496,11 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	in, err = creationInput(in)
 	if err != nil {
 		return nil, err
+	}
+	if s.wishFence != nil {
+		if err = s.wishCreationAuthorize(ctx, q, actor, in, id, prepared, true); err != nil {
+			return nil, err
+		}
 	}
 	if decide == nil {
 		return nil, ports.ErrInvalidSubscriptionBindings
@@ -737,6 +779,11 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	raw, _ := json.Marshal(stored)
 	if _, err = q.CreateIdempotencyRecord(ctx, db.CreateIdempotencyRecordParams{ID: s.ids.NewUUID(), ActorType: string(actor.Type), ActorID: actor.ID, IdempotencyKey: key, RequestHash: id.RequestHash, ResponseCode: 201, ResponseBody: raw, ResourceID: pgtype.Text{String: sub.ID.String(), Valid: true}}); err != nil {
 		return nil, err
+	}
+	if s.wishFence != nil {
+		if err = s.wishCreationFinish(ctx, q, actor, in, id, out); err != nil {
+			return nil, err
+		}
 	}
 	if err = tx.Commit(ctx); err != nil {
 		return nil, err
