@@ -24,7 +24,7 @@ jobs:
       - name: Prepare owned temporary paths
         run: |
           ci_tmp="/data/temp/pulse-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          sudo mkdir -p /data/temp
+          sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" /data/temp
           sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" "$ci_tmp"
           mkdir -p "$ci_tmp/build"
           for key in TMPDIR TMP TEMP CI_OWNED_TEMP; do echo "$key=$ci_tmp" >> "$GITHUB_ENV"; done
@@ -173,7 +173,7 @@ jobs:
       - name: Prepare owned temporary paths
         run: |
           ci_tmp="/data/temp/pulse-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${{ matrix.shard }}-${{ strategy.job-index }}"
-          sudo mkdir -p /data/temp
+          sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" /data/temp
           sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" "$ci_tmp"
           for key in TMPDIR TMP TEMP CI_OWNED_TEMP; do echo "$key=$ci_tmp" >> "$GITHUB_ENV"; done
       - name: Install mise tools
