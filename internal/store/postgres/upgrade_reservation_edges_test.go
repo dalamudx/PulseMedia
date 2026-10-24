@@ -218,7 +218,7 @@ func frozenPGCommand(t *testing.T, ctx context.Context, bin, dsn string, args ..
 	if e != nil {
 		t.Fatal(e)
 	}
-	cmd := exec.CommandContext(ctx, filepath.Join("/opt/mise/installs/postgres/18.6/bin", bin), args...)
+	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Env = append(os.Environ(), "PGHOST="+cfg.Host, "PGPORT="+strconv.Itoa(int(cfg.Port)), "PGUSER="+cfg.User, "PGPASSWORD="+cfg.Password, "PGDATABASE="+cfg.Database)
 	if out, e := cmd.CombinedOutput(); e != nil {
 		t.Fatalf("%s failed: %s (%v)", bin, out, e)

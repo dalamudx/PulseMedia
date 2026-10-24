@@ -227,6 +227,16 @@ func (r *Repository) ConfirmLibraryReuse(ctx context.Context, a *ports.Actor, c 
 	}
 	f, e := loadReuseFrozen(ctx, q, who, c, true)
 	if e != nil {
+		// A competing confirmation may commit its receipt after our first lookup.
+		if errors.Is(e, ports.ErrLibraryReuseChanged) {
+			cached, receiptErr := reuseCached(ctx, q, a, c, key)
+			if receiptErr != nil {
+				return nil, receiptErr
+			}
+			if cached != nil {
+				return cached, tx.Commit(ctx)
+			}
+		}
 		return nil, e
 	}
 	if !s.reuseMediaEligible(f) {

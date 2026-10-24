@@ -126,7 +126,7 @@ func TestIndexerManagementCommandsPG(t *testing.T) {
 		if created == nil {
 			created = r
 		}
-		if !reflect.DeepEqual(created, r) {
+		if !sameHistoricalJSON(created, r) {
 			t.Fatal("unstable concurrent create receipt")
 		}
 	}
@@ -241,7 +241,7 @@ func TestIndexerManagementCommandsPG(t *testing.T) {
 		r *ports.IndexerManagementReceipt
 	}{{create, "create-race", created}, {clear, "credential-clear", cleared}, {del, "delete-command", deleted}} {
 		got, e := store.MutateIndexer(ctx, a, c.m, c.k, managementHash)
-		if e != nil || !reflect.DeepEqual(got, c.r) {
+		if e != nil || !sameHistoricalJSON(got, c.r) {
 			t.Fatal("historical replay changed", e)
 		}
 	}
@@ -509,8 +509,13 @@ func TestIndexerManagementReadReceiptPG(t *testing.T) {
 		r   *ports.IndexerManagementReceipt
 	}{{"read-create", created}, {"read-update", updated}, {"read-delete", deleted}} {
 		got, e := store.ReadIndexerManagementReceipt(ctx, a, x.r.Action, x.key)
-		if e != nil || !reflect.DeepEqual(got, x.r) {
-			t.Fatal("receipt read changed historical result", e)
+		if e != nil {
+			t.Fatal("receipt read failed", e)
+		}
+		gotJSON, gotErr := json.Marshal(got)
+		expectedJSON, expectedErr := json.Marshal(x.r)
+		if gotErr != nil || expectedErr != nil || !bytes.Equal(gotJSON, expectedJSON) {
+			t.Fatal("receipt read changed historical fields or timestamps", gotErr, expectedErr)
 		}
 	}
 	if _, e := store.ReadIndexerManagementReceipt(ctx, a, ports.IndexerCreate, "missing-command"); !errors.Is(e, ports.ErrNotFound) {
@@ -595,7 +600,7 @@ func TestIndexerManagementFrozenHistoryPG(t *testing.T) {
 	}
 	f.store = postgres.NewUpgradeReservationStore(f.p, idgen.New(), codec)
 	replay, e := f.store.ReserveUpgrade(t.Context(), f.actor, command, "management-frozen")
-	if e != nil || replay == nil || !reflect.DeepEqual(replay, reserved) {
+	if e != nil || replay == nil || !sameHistoricalJSON(replay, reserved) {
 		t.Fatal("protected historical reservation replay failed", e)
 	}
 	available, e := postgres.IndexerAvailableForExecution(t.Context(), db.New(f.p), f.source)

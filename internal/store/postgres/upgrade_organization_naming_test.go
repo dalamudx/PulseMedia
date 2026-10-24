@@ -66,11 +66,11 @@ func TestMovieUpgradeNamingPreparationFrozenOfflineReceiptPG(t *testing.T) {
 		t.Fatal(err)
 	}
 	replay, err := f.preparation.PrepareMovieUpgradeOrganization(t.Context(), f.actor, f.command, "m9-upgrade-naming")
-	if err != nil || replay == nil || *replay != *result {
+	if err != nil || !sameHistoricalJSON(replay, result) {
 		t.Fatal("old preparation re-read current template or offline source", err)
 	}
 	read, err := f.preparation.ReadMovieUpgradeOrganizationPreparationReceipt(t.Context(), f.actor, f.operation, "m9-upgrade-naming")
-	if err != nil || read == nil || *read != *result {
+	if err != nil || !sameHistoricalJSON(read, result) {
 		t.Fatal("old original-key read changed receipt", err)
 	}
 	var after []byte

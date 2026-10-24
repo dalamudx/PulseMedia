@@ -133,7 +133,7 @@ func TestMovieUpgradeOrganizationPhysicalPlanPG(t *testing.T) {
 		if out == nil || out.ExecutionAllowed || out.Status != "organization_prepared_not_executable" {
 			t.Fatal(out)
 		}
-		if result != nil && *out != *result {
+		if result != nil && !sameHistoricalJSON(out, result) {
 			t.Fatal("same key changed receipt")
 		}
 		result = out

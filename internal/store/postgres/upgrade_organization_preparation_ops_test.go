@@ -61,8 +61,13 @@ func TestMovieUpgradeOrganizationPhysicalBusinessRestorePG(t *testing.T) {
 	}
 	rr := physicalPlanRepository(t, rp, rootfs.NewFilesystem())
 	again, e := rr.ReadMovieUpgradeOrganizationPreparationReceipt(ctx, f.actor, f.operation, "business-plan")
-	if e != nil || again == nil || *again != *out {
+	if e != nil || again == nil || !again.PreparedAt.Equal(out.PreparedAt) {
 		t.Fatal(again, e)
+	}
+	expected := *out
+	expected.PreparedAt = again.PreparedAt
+	if *again != expected {
+		t.Fatal("restored preparation changed historical fields")
 	}
 	if _, e = postgres.Rollback(ctx, restored, organization75MigrationDir(t)); e == nil || !strings.Contains(e.Error(), "upgrade physical preparation history prevents downgrade") {
 		t.Fatal("history downgrade", e)

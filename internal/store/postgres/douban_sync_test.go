@@ -120,8 +120,16 @@ func TestDoubanSyncReadsAndAuthorization(t *testing.T) {
 	t.Run("current GET has no writes", func(t *testing.T) {
 		for range 2 {
 			r, e := f.s.ReadDoubanSyncConfig(ctx, f.a)
-			if e != nil || !reflect.DeepEqual(r, &original.Config) {
+			if e != nil || r == nil {
 				t.Fatal(r, e)
+			}
+			if !r.CreatedAt.Equal(original.Config.CreatedAt) || !r.UpdatedAt.Equal(original.Config.UpdatedAt) {
+				t.Fatal("read changed the saved configuration timestamps")
+			}
+			expected := original.Config
+			expected.CreatedAt, expected.UpdatedAt = r.CreatedAt, r.UpdatedAt
+			if !reflect.DeepEqual(r, &expected) {
+				t.Fatal("read changed saved configuration fields")
 			}
 		}
 		f.counts(t, 1)
@@ -213,7 +221,7 @@ func TestDoubanSyncConcurrentOriginalKey(t *testing.T) {
 			if first == nil {
 				first = r
 			}
-			if !reflect.DeepEqual(first, r) {
+			if !sameHistoricalJSON(first, r) {
 				t.Fatal("unstable receipt")
 			}
 		}
@@ -399,11 +407,11 @@ func TestDoubanSyncHistoricalReceipt(t *testing.T) {
 		f.exec(t, "UPDATE library_root SET health='offline',media_type='tv' WHERE id=$1", f.movie)
 		f.save(t, ports.DoubanSyncInput{DoubanUID: "another", ExpectedVersion: 1}, "off")
 		r, e := f.s.ReadDoubanSyncConfigReceipt(ctx, f.a, "original")
-		if e != nil || !reflect.DeepEqual(r, original) {
+		if e != nil || !sameHistoricalJSON(r, original) {
 			t.Fatal(r, e)
 		}
 		r, e = f.s.SaveDoubanSyncConfig(ctx, f.a, f.input(), "original")
-		if e != nil || !reflect.DeepEqual(r, original) {
+		if e != nil || !sameHistoricalJSON(r, original) {
 			t.Fatal(r, e)
 		}
 		current, e := f.s.ReadDoubanSyncConfig(ctx, f.a)

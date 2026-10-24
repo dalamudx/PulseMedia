@@ -109,7 +109,7 @@ func TestMovieUpgradeOrganizationAuthorizePG(t *testing.T) {
 		}
 		if first == nil {
 			first = r
-		} else if *r != *first {
+		} else if !sameHistoricalJSON(r, first) {
 			t.Fatal("receipt changed", r, first)
 		}
 	}
@@ -129,11 +129,11 @@ func TestMovieUpgradeOrganizationAuthorizePG(t *testing.T) {
 		t.Fatal(e)
 	}
 	replay, e := r.ReadMovieUpgradeOrganizationReceipt(ctx, f.actor, f.operation, "organization-original-key")
-	if e != nil || replay == nil || *replay != *first {
+	if e != nil || replay == nil || !sameHistoricalJSON(replay, first) {
 		t.Fatal(replay, e)
 	}
 	again, e := r.AuthorizeMovieUpgradeOrganization(ctx, f.actor, c, "organization-original-key")
-	if e != nil || again == nil || *again != *first {
+	if e != nil || again == nil || !sameHistoricalJSON(again, first) {
 		t.Fatal(again, e)
 	}
 	c.ObservationID = uuid.New()

@@ -3,11 +3,11 @@ package postgres_test
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -136,7 +136,9 @@ func TestSiteCheckinConfigAuthorizationPG(t *testing.T) {
 	other := f.user(t)
 	f.exec(t, `UPDATE app_user SET is_active=false WHERE id=$1`, uuid.MustParse(f.a.ID))
 	c, e := f.s.ReadSiteCheckinConfig(ctx, other, f.id)
-	if e != nil || !reflect.DeepEqual(c, &original.Config) {
+	expectedConfig, encodeErr := json.Marshal(original.Config)
+	actualConfig, decodeErr := json.Marshal(c)
+	if e != nil || encodeErr != nil || decodeErr != nil || !bytes.Equal(actualConfig, expectedConfig) {
 		t.Fatal(c, e)
 	}
 	_, e = f.s.ReadSiteCheckinConfigReceipt(ctx, other, f.id, "first")
@@ -176,6 +178,12 @@ func TestSiteCheckinConfigRevocationAfterWaitPG(t *testing.T) {
 	checkinErr(t, <-done, ports.ErrForbidden)
 	f.counts(t, 0)
 }
+func checkinReceiptEqual(a, b *ports.SiteCheckinConfigReceipt) bool {
+	first, firstErr := json.Marshal(a)
+	second, secondErr := json.Marshal(b)
+	return firstErr == nil && secondErr == nil && bytes.Equal(first, second)
+}
+
 func TestSiteCheckinConfigConcurrencyPG(t *testing.T) {
 	f := newCheckinFixture(t)
 	var wg sync.WaitGroup
@@ -196,7 +204,7 @@ func TestSiteCheckinConfigConcurrencyPG(t *testing.T) {
 		}
 	}
 	a, b := <-results, <-results
-	if !reflect.DeepEqual(a, b) {
+	if !checkinReceiptEqual(a, b) {
 		t.Fatal("replay changed")
 	}
 	f.counts(t, 1)
@@ -211,7 +219,7 @@ func TestSiteCheckinConfigConcurrencyPG(t *testing.T) {
 	f.exec(t, `ALTER TABLE indexer_configuration DISABLE TRIGGER indexer_management_configuration_guard`)
 	f.exec(t, `UPDATE indexer_configuration SET url_encrypted='broken' WHERE indexer_id=$1`, f.id)
 	replay, e := f.s.SaveSiteCheckinConfig(t.Context(), f.a, f.id, f.input(), "same")
-	if e != nil || !reflect.DeepEqual(a, replay) {
+	if e != nil || !checkinReceiptEqual(a, replay) {
 		t.Fatal(replay, e)
 	}
 }
@@ -264,11 +272,11 @@ func TestSiteCheckinConfigDisableAndHistoryPG(t *testing.T) {
 		t.Fatal(disabled)
 	}
 	replay, e := f.s.ReadSiteCheckinConfigReceipt(t.Context(), f.a, f.id, "first")
-	if e != nil || !reflect.DeepEqual(replay, original) {
+	if e != nil || !checkinReceiptEqual(replay, original) {
 		t.Fatal(replay, e)
 	}
 	command, e := f.s.SaveSiteCheckinConfig(t.Context(), f.a, f.id, f.input(), "first")
-	if e != nil || !reflect.DeepEqual(command, original) {
+	if e != nil || !checkinReceiptEqual(command, original) {
 		t.Fatal(command, e)
 	}
 }

@@ -37,7 +37,8 @@ func intentTime(v pgtype.Timestamptz) *time.Time {
 	if !v.Valid {
 		return nil
 	}
-	return &v.Time
+	timestamp := v.Time.UTC()
+	return &timestamp
 }
 func intentUUID(v pgtype.UUID) *uuid.UUID {
 	if !v.Valid {
@@ -47,7 +48,7 @@ func intentUUID(v pgtype.UUID) *uuid.UUID {
 	return &id
 }
 func subscriptionIntentRecord(v db.Subscription) (ports.SubscriptionRecord, error) {
-	out := ports.SubscriptionRecord{ID: v.ID, UserID: v.UserID, MediaID: v.MediaID, RootID: v.RootID, QualityPolicyID: v.QualityPolicyID, QualityPolicyRevision: v.QualityPolicyRevision, DownloaderID: intentUUID(v.DownloaderID), State: v.State, IntentVersion: v.IntentVersion, ScopeType: v.ScopeType, CreatedAt: v.CreatedAt.Time, UpdatedAt: v.UpdatedAt.Time, IncludeSpecials: v.IncludeSpecials, EpisodeMappingRevision: intentInt8(v.EpisodeMappingRevision), UpgradeMode: v.UpgradeMode}
+	out := ports.SubscriptionRecord{ID: v.ID, UserID: v.UserID, MediaID: v.MediaID, RootID: v.RootID, QualityPolicyID: v.QualityPolicyID, QualityPolicyRevision: v.QualityPolicyRevision, DownloaderID: intentUUID(v.DownloaderID), State: v.State, IntentVersion: v.IntentVersion, ScopeType: v.ScopeType, CreatedAt: v.CreatedAt.Time.UTC(), UpdatedAt: v.UpdatedAt.Time.UTC(), IncludeSpecials: v.IncludeSpecials, EpisodeMappingRevision: intentInt8(v.EpisodeMappingRevision), UpgradeMode: v.UpgradeMode}
 	if e := json.Unmarshal(v.IndexerIds, &out.IndexerIDs); e != nil {
 		return out, e
 	}
@@ -63,7 +64,7 @@ func subscriptionIntentWanted(v db.WantedItem) ports.SubscriptionWanted {
 	return ports.SubscriptionWanted{
 		ID: v.ID, SubscriptionID: v.SubscriptionID, UnitID: v.UnitID, IntentVersion: v.IntentVersion,
 		IsSkipped: v.IsSkipped, IsSatisfied: v.IsSatisfied, UserSkipped: v.UserSkipped, ScopeExcluded: v.ScopeExcluded,
-		CurrentFactStage: intentText(v.CurrentFactStage), LastEvaluatedAt: intentTime(v.LastEvaluatedAt), NextEvaluateAt: intentTime(v.NextEvaluateAt), RssSeenAt: intentTime(v.RssSeenAt), CreatedAt: v.CreatedAt.Time, UpdatedAt: v.UpdatedAt.Time,
+		CurrentFactStage: intentText(v.CurrentFactStage), LastEvaluatedAt: intentTime(v.LastEvaluatedAt), NextEvaluateAt: intentTime(v.NextEvaluateAt), RssSeenAt: intentTime(v.RssSeenAt), CreatedAt: v.CreatedAt.Time.UTC(), UpdatedAt: v.UpdatedAt.Time.UTC(),
 		EvaluatedIntentVersion: intentInt8(v.EvaluatedIntentVersion), EvaluatedPolicyID: intentText(v.EvaluatedPolicyID), EvaluatedPolicyRevision: intentInt8(v.EvaluatedPolicyRevision), EvaluatedRootID: intentUUID(v.EvaluatedRootID), EvaluatedUnitID: intentUUID(v.EvaluatedUnitID), EvaluatedMediaID: intentUUID(v.EvaluatedMediaID), EvaluatedRootGeneration: intentInt8(v.EvaluatedRootGeneration), EvaluatedHealthRevision: intentInt8(v.EvaluatedHealthRevision), EvaluatedMediaMetadataVersion: intentInt8(v.EvaluatedMediaMetadataVersion), EvaluatedUnitMetadataVersion: intentInt8(v.EvaluatedUnitMetadataVersion), EvaluatedFactsVersion: intentInt8(v.EvaluatedFactsVersion), EvaluatedState: intentText(v.EvaluatedState), EvaluatedSkipped: intentBool(v.EvaluatedSkipped), ProjectionValidUntil: intentTime(v.ProjectionValidUntil), EvaluatedContractVersion: intentText(v.EvaluatedContractVersion), EvaluatedWriteToken: intentUUID(v.EvaluatedWriteToken),
 	}
 }

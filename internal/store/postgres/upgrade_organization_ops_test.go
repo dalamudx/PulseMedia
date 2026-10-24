@@ -84,8 +84,13 @@ func TestMovieUpgradeOrganizationBusinessRestorePG(t *testing.T) {
 	}
 	rr := organizationPool(t, rp)
 	again, e := rr.ReadMovieUpgradeOrganizationReceipt(ctx, f.actor, f.operation, "business-organization")
-	if e != nil || again == nil || *again != *out {
+	if e != nil || again == nil || !again.AuthorizedAt.Equal(out.AuthorizedAt) {
 		t.Fatal(again, e)
+	}
+	expected := *out
+	expected.AuthorizedAt = again.AuthorizedAt
+	if *again != expected {
+		t.Fatal("restored authorization changed historical fields")
 	}
 	if _, e = postgres.Rollback(ctx, restored, organization74MigrationDir(t)); e == nil || !strings.Contains(e.Error(), "upgrade organization history prevents downgrade") {
 		t.Fatal("history downgrade", e)

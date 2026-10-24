@@ -113,7 +113,7 @@ func TestWebPushDeviceEncryptedReceiptAndIsolationPG(t *testing.T) {
 	}
 	disabled := notify.NewWebPushService(f.repo, f.secrets, "", false)
 	replay, err := disabled.Register(t.Context(), f.actor, r.ID, f.config.Version, f.sub, "register")
-	if err != nil || !reflect.DeepEqual(r, replay) {
+	if err != nil || !sameHistoricalJSON(r, replay) {
 		t.Fatal("offline disabled replay", err)
 	}
 	revoked, err := disabled.Revoke(t.Context(), f.actor, r.ID, r.UpdatedAt, "revoke")

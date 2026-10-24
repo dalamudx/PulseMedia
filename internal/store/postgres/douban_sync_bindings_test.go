@@ -59,7 +59,7 @@ func TestDoubanSyncBindingsCanonicalAndLegacy(t *testing.T) {
 	// Canonical permutations share the same original-command hash.
 	slices.Reverse(b.IndexerIDs)
 	replay := f.save(t, in, "explicit")
-	if !reflect.DeepEqual(saved, replay) {
+	if !sameHistoricalJSON(saved, replay) {
 		t.Fatal("permutation replay changed")
 	}
 	in.Bindings = nil
@@ -81,7 +81,7 @@ func TestDoubanSyncBindingsCanonicalAndLegacy(t *testing.T) {
 	}
 	current, e := f.s.ReadDoubanSyncConfig(ctx, f.a)
 	wishNoError(t, e)
-	if !reflect.DeepEqual(current, &cleared.Config) {
+	if !sameHistoricalJSON(current, &cleared.Config) {
 		t.Fatal("current snapshot differs")
 	}
 	for name, bad := range map[string]*ports.DoubanSyncBindings{"nil ids": {}, "downloader only": {IndexerIDs: []uuid.UUID{}, DownloaderID: b.DownloaderID}, "zero id": {IndexerIDs: []uuid.UUID{uuid.Nil}, DownloaderID: b.DownloaderID}, "duplicate": {IndexerIDs: []uuid.UUID{b.IndexerIDs[0], b.IndexerIDs[0]}, DownloaderID: b.DownloaderID}, "no downloader": {IndexerIDs: []uuid.UUID{b.IndexerIDs[0]}}, "zero downloader": {IndexerIDs: []uuid.UUID{}, DownloaderID: new(uuid.UUID)}, "too many": {IndexerIDs: make([]uuid.UUID, 65), DownloaderID: b.DownloaderID}} {
@@ -116,11 +116,11 @@ func TestDoubanSyncBindingsHistoricalReplay(t *testing.T) {
 	f.exec(t, `DELETE FROM indexer`)
 	f.exec(t, `DELETE FROM download_client`)
 	r := f.save(t, in, "bound")
-	if !reflect.DeepEqual(r, bound) {
+	if !sameHistoricalJSON(r, bound) {
 		t.Fatal("historical endpoint replay changed")
 	}
 	r = f.save(t, f.input(), "old")
-	if !reflect.DeepEqual(r, old) {
+	if !sameHistoricalJSON(r, old) {
 		t.Fatal("plain replay gained bindings")
 	}
 	var afterInput, afterSnapshot []byte
@@ -379,7 +379,7 @@ func TestDoubanSyncBindingsAuditEventRollback(t *testing.T) {
 			requireDoubanError(t, e, ports.ErrUnavailable)
 			current, e := f.s.ReadDoubanSyncConfig(context.Background(), f.a)
 			wishNoError(t, e)
-			if !reflect.DeepEqual(current, &first.Config) {
+			if !sameHistoricalJSON(current, &first.Config) {
 				t.Fatal("partial binding save")
 			}
 			f.counts(t, 1)

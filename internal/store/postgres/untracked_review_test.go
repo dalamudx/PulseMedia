@@ -130,7 +130,7 @@ func TestUntrackedReviewRequestConcurrentKeysAndVersionsPG(t *testing.T) {
 		if first == nil {
 			first = r
 		}
-		if !reflect.DeepEqual(first, r) {
+		if !sameHistoricalJSON(first, r) {
 			t.Fatal("same key changed original", first, r)
 		}
 	}

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"sync"
 	"testing"
@@ -129,7 +128,7 @@ func TestSiteAccountStatsConfigAuthorizationPG(t *testing.T) {
 	other := f.user(t)
 	f.exec(t, `UPDATE app_user SET is_active=false WHERE id=$1`, uuid.MustParse(f.a.ID))
 	c, e := f.s.ReadSiteAccountStatsConfig(ctx, other, f.id)
-	if e != nil || !reflect.DeepEqual(c, &original.Config) {
+	if e != nil || !sameHistoricalJSON(c, &original.Config) {
 		t.Fatal(c, e)
 	}
 	_, e = f.s.ReadSiteAccountStatsConfigReceipt(ctx, other, f.id, "first")
@@ -189,7 +188,7 @@ func TestSiteAccountStatsConfigConcurrencyPG(t *testing.T) {
 		}
 	}
 	a, b := <-results, <-results
-	if !reflect.DeepEqual(a, b) {
+	if !sameHistoricalJSON(a, b) {
 		t.Fatal("replay changed")
 	}
 	f.counts(t, 1)
@@ -204,7 +203,7 @@ func TestSiteAccountStatsConfigConcurrencyPG(t *testing.T) {
 	f.exec(t, `ALTER TABLE indexer_configuration DISABLE TRIGGER indexer_management_configuration_guard`)
 	f.exec(t, `UPDATE indexer_configuration SET url_encrypted='broken' WHERE indexer_id=$1`, f.id)
 	replay, e := f.s.SaveSiteAccountStatsConfig(t.Context(), f.a, f.id, f.input(), "same")
-	if e != nil || !reflect.DeepEqual(a, replay) {
+	if e != nil || !sameHistoricalJSON(a, replay) {
 		t.Fatal(replay, e)
 	}
 }
@@ -257,7 +256,7 @@ func TestSiteAccountStatsConfigDisableAndHistoryPG(t *testing.T) {
 		t.Fatal(disabled)
 	}
 	replay, e := f.s.ReadSiteAccountStatsConfigReceipt(t.Context(), f.a, f.id, "first")
-	if e != nil || !reflect.DeepEqual(replay, original) {
+	if e != nil || !sameHistoricalJSON(replay, original) {
 		t.Fatal(replay, e)
 	}
 }
