@@ -329,7 +329,7 @@ Worker自动解释已启用配置，按每轮一次人物读取和64作品分页
 
 ## 5. Beta 候选与构建记录
 
-V1 范围是开发计划的 M0–M4，后续 M5–M11 不随本次候选交付。正式标签构建须来自已提交且无修改的源码；版本信息和 OCI revision 必须能追溯到同一个提交。例如在最终回归通过后运行：
+历史`0.1.0-beta.1`范围仅为开发计划M0–M4；本节下方另记覆盖M0–M11的`0.1.0-beta.2`远程预发布。正式标签构建须来自已提交且无修改的源码，版本信息和OCI revision必须追溯到同一个提交。历史构建示例：
 
 ```bash
 PULSE_BUILD_VERSION=0.1.0-beta.1 mise exec -- task build-container -- localhost/pulsemedia:0.1.0-beta.1-amd64 amd64
@@ -351,6 +351,22 @@ PULSE_BUILD_VERSION=0.1.0-beta.1 mise exec -- task build-container -- localhost/
 
 真实联调使用明确授权的服务和 CC BY 样本。公开索引源可能限流或超时，失败应保留原操作并等待/复核，不能盲目重复 Add。升级、跨根复用、copy/reflink/move 的确认和恢复边界沿用架构与操作页面提示。NAS 更换物理根时必须显式推进 generation 建立新基线，原文件事实不会随换挂载自动失效。
 
+
+### 0.1.0-beta.2公开预发布
+
+覆盖M0–M11的[预发布v0.1.0-beta.2](https://github.com/dalamudx/PulseMedia/releases/tag/v0.1.0-beta.2)已于2026-10-24公开。标签和两个正式镜像固定源码`06ed3164f76c345e5c28cd4d4db186a6fadc88a5`；与CI通过的`28cc0fe`仅差验收文档，Go1.26.10、迁移目标schema126。amd64原生及arm64 QEMU分别完成安装、schema82→126升级、加密备份/恢复隔离、初始化登录、只读根和PG18卷重建；arm64原生硬件性能仍未量测。
+
+无需注册表凭据可从Release下载本机架构的OCI归档及SHA256SUMS，再加载：
+
+```bash
+sha256sum --ignore-missing --check SHA256SUMS
+podman load -i pulsemedia_0.1.0-beta.2_linux_amd64.oci.tar.gz
+export PULSE_APP_IMAGE=localhost/pulsemedia:0.1.0-beta.2-amd64
+```
+
+arm64相应替换文件名和镜像后缀。加载不执行迁移或启动实例，后续安装/升级仍遵守第1–3节的独立DDL凭据、备份、空库与恢复点检查。归档SHA256：amd64为`fd2968ef8bf8432a1bd1143791c99dca7a456850de64c5c6e513905a205460c5`，arm64为`7094e3a7fbad35fb7ec92e9de7643f2a30b5f2ef97e518ce8fab4cec3eef4ef3`；已核对GitHub服务端摘要、归档重新加载身份、匿名校验文件与下载访问。
+
+GHCR的`ghcr.io/dalamudx/pulsemedia:0.1.0-beta.2`也已推送，多架构索引为`sha256:cc486ac8e645d33b412e0fbd5e12be0f048effa044d2d3e2d2102232ef70d4ed`。该包目前为私有，需有包读取权限的GitHub身份登录；匿名用户应使用上述公开Release归档，不能将私有包描述成可匿名拉取。
 
 ## 6. M5 开发切片与站点管理验证
 
