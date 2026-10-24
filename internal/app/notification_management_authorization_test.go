@@ -126,13 +126,13 @@ func TestNotificationManagementCurrentAccountAndReceiptProtection(t *testing.T) 
 	for _, bad := range []*ports.Actor{{Type: ports.ActorTypeUser, ID: a.ID, Role: ports.RoleAdmin, Scopes: []string{"read"}}, {Type: ports.ActorTypeSystem, ID: a.ID, Role: ports.RoleAdmin}, {Type: ports.ActorTypeUser, ID: uuid.NewString(), Role: ports.RoleAdmin}} {
 		check(bad)
 	}
-	if got, e := replacement.Replace(ctx, a, ch.ID, replaceCmd, "replaced"); e != nil || *got != *rr {
+	if got, e := replacement.Replace(ctx, a, ch.ID, replaceCmd, "replaced"); e != nil || got == nil || got.OldChannelID != rr.OldChannelID || got.NewChannelID != rr.NewChannelID || got.OldEnabled != rr.OldEnabled || got.NewEnabled != rr.NewEnabled || !got.OldUpdatedAt.Equal(rr.OldUpdatedAt) || !got.NewUpdatedAt.Equal(rr.NewUpdatedAt) {
 		t.Fatal("replacement receipt lost after restored authorization", e)
 	}
 	if got, e := delivery.Replay(ctx, a, d.ID, replayCmd, "replayed"); e != nil || *got != *dr {
 		t.Fatal("delivery receipt lost after restored authorization", e)
 	}
-	if got, e := skip.Skip(ctx, a, ds.ID, skipCmd, "skipped"); e != nil || *got != *kr {
+	if got, e := skip.Skip(ctx, a, ds.ID, skipCmd, "skipped"); e != nil || got == nil || got.ID != kr.ID || got.EventID != kr.EventID || got.State != kr.State || got.LeaseToken != kr.LeaseToken || got.Reason != kr.Reason || !got.SkippedAt.Equal(kr.SkippedAt) {
 		t.Fatal("skip receipt lost after restored authorization", e)
 	}
 	if _, e = f.pool.Exec(ctx, "DELETE FROM app_user WHERE id=$1", uuid.MustParse(a.ID)); e != nil {

@@ -40,7 +40,7 @@ run_pg test -x "$pgbin/initdb"
 mkdir -p "$GOTMPDIR" "$owned/socket" "$owned/pg"
 chmod 755 "$owned"
 if [ "$(id -u)" = 0 ]; then chown postgres:postgres "$owned/socket" "$owned/pg"; fi
-run_pg "$pgbin/initdb" -D "$owned/pg" -U postgres -A trust --no-locale >"$owned/init.log" 2>&1 || { tail -n 20 "$owned/init.log"; exit 1; }
+run_pg "$pgbin/initdb" -D "$owned/pg" -U postgres -A trust --no-locale --encoding=UTF8 >"$owned/init.log" 2>&1 || { tail -n 20 "$owned/init.log"; exit 1; }
 run_pg "$pgbin/pg_ctl" -D "$owned/pg" -l "$owned/pg/server.log" -o "-c listen_addresses='' -c unix_socket_directories='$owned/socket' -p 5432" -w start
 cat > "$owned/vite.config.mjs" <<'CONFIG'
 import {createRequire} from 'node:module';

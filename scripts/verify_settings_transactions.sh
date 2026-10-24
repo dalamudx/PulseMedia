@@ -16,7 +16,7 @@ expected_version=$(mise exec -- postgres --version)
 test "$("$pgbin/postgres" --version)" = "$expected_version"
 runuser -u postgres -- test -x "$pgbin/initdb"
 mkdir -p "$owned/build" "$owned/socket" "$owned/pg";chmod 755 "$owned";chown postgres:postgres "$owned/socket" "$owned/pg"
-runuser -u postgres -- "$pgbin/initdb" -D "$owned/pg" --auth=trust --no-locale >"$owned/init.log" 2>&1
+runuser -u postgres -- "$pgbin/initdb" -D "$owned/pg" --auth=trust --no-locale --encoding=UTF8 >"$owned/init.log" 2>&1
 runuser -u postgres -- "$pgbin/pg_ctl" -D "$owned/pg" -o "-k $owned/socket -c listen_addresses='' -c max_connections=100" -w start >"$owned/start.log" 2>&1
 if [ "$mode" != remaining ];then
  mise exec -- go test -race ./internal/usecase/settings ./internal/command ./internal/httpapi -run 'TestSetting|TestSettings|TestTMDBSetting|TestAPICredential|TestAPI.*Scope' -count=3 >"$owned/target.log" 2>&1 || { sed -n '/--- FAIL/,+12p;/build failed/,+3p' "$owned/target.log";tail -n 20 "$owned/target.log";exit 1; }

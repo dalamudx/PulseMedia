@@ -33,7 +33,7 @@ if [ "$(id -u)" = 0 ]; then chmod 755 "$owned"; chown postgres:postgres "$owned/
 export TMPDIR="$owned" TMP="$owned" TEMP="$owned" GOTMPDIR="$owned/build"
 export PULSE_TEST_DATABASE_URL="postgres://postgres@localhost/postgres?host=$owned/socket&port=5432&sslmode=disable"
 export PULSE_UI_FIXTURE=0
-run_pg "$pgbin/initdb" -D "$owned/pg" -U postgres --auth=trust --no-locale >"$owned/init.log" 2>&1 || { tail -n 15 "$owned/init.log"; exit 1; }
+run_pg "$pgbin/initdb" -D "$owned/pg" -U postgres --auth=trust --no-locale --encoding=UTF8 >"$owned/init.log" 2>&1 || { tail -n 15 "$owned/init.log"; exit 1; }
 run_pg "$pgbin/pg_ctl" -D "$owned/pg" -o "-k $owned/socket -c listen_addresses='' -c max_connections=100" -w start >"$owned/start.log" 2>&1 || { tail -n 15 "$owned/start.log"; exit 1; }
 setsid "$@" &
 child=$!
