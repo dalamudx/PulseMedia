@@ -44,7 +44,12 @@ if [[ -z "${PULSE_TEST_PG_BIN:-}" ]]; then
   PULSE_TEST_PG_BIN="$(dirname -- "$(command -v pg_dump)")"
   export PULSE_TEST_PG_BIN
 fi
-podman run -d --platform "linux/$(go env GOARCH)" --name "$pg_container" --network none \
+# Rootless PG must own its socket and data as the host test user.
+pg_user_args=()
+if [[ $(id -u) != 0 ]]; then
+  pg_user_args=(--userns=keep-id --user "$(id -u):$(id -g)")
+fi
+podman run -d "${pg_user_args[@]}" --platform "linux/$(go env GOARCH)" --name "$pg_container" --network none \
   --label "io.pulsemedia.test-state=$pg_work" \
   --env POSTGRES_HOST_AUTH_METHOD=trust \
   --env TMPDIR=/var/run/postgresql \
