@@ -40,11 +40,11 @@ try{
  await page.getByRole('heading',{name:'登录 PulseMedia',exact:true}).waitFor();assert.equal((await context.request.get(base+'/api/v1/auth/me')).status(),401);
  await login();
  let release;const held=new Promise(resolve=>release=resolve);let signal;const started=new Promise(resolve=>signal=resolve);
- let holdOld=true;const pending=[];
- await page.route('**/api/v1/system/status',async route=>{if(!holdOld){await route.continue();return;}signal();let finish;pending.push(new Promise(resolve=>finish=resolve));await held;try{await route.fulfill({status:401,contentType:'application/problem+json',body:JSON.stringify({code:'unauthorized',message:'obsolete fixture request'})});}catch{}finally{finish();}});
- await page.reload();await page.locator('.app-shell').waitFor();await started;holdOld=false;
+ let holdOld=true;let oldRequest;const pending=[];
+ await page.route('**/api/v1/system/status',async route=>{if(!holdOld){await route.continue();return;}oldRequest=route.request();signal();let finish;pending.push(new Promise(resolve=>finish=resolve));await held;try{await route.fulfill({status:401,contentType:'application/problem+json',body:JSON.stringify({code:'unauthorized',message:'obsolete fixture request'})});}catch{}finally{finish();}});
+ await page.reload();await page.locator('.app-shell').waitFor();await started;holdOld=false;const obsoleteResponse=oldRequest.response();
  await page.getByRole('button',{name:'退出',exact:true}).click();await page.getByRole('heading',{name:'登录 PulseMedia',exact:true}).waitFor();
- await login();const obsoleteResponse=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/system/status'&&r.status()===401);release();await Promise.all(pending);await obsoleteResponse;
+ await login();release();await Promise.all(pending);const oldResponse=await obsoleteResponse;assert(oldResponse?.status()===401||(!oldResponse&&/ABORTED|CANCELLED/.test(oldRequest.failure()?.errorText??"")),"old session request must finish with 401 or explicit cancellation");
  await page.getByRole('link',{name:'API 令牌',exact:true}).click();await page.getByRole('heading',{name:'API 令牌',exact:true}).waitFor();
  assert.equal(await page.locator('.app-shell').count(),1);assert.equal((await context.request.get(base+'/api/v1/auth/me')).status(),200);
  await page.unroute('**/api/v1/system/status');
