@@ -19,12 +19,14 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/acquisition"
 	"github.com/dalamudx/PulseMedia/internal/usecase/auth"
 	"github.com/dalamudx/PulseMedia/internal/usecase/download"
+	"github.com/dalamudx/PulseMedia/internal/usecase/downloadmetrics"
 	mediausecase "github.com/dalamudx/PulseMedia/internal/usecase/media"
 	"github.com/dalamudx/PulseMedia/internal/usecase/media_library"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediascrape"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediaserver"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
 	"github.com/dalamudx/PulseMedia/internal/usecase/operation"
+	"github.com/dalamudx/PulseMedia/internal/usecase/personfollow"
 	"github.com/dalamudx/PulseMedia/internal/usecase/policy"
 	usecaseScheduler "github.com/dalamudx/PulseMedia/internal/usecase/scheduler"
 	usecaseSearch "github.com/dalamudx/PulseMedia/internal/usecase/search"
@@ -57,10 +59,12 @@ type ServerHandler struct {
 	operationTimelineSvc      *operation.TimelineService
 	libraryCatalogSvc         *media_library.Service
 	libraryOverviewSvc        *media_library.OverviewService
+	globalRatesSvc            *downloadmetrics.OverviewService
 	dashboardActivitySvc      *operation.ActivityService
 	submissionRetrySvc        *operation.SubmissionRetryService
 	activityHub               *SSEHub
 	logHub                    *SSEHub
+	auditTimelineSvc          auditTimelineApplication
 	mediaScrapeSvc            *mediascrape.Service
 	tokenManagementSvc        *auth.TokenManagementService
 	authSvc                   *auth.Service
@@ -82,14 +86,22 @@ type ServerHandler struct {
 	metaProvider              ports.MetadataProvider
 	metadataDetailSvc         metadataDetailApplication
 	doubanRankingSvc          doubanRankingApplication
+	bangumiCalendarSvc        bangumiCalendarApplication
 	doubanSyncConfigSvc       *watchlist.ConfigService
 	siteAccountStatsConfigSvc siteAccountStatsConfigApplication
 	siteCheckinConfigSvc      siteCheckinConfigApplication
+	cookieCloudConfigSvc      cookieCloudConfigApplication
+	seedingConfigSvc          seedingConfigApplication
+	untrackedScopeSvc         untrackedScopeApplication
+	untrackedReviewSvc        untrackedReviewApplication
+	untrackedOrganizationSvc  untrackedOrganizationApplication
+	untrackedDiscoverySvc     untrackedDiscoveryApplication
 	siteCheckinHistorySvc     siteCheckinHistoryApplication
 	siteAccountStatsSvc       siteAccountStatsApplication
 	localMediaReader          ports.LocalMediaSearchReader
 	subSvc                    *subscription.Service
 	subCreationSvc            subscriptionCreationApplication
+	mediaRequestSvc           mediaRequestApplication
 	subscriptionListSvc       *subscription.ListService
 	controlSvc                *subscription.ControlService
 	tvRefreshSvc              *subscription.TVRefreshService
@@ -110,6 +122,9 @@ type ServerHandler struct {
 	dlMgr                     *download.Manager
 	syncSvc                   *mediaserver.SyncService
 	notifySvc                 *notify.Dispatcher
+	notificationTestSvc       *notify.TestService
+	webPushSvc                *notify.WebPushService
+	personFollowSvc           *personfollow.ConfigService
 	deliveryManagementSvc     *notify.DeliveryManagementService
 	channelStateSvc           *notify.ChannelStateService
 	channelReplacementSvc     *notify.ChannelReplacementService
@@ -156,6 +171,13 @@ func NewServerHandler(
 		SubmissionRetryRepository() ports.SubmissionRetryRepository
 	}); ok {
 		submissionRetrySvc = operation.NewSubmissionRetryService(provider.SubmissionRetryRepository())
+	}
+	var globalRatesSvc *downloadmetrics.OverviewService
+	if provider, ok := a.(interface {
+		DownloadGlobalRatesOverviewReader() ports.DownloadGlobalRatesOverviewReader
+		DownloadGlobalRatesCollectionEnabled() bool
+	}); ok {
+		globalRatesSvc = downloadmetrics.NewOverviewService(provider.DownloadGlobalRatesOverviewReader(), provider.DownloadGlobalRatesCollectionEnabled())
 	}
 	var libraryOverviewSvc *media_library.OverviewService
 	if provider, ok := a.(interface {
@@ -205,6 +227,7 @@ func NewServerHandler(
 		subscriptionListSvc:      subscriptionListSvc,
 		libraryCatalogSvc:        libraryCatalogSvc,
 		libraryOverviewSvc:       libraryOverviewSvc,
+		globalRatesSvc:           globalRatesSvc,
 		dashboardActivitySvc:     dashboardActivitySvc,
 		submissionRetrySvc:       submissionRetrySvc,
 		operationSvc:             operationSvc,
@@ -925,12 +948,17 @@ func (s *ServerHandler) PreviewPolicy(ctx context.Context, request PreviewPolicy
 		rejectReason = &eval.RejectedReason
 	}
 
+	var preferenceScore *int
+	if eval.PreferenceScore != 0 {
+		preferenceScore = &eval.PreferenceScore
+	}
 	return PreviewPolicy200JSONResponse{
-		Passed:         eval.Passed,
-		RejectedReason: rejectReason,
-		Score:          eval.Score,
-		MeetsCutoff:    eval.MeetsCutoff,
-		ScoreBreakdown: eval.ScoreBreakdown,
+		Passed:          eval.Passed,
+		RejectedReason:  rejectReason,
+		Score:           eval.Score,
+		PreferenceScore: preferenceScore,
+		MeetsCutoff:     eval.MeetsCutoff,
+		ScoreBreakdown:  eval.ScoreBreakdown,
 	}, nil
 }
 
@@ -1160,19 +1188,28 @@ func (s *ServerHandler) GetTMDBTVDetails(ctx context.Context, request GetTMDBTVD
 		}
 	}
 
+	var translationSource *TVTranslationSource
+	if source := tv.TranslationSource; source != nil {
+		fields := make([]TVTranslationSourceFields, len(source.Fields))
+		for i, field := range source.Fields {
+			fields[i] = TVTranslationSourceFields(field)
+		}
+		translationSource = &TVTranslationSource{Provider: TVTranslationSourceProvider(source.Provider), SourceId: source.SourceID, Language: TVTranslationSourceLanguage(source.Language), Fields: fields}
+	}
 	return GetTMDBTVDetails200JSONResponse{
-		TmdbId:        tv.TMDBID,
-		Title:         tv.Title,
-		OriginalTitle: &tv.OriginalTitle,
-		Year:          &tv.Year,
-		Overview:      &tv.Overview,
-		PosterUrl:     &tv.PosterURL,
-		BackdropUrl:   &tv.BackdropURL,
-		Rating:        ratingPtr,
-		Genres:        &tv.Genres,
-		SeasonsCount:  tv.SeasonsCount,
-		EpisodesCount: tv.EpisodesCount,
-		Seasons:       seasons,
+		TmdbId:            tv.TMDBID,
+		Title:             tv.Title,
+		OriginalTitle:     &tv.OriginalTitle,
+		Year:              &tv.Year,
+		Overview:          &tv.Overview,
+		PosterUrl:         &tv.PosterURL,
+		BackdropUrl:       &tv.BackdropURL,
+		Rating:            ratingPtr,
+		Genres:            &tv.Genres,
+		SeasonsCount:      tv.SeasonsCount,
+		EpisodesCount:     tv.EpisodesCount,
+		Seasons:           seasons,
+		TranslationSource: translationSource,
 	}, nil
 }
 

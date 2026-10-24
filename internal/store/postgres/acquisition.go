@@ -264,7 +264,7 @@ func (s *AcquisitionStore) reserveMovie(ctx context.Context, qtx *db.Queries, ac
 			if !file.Stage.Valid || !quality.KnownProfile(p) {
 				return nil, ErrOwnershipUncertain
 			}
-			if quality.EvaluateCandidate(rules, file.RelPath, p).Passed {
+			if quality.EvaluateStoredFile(rules, file.RelPath, p).Passed {
 				return nil, ErrLocalReuseRequired
 			}
 		}

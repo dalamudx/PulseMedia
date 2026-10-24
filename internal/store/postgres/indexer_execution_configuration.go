@@ -16,5 +16,8 @@ func ResolveExecutableIndexerConfiguration(ctx context.Context, q *db.Queries, d
 	if !available {
 		return db.Indexer{}, ports.IndexerExecutionModes{}, ports.ErrNotFound
 	}
+	if err := cookieCloudCredentialUsable(ctx, q, row); err != nil {
+		return db.Indexer{}, ports.IndexerExecutionModes{}, err
+	}
 	return ResolveIndexerConfiguration(ctx, q, decoder, row)
 }

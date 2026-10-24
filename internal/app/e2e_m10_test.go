@@ -22,26 +22,26 @@ func TestFullM10EcosystemIntegration(t *testing.T) {
 	// 1. CookieCloud Sync
 	cookieServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprint(w, `{"cookie_data": {"kp.m-team.cc": [{"name": "tp", "value": "token_123"}]}}`)
+		_, _ = fmt.Fprint(w, `{"encrypted":"U2FsdGVkX18AAQIDBAUGB0f+KaUEK9MG/2SKGlYZS4e3Tmi/7emjWB/O0bvuV2x5gj8VvDKVW52HAkWVIN0Ui8/EHMrQ0cMnPL7CLvygOfvW32Q4L+VOUHsP+qRv/a1d+EVm1CQK1WUxAagxvfwJPg==","crypto_type":"legacy"}`)
 	}))
 	defer cookieServer.Close()
 
 	ccClient := cookiecloud.NewClient(cookieServer.Client())
-	cookies, err := ccClient.SyncCookies(ctx, cookieServer.URL, "user-uuid", "password")
-	if err != nil || cookies["kp.m-team.cc"] != "tp=token_123" {
-		t.Fatalf("cookiecloud sync failed: %v, %+v", err, cookies)
+	cookies, err := ccClient.SyncCookies(ctx, cookieServer.URL, "fixture-user", "fixture-password")
+	if err != nil || cookies["tracker.example"] != "session=owned-fixture" {
+		t.Fatalf("cookiecloud encrypted protocol failed: %v", err)
 	}
 
 	// 2. Bangumi Calendar
 	bgmServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprint(w, `[{"weekday": {"id": 1, "cn": "星期一"}, "items": [{"id": 1, "name_cn": "葬送的芙莉莲", "air_date": "2023-09-29"}]}]`)
+		_, _ = fmt.Fprint(w, `[{"weekday":{"id":1},"items":[{"id":1,"type":2,"name":"葬送のフリーレン","name_cn":"葬送的芙莉莲","air_date":"2023-09-29"}]},{"weekday":{"id":2},"items":[]},{"weekday":{"id":3},"items":[]},{"weekday":{"id":4},"items":[]},{"weekday":{"id":5},"items":[]},{"weekday":{"id":6},"items":[]},{"weekday":{"id":7},"items":[]}]`)
 	}))
 	defer bgmServer.Close()
 
 	bgmClient := bangumi.NewClient(bgmServer.URL, bgmServer.Client())
 	sched, err := bgmClient.GetCalendar(ctx)
-	if err != nil || len(sched) != 1 || sched[0].Items[0].Title != "葬送的芙莉莲" {
+	if err != nil || len(sched) != 7 || sched[0].Items[0].Title != "葬送的芙莉莲" {
 		t.Fatalf("bangumi calendar failed: %v, %+v", err, sched)
 	}
 
@@ -65,10 +65,10 @@ func TestFullM10EcosystemIntegration(t *testing.T) {
 	embyServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if r.URL.Path == "/System/Info" {
-			_, _ = fmt.Fprint(w, `{"ServerName": "Emby Main"}`)
+			_, _ = fmt.Fprint(w, `{"ServerName":"Emby Main","Version":"4.8.0"}`)
 			return
 		}
-		if r.URL.Path == "/Library/Refresh" {
+		if r.URL.Path == "/Library/Media/Updated" {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}

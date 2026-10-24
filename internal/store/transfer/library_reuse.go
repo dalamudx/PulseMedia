@@ -6,6 +6,7 @@ import (
 	"errors"
 	"slices"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
@@ -63,7 +64,7 @@ func (r *Repository) PreviewLibraryReuseBatch(ctx context.Context, a *ports.Acto
 			return nil, ports.ErrInvalidLibraryReuse
 		}
 		seen[key] = true
-		preview, e := loadLibraryReusePreview(ctx, q, actor, target, now)
+		preview, e := loadLibraryReusePreview(ctx, q, actor, target, now, r.execution.minimumMediaBytes)
 		if e != nil {
 			return nil, e
 		}
@@ -105,7 +106,7 @@ type reuseWantedInput struct {
 	UserSkipped, ScopeExcluded, IsSkipped bool
 }
 
-func loadLibraryReusePreview(ctx context.Context, q *db.Queries, actor uuid.UUID, target ports.LibraryReuseTarget, now pgtype.Timestamptz, ignore ...uuid.UUID) (*ports.LibraryReusePreview, error) {
+func loadLibraryReusePreview(ctx context.Context, q *db.Queries, actor uuid.UUID, target ports.LibraryReuseTarget, now pgtype.Timestamptz, minimum int64, ignore ...uuid.UUID) (*ports.LibraryReusePreview, error) {
 	root, e := q.GetLibraryRootByID(ctx, target.RootID)
 	if e != nil {
 		return nil, e
@@ -189,6 +190,11 @@ func loadLibraryReusePreview(ctx context.Context, q *db.Queries, actor uuid.UUID
 				out.OwnershipUnknown = true
 			}
 			continue
+		}
+		if minimum > 0 {
+			if eligible, _ := naming.IsEligibleMediaFile(f.RelPath, f.SizeBytes, minimum); !eligible {
+				continue
+			}
 		}
 		out.Candidates = append(out.Candidates, candidate)
 	}

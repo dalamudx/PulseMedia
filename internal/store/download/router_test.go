@@ -6,6 +6,8 @@ import (
 
 	"github.com/google/uuid"
 
+	"errors"
+	"github.com/dalamudx/PulseMedia/internal/domain/endpoint"
 	"github.com/dalamudx/PulseMedia/internal/store/download"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
@@ -36,6 +38,9 @@ func TestDownloaderRouterDispatch(t *testing.T) {
 		t.Fatal("expected error with 0 clients")
 	}
 
+	if !errors.Is(err, download.ErrNoDownloadClientAvailable) {
+		t.Fatal("no clients must have an explicit no-available outcome")
+	}
 	// 2. Add Movie client and TV client
 	cMovieID, _ := uuid.NewV7()
 	_, _ = queries.CreateDownloadClient(ctx, db.CreateDownloadClientParams{
@@ -59,6 +64,7 @@ func TestDownloaderRouterDispatch(t *testing.T) {
 		RemotePathMap:     []byte("{}"),
 	})
 
+	router = download.NewRouter(queries, endpoint.DownloadRouteRule{MediaType: "movie", DownloaderID: cMovieID}, endpoint.DownloadRouteRule{MediaType: "tv", DownloaderID: cTVID})
 	// 3. Movie routes to Movie client
 	selectedMovie, err := router.SelectClient(ctx, "movie", nil)
 	if err != nil || selectedMovie.ID != cMovieID {
@@ -69,5 +75,23 @@ func TestDownloaderRouterDispatch(t *testing.T) {
 	selectedTV, err := router.SelectClient(ctx, "tv", nil)
 	if err != nil || selectedTV.ID != cTVID {
 		t.Fatalf("tv routing failed: %+v", selectedTV)
+	}
+	// A site override must win even when the media-specific client has a misleading name.
+	site := uuid.MustParse("00000000-0000-4000-8000-000000000009")
+	routed := download.NewRouter(queries, endpoint.DownloadRouteRule{MediaType: "movie", DownloaderID: cMovieID}, endpoint.DownloadRouteRule{IndexerID: site, DownloaderID: cTVID})
+	bySite, err := routed.SelectClient(ctx, "movie", &site)
+	if err != nil || bySite.ID != cTVID {
+		t.Fatal("site override was not respected")
+	}
+	// Without configured rules, two clients must not silently fall back to row order.
+	_, err = download.NewRouter(queries).SelectClient(ctx, "movie", nil)
+	if !errors.Is(err, endpoint.ErrAmbiguousDownloadRoute) {
+		t.Fatal("multiple configured clients require explicit routing")
+	}
+	// Closing the actual database pool must not be reported as an empty client list.
+	pool.Close()
+	_, err = routed.SelectClient(ctx, "movie", nil)
+	if err == nil || errors.Is(err, download.ErrNoDownloadClientAvailable) {
+		t.Fatal("database failure was masked as unavailable client")
 	}
 }

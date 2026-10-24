@@ -51,13 +51,13 @@ function OrganizationPanel({account,operationId,contextReady,refreshVersion}:{ac
    if(saved?.receipt){confirmed.current=saved;if(current())setJournal(saved);return;}
    if(!saved){
     if(!currentContext.current||permission!==permissionEpoch.current||!preview?.can_confirm||!ack||storageError)throw new Error('context required');
-    saved={version:1,account,operation:operationId,command:{task_id:preview.task_id,operation_id:operationId,tracking_job_id:preview.tracking_job_id,key:crypto.randomUUID()}};
+    saved={version:1,account,operation:operationId,command:{task_id:preview.task_id,operation_id:operationId,tracking_job_id:preview.tracking_job_id,key:crypto.randomUUID(),...(preview.naming_version===undefined?{}:{naming_version:preview.naming_version})}};
     saveJournal(saved); // Durable original refs AND key before the first POST.
    }
    if(!current())return;
    setJournal(saved);setStorageError(false);
    const command=saved.command;
-   const {data,error:failure}=await api.POST('/api/v1/download-tasks/{id}/complete-tv-organizations',{signal:ctl.signal,params:{path:{id:command.task_id},header:{'Idempotency-Key':command.key}},body:{operation_id:command.operation_id,tracking_job_id:command.tracking_job_id}});
+   const {data,error:failure}=await api.POST('/api/v1/download-tasks/{id}/complete-tv-organizations',{signal:ctl.signal,params:{path:{id:command.task_id},header:{'Idempotency-Key':command.key}},body:{operation_id:command.operation_id,tracking_job_id:command.tracking_job_id,...(command.naming_version===undefined?{}:{naming_version:command.naming_version})}});
    if(!current())return;
    if(failure||!validReceipt(data,command.task_id)){setPreview(null);setError('整理确认结果尚未确认。即使收到权限或冲突响应，也只允许恢复原命令，不能换键。');return;}
    const closed={...saved,receipt:data};confirmed.current=closed;setJournal(closed);setPreview(null);

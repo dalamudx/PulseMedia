@@ -15,18 +15,21 @@ type automaticTVObservationExecutor interface {
 	ObserveAutomaticTV(context.Context, ports.AutomaticTVObservationRepository, ports.AutomaticTVObservationRequest) (*ports.AutomaticTVObservationReceipt, error)
 }
 
-func (a *App) runAutomaticTVDownloadWorkers(ctx context.Context, queue *jobs.Queue, recovery ports.AutomaticTVSubmissionRecoveryRepository, sender ports.AutomaticTVSendJobExecutor, repository ports.AutomaticTVObservationRepository, observer automaticTVObservationExecutor) {
+func (a *App) runAutomaticTVDownloadWorkers(ctx context.Context, queue *jobs.Queue, recovery ports.AutomaticTVSubmissionRecoveryRepository, sender ports.AutomaticTVSendJobExecutor, repository ports.AutomaticTVObservationRepository, observer automaticTVObservationExecutor, organizationWake chan<- struct{}) {
 	if queue == nil || recovery == nil || sender == nil || repository == nil || observer == nil {
 		return
 	}
 	var group sync.WaitGroup
 	group.Add(2)
 	go func() { defer group.Done(); a.runAutomaticTVSubmissionWorkers(ctx, queue, recovery, sender) }()
-	go func() { defer group.Done(); a.runAutomaticTVObservationWorkers(ctx, queue, repository, observer) }()
+	go func() {
+		defer group.Done()
+		a.runAutomaticTVObservationWorkers(ctx, queue, repository, observer, organizationWake)
+	}()
 	group.Wait()
 }
 
-func (a *App) runAutomaticTVObservationWorkers(ctx context.Context, queue *jobs.Queue, repository ports.AutomaticTVObservationRepository, observer automaticTVObservationExecutor) {
+func (a *App) runAutomaticTVObservationWorkers(ctx context.Context, queue *jobs.Queue, repository ports.AutomaticTVObservationRepository, observer automaticTVObservationExecutor, organizationWake chan<- struct{}) {
 	if queue == nil || repository == nil || observer == nil {
 		return
 	}
@@ -37,7 +40,7 @@ func (a *App) runAutomaticTVObservationWorkers(ctx context.Context, queue *jobs.
 		group.Add(1)
 		go func() {
 			defer group.Done()
-			a.runAutomaticTVObservationConsumer(consumers, queue, repository, observer)
+			a.runAutomaticTVObservationConsumer(consumers, queue, repository, observer, organizationWake)
 		}()
 	}
 	ticker := time.NewTicker(3 * time.Second)
@@ -59,7 +62,7 @@ func (a *App) runAutomaticTVObservationWorkers(ctx context.Context, queue *jobs.
 	}
 }
 
-func (a *App) runAutomaticTVObservationConsumer(ctx context.Context, queue *jobs.Queue, repository ports.AutomaticTVObservationRepository, observer automaticTVObservationExecutor) {
+func (a *App) runAutomaticTVObservationConsumer(ctx context.Context, queue *jobs.Queue, repository ports.AutomaticTVObservationRepository, observer automaticTVObservationExecutor, organizationWake chan<- struct{}) {
 	owner := a.idgen.NewUUID().String()
 	q := db.New(a.dbPool)
 	idle := time.NewTicker(200 * time.Millisecond)
@@ -89,7 +92,8 @@ func (a *App) runAutomaticTVObservationConsumer(ctx context.Context, queue *jobs
 			err = runAutomaticTVLeased(ctx, 2*time.Minute, 10*time.Second, func(work context.Context) error {
 				return queue.RenewLease(work, job.ID, owner, job.LeaseToken, 30*time.Second)
 			}, func(work context.Context) error {
-				_, observeErr := observer.ObserveAutomaticTV(work, repository, request)
+				receipt, observeErr := observer.ObserveAutomaticTV(work, repository, request)
+				notifyAutomaticTVOrganization(receipt, observeErr, request.TaskID, organizationWake)
 				return observeErr
 			})
 		}

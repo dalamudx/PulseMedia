@@ -33,15 +33,16 @@ var (
 )
 
 type Service struct {
-	pool    *pgxpool.Pool
-	idgen   ports.IDGen
-	outbox  *outbox.Outbox
-	queries *db.Queries
-	files   ports.TransferFilesystem
+	pool              *pgxpool.Pool
+	idgen             ports.IDGen
+	outbox            *outbox.Outbox
+	queries           *db.Queries
+	files             ports.TransferFilesystem
+	minimumMediaBytes int64
 }
 
 func NewService(pool *pgxpool.Pool, idgen ports.IDGen, ob *outbox.Outbox, files ports.TransferFilesystem) *Service {
-	return &Service{pool: pool, idgen: idgen, outbox: ob, queries: postgres.Queries(pool), files: files}
+	return &Service{pool: pool, idgen: idgen, outbox: ob, queries: postgres.Queries(pool), files: files, minimumMediaBytes: 1}
 }
 func text(v string) pgtype.Text   { return pgtype.Text{String: v, Valid: true} }
 func integer(v int64) pgtype.Int8 { return pgtype.Int8{Int64: v, Valid: true} }
@@ -61,7 +62,7 @@ func relative(root, path string) (string, error) {
 	return naming.CleanRelPath(rel)
 }
 func (s *Service) source(ctx context.Context, op uuid.UUID, path string) (string, string, ports.FileIdentity, error) {
-	if eligible, _ := naming.IsEligibleMediaFile(path, 0, 1); !eligible || strings.HasPrefix(filepath.Base(path), ".") {
+	if eligible, _ := naming.IsPrimaryMediaPath(filepath.Base(path)); !eligible {
 		return "", "", ports.FileIdentity{}, ports.ErrFileEscape
 	}
 	roots, err := s.queries.ListTransferSourceRoots(ctx, op)
@@ -86,7 +87,13 @@ func (s *Service) source(ctx context.Context, op uuid.UUID, path string) (string
 		}
 		identity, err := root.Inspect(ctx, rel)
 		root.Close()
-		return pathRoot, rel, identity, err
+		if err != nil {
+			return "", "", ports.FileIdentity{}, err
+		}
+		if eligible, _ := naming.IsEligibleMediaFile(rel, identity.Size, s.minimumMediaBytes); !eligible {
+			return "", "", ports.FileIdentity{}, ErrReviewRequired
+		}
+		return pathRoot, rel, identity, nil
 	}
 	return "", "", ports.FileIdentity{}, ports.ErrFileEscape
 }
@@ -247,6 +254,28 @@ func (s *Service) createHardlinkPlan(ctx context.Context, opID, rootID, unitID u
 			return nil, nil, e
 		}
 	}
+	namingRules, namingVersion, err := lockTransferNaming(ctx, q)
+	if err != nil {
+		return nil, nil, err
+	}
+	template := namingRules.MovieTemplate
+	if episode {
+		template = namingRules.EpisodeTemplate
+	}
+	if template != "" {
+		input, e := transferNamingInput(ctx, q, targetMedia, unit, profile, filepath.Ext(sourcePath), template)
+		if e != nil {
+			return nil, nil, e
+		}
+		if episode {
+			targetRel, err = namingRules.EpisodeRelative(input)
+		} else {
+			targetRel, err = namingRules.MovieRelative(input)
+		}
+		if err != nil {
+			return nil, nil, ErrReviewRequired
+		}
+	}
 	plan, err := q.CreateTransferPlan(ctx, db.CreateTransferPlanParams{ID: s.idgen.NewUUID(), OperationID: opID, RootID: rootID, State: "approved", Strategy: "hardlink"})
 	if err != nil {
 		return nil, nil, err
@@ -263,6 +292,7 @@ func (s *Service) createHardlinkPlan(ctx context.Context, opID, rootID, unitID u
 		return nil, nil, err
 	}
 	frozenTarget := transferTargetEvidence{ParserVersion: media.EpisodeParserVersion, UnitID: unit.ID, UnitKey: unit.UnitKey, UnitVersion: unit.MetadataVersion, MediaID: targetMedia.ID, MediaVersion: targetMedia.MetadataVersion}
+	frozenTarget.NamingVersion = namingVersion
 	if movieInventoryTaskID != uuid.Nil {
 		frozenTarget.InventoryTaskID = movieInventoryTaskID
 		frozenTarget.InventorySourcePath = movieInventorySource
@@ -435,6 +465,11 @@ func (s *Service) executePlan(ctx context.Context, planID uuid.UUID, authority .
 	for _, step := range steps {
 		if step.State == "completed" {
 			continue
+		}
+		if step.State == "pending" {
+			if !s.stepMediaEligible(step) {
+				return s.review(ctx, plan, authority...)
+			}
 		}
 		var stepErr error
 		if step.Action == "hardlink" {

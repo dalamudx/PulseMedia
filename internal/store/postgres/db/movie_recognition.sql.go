@@ -214,22 +214,32 @@ func (q *Queries) InsertMovieRecognitionJob(ctx context.Context, arg InsertMovie
 }
 
 const listMovieRecognitionFiles = `-- name: ListMovieRecognitionFiles :many
-SELECT f.id,r.generation FROM library_file f JOIN library_root r ON r.id=f.root_id
+SELECT f.id,r.generation,f.rel_path,f.size_bytes FROM library_file f JOIN library_root r ON r.id=f.root_id
 WHERE r.id=$1::uuid AND r.media_type='movie' AND r.health='online' AND r.baseline_completed
+ AND ($2::uuid IS NULL OR f.id>$2::uuid)
+ AND f.size_bytes>=$3::bigint
  AND f.retired_at IS NULL AND f.file_fingerprint IS NOT NULL AND f.file_fingerprint<>''
  AND NOT EXISTS(SELECT 1 FROM library_file_unit m WHERE m.file_id=f.id AND m.retired_at IS NULL)
  AND NOT EXISTS(SELECT 1 FROM movie_recognition_work w WHERE w.file_id=f.id AND w.root_generation=r.generation)
 ORDER BY f.id LIMIT 25 FOR UPDATE OF f SKIP LOCKED
 `
 
+type ListMovieRecognitionFilesParams struct {
+	RootID            uuid.UUID
+	AfterID           pgtype.UUID
+	MinimumMediaBytes int64
+}
+
 type ListMovieRecognitionFilesRow struct {
 	ID         uuid.UUID
 	Generation int64
+	RelPath    string
+	SizeBytes  int64
 }
 
 // Fresh statement after acquiring the root lock; never rely on its old snapshot.
-func (q *Queries) ListMovieRecognitionFiles(ctx context.Context, rootID uuid.UUID) ([]ListMovieRecognitionFilesRow, error) {
-	rows, err := q.db.Query(ctx, listMovieRecognitionFiles, rootID)
+func (q *Queries) ListMovieRecognitionFiles(ctx context.Context, arg ListMovieRecognitionFilesParams) ([]ListMovieRecognitionFilesRow, error) {
+	rows, err := q.db.Query(ctx, listMovieRecognitionFiles, arg.RootID, arg.AfterID, arg.MinimumMediaBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -237,7 +247,12 @@ func (q *Queries) ListMovieRecognitionFiles(ctx context.Context, rootID uuid.UUI
 	var items []ListMovieRecognitionFilesRow
 	for rows.Next() {
 		var i ListMovieRecognitionFilesRow
-		if err := rows.Scan(&i.ID, &i.Generation); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Generation,
+			&i.RelPath,
+			&i.SizeBytes,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -251,15 +266,22 @@ func (q *Queries) ListMovieRecognitionFiles(ctx context.Context, rootID uuid.UUI
 const lockMovieRecognitionRoots = `-- name: LockMovieRecognitionRoots :many
 SELECT r.id FROM library_root r
 WHERE r.media_type='movie' AND r.health='online' AND r.baseline_completed
- AND EXISTS(SELECT 1 FROM library_file f WHERE f.root_id=r.id AND f.retired_at IS NULL
+ AND EXISTS(SELECT 1 FROM library_file f WHERE f.root_id=r.id AND f.retired_at IS NULL AND f.size_bytes>=$1::bigint
  AND f.file_fingerprint IS NOT NULL AND f.file_fingerprint<>''
  AND NOT EXISTS(SELECT 1 FROM library_file_unit m WHERE m.file_id=f.id AND m.retired_at IS NULL)
  AND NOT EXISTS(SELECT 1 FROM movie_recognition_work w WHERE w.file_id=f.id AND w.root_generation=r.generation))
-ORDER BY r.id LIMIT $1 FOR UPDATE OF r SKIP LOCKED
+ AND ($2::uuid IS NULL OR r.id>$2::uuid)
+ORDER BY r.id LIMIT $3::int FOR UPDATE OF r SKIP LOCKED
 `
 
-func (q *Queries) LockMovieRecognitionRoots(ctx context.Context, limit int32) ([]uuid.UUID, error) {
-	rows, err := q.db.Query(ctx, lockMovieRecognitionRoots, limit)
+type LockMovieRecognitionRootsParams struct {
+	MinimumMediaBytes int64
+	AfterRootID       pgtype.UUID
+	MaxRoots          int32
+}
+
+func (q *Queries) LockMovieRecognitionRoots(ctx context.Context, arg LockMovieRecognitionRootsParams) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, lockMovieRecognitionRoots, arg.MinimumMediaBytes, arg.AfterRootID, arg.MaxRoots)
 	if err != nil {
 		return nil, err
 	}

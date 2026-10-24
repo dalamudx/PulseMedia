@@ -1,0 +1,27 @@
+.bangumi-calendar { min-width: 0; }
+.bangumi-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.bangumi-heading h3 { margin: 0 0 .5rem; }
+.bangumi-heading p { max-width: 65ch; margin: 0; }
+.bangumi-weekdays { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+.bangumi-weekdays button, .bangumi-calendar button { min-height: 44px; }
+.bangumi-calendar button { white-space: normal; }
+.bangumi-name-filter { display: grid; gap: .5rem; max-width: 32rem; margin-bottom: 1rem; }
+.bangumi-name-filter input { min-height: 44px; width: 100%; box-sizing: border-box; }
+.bangumi-list { display: grid; grid-template-columns: repeat(auto-fill,minmax(min(100%,19rem),1fr)); gap: 1rem; }
+.bangumi-work { display: flex; gap: 1rem; min-width: 0; padding: 1rem 0; border-bottom: 1px solid var(--border-color); }
+.bangumi-poster { flex: 0 0 80px; aspect-ratio: 2 / 3; align-self: flex-start; }
+.bangumi-poster img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-sm); }
+.bangumi-poster-empty { display: grid; place-items: center; height: 100%; color: var(--text-secondary); background: var(--bg-secondary); }
+.bangumi-work-content { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.bangumi-work-content h4 { margin: 0 0 .5rem; }
+.bangumi-work-content p { margin: 0 0 .5rem; }
+.bangumi-candidates { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+.bangumi-candidate-list { list-style: none; padding: 0; margin: 0; }
+.bangumi-candidate-list li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border-color); }
+.bangumi-candidate-list li > div { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+ .bangumi-heading { flex-wrap: wrap; }
+ .bangumi-candidate-list li { align-items: flex-start; flex-direction: column; }
+ .bangumi-work { gap: .75rem; }
+ .bangumi-poster { flex-basis: 64px; }
+}

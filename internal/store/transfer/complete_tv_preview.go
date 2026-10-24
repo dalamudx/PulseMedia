@@ -122,7 +122,33 @@ func (r *Repository) ReadCompleteTVOrganizations(ctx context.Context, a *ports.A
 	if json.Unmarshal(candidate.QualityProfile, &profile) != nil {
 		return nil, ports.ErrTransferReviewRequired
 	}
+	var namingRules naming.TemplateRules
+	var namingVersion int64
+	frozenTargets := make(map[uuid.UUID]db.TransferStep)
+	if task.TransferPlanID.Valid {
+		steps, e := q.ListStepsForPlan(ctx, uuid.UUID(task.TransferPlanID.Bytes))
+		if e != nil {
+			return nil, e
+		}
+		if len(steps) != len(inputs.Files) {
+			return nil, ports.ErrTransferReviewRequired
+		}
+		for index, step := range steps {
+			var frozen transferTargetEvidence
+			if json.Unmarshal(step.TargetEvidence, &frozen) != nil || frozen.NamingVersion < 0 || (index > 0 && frozen.NamingVersion != namingVersion) || !step.TargetRel.Valid {
+				return nil, ports.ErrTransferReviewRequired
+			}
+			namingVersion = frozen.NamingVersion
+			frozenTargets[step.UnitID] = step
+		}
+	} else {
+		namingRules, namingVersion, err = lockTransferNaming(ctx, q)
+		if err != nil {
+			return nil, err
+		}
+	}
 	p := ports.CompleteTVOrganizationPreview{CompleteTVOrganizationReferences: ports.CompleteTVOrganizationReferences{TaskID: task.ID, OperationID: op, TrackingJobID: tracking}, Season: inputs.Frozen.CompleteSeasons[0].Season, Videos: []ports.CompleteTVOrganizationVideoPreview{}, AttachmentCount: len(inputs.Receipt.Files) - len(inputs.Files), OrganizationState: task.OrganizationState, CanConfirm: ready}
+	p.NamingVersion = namingVersion
 	for _, v := range inputs.Files {
 		source, e := naming.CleanRelPath(v.Path)
 		if e != nil || source != v.Path {
@@ -133,6 +159,22 @@ func (r *Repository) ReadCompleteTVOrganizations(ctx context.Context, a *ports.A
 			return nil, completeTVOrganizationReadError(e)
 		}
 		target, e := naming.FormatEpisodeRel(parent.Title, int(parent.Year.Int32), int(u.SeasonNumber.Int32), int(u.EpisodeNumber.Int32), profile, filepath.Ext(source))
+		if task.TransferPlanID.Valid {
+			frozen, ok := frozenTargets[u.ID]
+			if !ok {
+				return nil, ports.ErrTransferReviewRequired
+			}
+			target, e = naming.CleanRelPath(frozen.TargetRel.String)
+			if e != nil || target != frozen.TargetRel.String {
+				return nil, ports.ErrTransferReviewRequired
+			}
+		} else if namingRules.EpisodeTemplate != "" {
+			input, err := transferNamingInput(ctx, q, parent, u, profile, filepath.Ext(source), namingRules.EpisodeTemplate)
+			if err != nil {
+				return nil, err
+			}
+			target, e = namingRules.EpisodeRelative(input)
+		}
 		if e != nil {
 			return nil, ports.ErrTransferReviewRequired
 		}

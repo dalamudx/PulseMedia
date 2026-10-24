@@ -108,18 +108,22 @@ func (r *movieUpgradeOrganizationJobRepository) basis(ctx context.Context, tx pg
 	if old == nil || old.ID != prep {
 		return nil, nil, preparationConflict()
 	}
-	input, e := physical.inputs(ctx, tx, a, ports.PrepareMovieUpgradeOrganization{OperationID: op, AuthorizationID: auth})
-	if e != nil {
-		return nil, nil, e
-	}
 	var snap struct {
 		Snapshot json.RawMessage `json:"snapshot"`
 	}
 	var fields struct {
-		Basis         json.RawMessage `json:"basis"`
-		Authorization json.RawMessage `json:"authorization"`
+		Basis         json.RawMessage             `json:"basis"`
+		Authorization json.RawMessage             `json:"authorization"`
+		Physical      upgradeOrganizationPhysical `json:"physical"`
 	}
-	if json.Unmarshal(raw, &snap) != nil || json.Unmarshal(snap.Snapshot, &fields) != nil || !preparationSameJSON(fields.Basis, input.basis.raw) || !preparationSameJSON(fields.Authorization, input.authorization) {
+	if json.Unmarshal(raw, &snap) != nil || json.Unmarshal(snap.Snapshot, &fields) != nil {
+		return nil, nil, preparationConflict()
+	}
+	input, e := physical.readInputs(ctx, tx, a, ports.PrepareMovieUpgradeOrganization{OperationID: op, AuthorizationID: auth}, &fields.Physical)
+	if e != nil {
+		return nil, nil, e
+	}
+	if !preparationSameJSON(fields.Basis, input.basis.raw) || !preparationSameJSON(fields.Authorization, input.authorization) {
 		return nil, nil, preparationConflict()
 	}
 	verify := func() error {

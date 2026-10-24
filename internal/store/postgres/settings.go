@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/dalamudx/PulseMedia/internal/command"
+	"github.com/dalamudx/PulseMedia/internal/domain/artwork"
+	"github.com/dalamudx/PulseMedia/internal/domain/naming"
+	tvdbconfig "github.com/dalamudx/PulseMedia/internal/domain/tvdb"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
@@ -135,7 +138,7 @@ func (s *SettingsStore) UpdateSetting(ctx context.Context, a *ports.Actor, c por
 			if e = json.Unmarshal(old.ResponseBody, &item); e != nil || item.Key != c.Key {
 				return nil, ports.ErrCommandConflict
 			}
-			if c.Key == "tmdb.api_key" {
+			if c.Key == "tmdb.api_key" || c.Key == artwork.APIKeySetting || c.Key == tvdbconfig.CredentialsSetting {
 				item.Value = map[string]any{"configured": true}
 			}
 			if e = tx.Commit(ctx); e != nil {
@@ -145,6 +148,24 @@ func (s *SettingsStore) UpdateSetting(ctx context.Context, a *ports.Actor, c por
 		}
 		if !errors.Is(e, pgx.ErrNoRows) {
 			return nil, e
+		}
+	}
+	if c.Key == tvdbconfig.FallbackSetting {
+		if _, e := tvdbconfig.DecodeEnabled(c.Value); e != nil {
+			return nil, ports.ErrInvalidSettingCommand
+		}
+	}
+	if c.Key == artwork.SwitchSetting {
+		if _, e := artwork.DecodeSwitch(c.Value); e != nil {
+			return nil, ports.ErrInvalidSettingCommand
+		}
+	}
+	if (c.Key == artwork.APIKeySetting || c.Key == tvdbconfig.CredentialsSetting) && !artwork.ValidCiphertext(c.Value) {
+		return nil, ports.ErrInvalidSettingCommand
+	}
+	if c.Key == naming.TemplateSettingKey {
+		if _, e := naming.DecodeTemplateRules(c.Value); e != nil {
+			return nil, ports.ErrInvalidSettingCommand
 		}
 	}
 	// Lock the identity even before a row exists; FOR UPDATE alone cannot serialize first creation.
@@ -168,7 +189,7 @@ func (s *SettingsStore) UpdateSetting(ctx context.Context, a *ports.Actor, c por
 		return nil, e
 	}
 	var value any
-	if c.Key == "tmdb.api_key" {
+	if c.Key == "tmdb.api_key" || c.Key == artwork.APIKeySetting || c.Key == tvdbconfig.CredentialsSetting {
 		value = map[string]any{"configured": true}
 	} else if e = json.Unmarshal(updated.Value, &value); e != nil {
 		return nil, e
@@ -181,7 +202,7 @@ func (s *SettingsStore) UpdateSetting(ctx context.Context, a *ports.Actor, c por
 	if e != nil {
 		return nil, e
 	}
-	payload, e := json.Marshal(map[string]any{"key": c.Key, "version": updated.Version, "secret": c.Key == "tmdb.api_key"})
+	payload, e := json.Marshal(map[string]any{"key": c.Key, "version": updated.Version, "secret": c.Key == "tmdb.api_key" || c.Key == artwork.APIKeySetting || c.Key == tvdbconfig.CredentialsSetting})
 	if e != nil {
 		return nil, e
 	}

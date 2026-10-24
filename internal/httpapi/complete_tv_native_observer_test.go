@@ -73,6 +73,8 @@ func newNativeObserverFixture(t *testing.T) *nativeObserverFixture {
 	})
 	n.body = func() string { b, _ := json.Marshal([]any{n.row()}); return string(b) }
 	n.manager = n.newManager()
+	// Drain the protocol handler before the App cleanup closes its database pool.
+	t.Cleanup(n.server.Close)
 	return n
 }
 func (n *nativeObserverFixture) row() map[string]any {

@@ -7,3 +7,7 @@ func TestAppRunCompleteMovieDirectory(t *testing.T) {
 		t.Run("sidecars_"+mode, func(t *testing.T) { runFullMoviePipelineSource(t, true, mode, "sidecars") })
 	}
 }
+
+func TestM8MovieDirectoryFiltersSampleRuntimePG(t *testing.T) {
+	runFullMoviePipelineSource(t, true, "", "filtered_sample")
+}

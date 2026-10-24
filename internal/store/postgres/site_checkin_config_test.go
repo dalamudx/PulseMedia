@@ -33,7 +33,7 @@ type checkinFixture struct {
 }
 
 func newCheckinFixture(t *testing.T) *checkinFixture {
-	return newCheckinFixtureAt(t, "../../../migrations", 99)
+	return newCheckinFixtureAt(t, "../../../migrations", postgres.CurrentMigrationVersion)
 }
 
 func newCheckinFixtureAt(t *testing.T, migrationDir string, expectedVersion int64) *checkinFixture {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/dalamudx/PulseMedia/internal/domain/notification"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
@@ -27,7 +28,7 @@ func (s *ChannelReplacementStore) ReplaceNotificationChannel(ctx context.Context
 	if !a.IsAdmin() {
 		return nil, ports.ErrForbidden
 	}
-	if id == uuid.Nil || c.ExpectedUpdatedAt.IsZero() || c.Name == "" || len([]rune(c.Name)) > 120 || (c.ChannelType != "webhook" && c.ChannelType != "telegram") || len(c.Ciphertext) < 32 || len(c.Ciphertext) > 12000 || key == "" || len(key) > 160 || len(hash) != 64 {
+	if id == uuid.Nil || c.ExpectedUpdatedAt.IsZero() || c.Name == "" || len([]rune(c.Name)) > 120 || !notification.ValidKind(c.ChannelType) || len(c.Ciphertext) < 32 || len(c.Ciphertext) > 12000 || key == "" || len(key) > 160 || len(hash) != 64 {
 		return nil, ports.ErrInvalidChannelReplacement
 	}
 	defer func() {

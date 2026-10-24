@@ -34,7 +34,7 @@ func TestMovieDirectoryEvidenceAtomicAndScoped(t *testing.T) {
 			files := []map[string]any{{"index": 0, "name": "release/movie.mkv", "size": 200, "progress": 1}, {"index": 1, "name": "release/subtitle.srt", "size": 8, "progress": 1}}
 			switch mode {
 			case "multiple_videos":
-				files[1]["name"] = "release/sample.mkv"
+				files[1]["name"] = "release/another-feature.mkv"
 			case "partial_sidecar":
 				files[1]["progress"] = .5
 			case "escape":

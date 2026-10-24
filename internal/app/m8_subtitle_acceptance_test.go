@@ -142,7 +142,12 @@ func m8SubtitleWait(t *testing.T, ready func() bool) {
 	}
 }
 
-func m8SubtitleRuntime(t *testing.T, kind, scenario string) {
+type m8SubtitlePlaybackCheck struct {
+	video  []byte
+	verify func(*testing.T, string, string, string)
+}
+
+func m8SubtitleRuntime(t *testing.T, kind, scenario string, playback ...m8SubtitlePlaybackCheck) {
 	if !strings.HasPrefix(filepath.Clean(os.TempDir()), "/data/temp/") {
 		t.Fatal("owned TMPDIR under /data/temp required")
 	}
@@ -170,6 +175,15 @@ func m8SubtitleRuntime(t *testing.T, kind, scenario string) {
 	video := make([]byte, 65537)
 	for i := range video {
 		video[i] = byte((i*37 + i/251 + i/4096*19) % 256)
+	}
+	if len(playback) > 1 {
+		t.Fatal("one native player check expected")
+	}
+	if len(playback) == 1 {
+		if len(playback[0].video) < 16384 || playback[0].verify == nil {
+			t.Fatal("playable video and player verifier required")
+		}
+		video = playback[0].video
 	}
 	// Independent expected hash from fixture bytes; do not call production hashing.
 	var blocks []string
@@ -541,6 +555,9 @@ func m8SubtitleRuntime(t *testing.T, kind, scenario string) {
 		if strings.HasPrefix(entry.Name(), ".pulsemedia-sidecar-") {
 			t.Fatal("subtitle staging file leaked")
 		}
+	}
+	for _, player := range playback {
+		player.verify(t, rootPath, relative, subtitlePath)
 	}
 	t.Logf("M8_SUBTITLE_CASE_PASS kind=%s scenario=%s state=%s inventory=SQL_PREPARED video=REAL", kind, scenario, state)
 }

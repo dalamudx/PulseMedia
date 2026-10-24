@@ -87,15 +87,24 @@ func (r *MovieUpgradeTrackingRuntimeStore) ScheduleMovieUpgradeTracking(ctx cont
 func (r *MovieUpgradeTrackingRuntimeStore) actor(ctx context.Context, tx pgx.Tx, h upgradeTrackingHint) (*ports.Actor, error) {
 	return (&MovieUpgradeObservationRuntimeStore{store: r.store}).originalActor(ctx, tx, upgradeObservationHint{operation: h.operation, task: h.task, actor: h.actor})
 }
-func (r *MovieUpgradeTrackingRuntimeStore) scheduleOne(ctx context.Context, h upgradeTrackingHint) (added bool, err error) {
+func (r *MovieUpgradeTrackingRuntimeStore) scheduleOneWatched(ctx context.Context, h upgradeTrackingHint, watch *movieUpgradeWatchCapture) (added bool, err error) {
 	work, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-	defer func() { err = upgradeObservationError(ctx, err) }()
+	defer func() {
+		if watch != nil {
+			err = movieUpgradeWatchError(ctx, err)
+		} else {
+			err = upgradeObservationError(ctx, err)
+		}
+	}()
 	tx, err := r.store.pool.Begin(work)
 	if err != nil {
 		return false, err
 	}
 	defer upgradeRollback(work, tx)
+	if err = r.lockMovieUpgradeWatchIsolation(work, tx, watch); err != nil {
+		return false, err
+	}
 	actor, err := r.actor(work, tx, h)
 	if err != nil {
 		return false, err
@@ -103,6 +112,9 @@ func (r *MovieUpgradeTrackingRuntimeStore) scheduleOne(ctx context.Context, h up
 	s := &movieUpgradeTrackingSession{base: &movieUpgradeSendSession{store: r.store, operation: h.operation}}
 	_, sub, verify, err := s.load(work, tx, actor)
 	if err != nil {
+		return false, err
+	}
+	if err = r.validateMovieUpgradeWatchCapture(work, tx, watch, uuid.Nil); err != nil {
 		return false, err
 	}
 	// Never wait for a physical session while holding account/business locks.
@@ -157,12 +169,20 @@ func (r *MovieUpgradeTrackingRuntimeStore) scheduleOne(ctx context.Context, h up
 		if !same {
 			return preparationConflict()
 		}
+		if e := r.validateMovieUpgradeWatchCapture(work, tx, watch, id); e != nil {
+			return e
+		}
 		return nil
 	}
 	ledger := &UpgradeReservationStore{pool: r.store.pool, ids: r.store.ids}
 	receipt := map[string]any{"job_id": id, "operation_id": h.operation, "task_id": h.task, "status": "queued", "execution_allowed": false}
 	if err = ledger.upgradeSuccess(work, tx, actor, sub, "upgrade.tracking-job:"+id.String(), coverageDigest(json.RawMessage(binding)), "upgrade.tracking-job-queue", id, receipt, own, check); err != nil {
 		return false, err
+	}
+	if watch != nil {
+		if _, err = tx.Exec(work, "SET CONSTRAINTS ALL IMMEDIATE"); err != nil {
+			return false, err
+		}
 	}
 	if err = check(); err != nil {
 		return false, err

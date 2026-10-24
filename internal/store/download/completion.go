@@ -21,17 +21,23 @@ func completedObservation(info *ports.TorrentInfo) bool {
 }
 
 // Download completion and its durable organization work must never split.
-func (m *Manager) completeForOrganization(ctx context.Context, snapshot db.DownloadTask, info *ports.TorrentInfo, inventory ...*episodeInventoryObservation) (*db.DownloadTask, error) {
+func (m *Manager) completeForOrganizationGuarded(ctx context.Context, snapshot db.DownloadTask, info *ports.TorrentInfo, watch *ports.DownloadWatchTarget, inventory ...*episodeInventoryObservation) (*db.DownloadTask, error) {
 	tx, err := m.pool.Begin(ctx)
 	if err != nil {
 		return nil, err
 	}
 	defer func() { _ = tx.Rollback(context.WithoutCancel(ctx)) }()
 	q := m.queries.WithTx(tx)
+	if err = m.validateWatch(ctx, q, watch, true); err != nil {
+		return nil, err
+	}
 	if _, err = q.LockDownloadTaskUnits(ctx, snapshot.ID); err != nil {
 		return nil, err
 	}
 	if err = q.LockDownloadAcquisition(ctx, snapshot.OperationID); err != nil {
+		return nil, err
+	}
+	if _, err = q.LockDownloadClientForEdit(ctx, snapshot.ClientID); err != nil {
 		return nil, err
 	}
 	current, err := q.LockDownloadTask(ctx, snapshot.ID)
@@ -61,7 +67,7 @@ func (m *Manager) completeForOrganization(ctx context.Context, snapshot db.Downl
 	if _, err = q.InsertAuditLog(ctx, db.InsertAuditLogParams{ID: m.idgen.NewUUID(), ActorType: "system", ActorID: current.OperationID.String(), Action: "download.completed", TargetType: "download_task", TargetID: current.ID.String(), Payload: payload}); err != nil {
 		return nil, err
 	}
-	if err = tx.Commit(ctx); err != nil {
+	if err = m.commitWatchObservation(ctx, tx, q, watch, completed); err != nil {
 		return nil, err
 	}
 	return &completed, nil

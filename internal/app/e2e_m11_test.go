@@ -2,9 +2,12 @@ package app_test
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -13,7 +16,6 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/adapter/downloader/rtorrent"
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/fanart"
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/tvdb"
-	"github.com/dalamudx/PulseMedia/internal/adapter/notifier/webpush"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
 	"github.com/dalamudx/PulseMedia/internal/ports"
@@ -23,48 +25,82 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
 )
 
+type m11FanartTransport func(*http.Request) (*http.Response, error)
+
+func (f m11FanartTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
 func TestFullM11EcosystemIntegration(t *testing.T) {
 	ctx := context.Background()
 
-	// 1. Fanart.tv Artworks Verification
-	fanartServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// Fanart uses an owned TLS service; any request or decoding failure fails this check.
+	fanartServer := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet || r.URL.Path != "/v3/movies/550" || r.URL.Query().Get("api_key") != "test_fanart_key" {
+			t.Error("unexpected native Fanart request")
+		}
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprint(w, `{
-			"hdmovielogo": [{"id": "1", "url": "https://assets.fanart.tv/logo.png", "lang": "zh"}],
-			"moviebanner": [{"id": "2", "url": "https://assets.fanart.tv/banner.jpg", "lang": "en"}],
-			"moviedisc": [{"id": "3", "url": "https://assets.fanart.tv/disc.png", "lang": "en"}]
-		}`)
+		_, _ = fmt.Fprint(w, `{"tmdb_id":"550",
+			"hdmovielogo": [{"id":"1","url":"https://assets.fanart.tv/fanart/movies/550/hdmovielogo/logo.png","lang":"zh"}],
+			"moviebanner": [{"id":"2","url":"https://assets.fanart.tv/fanart/movies/550/moviebanner/banner.jpg","lang":"en"}],
+			"moviedisc": [{"id":"3","url":"https://assets.fanart.tv/fanart/movies/550/moviedisc/disc.png","lang":"en"}]}`)
 	}))
 	defer fanartServer.Close()
-
-	fanartClient := fanart.NewClient("test_fanart_key", fanartServer.Client())
-	art, err := fanartClient.GetMovieArtworks(ctx, 1396)
-	if err == nil && art != nil {
-		if art.ClearLogo != "" && art.ClearLogo != "https://assets.fanart.tv/logo.png" {
-			t.Fatalf("unexpected fanart logo: %s", art.ClearLogo)
+	fanartHTTP := fanartServer.Client()
+	fanartTransport := fanartHTTP.Transport
+	fanartHTTP.Transport = m11FanartTransport(func(r *http.Request) (*http.Response, error) {
+		if r.URL.Scheme != "https" || r.URL.Host != "webservice.fanart.tv" {
+			t.Error("unexpected Fanart origin")
 		}
+		request := r.Clone(r.Context())
+		request.URL.Host = fanartServer.Listener.Addr().String()
+		return fanartTransport.RoundTrip(request)
+	})
+	fanartClient := fanart.NewClient("test_fanart_key", fanartHTTP)
+	art, err := fanartClient.GetMovieArtworks(ctx, 550)
+	if err != nil || art == nil || art.ClearLogo != "https://assets.fanart.tv/fanart/movies/550/hdmovielogo/logo.png" || art.Banner == "" || art.DiscArt == "" {
+		t.Fatalf("Fanart native compatibility failed: %+v %v", art, err)
 	}
 
-	// 2. TheTVDB v4 Series Verification
-	tvdbServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// TVDB uses a login token, and retains TVDB identity instead of relabelling it TMDB.
+	var tvdbLogins, tvdbReads atomic.Int32
+	tvdbServer := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprint(w, `{
-			"data": {
-				"id": 81189,
-				"name": "Breaking Bad",
-				"year": "2008",
-				"seasons": [{"id": 1, "number": 1, "name": "Season 1"}]
+		switch r.URL.Path {
+		case "/v4/login":
+			var credentials map[string]string
+			if r.Method != http.MethodPost || r.Header.Get("Authorization") != "" || json.NewDecoder(r.Body).Decode(&credentials) != nil || len(credentials) != 1 || credentials["apikey"] != "test_tvdb_key" {
+				t.Error("incorrect native TVDB login")
+				w.WriteHeader(http.StatusBadRequest)
+				return
 			}
-		}`)
+			tvdbLogins.Add(1)
+			_, _ = fmt.Fprint(w, `{"status":"success","data":{"token":"owned-tvdb-token"}}`)
+		case "/v4/series/81189/extended":
+			if r.Method != http.MethodGet || r.Header.Get("Authorization") != "Bearer owned-tvdb-token" {
+				t.Error("incorrect native TVDB read")
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			tvdbReads.Add(1)
+			_, _ = fmt.Fprint(w, `{"status":"success","data":{"id":81189,"name":"Breaking Bad","year":"2008","seasons":[{"id":1,"number":1,"name":"Season 1","type":{"id":1,"type":"official"}}]}}`)
+		default:
+			http.NotFound(w, r)
+		}
 	}))
 	defer tvdbServer.Close()
-
-	tvdbClient := tvdb.NewClient("test_tvdb_key", tvdbServer.Client())
-	tv, err := tvdbClient.GetSeriesDetails(ctx, 81189)
-	if err == nil && tv != nil {
-		if tv.Title != "Breaking Bad" {
-			t.Fatalf("unexpected tvdb title: %s", tv.Title)
+	tvdbHTTP := tvdbServer.Client()
+	tvdbTransport := tvdbHTTP.Transport
+	tvdbHTTP.Transport = m11FanartTransport(func(r *http.Request) (*http.Response, error) {
+		if r.URL.Scheme != "https" || r.URL.Host != "api4.thetvdb.com" {
+			t.Error("unexpected TVDB origin")
 		}
+		request := r.Clone(r.Context())
+		request.URL.Host = tvdbServer.Listener.Addr().String()
+		return tvdbTransport.RoundTrip(request)
+	})
+	tvdbClient := tvdb.NewClient("test_tvdb_key", tvdbHTTP)
+	tv, err := tvdbClient.GetSeriesDetails(ctx, 81189)
+	if err != nil || tv == nil || tv.TVDBID != 81189 || tv.Title != "Breaking Bad" || len(tv.Seasons) != 1 || tv.Seasons[0].EpisodeCount != nil || tvdbLogins.Load() != 1 || tvdbReads.Load() != 1 {
+		t.Fatalf("TVDB native compatibility failed: %+v %v", tv, err)
 	}
 
 	// 3. System Audit Log Persistence Verification (PG 18.6 isolated cluster)
@@ -107,20 +143,8 @@ func TestFullM11EcosystemIntegration(t *testing.T) {
 		t.Fatalf("test rtorrent failed: %v", err)
 	}
 
-	// 5. Web Push Dispatch Verification
-	pushServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusCreated)
-	}))
-	defer pushServer.Close()
-
-	pushClient := webpush.NewClient(pushServer.Client())
-	err = pushClient.SendNotification(ctx, pushServer.URL, webpush.NotificationPayload{
-		Title: "入库完成",
-		Body:  "电影《盗梦空间》已成功入库",
-	})
-	if err != nil {
-		t.Fatalf("send webpush failed: %v", err)
-	}
+	// 5. Encrypted native Web Push compatibility; no delivery-ledger claim.
+	m11WebPushCompatibility(t, ctx)
 
 	// 6. Person Subscription Auto-Tracking Verification
 	personMgr := subscription.NewPersonSubscriptionManager(nil, nil)
@@ -135,7 +159,7 @@ func TestFullM11EcosystemIntegration(t *testing.T) {
 		Year:   2010,
 	}, uuid.New())
 
-	if err != nil || !ok {
-		t.Fatalf("person subscription auto-tracking failed: %v", err)
+	if ok || !errors.Is(err, ports.ErrUnavailable) {
+		t.Fatalf("legacy person prototype reported an uncommitted subscription: %v", err)
 	}
 }

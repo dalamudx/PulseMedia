@@ -42,6 +42,8 @@ type organizationFixture struct {
 	root, unit, media, op, taskID, client uuid.UUID
 	source, target, path                  string
 	info                                  *ports.TorrentInfo
+	seedingProbe                          *movieSeedingProtocol
+	rtorrentProbe                         *m11RTorrentMovieProtocol
 }
 
 func organizationSetup(t *testing.T) *organizationFixture {

@@ -330,7 +330,7 @@ func validateResult(s ports.MediaSidecarSnapshot, c ports.MediaSidecarCompletion
 	identities := make(map[[2]int64]bool)
 	review := false
 	for _, artifact := range c.Artifacts {
-		if (artifact.Name != nfo && artifact.Name != "poster.jpg") || seen[artifact.Name] {
+		if (artifact.Name != nfo && artifact.Name != "poster.jpg" && artifact.Name != "logo.png" && artifact.Name != "clearart.png" && artifact.Name != "banner.jpg" && (artifact.Name != "disc.png" || s.MediaType != "movie")) || seen[artifact.Name] {
 			return false, ports.ErrMediaSidecarResult
 		}
 		seen[artifact.Name] = true

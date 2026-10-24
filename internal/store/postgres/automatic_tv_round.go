@@ -14,6 +14,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/endpoint"
 	"github.com/dalamudx/PulseMedia/internal/domain/media"
 	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	sd "github.com/dalamudx/PulseMedia/internal/domain/subscription"
@@ -26,12 +27,17 @@ import (
 )
 
 type AutomaticTVRoundStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool           *pgxpool.Pool
+	ids            ports.IDGen
+	routingEnabled bool
+	routingRules   []endpoint.DownloadRouteRule
 }
 
 func NewAutomaticTVRoundStore(pool *pgxpool.Pool, ids ports.IDGen) *AutomaticTVRoundStore {
 	return &AutomaticTVRoundStore{pool: pool, ids: ids}
+}
+func NewAutomaticTVRoundStoreWithRouting(pool *pgxpool.Pool, ids ports.IDGen, rules []endpoint.DownloadRouteRule) *AutomaticTVRoundStore {
+	return &AutomaticTVRoundStore{pool: pool, ids: ids, routingEnabled: true, routingRules: append([]endpoint.DownloadRouteRule(nil), rules...)}
 }
 
 var _ ports.AutomaticTVRoundRepository = (*AutomaticTVRoundStore)(nil)
@@ -173,11 +179,15 @@ func automaticTVLockOwner(ctx context.Context, q *db.Queries, id uuid.UUID) (*po
 
 // Called only under current account and policy/subscription locks. No external I/O.
 func automaticTVSnapshot(ctx context.Context, q *db.Queries, sub db.Subscription, wantedID uuid.UUID, observed time.Time) (ports.AutomaticTVRoundSnapshot, map[uuid.UUID]ports.TVEpisodeQuery, error) {
+	return automaticTVSnapshotForStart(ctx, q, sub, wantedID, observed, nil)
+}
+
+func automaticTVSnapshotForStart(ctx context.Context, q *db.Queries, sub db.Subscription, wantedID uuid.UUID, observed time.Time, bind automaticTVInitialBinding) (ports.AutomaticTVRoundSnapshot, map[uuid.UUID]ports.TVEpisodeQuery, error) {
 	var snap ports.AutomaticTVRoundSnapshot
 	reject := func() (ports.AutomaticTVRoundSnapshot, map[uuid.UUID]ports.TVEpisodeQuery, error) {
 		return snap, nil, ports.ErrAcquisitionRoundAborted
 	}
-	if sub.State != "active" || !sub.DownloaderID.Valid || sub.UpgradeMode != "disabled" {
+	if sub.State != "active" || (!sub.DownloaderID.Valid && bind == nil) || sub.UpgradeMode != "disabled" {
 		return reject()
 	}
 	root, e := q.LockAcquisitionRoot(ctx, sub.RootID)
@@ -316,6 +326,15 @@ func automaticTVSnapshot(ctx context.Context, q *db.Queries, sub db.Subscription
 	if len(sources) == 0 {
 		return reject()
 	}
+	if !sub.DownloaderID.Valid && bind != nil {
+		sub, e = bind(ctx, q, sub, root, sources)
+		if e != nil {
+			return snap, nil, e
+		}
+		if !sub.DownloaderID.Valid {
+			return reject()
+		}
+	}
 	clientID := uuid.UUID(sub.DownloaderID.Bytes)
 	if _, e = q.GetSearchDownloaderSnapshot(ctx, clientID); e != nil {
 		return snap, nil, e
@@ -401,7 +420,11 @@ func (s *AutomaticTVRoundStore) StartAutomaticTVRound(ctx context.Context, in po
 	if old != nil {
 		observed = old.CreatedAt
 	}
-	snap, sources, e := automaticTVSnapshot(ctx, q, sub, w.ID, observed)
+	var binder automaticTVInitialBinding
+	if old == nil && s.routingEnabled {
+		binder = s.bindInitialTVDownloader
+	}
+	snap, sources, e := automaticTVSnapshotForStart(ctx, q, sub, w.ID, observed, binder)
 	if e != nil {
 		return nil, e
 	}

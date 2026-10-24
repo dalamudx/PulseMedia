@@ -42,24 +42,33 @@ var ErrAcquisitionRoundAborted = errors.New("search round snapshot no longer aut
 var ErrAcquisitionRoundNotReady = errors.New("search round still awaiting executions")
 
 type RoundSnapshot struct {
-	UnitMetadataVersion    int64             `json:"unit_metadata_version"`
-	MediaMetadataVersion   int64             `json:"media_metadata_version"`
-	PolicyID               string            `json:"policy_id"`
-	RootID                 uuid.UUID         `json:"root_id"`
-	RootGeneration         int64             `json:"root_generation"`
-	RootPath               string            `json:"root_path"`
-	UnitID                 uuid.UUID         `json:"unit_id"`
-	MediaID                uuid.UUID         `json:"media_id"`
-	Title                  string            `json:"title"`
-	Year                   int32             `json:"year"`
-	Identities             map[string]string `json:"identities"`
-	Indexers               map[string]int64  `json:"indexers"`
-	Bindings               json.RawMessage   `json:"bindings"`
-	DownloaderID           *uuid.UUID        `json:"downloader_id"`
-	SelectedDownloaderID   *uuid.UUID        `json:"selected_downloader_id"`
-	DownloaderConfigDigest string            `json:"downloader_config_digest"`
-	SharedSource           bool              `json:"shared_source"`
-	Scheduled              bool              `json:"scheduled"`
+	UnitMetadataVersion    int64                           `json:"unit_metadata_version"`
+	MediaMetadataVersion   int64                           `json:"media_metadata_version"`
+	PolicyID               string                          `json:"policy_id"`
+	RootID                 uuid.UUID                       `json:"root_id"`
+	RootGeneration         int64                           `json:"root_generation"`
+	RootPath               string                          `json:"root_path"`
+	UnitID                 uuid.UUID                       `json:"unit_id"`
+	MediaID                uuid.UUID                       `json:"media_id"`
+	Title                  string                          `json:"title"`
+	Year                   int32                           `json:"year"`
+	Identities             map[string]string               `json:"identities"`
+	Indexers               map[string]int64                `json:"indexers"`
+	Bindings               json.RawMessage                 `json:"bindings"`
+	DownloaderID           *uuid.UUID                      `json:"downloader_id"`
+	SelectedDownloaderID   *uuid.UUID                      `json:"selected_downloader_id"`
+	DownloaderConfigDigest string                          `json:"downloader_config_digest"`
+	SharedSource           bool                            `json:"shared_source"`
+	Scheduled              bool                            `json:"scheduled"`
+	RoutedDownloaders      map[string]RoundDownloaderRoute `json:"routed_downloaders,omitempty"`
+}
+
+// RoundDownloaderRoute is immutable first-choice evidence for one frozen source.
+type RoundDownloaderRoute struct {
+	DownloaderID  uuid.UUID `json:"downloader_id"`
+	ConfigDigest  string    `json:"config_digest"`
+	PolicyVersion int64     `json:"policy_version"`
+	Basis         string    `json:"basis"`
 }
 type RoundDecision struct {
 	RoundID             uuid.UUID

@@ -4,16 +4,25 @@ import (
 	"context"
 	"errors"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 )
+
+func (s *Service) stepMediaEligible(step db.TransferStep) bool {
+	source, _ := naming.IsEligibleMediaFile(step.SourceRel.String, step.SourceSize, s.minimumMediaBytes)
+	target, _ := naming.IsEligibleMediaFile(step.TargetRel.String, step.SourceSize, s.minimumMediaBytes)
+	return source && target
+}
 
 func (s *Service) executeHardlinkStep(ctx context.Context, roots map[string]ports.TransferRoot, plan db.TransferPlan, step db.TransferStep, marker string, authority []ports.JobLease) error {
 	if err := s.startStep(ctx, plan, step, authority...); err != nil {
 		return err
 	}
-	if err := s.files.Hardlink(ctx, roots[step.SourceRoot.String], step.SourceRel.String, roots[plan.RootPath.String], step.TargetRel.String, frozen(step)); err != nil {
-		return ErrReviewRequired
+	if s.stepMediaEligible(step) {
+		if err := s.files.Hardlink(ctx, roots[step.SourceRoot.String], step.SourceRel.String, roots[plan.RootPath.String], step.TargetRel.String, frozen(step)); err != nil {
+			return ErrReviewRequired
+		}
 	}
 	if _, err := roots[plan.RootPath.String].Inspect(ctx, marker); err != nil {
 		return ErrReviewRequired
@@ -46,6 +55,9 @@ func (s *Service) executeVerifiedStep(ctx context.Context, roots map[string]port
 		return ErrReviewRequired
 	}
 	if a.Content == nil {
+		if !s.stepMediaEligible(step) {
+			return ErrReviewRequired
+		}
 		proof, e := cap.InspectContent(ctx, source, step.SourceRel.String, frozen(step))
 		if e != nil {
 			return ErrReviewRequired
@@ -59,7 +71,11 @@ func (s *Service) executeVerifiedStep(ctx context.Context, roots map[string]port
 			return ErrReviewRequired
 		}
 	}
-	result, err := cap.TransferVerified(ctx, source, step.SourceRel.String, roots[plan.RootPath.String], step.TargetRel.String, *a.Content, step.Action, step.ID)
+	apply := cap.TransferVerified
+	if !s.stepMediaEligible(step) {
+		apply = cap.ObserveTransfer
+	}
+	result, err := apply(ctx, source, step.SourceRel.String, roots[plan.RootPath.String], step.TargetRel.String, *a.Content, step.Action, step.ID)
 	if err != nil {
 		if errors.Is(err, ports.ErrFileNoSpace) {
 			return err

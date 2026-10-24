@@ -119,7 +119,7 @@ func (q *Queries) ListTVMediaSubscriptions(ctx context.Context, mediaID uuid.UUI
 }
 
 const retireMissingTVSeasonUnits = `-- name: RetireMissingTVSeasonUnits :exec
-UPDATE media_unit SET retired=true,updated_at=clock_timestamp() WHERE media_id=$1 AND season_number=$2 AND NOT (episode_number=ANY($3::integer[])) AND NOT retired
+UPDATE media_unit AS u SET retired=true,updated_at=clock_timestamp() WHERE u.media_id=$1 AND u.season_number=$2 AND NOT (u.episode_number=ANY($3::integer[])) AND NOT u.retired AND NOT EXISTS(SELECT 1 FROM tvdb_episode_evidence e WHERE e.unit_id=u.id)
 `
 
 type RetireMissingTVSeasonUnitsParams struct {

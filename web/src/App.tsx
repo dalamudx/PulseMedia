@@ -6,6 +6,7 @@ import { Header } from "@/components/common/Header";
 import { DashboardView } from "@/views/DashboardView";
 import { DiscoverView } from "@/views/DiscoverView";
 import { SubscriptionsView } from "@/views/SubscriptionsView";
+import { RequestsView } from "@/views/RequestsView";
 import { ActivityView } from "@/views/ActivityView";
 import { MediaView } from "@/views/MediaView";
 import { SitesView } from "@/views/SitesView";
@@ -134,6 +135,7 @@ export const App: React.FC = () => {
             <Route path="/" element={<DashboardView />} />
             <Route path="/discover" element={<DiscoverView />} />
             <Route path="/subscriptions" element={<SubscriptionsView />} />
+            <Route path="/requests" element={<RequestsView />} />
             <Route path="/activity" element={<ActivityView />} />
             <Route path="/media" element={<MediaView />} />
             <Route path="/sites" element={<SitesView />} />

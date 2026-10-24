@@ -77,6 +77,7 @@ type transferTargetEvidence struct {
 	InventorySourcePath       string              `json:"inventory_source_path,omitempty"`
 	InventorySizeBytes        int64               `json:"inventory_size_bytes,omitempty"`
 	FileAction                *fileActionEvidence `json:"file_action,omitempty"`
+	NamingVersion             int64               `json:"naming_version,omitempty"`
 }
 
 func lockTransferAcquisition(ctx context.Context, q *db.Queries, op, unit uuid.UUID, evidence []byte) error {

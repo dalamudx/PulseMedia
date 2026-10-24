@@ -64,6 +64,7 @@ type Policy struct {
 	ResolutionOrder map[Resolution]int
 	SourceOrder     map[Source]int
 	PreferHDR       bool
+	CustomWords     []CustomWordRule `json:"custom_words,omitempty"`
 }
 
 func DefaultPolicy() Policy {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/endpoint"
 	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
@@ -57,7 +58,7 @@ func TestFullM9AdvancedWorkflow(t *testing.T) {
 		RemotePathMap:     []byte("{}"),
 	})
 
-	router := downloadstore.NewRouter(queries)
+	router := downloadstore.NewRouter(queries, endpoint.DownloadRouteRule{MediaType: "movie", DownloaderID: cMovieID}, endpoint.DownloadRouteRule{MediaType: "tv", DownloaderID: cTVID})
 	selectedMovie, err := router.SelectClient(ctx, "movie", nil)
 	if err != nil || selectedMovie.ID != cMovieID {
 		t.Fatalf("expected movie client routed: %+v", selectedMovie)

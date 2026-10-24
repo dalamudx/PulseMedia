@@ -11,6 +11,7 @@ type CompleteTVOrganizationReferences struct {
 	TaskID        uuid.UUID `json:"task_id"`
 	OperationID   uuid.UUID `json:"operation_id"`
 	TrackingJobID uuid.UUID `json:"tracking_job_id"`
+	NamingVersion int64     `json:"naming_version,omitempty"`
 }
 
 type CompleteTVOrganizationConfirmationRepository interface {

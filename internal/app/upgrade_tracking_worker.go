@@ -45,9 +45,13 @@ type movieUpgradeTrackingQueue interface {
 	Fail(context.Context, uuid.UUID, string, int64, string, time.Duration) error
 }
 
-func (a *App) runMovieUpgradeTrackingWorker(ctx context.Context, q movieUpgradeTrackingQueue, runtime ports.MovieUpgradeTrackingRuntime, repo ports.MovieUpgradeNativeJobTrackingRepository) {
+func (a *App) runMovieUpgradeTrackingWorker(ctx context.Context, q movieUpgradeTrackingQueue, runtime ports.MovieUpgradeTrackingRuntime, repo ports.MovieUpgradeNativeJobTrackingRepository, wakes ...<-chan struct{}) {
 	if q == nil || runtime == nil || repo == nil {
 		return
+	}
+	var wake <-chan struct{}
+	if len(wakes) > 0 {
+		wake = wakes[0]
 	}
 	owner := a.idgen.NewUUID().String()
 	tick := time.NewTicker(2 * time.Second)
@@ -68,6 +72,8 @@ func (a *App) runMovieUpgradeTrackingWorker(ctx context.Context, q movieUpgradeT
 			select {
 			case <-ctx.Done():
 				return
+			case <-wake:
+				continue
 			case <-tick.C:
 				continue
 			}
@@ -79,6 +85,8 @@ func (a *App) runMovieUpgradeTrackingWorker(ctx context.Context, q movieUpgradeT
 			select {
 			case <-ctx.Done():
 				return
+			case <-wake:
+				continue
 			case <-tick.C:
 				continue
 			}

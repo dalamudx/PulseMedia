@@ -10,7 +10,7 @@ import (
 )
 
 // Owned by App.Run: cancellation does not release an in-flight physical root slot.
-func (a *App) runOrganizationWorker(ctx context.Context, queue *jobs.Queue, svc *transfer.Service, reuse ...*transfer.LibraryReuseService) {
+func (a *App) runOrganizationWorkerWithWake(ctx context.Context, queue *jobs.Queue, svc *transfer.Service, wake <-chan struct{}, reuse ...*transfer.LibraryReuseService) {
 	owner := a.idgen.NewUUID().String()
 	q := db.New(a.dbPool)
 	kinds := []string{"download_organization"}
@@ -58,6 +58,7 @@ func (a *App) runOrganizationWorker(ctx context.Context, queue *jobs.Queue, svc 
 		select {
 		case <-ctx.Done():
 			return
+		case <-wake:
 		case <-ticker.C:
 		}
 	}

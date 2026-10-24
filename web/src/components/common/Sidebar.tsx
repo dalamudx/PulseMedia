@@ -1,11 +1,11 @@
 import React, { type RefObject } from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Compass, Rss, FolderSync, Activity, PackageOpen, Globe2, Settings, KeyRound, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
+import { LayoutDashboard, Compass, Rss, ClipboardList, FolderSync, Activity, PackageOpen, Globe2, Settings, KeyRound, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 
 const groups = [
   { title: "开始", items: [{ to: "/", label: "仪表盘", icon: LayoutDashboard }] },
   { title: "发现", items: [{ to: "/discover", label: "探索发现", icon: Compass }] },
-  { title: "订阅", items: [{ to: "/subscriptions", label: "影视订阅", icon: Rss }] },
+  { title: "订阅", items: [{ to: "/subscriptions", label: "影视订阅", icon: Rss }, { to: "/requests", label: "家庭请求", icon: ClipboardList }] },
   { title: "整理与存储", items: [
     { to: "/media", label: "媒体库", icon: FolderSync },
     { to: "/activity", label: "下载活动", icon: Activity },

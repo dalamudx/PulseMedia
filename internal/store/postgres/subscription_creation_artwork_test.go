@@ -88,7 +88,7 @@ func TestCreationArtworkRequiresOneExactNamespaceIdentity(t *testing.T) {
 }
 
 func TestCreationArtworkNativeServiceAndReplay(t *testing.T) {
-	f := newCreationFixture(t, 92)
+	f := newCreationFixture(t, 117)
 	p := &artworkCreationProvider{poster: "https://image.tmdb.org/t/p/original/Trusted_09-poster.jpg"}
 	svc := subscription.NewSubscriptionCreationService(f.store, p, p, artworkCreationSecrets{})
 	mediaIDs := map[string]uuid.UUID{}
@@ -138,7 +138,7 @@ func TestCreationArtworkEmptyHistoricalAndUnknown(t *testing.T) {
 	old.create(t, in, creationMovie(6203), "historical-empty")
 	old.create(t, in, nil, "historical-nil")
 	for _, kind := range []string{"movie", "tv"} {
-		f := newCreationFixture(t, 92)
+		f := newCreationFixture(t, 117)
 		in := creationInput(6204, kind)
 		p := creationMovie(6204)
 		if kind == "tv" {
@@ -188,7 +188,7 @@ func TestCreationArtworkTrustedPublicationReplacesFutureCache(t *testing.T) {
 func TestCreationArtworkTailFaultRollbackAndOriginalRetry(t *testing.T) {
 	for _, table := range []string{"media_artwork", "audit_log", "outbox_event", "idempotency_record"} {
 		t.Run(table, func(t *testing.T) {
-			f := newCreationFixture(t, 92)
+			f := newCreationFixture(t, 117)
 			in, p := creationInput(6206, "tv"), creationTV(6206, creationSeason(1, 1, 3))
 			p.PosterPath = "/first.jpg"
 			execIntent(t, f.pool, `CREATE FUNCTION artwork_tail_fault() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN RAISE EXCEPTION 'private artwork fault';END$$`)

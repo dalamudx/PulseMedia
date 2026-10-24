@@ -79,10 +79,8 @@ func (s *Service) runAutomaticTVSource(ctx context.Context, work ports.Automatic
 		if page < work.NextPage {
 			queryID = work.SavedQueries[page]
 		} else {
-			if page > 0 {
-				if err := s.waitAutomaticTVContinuation(callCtx, work); err != nil {
-					return stop(err)
-				}
+			if err := s.waitAutomaticTVContinuation(callCtx, work); err != nil {
+				return stop(err)
 			}
 			query := work.Query
 			query.Offset = page * 50

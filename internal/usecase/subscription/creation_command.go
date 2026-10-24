@@ -407,7 +407,7 @@ func creationError(ctx context.Context, err error) error {
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
-	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, ports.ErrUnauthorized, ports.ErrForbidden, ports.ErrNotFound, ports.ErrInvalidSubscriptionBindings, ports.ErrSubscriptionBindingsConflict, ports.ErrNoSubscriptionRoot, ports.ErrAmbiguousSubscriptionRoot, ports.ErrBadResponse, ports.ErrTimeout} {
+	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, ports.ErrUnauthorized, ports.ErrForbidden, ports.ErrNotFound, ports.ErrInvalidSubscriptionBindings, ports.ErrSubscriptionBindingsConflict, ports.ErrMediaRequestConflict, ports.ErrNoSubscriptionRoot, ports.ErrAmbiguousSubscriptionRoot, ports.ErrBadResponse, ports.ErrTimeout} {
 		if errors.Is(err, safe) {
 			return safe
 		}

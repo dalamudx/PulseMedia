@@ -14,6 +14,7 @@ func SelectMovieRound(in ports.MovieRoundSelectionInput) ports.MovieRoundSelecti
 		Reason:    "no_qualified_candidate",
 		Decisions: make([]ports.MovieRoundCandidateDecision, 0, len(in.Candidates)),
 	}
+	bestSelectionScore := 0
 	for _, candidate := range in.Candidates {
 		if !candidate.Admissible {
 			out.Decisions = append(out.Decisions, ports.MovieRoundCandidateDecision{
@@ -38,10 +39,12 @@ func SelectMovieRound(in ports.MovieRoundSelectionInput) ports.MovieRoundSelecti
 		if evaluation.Decision != "accept" {
 			continue
 		}
-		if out.SelectedCandidateID == nil || evaluation.Score > out.BestScore {
+		selectionScore := evaluation.Score + evaluation.PreferenceScore
+		if out.SelectedCandidateID == nil || selectionScore > bestSelectionScore {
 			id := candidate.ID
 			out.SelectedCandidateID = &id
 			out.BestScore = evaluation.Score
+			bestSelectionScore = selectionScore
 			out.Reason = ""
 		}
 	}

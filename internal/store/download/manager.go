@@ -31,21 +31,22 @@ var (
 )
 
 type Manager struct {
-	pool            *pgxpool.Pool
-	idgen           ports.IDGen
-	masterKey       []byte
-	queries         *db.Queries
-	clients         map[uuid.UUID]ports.DownloadClient
-	slots           map[uuid.UUID]chan struct{}
-	mu              sync.RWMutex
-	factory         ClientFactory
-	submissionStore ports.DownloadSubmissionRepository
-	sourceFactory   ports.DownloadTorrentSourceFactory
-	inspector       ports.TorrentMetainfoInspector
-	indexerDecoder  ports.CredentialDecoder
-	completeTV      *completeTVServices
-	automaticTV     *automaticTVServices
-	recordRates     bool
+	pool              *pgxpool.Pool
+	idgen             ports.IDGen
+	masterKey         []byte
+	queries           *db.Queries
+	clients           map[uuid.UUID]ports.DownloadClient
+	slots             map[uuid.UUID]chan struct{}
+	mu                sync.RWMutex
+	factory           ClientFactory
+	submissionStore   ports.DownloadSubmissionRepository
+	sourceFactory     ports.DownloadTorrentSourceFactory
+	inspector         ports.TorrentMetainfoInspector
+	indexerDecoder    ports.CredentialDecoder
+	completeTV        *completeTVServices
+	automaticTV       *automaticTVServices
+	recordRates       bool
+	trackingHintFiles ports.RootFilesystem
 }
 
 func NewManager(pool *pgxpool.Pool, idgen ports.IDGen, masterKey []byte) *Manager {
@@ -215,6 +216,17 @@ func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uui
 	}
 	infoHash := payload.InfoHash
 
+	var clientSnapshot *db.DownloadClient
+	clientStamp := ""
+	if len(authority) == 1 {
+		bound, e := m.queries.GetBoundSubmissionClient(ctx, clientID)
+		if e != nil {
+			return nil, ports.ErrUnavailable
+		}
+		clientSnapshot = &bound.DownloadClient
+		clientStamp = bound.ConfigStamp
+	}
+
 	// 3. Create task record in submitting state
 	taskID := m.idgen.NewUUID()
 	params := db.CreateDownloadTaskParams{
@@ -231,7 +243,7 @@ func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uui
 		if len(authority) != 1 || m.submissionStore == nil {
 			return nil, ports.ErrDownloadDemandChanged
 		}
-		receipt, e := m.submissionStore.PrepareSubmission(ctx, ports.DownloadSubmissionCommand{Lease: authority[0], TaskID: taskID, OperationID: opID, ClientID: clientID, CandidateID: candID, InfoHash: infoHash, SavePath: savePath, CipherHash: sha256.Sum256(cand.LinkEncrypted)})
+		receipt, e := m.submissionStore.PrepareSubmission(ctx, ports.DownloadSubmissionCommand{Lease: authority[0], TaskID: taskID, OperationID: opID, ClientID: clientID, CandidateID: candID, InfoHash: infoHash, SavePath: savePath, CipherHash: sha256.Sum256(cand.LinkEncrypted), ClientConfigStamp: clientStamp})
 		if e != nil {
 			return nil, e
 		}
@@ -249,8 +261,12 @@ func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uui
 		return nil, fmt.Errorf("failed to create download task: %w", err)
 	}
 
-	// Use persisted credentials when a client was not injected by the app.
-	client, err := m.clientFor(ctx, clientID)
+	var client ports.DownloadClient
+	if clientSnapshot != nil {
+		client, err = m.clientForRateSnapshot(ctx, *clientSnapshot)
+	} else {
+		client, err = m.clientFor(ctx, clientID)
+	}
 	if err != nil {
 		_, _ = m.queries.TransitionTaskToUnknown(ctx, db.TransitionTaskToUnknownParams{ID: task.ID, Error: pgtype.Text{String: "download client unavailable", Valid: true}})
 		return &task, err
@@ -404,7 +420,10 @@ func (m *Manager) ReconcileTask(ctx context.Context, opID uuid.UUID) (*db.Downlo
 // ObserveTask refreshes a tracking download without claiming its files have
 // been imported. Missing torrents and path changes retain the business
 // reservation and require reconciliation; progress alone cannot release it.
-func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.DownloadTask, error) {
+func (m *Manager) observeTask(ctx context.Context, opID uuid.UUID, watch *ports.DownloadWatchTarget) (*db.DownloadTask, error) {
+	if err := m.validateWatch(ctx, m.queries, watch, false); err != nil {
+		return nil, err
+	}
 	if err := m.requireNoFrozenUpgrade(ctx, opID); err != nil {
 		return nil, err
 	}
@@ -423,13 +442,16 @@ func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.Download
 		return nil, err
 	}
 	defer release()
+	if err = m.validateWatch(ctx, m.queries, watch, false); err != nil {
+		return nil, err
+	}
 
 	configSnapshot, err := m.queries.GetDownloadClientByID(ctx, task.ClientID)
 	if err != nil {
 		return nil, ports.ErrUnavailable
 	}
 	var client ports.DownloadClient
-	if m.recordRates {
+	if m.recordRates || watch != nil {
 		client, err = m.clientForRateSnapshot(ctx, configSnapshot)
 	} else {
 		client, err = m.clientFor(ctx, task.ClientID)
@@ -437,15 +459,24 @@ func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.Download
 	if err != nil {
 		return nil, err
 	}
+	if watch != nil {
+		client = &watchReadClient{DownloadClient: client, manager: m, target: *watch}
+	}
 	info, err := client.GetTorrent(ctx, task.InfoHash)
 	if errors.Is(err, ports.ErrNotFound) {
-		_, err = m.recordObservationState(ctx, task, "unknown", "torrent no longer visible; manual reconciliation required")
+		_, err = m.recordObservationStateGuarded(ctx, task, "unknown", "torrent no longer visible; manual reconciliation required", watch)
 		if err != nil {
 			return nil, err
 		}
 		return nil, ErrReconcilePending
 	}
 	if err != nil {
+		if watch != nil {
+			if _, fenceErr := m.writeWatchProgress(ctx, task, configSnapshot, nil, watch); fenceErr != nil {
+				return nil, fenceErr
+			}
+			return nil, err
+		}
 		if m.recordRates && ctx.Err() == nil {
 			if rateErr := m.recordUnknownRate(ctx, task, configSnapshot); rateErr != nil {
 				return nil, rateErr
@@ -457,7 +488,7 @@ func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.Download
 		!sameOrChildPath(task.SavePath, info.SavePath) ||
 		(info.ContentPath != "" && !sameOrChildPath(task.SavePath, info.ContentPath)) ||
 		math.IsNaN(float64(info.Progress)) || math.IsInf(float64(info.Progress), 0) || info.Progress < 0 || info.Progress > 1 || info.TotalBytes < 0 || info.DownloadedBytes < 0 {
-		_, err = m.recordObservationState(ctx, task, "unknown", "download identity or path requires review")
+		_, err = m.recordObservationStateGuarded(ctx, task, "unknown", "download identity or path requires review", watch)
 		if err != nil {
 			return nil, err
 		}
@@ -474,7 +505,10 @@ func (m *Manager) ObserveTask(ctx context.Context, opID uuid.UUID) (*db.Download
 				return nil, e
 			}
 		}
-		return m.completeForOrganization(ctx, task, info, inventory)
+		return m.completeForOrganizationGuarded(ctx, task, info, watch, inventory)
+	}
+	if watch != nil {
+		return m.writeWatchProgress(ctx, task, configSnapshot, info, watch)
 	}
 	if m.recordRates {
 		return m.updateProgressWithRate(ctx, task, configSnapshot, info)

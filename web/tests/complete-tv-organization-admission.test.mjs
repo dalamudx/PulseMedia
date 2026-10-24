@@ -26,3 +26,20 @@ for(const suffix of ['\n','\r','\u2028','\u2029'])test('line terminator '+JSON.s
  for(const field of ['task_id','operation_id','tracking_job_id','key'])assert.throws(()=>journal.saveJournal({...pending,command:{...command,[field]:command[field]+suffix}}),/journal invalid/);
  assert.equal(writes,0);assert.deepEqual(journal.readJournal(account,operation),pending);
 });
+
+test('naming versions remain bound to the original command and survive receipt repair',()=>{
+ const entries=new Map();globalThis.localStorage={getItem:key=>entries.get(key)??null,setItem:(key,value)=>entries.set(key,value)};
+ for(const naming_version of [0,7]){
+  const original={...pending,command:{...command,naming_version}};
+  journal.saveJournal(original);
+  assert.deepEqual(journal.readJournal(account,operation),original);
+  const closed={...original,receipt:{task_id:command.task_id,plan_id:'55555555-5555-4555-8555-555555555555',job_id:'66666666-6666-4666-8666-666666666666',state:'queued'}};
+  journal.saveJournal(closed);assert.deepEqual(journal.readJournal(account,operation).command,original.command);
+ }
+});
+for(const naming_version of [-1,1.5,null,'7',Number.MAX_SAFE_INTEGER+1])test('invalid naming version '+JSON.stringify(naming_version)+' cannot replace original journal',()=>{
+ const entries=new Map([[journal.journalName(account,operation),JSON.stringify(pending)]]);let writes=0;
+ globalThis.localStorage={getItem:key=>entries.get(key)??null,setItem:(key,value)=>{writes++;entries.set(key,value)}};
+ assert.throws(()=>journal.saveJournal({...pending,command:{...command,naming_version}}),/journal invalid/);
+ assert.equal(writes,0);assert.deepEqual(journal.readJournal(account,operation),pending);
+});

@@ -116,7 +116,7 @@ func (r *Root) publishSidecar(ctx context.Context, req SidecarRequest, ops sidec
 		if !validSubtitleRequest(req) {
 			return out, ErrSidecarRequest
 		}
-	} else if req.Name != "movie.nfo" && req.Name != "tvshow.nfo" && req.Name != "poster.jpg" {
+	} else if req.Name != "movie.nfo" && req.Name != "tvshow.nfo" && req.Name != "poster.jpg" && req.Name != "logo.png" && req.Name != "clearart.png" && req.Name != "banner.jpg" && req.Name != "disc.png" {
 		return out, ErrSidecarRequest
 	}
 	if len(req.Content) == 0 || len(req.Content) > MaxSidecarBytes {

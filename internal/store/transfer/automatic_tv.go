@@ -523,6 +523,9 @@ func (s *Service) createAutomaticTVOrganizationPlan(ctx context.Context, lease p
 	if e != nil {
 		return zero, e
 	}
+	if eligible, _ := naming.IsEligibleMediaFile(sourceRel, video.Size, s.minimumMediaBytes); !eligible {
+		return zero, ErrReviewRequired
+	}
 	targetIdentity, e := roots[root.Path].Identity(ctx)
 	if e != nil {
 		return zero, e
@@ -564,9 +567,31 @@ func (s *Service) createAutomaticTVOrganizationPlan(ctx context.Context, lease p
 	if baseline.RootDevice != targetIdentity.Device || baseline.RootInode != targetIdentity.Inode {
 		return zero, ErrReviewRequired
 	}
+	namingRules, namingVersion, e := lockTransferNaming(ctx, q)
+	if e != nil {
+		return zero, e
+	}
 	targetRel, e := naming.FormatEpisodeRel(current.Authority.Target.Title, int(current.Authority.Target.Year), int(current.Authority.Target.Season), int(current.Authority.Target.Episode), mustAutomaticTVProfile(current.Candidate.QualityProfile), filepath.Ext(current.Source))
 	if e != nil {
 		return zero, e
+	}
+	if namingRules.EpisodeTemplate != "" {
+		unit, err := q.GetSearchUnit(ctx, current.Authority.Target.UnitID)
+		if err != nil {
+			return zero, err
+		}
+		parent, err := q.GetMediaByID(ctx, unit.MediaID)
+		if err != nil {
+			return zero, err
+		}
+		input, err := transferNamingInput(ctx, q, parent, unit, mustAutomaticTVProfile(current.Candidate.QualityProfile), filepath.Ext(current.Source), namingRules.EpisodeTemplate)
+		if err != nil {
+			return zero, err
+		}
+		targetRel, e = namingRules.EpisodeRelative(input)
+		if e != nil {
+			return zero, ErrReviewRequired
+		}
 	}
 	plan, e := q.CreateTransferPlan(ctx, db.CreateTransferPlanParams{ID: s.idgen.NewUUID(), OperationID: operation, RootID: root.ID, State: "approved", Strategy: "hardlink"})
 	if e != nil {
@@ -579,7 +604,9 @@ func (s *Service) createAutomaticTVOrganizationPlan(ctx context.Context, lease p
 	if e != nil {
 		return zero, e
 	}
-	evidence, _ := json.Marshal(automaticTVOrganizationTarget(current.Authority, current.Task.ID, current.Original.InventoryStamp, current.Source, video.Size))
+	targetEvidence := automaticTVOrganizationTarget(current.Authority, current.Task.ID, current.Original.InventoryStamp, current.Source, video.Size)
+	targetEvidence.NamingVersion = namingVersion
+	evidence, _ := json.Marshal(targetEvidence)
 	if e = q.FreezeTransferStep(ctx, db.FreezeTransferStepParams{ID: step.ID, SourceRoot: text(sourceRoot), SourceRel: text(sourceRel), TargetRel: text(targetRel), SourceDevice: integer(video.Device), SourceInode: integer(video.Inode), QualityProfile: current.Candidate.QualityProfile, TargetEvidence: evidence}); e != nil {
 		return zero, e
 	}

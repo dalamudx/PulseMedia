@@ -13,7 +13,12 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require golang.org/x/net v0.61.0
+require (
+	github.com/SherClockHolmes/webpush-go v1.4.1-0.20260422052225-76cc00f5ac2d
+	golang.org/x/net v0.61.0
+)
+
+require github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 
 require (
 	filippo.io/age v1.3.1

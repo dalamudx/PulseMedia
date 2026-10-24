@@ -93,6 +93,10 @@ func (d *Dispatcher) DispatchDelivery(ctx context.Context, deliveryID, channelID
 		Timestamp: delivery.CreatedAt,
 	}
 
+	if event.EventType == "notification.test.v1" {
+		notif.Title = "PulseMedia 测试通知"
+		notif.Body = "用于检查通知通道连通性；此通知不改变业务数据。"
+	}
 	if event.EventType == "notification.media_imported.v1" {
 		if err = applyBatchPresentation(&notif, event.AggregateID, event.Payload); err != nil {
 			return err

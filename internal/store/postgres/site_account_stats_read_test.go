@@ -20,7 +20,7 @@ func newStatsReadFixture(t *testing.T) *statsFixture {
 	t.Helper()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
 	v, e := postgres.Migrate(t.Context(), dsn, "../../../migrations")
-	if e != nil || v != 98 {
+	if e != nil || v != postgres.CurrentMigrationVersion {
 		t.Fatal(v, e)
 	}
 	p, e := postgres.NewPool(t.Context(), dsn, postgres.DefaultPoolConfig())

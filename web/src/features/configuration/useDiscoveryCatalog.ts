@@ -43,6 +43,7 @@ export function useDiscoveryCatalog({ category, locationKey, userId, role }: {
     scope.feed = controller;
     const owns = () => active() && scope.feed === controller && !controller.signal.aborted;
     setFeed(previous => ({ scope, items: previous.scope === scope ? previous.items : [], busy: true, error: "" }));
+    if(scope.category === "bangumi"){setFeed({scope,items:[],busy:false,error:""});scope.feed=null;return true;}
     try {
       if (isDoubanCategory(scope.category)) {
         const listName = doubanCategoryToList[scope.category];

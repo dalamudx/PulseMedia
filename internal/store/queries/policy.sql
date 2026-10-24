@@ -44,3 +44,12 @@ WHERE subscription_id IN (
 
 -- name: ListPolicyDocuments :many
 SELECT p.id,p.name,p.current_revision,r.rules FROM policy p JOIN policy_revision r ON r.policy_id=p.id AND r.revision=p.current_revision ORDER BY p.id;
+
+-- name: GetInteractiveRankingPolicy :one
+-- Scope authorization precedes this immutable revision read in the same RR snapshot.
+SELECT r.policy_id, r.revision, r.rules
+FROM policy p
+JOIN policy_revision r ON r.policy_id=p.id
+LEFT JOIN subscription s ON s.id=sqlc.narg(subscription_id)::uuid
+WHERE p.id=COALESCE(s.quality_policy_id,'default')
+ AND r.revision=COALESCE(s.quality_policy_revision,p.current_revision);

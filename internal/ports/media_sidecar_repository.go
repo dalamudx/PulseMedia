@@ -61,8 +61,8 @@ type MediaSidecarSnapshot struct {
 }
 
 // MediaSidecarArtifactResult binds an actual filesystem outcome to one allowed
-// name: movie.nfo/tvshow.nfo (according to media type), or poster.jpg. Preserved
-// regular entries are observations and never imply ownership by this job.
+// name: movie.nfo/tvshow.nfo, poster.jpg, logo.png, clearart.png, banner.jpg,
+// or movie-only disc.png. Preserved regular entries never imply job ownership.
 type MediaSidecarArtifactResult struct {
 	Name   string        `json:"name"`
 	Result SidecarResult `json:"result"`

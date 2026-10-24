@@ -36,10 +36,28 @@ const m5CreationAPIKey = "owned-creation-tmdb-key"
 type m5CreationRoute struct {
 	target    *url.URL
 	transport http.RoundTripper
+	protocol  *m5CreationProtocol
 }
 
 func (r m5CreationRoute) RoundTrip(req *http.Request) (*http.Response, error) {
-	if req.URL.Scheme != "https" || req.URL.Host != "api.themoviedb.org" || !strings.HasPrefix(req.URL.Path, "/3/") {
+	if r.protocol != nil {
+		r.protocol.mu.Lock()
+		transport := r.protocol.tvdbTransport
+		r.protocol.mu.Unlock()
+		if transport != nil {
+			return transport.RoundTrip(req)
+		}
+	}
+	if r.protocol != nil && (req.URL.Host == "webservice.fanart.tv" || req.URL.Host == "assets.fanart.tv" || req.URL.Host == "api.themoviedb.org" && strings.HasSuffix(req.URL.Path, "/external_ids")) {
+		r.protocol.mu.Lock()
+		transport := r.protocol.artworkTransport
+		r.protocol.mu.Unlock()
+		if transport != nil {
+			return transport.RoundTrip(req)
+		}
+	}
+	allowed := (req.URL.Host == "api.themoviedb.org" && strings.HasPrefix(req.URL.Path, "/3/")) || (req.URL.Host == "api.bgm.tv" && req.URL.Path == "/calendar")
+	if req.URL.Scheme != "https" || !allowed {
 		return nil, errors.New("unexpected outbound metadata destination")
 	}
 	clone := req.Clone(req.Context())
@@ -51,8 +69,11 @@ func (r m5CreationRoute) RoundTrip(req *http.Request) (*http.Response, error) {
 
 type m5CreationProtocol struct {
 	mu               sync.Mutex
+	artworkTransport http.RoundTripper
+	tvdbTransport    http.RoundTripper
 	bodies           map[string]string
 	calls            map[string]int
+	calendarStatus   int
 	blockedPath      string
 	entered, release chan struct{}
 }
@@ -86,6 +107,9 @@ func (p *m5CreationProtocol) block(path string) (<-chan struct{}, func()) {
 }
 func (p *m5CreationProtocol) serve(t *testing.T, w http.ResponseWriter, r *http.Request) {
 	t.Helper()
+	if p.serveBangumi(t, w, r) {
+		return
+	}
 	if r.Method != "GET" || r.URL.Query().Get("api_key") != m5CreationAPIKey || r.URL.Query().Get("language") != "zh-CN" {
 		t.Error("native TMDB lost encrypted setting credential or locale")
 		w.WriteHeader(400)
@@ -154,7 +178,7 @@ func m5CreationTV(p *m5CreationProtocol, id int, expanded, specials, empty bool)
 		{"id": id*100 + 2, "name": "Unknown photo actor", "character": "Supporting role", "profile_path": nil},
 	}}))
 }
-func newM5CreationAcceptance(t *testing.T) (*m5IndexerAcceptance, *m5CreationProtocol) {
+func newM5CreationAcceptance(t *testing.T, configuration ...func(*config.Config)) (*m5IndexerAcceptance, *m5CreationProtocol) {
 	t.Helper()
 	// Opt-in precedes all cluster/database creation. No host credentials are read.
 	if os.Getenv("PULSE_M5_SUBSCRIPTION_CREATION_ACCEPTANCE") != "1" {
@@ -192,28 +216,41 @@ func newM5CreationAcceptance(t *testing.T) (*m5IndexerAcceptance, *m5CreationPro
 	if err = listener.Close(); err != nil {
 		t.Fatal(err)
 	}
-	a, err := app.New(cfg, app.WithMetadataHTTPClient(&http.Client{Transport: m5CreationRoute{target, tr}, Timeout: 10 * time.Second}), app.WithLogger(slog.New(slog.NewTextHandler(io.Discard, nil))))
+	for _, configure := range configuration {
+		configure(cfg)
+	}
+	a, err := app.New(cfg, app.WithMetadataHTTPClient(&http.Client{Transport: m5CreationRoute{target, tr, p}, Timeout: 10 * time.Second}), app.WithLogger(slog.New(slog.NewTextHandler(io.Discard, nil))))
 	if err != nil {
 		t.Fatal(err)
 	}
-	f := &m5IndexerAcceptance{app: a, base: "http://" + cfg.Server.HTTPAddr}
+	f := &m5IndexerAcceptance{app: a, base: "http://" + cfg.Server.HTTPAddr, dataDir: cfg.DataDir}
+	f.newRuntime = func() (*app.App, error) {
+		for _, configure := range configuration {
+			configure(cfg)
+		}
+		return app.New(cfg, app.WithMetadataHTTPClient(&http.Client{Transport: m5CreationRoute{target, tr, p}, Timeout: 10 * time.Second}), app.WithLogger(slog.New(slog.NewTextHandler(io.Discard, nil))))
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	done := make(chan error, 1)
 	go func() { done <- a.Run(ctx) }()
-	t.Cleanup(func() {
-		cancel()
-		select {
-		case e := <-done:
-			if e != nil {
+	var stopRuntimeOnce sync.Once
+	f.stopRuntime = func() {
+		stopRuntimeOnce.Do(func() {
+			cancel()
+			select {
+			case e := <-done:
+				if e != nil {
+					t.Error(e)
+				}
+			case <-time.After(50 * time.Second):
+				t.Error("App cancellation/join exceeded shutdown budget")
+			}
+			if e := a.Close(); e != nil {
 				t.Error(e)
 			}
-		case <-time.After(50 * time.Second):
-			t.Error("App cancellation/join exceeded shutdown budget")
-		}
-		if e := a.Close(); e != nil {
-			t.Error(e)
-		}
-	})
+		})
+	}
+	t.Cleanup(f.stopRuntime)
 	deadline := time.Now().Add(15 * time.Second)
 	for {
 		r, e := (&http.Client{Timeout: time.Second}).Get(f.base + "/api/v1/auth/status")

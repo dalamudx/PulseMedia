@@ -1,0 +1,11 @@
+.notification-channel-editor { min-width: 0; overflow-wrap: anywhere; }
+.notification-channel-editor > .config-heading { display: flex; flex-wrap: wrap; gap: .75rem; }
+.settings-container .notification-channel-editor button { max-width: 100%; min-width: 44px; white-space: normal; overflow-wrap: anywhere; }
+.notification-channel-editor ul { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; }
+.notification-channel-editor li { min-width: 0; }
+.notification-channel-editor li > span { display: block; margin-bottom: .5rem; }
+.notification-channel-editor .notification-channel-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: flex-start; gap: .5rem; }
+.notification-channel-actions > div { min-width: 0; flex: 1 1 12rem; }
+.notification-channel-editor fieldset { min-width: 0; margin-inline: 0; padding: .75rem; }
+.notification-channel-editor legend { max-width: 100%; }
+@media(max-width:520px) { .notification-channel-actions > div { flex-basis: 100%; } }

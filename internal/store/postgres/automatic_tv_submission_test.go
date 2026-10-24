@@ -123,6 +123,8 @@ func automaticTVSubmissionBase(t *testing.T, explicit bool) automaticTVFixture {
 	in.IndexerIDs = []uuid.UUID{indexer}
 	in.DownloaderID = &client
 	season := creationSeason(2, 3)
+	// This schema89 send fixture supplies one known episode, without season-retirement authority.
+	season.Complete = false
 	aired := time.Date(2020, 3, 4, 0, 0, 0, 0, time.UTC)
 	season.Episodes[0].AirDate = &aired
 	prepared := creationTV(55101, season)

@@ -12,7 +12,7 @@ import (
 )
 
 func historyFixture(t *testing.T) *checkinFixture {
-	return newCheckinFixtureAt(t, "../../../migrations", 100)
+	return newCheckinFixtureAt(t, "../../../migrations", postgres.CurrentMigrationVersion)
 }
 
 // Open-day fixtures have no execution or send permission and retain all PG guards.

@@ -52,6 +52,11 @@ func (o *Outbox) PublishImported(ctx context.Context, q *db.Queries, unit string
 	}); err != nil {
 		return nil, err
 	}
+	if o.webPushVersion != "" {
+		if err = o.publishImportedWebPush(ctx, q, event, ids.FileID, ids.UnitID); err != nil {
+			return nil, err
+		}
+	}
 	if len(channels) == 0 {
 		return event, nil
 	}

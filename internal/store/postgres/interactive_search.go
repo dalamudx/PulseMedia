@@ -256,6 +256,22 @@ func (s *InteractiveSearchStore) CreateInteractiveSearch(ctx context.Context, a 
 	if out != nil {
 		return out, tx.Commit(ctx)
 	}
+	// A historical original-key receipt above keeps its original strategy.
+	// New observations freeze the trusted bound/default revision in this same
+	// snapshot. This read takes no later policy lock after the scope locks.
+	var rankingSubscription pgtype.UUID
+	if in.SubscriptionID != nil {
+		rankingSubscription = pgtype.UUID{Bytes: *in.SubscriptionID, Valid: true}
+	}
+	frozen, e := db.New(tx).GetInteractiveRankingPolicy(ctx, rankingSubscription)
+	if e != nil {
+		return nil, ports.ErrUnavailable
+	}
+	var ruleSet quality.PolicyRules
+	if json.Unmarshal(frozen.Rules, &ruleSet) != nil || quality.ValidateRules(ruleSet) != nil {
+		return nil, ports.ErrUnavailable
+	}
+	in.RankingPolicy = quality.Policy{ID: frozen.PolicyID, Revision: frozen.Revision, ResolutionOrder: ruleSet.ResolutionOrder, SourceOrder: ruleSet.SourceOrder, PreferHDR: ruleSet.PreferHDR, CustomWords: ruleSet.CustomWords}
 	rows, e := tx.Query(ctx, `SELECT i.id,i.config_version FROM indexer i LEFT JOIN indexer_lifecycle l ON l.indexer_id=i.id WHERE COALESCE(l.enabled,true) AND l.deleted_at IS NULL ORDER BY i.id FOR SHARE OF i`)
 	if e != nil {
 		return nil, e

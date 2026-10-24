@@ -64,7 +64,7 @@ func evaluateUpgrade(rules PolicyRules, current Profile, candidate Profile, stop
 	if _, ok := rules.SourceOrder[current.Source]; !ok {
 		return UpgradeDecision{Reason: "current_policy_incompatible"}
 	}
-	if !EvaluateCandidate(rules, "", candidate).Passed {
+	if !EvaluateStoredFile(rules, "", candidate).Passed {
 		return UpgradeDecision{Reason: "candidate_policy_rejected"}
 	}
 	pol := Policy{

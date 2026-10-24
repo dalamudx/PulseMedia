@@ -81,6 +81,25 @@ func (f *prepareTVFixture) rejectUnchanged(t *testing.T) {
 }
 func TestCompleteTVPreparationPGWholeSetEightWay(t *testing.T) {
 	f := newPrepareTVFixture(t)
+	// Eight serialized preparations test deduplication, with room for race-build contention.
+	// Production and timeout scenarios keep the default two-second lock wait.
+	poolConfig := f.f.a.DBPool().Config()
+	configureConnection := poolConfig.AfterConnect
+	poolConfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+		if configureConnection != nil {
+			if err := configureConnection(ctx, conn); err != nil {
+				return err
+			}
+		}
+		_, err := conn.Exec(ctx, "SET lock_timeout='15s'")
+		return err
+	}
+	pool, err := pgxpool.NewWithConfig(t.Context(), poolConfig)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(pool.Close)
+	f.store = postgres.NewCompleteTVSubmissionStore(pool, idgen.New())
 	var wg sync.WaitGroup
 	results := make(chan *ports.CompleteTVSubmissionReceipt, 8)
 	errs := make(chan error, 8)

@@ -126,6 +126,9 @@ func interactiveSearchReceipt(h ports.InteractiveSearchHeader) InteractiveReleas
 }
 func interactiveSearchProjection(s ports.InteractiveSearchSnapshot) InteractiveReleaseSearchSnapshot {
 	out := InteractiveReleaseSearchSnapshot{Search: interactiveSearchReceipt(s.Header), State: s.State, Partial: s.Partial, Truncated: s.Truncated, TotalCandidates: s.TotalCandidates, StatisticsMode: "latest_persisted", SortOrder: "quality_desc_seeders_desc_id_asc", Results: make([]ReleaseItemResult, 0, len(s.Candidates)), Sources: make([]InteractiveReleaseSearchSource, 0, len(s.Sources))}
+	if len(s.Header.RankingPolicy.CustomWords) != 0 {
+		out.SortOrder = "quality_preference_desc_seeders_desc_id_asc"
+	}
 	for _, source := range s.Sources {
 		ids := append(make([]uuid.UUID, 0, len(source.QueryIDs)), source.QueryIDs...)
 		out.Sources = append(out.Sources, InteractiveReleaseSearchSource{IndexerId: source.IndexerID, Name: source.Name, ConfigVersion: source.ConfigVersion, State: source.State, Reason: source.Reason, QueryIds: ids, Partial: source.Partial})
@@ -133,6 +136,9 @@ func interactiveSearchProjection(s ports.InteractiveSearchSnapshot) InteractiveR
 	for _, row := range s.Candidates {
 		c := row.Candidate
 		item := ReleaseItemResult{Id: c.ID, Title: c.Title, SizeBytes: c.SizeBytes, Seeders: int(c.Seeders), Leechers: int(c.Leechers), IndexerName: row.SourceName, Score: &row.QualityScore}
+		if row.PreferenceScore != 0 {
+			item.PreferenceScore = &row.PreferenceScore
+		}
 		var profile quality.Profile
 		if len(c.QualityProfile) <= 16384 && json.Unmarshal(c.QualityProfile, &profile) == nil && quality.KnownProfile(profile) {
 			resolution, source, codec := string(profile.Resolution), string(profile.Source), string(profile.Codec)

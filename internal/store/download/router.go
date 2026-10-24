@@ -2,42 +2,45 @@ package download
 
 import (
 	"context"
-	"errors"
-	"strings"
-
-	"github.com/google/uuid"
-
+	"github.com/dalamudx/PulseMedia/internal/domain/endpoint"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
+	"github.com/google/uuid"
 )
 
-var (
-	ErrNoDownloadClientAvailable = errors.New("no download client available")
-)
+var ErrNoDownloadClientAvailable = endpoint.ErrNoDownloadRouteClient
 
 type Router struct {
 	queries *db.Queries
+	rules   []endpoint.DownloadRouteRule
 }
 
-func NewRouter(queries *db.Queries) *Router {
-	return &Router{queries: queries}
+func NewRouter(queries *db.Queries, rules ...endpoint.DownloadRouteRule) *Router {
+	return &Router{queries: queries, rules: append([]endpoint.DownloadRouteRule(nil), rules...)}
 }
 
-// SelectClient selects the most appropriate download client according to media type and availability.
+// SelectClient is the legacy internal projection. Production authorization freezes
+// the selected ID and configuration before any send; this method grants no permit.
 func (r *Router) SelectClient(ctx context.Context, mediaType string, indexerID *uuid.UUID) (*db.DownloadClient, error) {
 	clients, err := r.queries.ListDownloadClients(ctx)
-	if err != nil || len(clients) == 0 {
-		return nil, ErrNoDownloadClientAvailable
+	if err != nil {
+		return nil, err
 	}
-
-	// 1. Specialized match: look for a client specialized for this media type
-	targetKeyword := strings.ToLower(mediaType) // "movie" or "tv"
+	available := make([]endpoint.DownloadRouteClient, 0, len(clients))
+	for _, client := range clients {
+		available = append(available, endpoint.DownloadRouteClient{ID: client.ID, Eligible: true})
+	}
+	request := endpoint.DownloadRouteRequest{MediaType: mediaType}
+	if indexerID != nil {
+		request.IndexerID = *indexerID
+	}
+	selected, err := endpoint.SelectDownloadRoute(request, available, r.rules)
+	if err != nil {
+		return nil, err
+	}
 	for i := range clients {
-		nameLower := strings.ToLower(clients[i].Name)
-		if strings.Contains(nameLower, targetKeyword) {
+		if clients[i].ID == selected.DownloaderID {
 			return &clients[i], nil
 		}
 	}
-
-	// 2. Default fallback: return first active client
-	return &clients[0], nil
+	return nil, ErrNoDownloadClientAvailable
 }

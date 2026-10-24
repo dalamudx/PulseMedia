@@ -291,3 +291,25 @@ test('legacy unknown protocol is displayed without silently selecting a supporte
     assert.equal(await h.out.save(), false); assert.equal(writes(h).length, 0); assert.equal(h.out.draft.type, 'old-server');
   } finally { await h.close(); }
 });
+
+
+test('rTorrent real controls preserve protocol across creation, editing and explicit probe', async () => {
+  const h = await hookHost();
+  try {
+    await h.ready([]); fillCreate(h); h.out.change('type', 'rtorrent'); h.out.change('url', 'http://localhost:8080/RPC2'); h.out.change('password', 'owned-rtorrent-secret');
+    const native = row('download_client', { client_type: 'rtorrent', url: 'http://localhost:8080/RPC2' });
+    const save = h.out.save(); assert.equal(h.calls.at(-1).method, 'POST'); assert.equal(h.calls.at(-1).options.body.client_type, 'rtorrent');
+    h.reply(201, native); await h.flush(); h.reply(200, { items: [native] }); assert.equal(await save, true); await h.flush();
+    h.out.startEdit('endpoint-1'); await h.flush();
+    const panel = await load('EndpointConfigurationPanel.tsx', { React, useEndpointConfiguration: () => h.out });
+    const html = renderToStaticMarkup(React.createElement(panel.EndpointConfigurationPanel, { family: 'download_client' }));
+    assert(html.includes('<option value="rtorrent" selected="">rTorrent / ruTorrent</option>')); assert(!html.includes('owned-rtorrent-secret'));
+    assert(html.includes("XML-RPC 地址")); assert(html.includes("不要填写 ruTorrent 首页"));
+    const edit = h.out.save(); assert.equal(h.calls.at(-1).method, 'PUT');
+    assert.equal(h.calls.at(-1).options.body.client_type, 'rtorrent'); assert.equal(h.calls.at(-1).options.body.password, ''); assert.equal(h.calls.at(-1).options.body.expected_updated_at, version);
+    const updated = { ...native, updated_at: nextVersion }; h.reply(200, updated); await h.flush(); h.reply(200, { items: [updated] }); assert.equal(await edit, true); await h.flush();
+    assert.equal(h.calls.filter(c => c.path.endsWith('/test')).length, 0);
+    const probe = h.out.probe('endpoint-1'); assert.equal(h.calls.at(-1).path, '/api/v1/download-clients/{id}/test'); h.reply(200, { alive: true }); assert.equal(await probe, true);
+    assert.equal(writes(h).length, 2);
+  } finally { await h.close(); }
+});

@@ -13,9 +13,11 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	cookiecloudadapter "github.com/dalamudx/PulseMedia/internal/adapter/cookiecloud"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/nexusphp"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/torznab"
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/universal_rss"
+	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/bangumi"
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/douban"
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/tmdb"
 	"github.com/dalamudx/PulseMedia/internal/adapter/subtitle/shooter"
@@ -40,8 +42,14 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	transferstore "github.com/dalamudx/PulseMedia/internal/store/transfer"
 	"github.com/dalamudx/PulseMedia/internal/usecase/acquisition"
+	"github.com/dalamudx/PulseMedia/internal/usecase/audit"
 	"github.com/dalamudx/PulseMedia/internal/usecase/auth"
+	cookiecloudusecase "github.com/dalamudx/PulseMedia/internal/usecase/cookiecloud"
 	"github.com/dalamudx/PulseMedia/internal/usecase/download"
+	seedingusecase "github.com/dalamudx/PulseMedia/internal/usecase/seeding"
+
+	calendarusecase "github.com/dalamudx/PulseMedia/internal/usecase/calendar"
+	"github.com/dalamudx/PulseMedia/internal/usecase/downloadmetrics"
 	"github.com/dalamudx/PulseMedia/internal/usecase/library"
 	mediausecase "github.com/dalamudx/PulseMedia/internal/usecase/media"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediascrape"
@@ -49,6 +57,7 @@ import (
 	metadatausecase "github.com/dalamudx/PulseMedia/internal/usecase/metadata"
 	"github.com/dalamudx/PulseMedia/internal/usecase/metadatasidecar"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
+	"github.com/dalamudx/PulseMedia/internal/usecase/personfollow"
 	"github.com/dalamudx/PulseMedia/internal/usecase/policy"
 	"github.com/dalamudx/PulseMedia/internal/usecase/ranking"
 	usecaseScheduler "github.com/dalamudx/PulseMedia/internal/usecase/scheduler"
@@ -63,16 +72,17 @@ import (
 
 // App is the composition root managing subsystem lifecycles.
 type App struct {
-	cfg                *config.Config
-	logger             *slog.Logger
-	clock              ports.Clock
-	idgen              ports.IDGen
-	indexerDecoder     ports.CredentialDecoder
-	lock               *lockfile.DataDirLock
-	version            string
-	dbPool             *pgxpool.Pool
-	metadataHTTPClient *http.Client
-	sseHub             *httpapi.SSEHub
+	cfg                    *config.Config
+	logger                 *slog.Logger
+	clock                  ports.Clock
+	idgen                  ports.IDGen
+	indexerDecoder         ports.CredentialDecoder
+	lock                   *lockfile.DataDirLock
+	version                string
+	dbPool                 *pgxpool.Pool
+	metadataHTTPClient     *http.Client
+	notificationHTTPClient *http.Client
+	sseHub                 *httpapi.SSEHub
 
 	mu        sync.RWMutex
 	ready     bool
@@ -115,6 +125,10 @@ func WithDBPool(pool *pgxpool.Pool) Option {
 	return func(a *App) {
 		a.dbPool = pool
 	}
+}
+
+func WithNotificationHTTPClient(client *http.Client) Option {
+	return func(a *App) { a.notificationHTTPClient = client }
 }
 
 func WithMetadataHTTPClient(client *http.Client) Option {
@@ -304,6 +318,17 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var healthSvc *usecaseSearch.HealthService
 	var scheduler *usecaseScheduler.AutoFulfillScheduler
 	var dlMgr *download.Manager
+	var downloadWatchRepo ports.DownloadWatchRepository
+	var downloadWatchObserver ports.DownloadWatchObserver
+	var completeTVWatchRepo ports.DownloadWatchRepository
+	var completeTVHintObserver ports.DownloadWatchObserver
+	var automaticTVWatchRepo ports.DownloadWatchRepository
+	var automaticTVHintObserver ports.DownloadWatchObserver
+	var movieUpgradeWatchRepo ports.DownloadWatchRepository
+	var movieUpgradeHintScheduler ports.MovieUpgradeTrackingHintScheduler
+	var untrackedDiscoveryRepo *postgres.UntrackedDiscoveryStore
+	var untrackedDiscoverySvc *library.UntrackedDiscoveryService
+	var untrackedReviewRepo *postgres.UntrackedReviewStore
 	var queue *jobs.Queue
 	var completeTV ports.CompleteTVExecutor
 	var upgradeObservationRuntime ports.MovieUpgradeObservationRuntime
@@ -314,6 +339,8 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var upgradeOrganization *movieUpgradeOrganizationWorker
 	var syncSvc *mediaserver.SyncService
 	var ob *outbox.Outbox
+	var untrackedOrganizationRepo *postgres.UntrackedOrganizationStore
+	var untrackedOrganizationExecutor ports.UntrackedOrganizationExecutionRepository
 	var notifySvc *notify.Dispatcher
 
 	if a.dbPool != nil {
@@ -335,17 +362,28 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		settingsSvc = settings.NewService(postgres.NewSettingsStore(a.dbPool, a.idgen), crypto.NewSettingsCipher(masterKey))
 		queue = jobs.NewQueue(a.dbPool, a.idgen, a.clock)
 		ob = outbox.New(a.dbPool, a.idgen, a.clock)
+		a.enableWebPush(ob)
 		notifySvc = notify.NewDispatcher(postgres.NewNotificationChannelReader(a.dbPool), a.idgen, a.clock, ob, postgres.NewNotificationChannelStore(a.dbPool, a.idgen))
-		notifySvc.SetClientFactory(crypto.NewSecretProtector(masterKey), notificationClient)
+		notifySvc.SetClientFactory(crypto.NewSecretProtector(masterKey), func(kind string, c notify.ChannelConfig) (ports.Notifier, error) {
+			return notificationClientWithHTTP(kind, c, a.notificationHTTPClient, a.clock)
+		})
 		acqSvc = acquisition.NewService(postgres.NewAcquisitionStore(a.dbPool, a.idgen, a.clock, acquisition.SelectMovieRound))
 		acqSvc.SetRequirementRepository(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen))
-		transferSvc = transfer.NewService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem()))
+		transferSvc = transfer.NewService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes))
 		subSvcStore := postgres.NewSubscriptionIntentStore(a.dbPool, a.idgen)
 		subSvc = subscription.NewService(subSvcStore, subSvcStore, postgres.NewSubscriptionControlStore(a.dbPool, a.idgen), subSvcStore)
 		polSvc = policy.NewService(postgres.NewPolicyStore(a.dbPool, a.idgen))
 
 		downloadRepo := downloadstore.NewRepositoryWithDownloadRates(a.dbPool, a.idgen, masterKey)
+		downloadWatchRepo = postgres.NewDownloadWatchStore(a.dbPool)
+		downloadWatchObserver = download.NewWatchObserver(downloadRepo)
+		completeTVWatchRepo = postgres.NewCompleteTVWatchStore(a.dbPool, a.idgen, a.clock)
+		completeTVHintObserver = download.NewCompleteTVHintObserver(postgres.NewCompleteTVTrackingRuntimeStore(a.dbPool, a.idgen))
+		automaticTVWatchStore := postgres.NewAutomaticTVWatchStore(a.dbPool, a.idgen, a.clock)
+		automaticTVWatchRepo = automaticTVWatchStore
+		automaticTVHintObserver = download.NewAutomaticTVHintObserver(automaticTVWatchStore)
 		downloadRepo.SetIndexerConfigurationDecoder(a.indexerDecoder)
+		downloadRepo.SetCompleteTVTrackingHintFilesystem(rootfs.NewFilesystem())
 		downloadRepo.SetTorrentSource(func(kind, baseURL, credential string) ports.IndexerClient {
 			switch kind {
 			case "rss":
@@ -378,6 +416,16 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 			return fmt.Errorf("initialize upgrade tracking: %w", trackingErr)
 		}
 		upgradeTrackingRuntime, upgradeTrackingRepo = trackingRuntime, tracker
+		upgradeWatchStore, watchErr := postgres.NewMovieUpgradeWatchStore(trackingRuntime, a.clock)
+		if watchErr != nil {
+			return fmt.Errorf("initialize upgrade watch: %w", watchErr)
+		}
+		movieUpgradeWatchRepo, movieUpgradeHintScheduler = upgradeWatchStore, upgradeWatchStore
+		untrackedDiscoveryRepo = postgres.NewUntrackedDiscoveryStore(a.dbPool, a.idgen, a.clock)
+		untrackedDiscoverySvc = library.NewUntrackedDiscoveryService(untrackedDiscoveryRepo, rootfs.NewFilesystem())
+		untrackedReviewRepo = postgres.NewUntrackedReviewStore(a.dbPool, a.idgen, a.clock)
+		untrackedOrganizationRepo = postgres.NewUntrackedOrganizationStore(a.dbPool, a.idgen, a.clock)
+		untrackedOrganizationExecutor = transferstore.NewUntrackedOrganizationExecutorWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes)
 		upgradeSend, err = a.movieUpgradeSendServices(downloadRepo)
 		if err != nil {
 			return fmt.Errorf("initialize upgrade send: %w", err)
@@ -394,6 +442,9 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		searchSvc = usecaseSearch.NewService(postgres.NewSearchExecutionStore(a.dbPool, a.indexerDecoder), a.idgen, crypto.NewSecretProtector(masterKey))
 		searchSvc.SetEndpointRepository(postgres.NewSearchEndpointStore(a.dbPool))
 		automaticTVRounds = postgres.NewAutomaticTVRoundStore(a.dbPool, a.idgen)
+		if a.cfg.DownloadRouting.IsEnabled() {
+			automaticTVRounds = postgres.NewAutomaticTVRoundStoreWithRouting(a.dbPool, a.idgen, a.cfg.DownloadRouting.RulesForSelection())
+		}
 		automaticTVFinalizer = postgres.NewAutomaticTVAcquisitionStore(a.dbPool, a.idgen, acquisition.SelectAutomaticTVEpisode)
 		searchSvc.SetAutomaticTVRoundRepository(automaticTVRounds)
 		searchSvc.SetClientFactory(newIndexerClient)
@@ -411,50 +462,90 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		searchSvc.SetHealthRepository(healthStore)
 		healthSvc = usecaseSearch.NewHealthService(healthStore, searchSvc)
 		evaluator := subscription.NewEvaluator(postgres.NewWantedProjectionStore(a.dbPool))
-		coord := usecaseSearch.NewRoundCoordinator(postgres.NewSearchRoundStore(a.dbPool, a.idgen), a.clock, acqSvc)
+		movieRounds := postgres.NewSearchRoundStore(a.dbPool, a.idgen)
+		if a.cfg.DownloadRouting.IsEnabled() {
+			movieRounds = postgres.NewSearchRoundStoreWithRouting(a.dbPool, a.idgen, a.cfg.DownloadRouting.RulesForSelection())
+		}
+		coord := usecaseSearch.NewRoundCoordinator(movieRounds, a.clock, acqSvc)
 		automaticCoord := usecaseSearch.NewAutomaticRoundCoordinator(coord, automaticTVRounds)
 		scheduler = usecaseScheduler.NewAutoFulfillScheduler(postgres.NewEvaluationScheduleStore(a.dbPool), evaluator, automaticCoord, polSvc)
 	}
 
 	metaProvider := &dynamicTMDBProvider{settingsSvc: settingsSvc, httpClient: a.metadataHTTPClient, budget: budget.NewMetadataBudget(a.clock)}
+	var untrackedReviewRunner *library.UntrackedReviewRunner
+	if untrackedReviewRepo != nil {
+		untrackedReviewRunner = library.NewUntrackedReviewRunner(untrackedReviewRepo, rootfs.NewFilesystem(), metaProvider, metaProvider)
+	}
 	var sidecarSvc *metadatasidecar.Service
 	var subtitleSvc *subtitle.Service
 	var doubanWishRepo ports.DoubanWishSyncRepository
 	var doubanWishSvc *watchlist.SyncService
+	var personFollowRepo ports.PersonFollowSyncRepository
+	var personFollowSvc *personfollow.SyncService
 	var statsRepo ports.SiteAccountStatsRepository
 	var siteStatsSvc mediaSidecarExecutor
 	var checkinRepo ports.SiteCheckinRepository
 	var siteCheckinSvc mediaSidecarExecutor
+	var cookieCloudRepo ports.CookieCloudSyncRepository
+	var cookieCloudSvc mediaSidecarExecutor
+	var seedingRepo seedingScheduler
+	var seedingSvc mediaSidecarExecutor
+
+	var globalRatesRepo ports.DownloadGlobalRatesRepository
+	var globalRatesSvc mediaSidecarExecutor
 	if a.dbPool != nil {
 		statsRepo = postgres.NewSiteAccountStatsStore(a.dbPool, a.idgen, a.indexerDecoder)
 		checkinRepo = postgres.NewSiteCheckinStore(a.dbPool, a.idgen, a.indexerDecoder)
+		cookieCloudRepo = postgres.NewCookieCloudSyncStore(a.dbPool, a.idgen, a.indexerDecoder, crypto.NewSecretProtector(masterKey))
 	}
 	if queue != nil && len(masterKey) > 0 {
 		siteStatsSvc = siteusecase.NewAccountStatsCollector(statsRepo, &siteAccountStatsClientBuilder{httpClient: a.metadataHTTPClient, clock: a.clock})
 		siteCheckinSvc = siteusecase.NewCheckinRunner(checkinRepo, &siteCheckinClientBuilder{httpClient: a.metadataHTTPClient, clock: a.clock})
+		cookieCloudSvc = cookiecloudusecase.NewRunner(cookieCloudRepo, cookiecloudadapter.NewClient(a.metadataHTTPClient))
+		seedingRepo = postgres.NewSeedingScheduleStore(a.dbPool, a.idgen)
+		seedingSvc = seedingusecase.NewRunner(postgres.NewSeedingExecutionStore(a.dbPool, a.idgen), &seedingClientFactory{sources: postgres.NewSeedingClientSourceStore(a.dbPool, a.indexerDecoder)})
+	}
+	if queue != nil && len(masterKey) > 0 && a.cfg.DownloadGlobalRates.Enabled {
+		globalRatesRepo = postgres.NewDownloadGlobalRatesStore(a.dbPool, a.idgen, a.indexerDecoder)
+		globalRatesSvc = downloadmetrics.NewService(globalRatesRepo, downloadGlobalRatesBuilder{}, a.clock)
 	}
 	if queue != nil && len(masterKey) > 0 {
 		doubanWishRepo = postgres.NewDoubanWishSyncStore(a.dbPool, a.idgen)
 		creator := &doubanWishSubscriptionCreator{pool: a.dbPool, ids: a.idgen, provider: metaProvider, episodes: metaProvider, protector: crypto.NewSecretProtector(masterKey)}
 		doubanWishSvc = watchlist.NewSyncService(doubanWishRepo, douban.NewWishClient("", a.metadataHTTPClient), metaProvider, creator)
+		personFollowRepo = postgres.NewPersonFollowSyncStore(a.dbPool, a.idgen)
+		personCreator := &personFollowSubscriptionCreator{pool: a.dbPool, ids: a.idgen, provider: metaProvider, episodes: metaProvider, protector: crypto.NewSecretProtector(masterKey)}
+		personFollowSvc = personfollow.NewSyncService(personFollowRepo, metaProvider, personCreator)
 	}
 	if queue != nil {
-		sidecarSvc = metadatasidecar.NewService(sidecarstore.NewRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), metaProvider, tmdbartwork.New(a.metadataHTTPClient, metaProvider.budget))
+		sidecarSvc = metadatasidecar.NewService(sidecarstore.NewRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), metaProvider, tmdbartwork.New(a.metadataHTTPClient, metaProvider.budget), metadatasidecar.WithArtworkSource(artworkSource{settings: settingsSvc, httpClient: a.metadataHTTPClient}, metaProvider))
 		subtitleSvc = subtitle.NewService(sidecarstore.NewSubtitleRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), shooter.NewClient("", a.metadataHTTPClient))
 	}
 	sseHub := a.sseHub
 
 	var reuseSvc *transfer.LibraryReuseService
-	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, metaProvider, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
+	tvdbFallback := tvdbSource{settings: settingsSvc, httpClient: a.metadataHTTPClient, identity: metaProvider, resolver: metaProvider}
+	browserMetadata := &tvdbBrowseProvider{MetadataProvider: metaProvider, translations: metaProvider, source: tvdbFallback}
+	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, browserMetadata, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
 	serverHandler.SetDoubanSyncConfigService(watchlist.NewConfigService(postgres.NewDoubanSyncConfigStore(a.dbPool, a.idgen)))
 	serverHandler.SetSiteAccountStatsConfigService(siteusecase.NewAccountStatsConfigService(postgres.NewSiteAccountStatsConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
 	serverHandler.SetSiteCheckinConfigService(siteusecase.NewCheckinConfigService(postgres.NewSiteCheckinConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
+	serverHandler.SetCookieCloudConfigService(cookiecloudusecase.NewConfigService(postgres.NewCookieCloudConfigStore(a.dbPool, a.idgen), crypto.NewSecretProtector(masterKey)))
+	serverHandler.SetSeedingConfigService(seedingusecase.NewConfigService(postgres.NewSeedingConfigStore(a.dbPool, a.idgen)))
+	serverHandler.SetUntrackedScopeService(library.NewUntrackedScopeService(postgres.NewUntrackedScopeStore(a.dbPool, a.idgen, a.clock), rootfs.NewFilesystem()))
+	serverHandler.SetUntrackedDiscoveryService(library.NewUntrackedDiscoveryReader(untrackedDiscoveryRepo))
+	serverHandler.SetUntrackedReviewService(library.NewUntrackedReviewService(untrackedReviewRepo, rootfs.NewFilesystem()))
+	serverHandler.SetUntrackedOrganizationService(library.NewUntrackedOrganizationService(untrackedOrganizationRepo, rootfs.NewFilesystem()))
 	serverHandler.SetSiteCheckinHistoryService(siteusecase.NewCheckinHistoryReader(postgres.NewSiteCheckinHistoryStore(a.dbPool)))
 	serverHandler.SetSiteAccountStatsService(siteusecase.NewAccountStatsReader(statsRepo))
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
 	serverHandler.SetDoubanRankingService(ranking.NewService(douban.NewClient("", a.metadataHTTPClient, douban.WithCredentialSource(doubanCredentials(settingsSvc)), douban.WithClock(a.clock)), metaProvider, a.clock))
+	serverHandler.SetBangumiCalendarService(calendarusecase.NewService(bangumi.NewClient("", a.metadataHTTPClient), a.clock))
 	serverHandler.SetTokenManagementService(auth.NewTokenManagementService(postgres.NewTokenManagementStore(a.dbPool, a.idgen), crypto.ReadTokenIssuer{}, a.clock))
 	serverHandler.SetNotificationDispatcher(notifySvc)
+	serverHandler.SetNotificationTestService(notify.NewTestService(postgres.NewNotificationTestStore(a.dbPool, a.idgen, ob)))
+	serverHandler.SetWebPushService(notify.NewWebPushService(postgres.NewWebPushStore(a.dbPool, a.idgen, ob), crypto.NewSecretProtector(masterKey), a.cfg.WebPush.PublicKey, a.cfg.WebPush.Enabled))
+	serverHandler.SetPersonFollowService(personfollow.NewConfigService(postgres.NewPersonFollowStore(a.dbPool, a.idgen, ob)))
 	serverHandler.SetFileMappingService(mediausecase.NewFileMappingService(postgres.NewFileMappingStore(a.dbPool, a.idgen)))
 	serverHandler.SetDeliveryManagementService(notify.NewDeliveryManagementService(postgres.NewDeliveryManagementStore(a.dbPool, a.idgen)))
 	serverHandler.SetChannelStateService(notify.NewChannelStateService(postgres.NewChannelStateStore(a.dbPool, a.idgen)))
@@ -467,17 +558,21 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		indexerManagementStore := postgres.NewIndexerManagementStore(a.dbPool, a.idgen, a.indexerDecoder)
 		serverHandler.SetIndexerManagementServices(usecaseSearch.NewIndexerManagementService(indexerManagementStore, crypto.NewSecretProtector(masterKey)), usecaseSearch.NewIndexerManagementReceiptService(indexerManagementStore))
 		serverHandler.SetWithdrawalService(acquisition.NewWithdrawalService(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen)))
-		serverHandler.SetTransferRecoveryService(transfer.NewRecoveryService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem())))
-		serverHandler.SetCompleteTVOrganizationPreviewService(transfer.NewCompleteTVOrganizationPreviewService(transferstore.NewRepository(a.dbPool, a.idgen, nil, nil)))
-		serverHandler.SetTransferRevisionService(transfer.NewRevisionService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem())))
-		reuseSvc = transfer.NewLibraryReuseService(transferstore.NewRepository(a.dbPool, a.idgen, ob, rootfs.NewFilesystem()))
+		serverHandler.SetTransferRecoveryService(transfer.NewRecoveryService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes)))
+		serverHandler.SetCompleteTVOrganizationPreviewService(transfer.NewCompleteTVOrganizationPreviewService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, nil, nil, a.cfg.Organization.MinMediaBytes)))
+		serverHandler.SetTransferRevisionService(transfer.NewRevisionService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes)))
+		reuseSvc = transfer.NewLibraryReuseService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes))
 		serverHandler.SetLibraryReuseService(reuseSvc)
 		serverHandler.SetMediaScrapeService(mediascrape.NewService(scrapestore.NewRepository(a.dbPool), a.idgen))
+		serverHandler.SetAuditTimelineService(audit.NewTimelineService(postgres.NewAuditTimelineStore(a.dbPool)))
 		serverHandler.SetRootSelectionService(subscription.NewRootSelectionService(postgres.NewLibraryRootSelectionStore(a.dbPool)))
 		serverHandler.SetSubscriptionCreationService(subscription.NewSubscriptionCreationService(postgres.NewSubscriptionCreationStore(a.dbPool, a.idgen), metaProvider, metaProvider, crypto.NewSecretProtector(masterKey)))
+		serverHandler.SetMediaRequestService(subscription.NewMediaRequestService(postgres.NewMediaRequestStore(a.dbPool, a.idgen, a.clock), func(fence ports.MediaRequestApprovalFence) ports.SubscriptionCreator {
+			return subscription.NewSubscriptionCreationService(postgres.NewMediaRequestApprovalCreationStore(a.dbPool, a.idgen, fence), metaProvider, metaProvider, crypto.NewSecretProtector(masterKey))
+		}))
 		serverHandler.SetCandidateExplanationService(usecaseSearch.NewCandidateExplanationService(postgres.NewCandidateExplanationStore(a.dbPool)))
 		serverHandler.SetControlService(subscription.NewControlService(postgres.NewSubscriptionControlStore(a.dbPool, a.idgen)))
-		serverHandler.SetTVRefreshService(subscription.NewTVRefreshService(postgres.NewTVRefreshStore(a.dbPool, a.idgen), metaProvider))
+		serverHandler.SetTVRefreshService(subscription.NewTVRefreshServiceWithSupplements(postgres.NewTVRefreshStore(a.dbPool, a.idgen), metaProvider, tvdbFallback))
 		sourceRepo := postgres.NewEpisodeSourceStore(postgres.NewTVRefreshStore(a.dbPool, a.idgen))
 		sourceService := subscription.NewEpisodeSourceService(sourceRepo, metaProvider)
 		serverHandler.SetEpisodeSourceService(sourceService)
@@ -525,6 +620,79 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 
 	// Own the worker until shutdown, including in-flight physical downloader I/O.
 	workerCtx, cancelWorker := context.WithCancel(ctx)
+	organizationWake := make(chan struct{}, 1)
+	upgradeTrackingWake := make(chan struct{}, 1)
+	untrackedDiscoveryWake := make(chan struct{}, 1)
+	untrackedDiscoveryDone, untrackedDiscoveryWatchDone := make(chan struct{}), make(chan struct{})
+	if queue != nil && untrackedDiscoveryRepo != nil && untrackedDiscoverySvc != nil {
+		go func() {
+			defer close(untrackedDiscoveryDone)
+			a.runUntrackedDiscoveryWorker(workerCtx, queue, untrackedDiscoveryRepo, untrackedDiscoverySvc, untrackedDiscoveryWake)
+		}()
+		go func() {
+			defer close(untrackedDiscoveryWatchDone)
+			a.runDownloadWatchWorker(workerCtx, &untrackedDiscoveryWatch{scheduler: untrackedDiscoveryRepo}, &untrackedDiscoveryHintObserver{scheduler: untrackedDiscoveryRepo, wake: untrackedDiscoveryWake}, rootfs.NewFilesystem(), nil)
+		}()
+	} else {
+		close(untrackedDiscoveryDone)
+		close(untrackedDiscoveryWatchDone)
+	}
+	untrackedReviewDone := make(chan struct{})
+	if queue != nil && untrackedReviewRepo != nil && untrackedReviewRunner != nil {
+		go func() {
+			defer close(untrackedReviewDone)
+			a.runUntrackedReviewWorker(workerCtx, queue, untrackedReviewRepo, untrackedReviewRunner)
+		}()
+	} else {
+		close(untrackedReviewDone)
+	}
+	untrackedOrganizationDone := make(chan struct{})
+	if queue != nil && untrackedOrganizationExecutor != nil {
+		go func() {
+			defer close(untrackedOrganizationDone)
+			a.runUntrackedOrganizationWorker(workerCtx, queue, untrackedOrganizationExecutor)
+		}()
+	} else {
+		close(untrackedOrganizationDone)
+	}
+	movieUpgradeWatchDone := make(chan struct{})
+	if queue != nil && movieUpgradeWatchRepo != nil && movieUpgradeHintScheduler != nil {
+		upgradeHintObserver := download.NewMovieUpgradeHintObserver(movieUpgradeHintScheduler, rootfs.NewFilesystem(), upgradeTrackingWake)
+		go func() {
+			defer close(movieUpgradeWatchDone)
+			a.runDownloadWatch(workerCtx, movieUpgradeWatchRepo, upgradeHintObserver, rootfs.NewFilesystem(), nil, downloadWatchOptions{observationTimeout: 35 * time.Second})
+		}()
+	} else {
+		close(movieUpgradeWatchDone)
+	}
+	automaticTVWatchDone := make(chan struct{})
+	if queue != nil && automaticTVWatchRepo != nil && automaticTVHintObserver != nil {
+		go func() {
+			defer close(automaticTVWatchDone)
+			a.runDownloadWatchWorker(workerCtx, automaticTVWatchRepo, automaticTVHintObserver, rootfs.NewFilesystem(), nil)
+		}()
+	} else {
+		close(automaticTVWatchDone)
+	}
+	completeTVTrackingWake := make(chan struct{}, 1)
+	completeTVWatchDone := make(chan struct{})
+	if queue != nil && completeTVWatchRepo != nil && completeTVHintObserver != nil {
+		go func() {
+			defer close(completeTVWatchDone)
+			a.runDownloadWatchWorker(workerCtx, completeTVWatchRepo, completeTVHintWakeObserver{delegate: completeTVHintObserver, wake: completeTVTrackingWake}, rootfs.NewFilesystem(), nil)
+		}()
+	} else {
+		close(completeTVWatchDone)
+	}
+	downloadWatchDone := make(chan struct{})
+	if queue != nil && downloadWatchRepo != nil && downloadWatchObserver != nil {
+		go func() {
+			defer close(downloadWatchDone)
+			a.runDownloadWatchWorker(workerCtx, downloadWatchRepo, downloadWatchObserver, rootfs.NewFilesystem(), organizationWake)
+		}()
+	} else {
+		close(downloadWatchDone)
+	}
 	workerDone := make(chan struct{})
 	completeTVDone := make(chan struct{})
 	automaticTVDownloadDone := make(chan struct{})
@@ -536,6 +704,16 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	mediaSidecarDone := make(chan struct{})
 	mediaSubtitleDone := make(chan struct{})
 	doubanWishDone := make(chan struct{})
+	personFollowDone := make(chan struct{})
+	globalRatesDone := make(chan struct{})
+	if globalRatesSvc != nil {
+		go func() {
+			defer close(globalRatesDone)
+			a.runDownloadGlobalRatesWorker(workerCtx, queue, globalRatesRepo, globalRatesSvc)
+		}()
+	} else {
+		close(globalRatesDone)
+	}
 	siteStatsDone := make(chan struct{})
 	if siteStatsSvc != nil {
 		go func() {
@@ -554,6 +732,21 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	} else {
 		close(siteCheckinDone)
 	}
+	seedingDone := make(chan struct{})
+	if seedingSvc != nil {
+		go func() { defer close(seedingDone); a.runSeedingWorker(workerCtx, queue, seedingRepo, seedingSvc) }()
+	} else {
+		close(seedingDone)
+	}
+	cookieCloudDone := make(chan struct{})
+	if cookieCloudSvc != nil {
+		go func() {
+			defer close(cookieCloudDone)
+			a.runCookieCloudWorker(workerCtx, queue, cookieCloudRepo, cookieCloudSvc)
+		}()
+	} else {
+		close(cookieCloudDone)
+	}
 	if doubanWishSvc != nil {
 		go func() {
 			defer close(doubanWishDone)
@@ -562,13 +755,21 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	} else {
 		close(doubanWishDone)
 	}
+	if personFollowSvc != nil {
+		go func() {
+			defer close(personFollowDone)
+			a.runPersonFollowWorker(workerCtx, queue, personFollowRepo, personFollowSvc)
+		}()
+	} else {
+		close(personFollowDone)
+	}
 	outboxDone := make(chan struct{})
 	searchDone := make(chan struct{})
 	libraryDone := make(chan struct{})
 	if queue != nil {
 		go func() {
 			defer close(automaticTVDownloadDone)
-			a.runAutomaticTVDownloadWorkers(workerCtx, queue, automaticTVRecovery, automaticTVSender, automaticTVObservationRepo, automaticTVObserver)
+			a.runAutomaticTVDownloadWorkers(workerCtx, queue, automaticTVRecovery, automaticTVSender, automaticTVObservationRepo, automaticTVObserver, organizationWake)
 		}()
 		go func() {
 			defer close(upgradeOrganizationDone)
@@ -576,7 +777,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		}()
 		go func() {
 			defer close(upgradeTrackingDone)
-			a.runMovieUpgradeTrackingWorker(workerCtx, queue, upgradeTrackingRuntime, upgradeTrackingRepo)
+			a.runMovieUpgradeTrackingWorker(workerCtx, queue, upgradeTrackingRuntime, upgradeTrackingRepo, upgradeTrackingWake)
 		}()
 		go func() {
 			defer close(upgradeSendDone)
@@ -588,7 +789,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		}()
 		go func() {
 			defer close(completeTVDone)
-			a.runCompleteTVWorker(workerCtx, queue, completeTV, postgres.NewCompleteTVObservationStore(a.dbPool, a.idgen), postgres.NewCompleteTVRuntimeStore(a.dbPool, a.idgen), postgres.NewCompleteTVTrackingStoreWithDownloadRates(a.dbPool, a.idgen), torrent.Inspector{}, postgres.NewCompleteTVTrackingRuntimeStore(a.dbPool, a.idgen))
+			a.runCompleteTVWorker(workerCtx, queue, completeTV, postgres.NewCompleteTVObservationStore(a.dbPool, a.idgen), postgres.NewCompleteTVRuntimeStore(a.dbPool, a.idgen), postgres.NewCompleteTVTrackingStoreWithDownloadRates(a.dbPool, a.idgen), torrent.Inspector{}, postgres.NewCompleteTVTrackingRuntimeStore(a.dbPool, a.idgen), completeTVTrackingWake)
 		}()
 		go func() {
 			defer close(workerDone)
@@ -596,7 +797,11 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		}()
 		go func() {
 			defer close(organizationDone)
-			a.runOrganizationWorker(workerCtx, queue, transferSvc, reuseSvc)
+			if downloadWatchRepo == nil {
+				a.runOrganizationWorker(workerCtx, queue, transferSvc, reuseSvc)
+			} else {
+				a.runOrganizationWorkerWithWake(workerCtx, queue, transferSvc, organizationWake, reuseSvc)
+			}
 		}()
 		go func() {
 			defer close(mediaSidecarDone)
@@ -631,7 +836,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		cancelWorker()
 		budget, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		waitRuntime(budget, a.logger, workerDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, siteStatsDone, siteCheckinDone, outboxDone, searchDone, libraryDone)
+		waitRuntime(budget, a.logger, workerDone, downloadWatchDone, completeTVWatchDone, automaticTVWatchDone, movieUpgradeWatchDone, untrackedDiscoveryDone, untrackedDiscoveryWatchDone, untrackedReviewDone, untrackedOrganizationDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, personFollowDone, globalRatesDone, siteStatsDone, siteCheckinDone, cookieCloudDone, seedingDone, outboxDone, searchDone, libraryDone)
 	}
 	defer stopWorker()
 

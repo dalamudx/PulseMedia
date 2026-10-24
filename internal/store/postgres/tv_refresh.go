@@ -101,7 +101,13 @@ func (s *TVRefreshStore) ReadTVRefreshContext(ctx context.Context, a *ports.Acto
 	}
 	return input, nil, nil
 }
-func (s *TVRefreshStore) ApplyTVRefresh(ctx context.Context, a *ports.Actor, hint ports.TVRefreshContext, c ports.TVRefreshCommand, seasons []ports.TVSeasonMetadata, key, hash string) (out *ports.TVRefreshReceipt, err error) {
+func (s *TVRefreshStore) ApplyTVRefresh(ctx context.Context, a *ports.Actor, hint ports.TVRefreshContext, c ports.TVRefreshCommand, seasons []ports.TVSeasonMetadata, key, hash string) (*ports.TVRefreshReceipt, error) {
+	return s.applyTVRefresh(ctx, a, hint, c, seasons, nil, key, hash)
+}
+func (s *TVRefreshStore) ApplyTVRefreshWithSupplements(ctx context.Context, a *ports.Actor, hint ports.TVRefreshContext, c ports.TVRefreshCommand, seasons []ports.TVSeasonMetadata, supplements []ports.TVDBSeasonSupplement, key, hash string) (*ports.TVRefreshReceipt, error) {
+	return s.applyTVRefresh(ctx, a, hint, c, seasons, supplements, key, hash)
+}
+func (s *TVRefreshStore) applyTVRefresh(ctx context.Context, a *ports.Actor, hint ports.TVRefreshContext, c ports.TVRefreshCommand, seasons []ports.TVSeasonMetadata, supplements []ports.TVDBSeasonSupplement, key, hash string) (out *ports.TVRefreshReceipt, err error) {
 	if a == nil {
 		return nil, ports.ErrUnauthorized
 	}
@@ -200,6 +206,10 @@ func (s *TVRefreshStore) ApplyTVRefresh(ctx context.Context, a *ports.Actor, hin
 	if input.MediaID != hint.MediaID || m.MetadataVersion != hint.MediaVersion || input.TMDBID != hint.TMDBID || input.IntentVersion != c.ExpectedVersion {
 		return nil, ports.ErrSubscriptionBindingsConflict
 	}
+	proofs, existingUnits, e := prepareTVDBRefresh(ctx, q, hint, seasons, supplements)
+	if e != nil {
+		return nil, e
+	}
 	count := 0
 	if len(seasons) != len(c.Seasons) {
 		return nil, ports.ErrInvalidSubscriptionBindings
@@ -217,7 +227,8 @@ func (s *TVRefreshStore) ApplyTVRefresh(ctx context.Context, a *ports.Actor, hin
 		seenSeasons[season.SeasonNumber] = true
 		numbers := []int32{}
 		seen := map[int]bool{}
-		if !season.Complete || len(season.Episodes) == 0 {
+		proof, supplemented := proofs[season.SeasonNumber]
+		if (!season.Complete && !supplemented) || (season.Complete && supplemented) || len(season.Episodes) == 0 {
 			return nil, ports.ErrInvalidSubscriptionBindings
 		}
 		for _, episode := range season.Episodes {
@@ -243,15 +254,25 @@ func (s *TVRefreshStore) ApplyTVRefresh(ctx context.Context, a *ports.Actor, hin
 				}
 				absolute = pgtype.Int4{Int32: int32(*episode.AbsoluteNumber), Valid: true}
 			}
-			u, e := q.ApplyTVEpisodeMetadata(ctx, db.ApplyTVEpisodeMetadataParams{ID: s.ids.NewUUID(), MediaID: hint.MediaID, UnitKey: media.FormatEpisodeUnitKey(season.SeasonNumber, episode.EpisodeNumber), SeasonNumber: pgtype.Int4{Int32: int32(season.SeasonNumber), Valid: true}, EpisodeNumber: pgtype.Int4{Int32: int32(episode.EpisodeNumber), Valid: true}, AbsoluteNumber: absolute, AirDate: date})
-			if e != nil {
-				return nil, e
+			unitID := s.ids.NewUUID()
+			unitKey := media.FormatEpisodeUnitKey(season.SeasonNumber, episode.EpisodeNumber)
+			if existing, ok := existingUnits[unitKey]; supplemented && ok {
+				if existing.Retired || !existing.TmdbEpisodeID.Valid || existing.TmdbEpisodeID.Int64 != episode.TMDBEpisodeID || !existing.TmdbSeriesID.Valid || existing.TmdbSeriesID.Int64 != hint.TMDBID || !existing.SeasonNumber.Valid || int(existing.SeasonNumber.Int32) != season.SeasonNumber || !existing.EpisodeNumber.Valid || int(existing.EpisodeNumber.Int32) != episode.EpisodeNumber {
+					return nil, ports.ErrSubscriptionBindingsConflict
+				}
+				unitID = existing.ID
+			} else {
+				u, applyErr := q.ApplyTVEpisodeMetadata(ctx, db.ApplyTVEpisodeMetadataParams{ID: unitID, MediaID: hint.MediaID, UnitKey: unitKey, SeasonNumber: pgtype.Int4{Int32: int32(season.SeasonNumber), Valid: true}, EpisodeNumber: pgtype.Int4{Int32: int32(episode.EpisodeNumber), Valid: true}, AbsoluteNumber: absolute, AirDate: date})
+				if applyErr != nil {
+					return nil, applyErr
+				}
+				unitID = u.ID
 			}
 			if episode.TMDBEpisodeID > 0 {
-				if _, e = q.BindTMDBEpisodeIdentity(ctx, db.BindTMDBEpisodeIdentityParams{UnitID: u.ID, ExternalID: episode.TMDBEpisodeID, TmdbSeriesID: hint.TMDBID}); e != nil {
+				if _, e = q.BindTMDBEpisodeIdentity(ctx, db.BindTMDBEpisodeIdentityParams{UnitID: unitID, ExternalID: episode.TMDBEpisodeID, TmdbSeriesID: hint.TMDBID}); e != nil {
 					return nil, e
 				}
-				identity, e := q.GetTMDBEpisodeIdentityForUnit(ctx, u.ID)
+				identity, e := q.GetTMDBEpisodeIdentityForUnit(ctx, unitID)
 				if errors.Is(e, pgx.ErrNoRows) {
 					return nil, ports.ErrSubscriptionBindingsConflict
 				}
@@ -262,10 +283,17 @@ func (s *TVRefreshStore) ApplyTVRefresh(ctx context.Context, a *ports.Actor, hin
 					return nil, ports.ErrSubscriptionBindingsConflict
 				}
 			}
+			if supplemented {
+				if e = persistTVDBEpisodeEvidence(ctx, q, hint.MediaID, unitID, proof, episode); e != nil {
+					return nil, e
+				}
+			}
 			count++
 		}
-		if e = q.RetireMissingTVSeasonUnits(ctx, db.RetireMissingTVSeasonUnitsParams{MediaID: hint.MediaID, SeasonNumber: pgtype.Int4{Int32: int32(season.SeasonNumber), Valid: true}, Column3: numbers}); e != nil {
-			return nil, e
+		if !supplemented {
+			if e = q.RetireMissingTVSeasonUnits(ctx, db.RetireMissingTVSeasonUnitsParams{MediaID: hint.MediaID, SeasonNumber: pgtype.Int4{Int32: int32(season.SeasonNumber), Valid: true}, Column3: numbers}); e != nil {
+				return nil, e
+			}
 		}
 	}
 	m, e = q.AdvanceTVMediaMetadataVersion(ctx, hint.MediaID)

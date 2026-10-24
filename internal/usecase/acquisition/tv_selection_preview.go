@@ -176,7 +176,7 @@ func PreviewTVSelection(ctx context.Context, actor *ports.Actor, in TVSelectionP
 			exclusion(f.CandidateID, "quality_rejected")
 			continue
 		}
-		candidate.Score = q.Score
+		candidate.Score = q.SelectionScore()
 		packs = append(packs, candidate)
 	}
 	singles := []quality.EpisodeSelectionCandidate{}
@@ -196,7 +196,7 @@ func PreviewTVSelection(ctx context.Context, actor *ports.Actor, in TVSelectionP
 			exclusion(f.CandidateID, "quality_rejected")
 			continue
 		}
-		singles = append(singles, quality.EpisodeSelectionCandidate{ID: f.CandidateID.String(), Episode: units[r.UnitID].EpisodeNumber, Score: q.Score})
+		singles = append(singles, quality.EpisodeSelectionCandidate{ID: f.CandidateID.String(), Episode: units[r.UnitID].EpisodeNumber, Score: q.SelectionScore()})
 	}
 	out.Decision, err = quality.ChooseTVSelection(in.PackPolicy, expected, missing, packs, singles)
 	if err != nil {

@@ -5,8 +5,18 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/dalamudx/PulseMedia/internal/ports"
+	"net/http"
+	"strings"
 )
 
+func settingsNoStore(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/api/v1/settings" || strings.HasPrefix(r.URL.Path, "/api/v1/settings/") {
+			w.Header().Set("Cache-Control", "private, no-store")
+		}
+		next.ServeHTTP(w, r)
+	})
+}
 func (s *ServerHandler) GetSettingCommand(ctx context.Context, r GetSettingCommandRequestObject) (GetSettingCommandResponseObject, error) {
 	id := GetRequestID(ctx)
 	a := GetActor(ctx)

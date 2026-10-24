@@ -79,7 +79,7 @@ func (q *Queries) GuardOutboxDelivery(ctx context.Context, arg GuardOutboxDelive
 const listRuntimeOutboxConsumers = `-- name: ListRuntimeOutboxConsumers :many
 SELECT DISTINCT consumer FROM outbox_delivery
 WHERE state IN ('pending','delivering')
- AND (consumer LIKE 'notify:%' OR consumer LIKE 'mediaserver.refresh:%')
+ AND (consumer LIKE 'notify:%' OR consumer LIKE 'mediaserver.refresh:%' OR consumer LIKE 'webpush:%')
 ORDER BY consumer
 `
 

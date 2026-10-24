@@ -25,7 +25,7 @@ export type EndpointConfiguration = View & {
 const blankDraft = (family: EndpointFamily): EndpointDraft => ({ name: "", type: family === "download_client" ? "qbittorrent" : "jellyfin", url: "", username: "", password: "", api_key: "" });
 const initial = (family: EndpointFamily): View => ({ items: [], draft: blankDraft(family), editing: null, listStatus: "loading", busy: null, gate: "none", message: "", feedbackKind: "status", probes: {} });
 const draftOf = (item: EndpointItem): EndpointDraft => ({ name: item.name, type: item.type, url: item.url, username: item.username, password: "", api_key: "" });
-const downloadType = (value: string): value is "qbittorrent" | "transmission" => value === "qbittorrent" || value === "transmission";
+const downloadType = (value: string): value is "qbittorrent" | "transmission" | "rtorrent" => value === "qbittorrent" || value === "transmission" || value === "rtorrent";
 const mediaType = (value: string): value is "jellyfin" | "emby" | "plex" => value === "jellyfin" || value === "emby" || value === "plex";
 const failureMessage = (status: number) => status === 403 ? "权限不足，请确认当前管理员账户后重新读取。" : status === 401 ? "登录已失效，请重新登录。" : status === 404 ? "配置已不存在，请重新读取。" : status === 503 ? "配置服务暂时不可用，请重新读取。" : "请求失败，请稍后重新读取。";
 

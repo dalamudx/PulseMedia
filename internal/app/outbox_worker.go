@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"errors"
+	"github.com/dalamudx/PulseMedia/internal/adapter/notify/im"
 	"github.com/dalamudx/PulseMedia/internal/adapter/notify/telegram"
 	"github.com/dalamudx/PulseMedia/internal/adapter/notify/webhook"
 	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
@@ -11,10 +12,23 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediaserver"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
 	"github.com/google/uuid"
+	"net/http"
 	"strings"
 	"sync"
 	"time"
 )
+
+func notificationClientWithHTTP(kind string, c notify.ChannelConfig, h *http.Client, clock ports.Clock) (ports.Notifier, error) {
+	switch kind {
+	case "webhook":
+		return webhook.NewClient(c.URL, c.Secret, h), nil
+	case "telegram":
+		return telegram.NewClient(c.BotToken, c.ChatID, h), nil
+	case "wechat", "dingtalk", "feishu", "bark":
+		return im.NewClient(kind, c.URL, c.Secret, h, clock, im.Artwork{URL: c.ImageURL, Key: c.ImageKey}), nil
+	}
+	return nil, ports.ErrUnavailable
+}
 
 func notificationClient(kind string, c notify.ChannelConfig) (ports.Notifier, error) {
 	switch kind {
@@ -22,6 +36,8 @@ func notificationClient(kind string, c notify.ChannelConfig) (ports.Notifier, er
 		return webhook.NewClient(c.URL, c.Secret, nil), nil
 	case "telegram":
 		return telegram.NewClient(c.BotToken, c.ChatID, nil), nil
+	case "wechat", "dingtalk", "feishu", "bark":
+		return im.NewClient(kind, c.URL, c.Secret, nil, nil, im.Artwork{URL: c.ImageURL, Key: c.ImageKey}), nil
 	}
 	return nil, ports.ErrUnavailable
 }
@@ -77,7 +93,7 @@ func (a *App) runOutboxConsumer(ctx context.Context, ob *outbox.Outbox, ms *medi
 	defer ticker.Stop()
 	for ctx.Err() == nil {
 		var permit *mediaserver.RefreshPermit
-		if kind != "notify" {
+		if kind != "notify" && kind != "webpush" {
 			var e error
 			permit, e = ms.AcquireRefreshPermit(ctx, recipient)
 			if e != nil {
@@ -106,9 +122,12 @@ func (a *App) runOutboxConsumer(ctx context.Context, ob *outbox.Outbox, ms *medi
 		}
 		if d != nil {
 			work, cancel := context.WithTimeout(ctx, 35*time.Second)
-			if kind == "notify" {
+			switch kind {
+			case "webpush":
+				e = a.processWebPushDelivery(work, ob, d.ID, recipient, owner, d.LeaseToken)
+			case "notify":
 				e = n.DispatchDelivery(work, d.ID, recipient, owner, d.LeaseToken)
-			} else {
+			default:
 				e = ms.ProcessReservedRefreshDelivery(work, permit, d.ID, recipient, owner, d.LeaseToken, "")
 			}
 			cancel()

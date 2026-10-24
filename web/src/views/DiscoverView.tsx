@@ -11,6 +11,7 @@ import { TorrentSearchModal } from "@/components/dialog/TorrentSearchModal";
 import {useInteractiveReleaseSearch} from "@/features/configuration/useInteractiveReleaseSearch";
 import { useSubscriptionCreation } from "@/features/configuration/useSubscriptionCreation";
 import { subscriptionScope } from "@/features/configuration/subscriptionCreationRecovery";
+import { BangumiCalendarPanel } from "@/features/configuration/BangumiCalendarPanel";
 
 
 
@@ -138,6 +139,7 @@ export const DiscoverView: React.FC = () => {
           </p>
         </div>
         <div className="header-actions">
+          {activeCategory !== "bangumi" && (
           <button
             type="button"
             className="btn-secondary btn-sm"
@@ -148,6 +150,7 @@ export const DiscoverView: React.FC = () => {
             <RefreshCw size={14} className={loadingFeed ? "spinner-icon" : ""} />
             <span>{loadingFeed ? "刷新中..." : "刷新数据"}</span>
           </button>
+          )}
         </div>
       </div>
 
@@ -297,9 +300,9 @@ export const DiscoverView: React.FC = () => {
         <div className="type-filter source-filter" role="tablist" aria-label="数据源选择" style={{ width: "fit-content", marginBottom: "1rem" }}>
           <button
             type="button"
-            className={`type-btn ${!isDoubanCategory(activeCategory) ? "active" : ""}`}
+            className={`type-btn ${activeCategory !== "bangumi" && !isDoubanCategory(activeCategory) ? "active" : ""}`}
             onClick={() => switchCategory("trending")}
-            aria-selected={!isDoubanCategory(activeCategory)}
+            aria-selected={activeCategory !== "bangumi" && !isDoubanCategory(activeCategory)}
           >
             <Sparkles size={14} style={{ marginRight: "0.35rem", verticalAlign: "middle" }} />
             <span>TMDB 影视流</span>
@@ -313,10 +316,11 @@ export const DiscoverView: React.FC = () => {
             <Trophy size={14} style={{ marginRight: "0.35rem", verticalAlign: "middle" }} />
             <span>豆瓣精选榜</span>
           </button>
+          <button type="button" role="tab" className={`type-btn ${activeCategory === "bangumi" ? "active" : ""}`} aria-selected={activeCategory === "bangumi"} onClick={() => switchCategory("bangumi")}>动漫新番周历</button>
         </div>
       )}
 
-      {!searched && !isDoubanCategory(activeCategory) && (
+      {!searched && activeCategory !== "bangumi" && !isDoubanCategory(activeCategory) && (
         <div className="tabs-bar" role="group" aria-label="TMDB榜单">
           <button
             className={`tab-btn ${activeCategory === "trending" ? "active" : ""}`}
@@ -407,6 +411,8 @@ export const DiscoverView: React.FC = () => {
         </div>
       )}
 
+      {!searched && activeCategory === "bangumi" && <BangumiCalendarPanel key={`${user?.id}:${user?.role}:${location.key}`} onSelect={openMediaDetail} />}
+      {!(activeCategory === "bangumi" && !searched) && <>
       {/* Genre Filter Pills with Real Live Filtering */}
       <div className="recommend-box">
         <span className="recommend-label">题材筛选（当前列表）:</span>
@@ -455,6 +461,7 @@ export const DiscoverView: React.FC = () => {
           <p>{searched || selectedGenre !== "全部" ? "可调整题材筛选或更换搜索关键词。" : "元数据源成功返回空列表，可稍后重新加载。"}</p>
         </div>
       )}
+      </>}
 
       {/* Media Detail & Season Picker Modal */}
       {showDetailModal && (
@@ -464,6 +471,12 @@ export const DiscoverView: React.FC = () => {
           onClose={() => setShowDetailModal(false)}
           onSubscribe={subscribeMedia}
           onSearchReleases={openReleaseSearch}
+          onRequestApproval={media => {
+            if (!Number.isSafeInteger(media.tmdb_id) || media.tmdb_id <= 0 || (media.media_type !== "movie" && media.media_type !== "tv")) return;
+            const query = new URLSearchParams({ media_type: media.media_type, tmdb_id: String(media.tmdb_id), title: media.title });
+            setShowDetailModal(false);
+            navigate(`/requests?${query.toString()}`);
+          }}
         />
       )}
 

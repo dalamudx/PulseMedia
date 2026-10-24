@@ -309,6 +309,14 @@ func TestAutomaticTVSourcePreservesFirstPage(t *testing.T) {
 			svc, r, c := newAutomaticTVHarness(t)
 			c.call = func(_ context.Context, q ports.TVEpisodeQuery) (*ports.IndexerPage, error) {
 				if q.Offset == 0 {
+					switch kind {
+					case "deferred":
+						r.delayErr = ports.ErrAutomaticTVSearchDeferred
+					case "wait_too_long":
+						r.delay = 9 * time.Second
+					case "wait_error":
+						r.delayErr = errors.New("private provider URL/key")
+					}
 					return automaticTVPage(q, 50, 250), nil
 				}
 				switch kind {
@@ -323,15 +331,6 @@ func TestAutomaticTVSourcePreservesFirstPage(t *testing.T) {
 				}
 				t.Fatal("continuation should not call network")
 				return nil, ports.ErrUnavailable
-			}
-			if kind == "deferred" {
-				r.delayErr = ports.ErrAutomaticTVSearchDeferred
-			}
-			if kind == "wait_too_long" {
-				r.delay = 9 * time.Second
-			}
-			if kind == "wait_error" {
-				r.delayErr = errors.New("private provider URL/key")
 			}
 			err := svc.ExecuteAutomaticTVSource(context.Background(), r.work.Task)
 			if err == nil || strings.Contains(err.Error(), "private") || r.outcome != ports.AutomaticTVSourcePartial || r.commits.Load() != 1 {

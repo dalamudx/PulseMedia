@@ -117,7 +117,7 @@ func (f sidecarFixture) destination(t *testing.T, path string) sidecarFixture {
 }
 
 func TestSidecarPublish(t *testing.T) {
-	for _, name := range []string{"movie.nfo", "tvshow.nfo", "poster.jpg"} {
+	for _, name := range []string{"movie.nfo", "tvshow.nfo", "poster.jpg", "logo.png", "clearart.png", "banner.jpg", "disc.png"} {
 		t.Run(name, func(t *testing.T) {
 			f := newSidecarFixture(t)
 			f.req.Name = name

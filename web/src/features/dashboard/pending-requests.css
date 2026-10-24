@@ -1,0 +1,10 @@
+.pending-requests-panel .pending-requests-line { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; padding-block: .75rem; }
+.pending-requests-count { min-width: 0; max-width: 100%; font-size: clamp(1.75rem, 5vw, 2.5rem); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.pending-requests-line a { text-underline-offset: .2em; }
+
+.pending-requests-panel .facts-heading { flex-wrap: wrap; gap: 1rem; }
+.pending-requests-panel button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-hover); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+.pending-requests-panel button:hover:not(:disabled) { background: var(--surface-hover); }
+.pending-requests-panel button:disabled { cursor: default; opacity: .65; }
+.pending-requests-line a { display: inline-flex; align-items: center; min-height: 44px; }
+.pending-requests-panel :is(button, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }

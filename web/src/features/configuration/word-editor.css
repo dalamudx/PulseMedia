@@ -1,0 +1,8 @@
+.custom-words-editor { min-width: 0; margin-block: 1.25rem; }
+.custom-words-editor > button { min-height: 44px; }
+.custom-word-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr) minmax(0, 1fr) auto; gap: .75rem; margin-block: 1rem; align-items: end; }
+.custom-word-row label { min-width: 0; }
+.custom-word-row :is(input,select,button) { box-sizing: border-box; width: 100%; min-height: 44px; }
+.custom-word-row input[aria-invalid="true"] { border-color: var(--danger); }
+@media (max-width: 760px) { .custom-word-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .custom-word-row { grid-template-columns: minmax(0, 1fr); } }

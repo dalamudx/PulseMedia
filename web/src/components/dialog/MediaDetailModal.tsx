@@ -15,6 +15,7 @@ interface MediaDetailModalProps {
   media: MediaItem | null;
   subscribing?: boolean;
   onClose: () => void;
+  onRequestApproval?: (media: MediaItem) => void;
   onSubscribe: (
     m: MediaItem,
     scope: "all" | "selected",
@@ -45,7 +46,7 @@ export const MediaDetailModal: React.FC<MediaDetailModalProps> = props => {
   return <MediaDetailDialog key={scope} {...props} media={props.media} />;
 };
 
-function MediaDetailDialog({ media, subscribing = false, onClose, onSubscribe, onSearchReleases }: MediaDetailModalProps & { media: MediaItem }) {
+function MediaDetailDialog({ media, subscribing = false, onClose, onSubscribe, onSearchReleases, onRequestApproval }: MediaDetailModalProps & { media: MediaItem }) {
   const dialog = useRef<HTMLDivElement>(null);
   useDialogFocus(dialog, onClose);
   const titleId = useId(), seasonId = useId(), helpId = useId();
@@ -179,6 +180,7 @@ function MediaDetailDialog({ media, subscribing = false, onClose, onSubscribe, o
       <footer className="media-detail-actions">
         <button type="button" className="btn-primary" disabled={!ready} onClick={submit}><Rss size={17} aria-hidden="true" />{subscribing ? "正在发起订阅…" : isTV && custom ? `保存选集订阅（${totalSelected} 集）` : isTV ? "保存剧集订阅" : "保存电影订阅"}</button>
         <button type="button" className="btn-secondary" disabled={subscribing || !data} onClick={() => onSearchReleases(media)}><Search size={17} aria-hidden="true" />检索资源</button>
+        {onRequestApproval && data && Number.isSafeInteger(media.tmdb_id) && media.tmdb_id > 0 && (media.media_type === "movie" || media.media_type === "tv") && <button type="button" className="btn-secondary" disabled={subscribing} onClick={() => onRequestApproval(media)}>请求审核</button>}
         {data && <button type="button" className="btn-secondary" disabled={subscribing} onClick={model.retryDetail}>刷新影视详情</button>}
       </footer>
     </div>

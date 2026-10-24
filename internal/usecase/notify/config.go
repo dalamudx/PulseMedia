@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/dalamudx/PulseMedia/internal/domain/notification"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"net/url"
 	"strings"
@@ -23,12 +24,17 @@ func (d *Dispatcher) SetClientFactory(codec ports.NotificationCredentialCodec, f
 	d.factory = f
 }
 func validChannelConfig(kind string, c ChannelConfig) bool {
+	if !notification.ValidArtwork(kind, c.ImageURL, c.ImageKey) {
+		return false
+	}
 	switch kind {
 	case "webhook":
 		u, err := url.Parse(c.URL)
 		return err == nil && (u.Scheme == "http" || u.Scheme == "https") && u.Host != "" && u.User == nil && u.Fragment == "" && c.Secret != "" && c.BotToken == "" && c.ChatID == ""
 	case "telegram":
 		return strings.TrimSpace(c.BotToken) != "" && strings.TrimSpace(c.ChatID) != "" && c.URL == "" && c.Secret == ""
+	case "wechat", "dingtalk", "feishu", "bark":
+		return c.BotToken == "" && c.ChatID == "" && notification.ValidRobot(kind, c.URL, c.Secret)
 	}
 	return false
 }

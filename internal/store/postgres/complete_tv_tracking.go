@@ -91,6 +91,10 @@ func (s *CompleteTVTrackingStore) CommitCompleteTVTracking(ctx context.Context, 
 	if *current != snapshot {
 		return nil, ports.ErrCompleteTVObservationStale
 	}
+	hintBefore, err := ValidateCompleteTVTrackingHint(ctx, tx, snapshot.Request)
+	if err != nil {
+		return nil, err
+	}
 	mutableBefore, err := trackingMutableFields(ctx, tx, snapshot.Request.TaskID)
 	if err != nil {
 		return nil, err
@@ -161,6 +165,11 @@ func (s *CompleteTVTrackingStore) CommitCompleteTVTracking(ctx context.Context, 
 	finished, err := q.FinishJob(ctx, db.FinishJobParams{Column1: lease.ID, Column2: lease.Owner, Column3: lease.Token, Column4: safe})
 	if err != nil {
 		return nil, err
+	}
+	if hintBefore != "" {
+		if _, err = tx.Exec(ctx, `SET CONSTRAINTS ALL IMMEDIATE`); err != nil {
+			return nil, err
+		}
 	}
 	if finished.ID != lease.ID || finished.Kind != ports.CompleteTVTrackingJobKind || finished.State != "succeeded" || finished.LeaseToken != lease.Token || finished.LeaseOwner.Valid || finished.LeaseUntil.Valid || completeTVJSONDigest(finished.Result) != completeTVJSONDigest(safe) {
 		return nil, ports.ErrCompleteTVObservationStale
@@ -244,6 +253,15 @@ func (s *CompleteTVTrackingStore) CommitCompleteTVTracking(ctx context.Context, 
 	if !consistent {
 		return nil, ports.ErrCompleteTVObservationStale
 	}
+	if hintBefore != "" {
+		hintAfter, e := ValidateCompleteTVTrackingHintEvidence(ctx, tx, snapshot.Request)
+		if e != nil {
+			return nil, e
+		}
+		if hintAfter != hintBefore {
+			return nil, ports.ErrCompleteTVObservationStale
+		}
+	}
 	if err = tx.Commit(ctx); err != nil {
 		return nil, err
 	}
@@ -259,6 +277,14 @@ func (s *CompleteTVTrackingStore) lockTracking(ctx context.Context, tx pgx.Tx, r
 		return nil, "", stale
 	}
 	q := db.New(tx)
+	// Hint-bound transactions take the isolation fence before account/root locks.
+	if _, hintErr := q.GetCompleteTVTrackingHint(ctx, r.Lease.ID); hintErr == nil {
+		if err := watchGuard(ctx, q); err != nil {
+			return nil, "", err
+		}
+	} else if !errors.Is(hintErr, pgx.ErrNoRows) {
+		return nil, "", hintErr
+	}
 	record, err := q.GetCompleteTVExecutionAuthority(ctx, r.OperationID)
 	if err != nil {
 		return nil, "", err
@@ -270,6 +296,9 @@ func (s *CompleteTVTrackingStore) lockTracking(ctx context.Context, tx pgx.Tx, r
 	var id uuid.UUID
 	// Lock even disabled accounts, without requiring present-day command rights.
 	if err = tx.QueryRow(ctx, `SELECT id FROM app_user WHERE id=$1 FOR SHARE`, frozen.ActorID).Scan(&id); err != nil {
+		return nil, "", err
+	}
+	if err = LockCompleteTVTrackingHintRoot(ctx, tx, r); err != nil {
 		return nil, "", err
 	}
 	units := append([]media.NumberingRow(nil), frozen.Units...)
@@ -417,7 +446,15 @@ func (s *CompleteTVTrackingStore) lockTracking(ctx context.Context, tx pgx.Tx, r
 	if !valid {
 		return nil, "", stale
 	}
-	seal := coverageDigest([]any{"complete-tv.tracking.v1", r, record, prepared, task, stamp, protection})
+	hintDigest, err := ValidateCompleteTVTrackingHint(ctx, tx, r)
+	if err != nil {
+		return nil, "", err
+	}
+	material := []any{"complete-tv.tracking.v1", r, record, prepared, task, stamp, protection}
+	if hintDigest != "" {
+		material = append(material, hintDigest)
+	}
+	seal := coverageDigest(material)
 	return &ports.CompleteTVTrackingSnapshot{Request: r, ClientID: task.ClientID, ClientStamp: stamp, InfoHash: task.InfoHash, OperationTag: "pulsemedia:op:" + r.OperationID.String(), SavePath: proof.SavePath, TotalBytes: proof.TotalBytes, Seal: seal, PhysicalPermit: permit}, protection, nil
 }
 

@@ -34,7 +34,7 @@ func NewRouter(a AppContext, server StrictServerInterface, authSvc *auth.Service
 			WriteJSONError(w, http.StatusInternalServerError, "INTERNAL_ERROR", "request could not be completed", GetRequestID(r.Context()))
 		},
 	})
-	HandlerWithOptions(strictHandler, StdHTTPServerOptions{BaseRouter: mux, ErrorHandlerFunc: badRequest, Middlewares: []MiddlewareFunc{strictSiteCheckinHistoryJSON, strictSiteCheckinConfigJSON, strictSiteAccountStatsReadJSON, strictSiteAccountStatsConfigJSON, strictDoubanSyncConfigJSON, strictMediaScrapeJSON, strictSubscriptionCreationJSON, strictInteractiveSearchJSON, strictEndpointConfigurationJSON, strictIndexerManagementJSON, strictLibraryReuseJSON, strictUpgradeOrganizationJSON, strictUpgradeCommandsJSON, strictUpgradePreviewJSON, strictCompleteTVOrganizationJSON, strictTVSelectionJSON, strictCompleteTVAcquisitionJSON, strictEpisodeAcquisitionJSON, strictTVCoverageReviewJSON, strictTransferRecoveryJSON, strictTransferRevisionJSON}})
+	HandlerWithOptions(strictHandler, StdHTTPServerOptions{BaseRouter: mux, ErrorHandlerFunc: badRequest, Middlewares: []MiddlewareFunc{strictNamingJSON, strictSiteCheckinHistoryJSON, strictSiteCheckinConfigJSON, strictSiteAccountStatsReadJSON, strictSiteAccountStatsConfigJSON, strictDoubanSyncConfigJSON, strictMediaScrapeJSON, strictSubscriptionCreationJSON, strictInteractiveSearchJSON, strictPolicyJSON, strictEndpointConfigurationJSON, strictIndexerManagementJSON, strictLibraryReuseJSON, strictUpgradeOrganizationJSON, strictUpgradeCommandsJSON, strictUpgradePreviewJSON, strictCompleteTVOrganizationJSON, strictTVSelectionJSON, strictCompleteTVAcquisitionJSON, strictEpisodeAcquisitionJSON, strictTVCoverageReviewJSON, strictTransferRecoveryJSON, strictTransferRevisionJSON}})
 
 	// 2. Mount Server-Sent Events endpoint
 	if sseHub != nil {
@@ -148,18 +148,25 @@ func NewRouter(a AppContext, server StrictServerInterface, authSvc *auth.Service
 		cookieMux.ServeHTTP(w, r)
 	})
 
+	notificationIngress := strictNotificationJSON(activityChanges(sseHub, spaHandler))
+	notificationIngress = strictAuditTimelineQuery(notificationIngress)
+	notificationIngress = strictWebPushJSON(notificationIngress)
+	notificationIngress = strictPersonFollowJSON(notificationIngress)
 	// Global middleware chain: RequestID -> Recovery -> Logging -> Idempotency -> Auth
 	chain := RequestIDMiddleware(a.IDGen())(
 		ProblemResponseMiddleware()(RecoveryMiddleware(a.Logger())(
 			LoggingMiddleware(a.Logger())(
 				IdempotencyMiddleware()(
-					authAdmissionMiddleware(a.Clock())(AuthMiddleware(authSvc)(APITokenScopeMiddleware()(CSRFMiddleware()(strictTokenManagementJSON(activityChanges(sseHub, spaHandler)))))),
+					authAdmissionMiddleware(a.Clock())(AuthMiddleware(authSvc)(strictSeedingConfigJSON(strictBangumiCalendarQuery(strictCookieCloudConfigJSON(StrictMediaRequestJSON(strictUntrackedScopeJSON(APITokenScopeMiddleware()(CSRFMiddleware()(strictTokenManagementJSON(notificationIngress)))))))))),
 				),
 			),
 		)),
 	)
 
-	return siteCheckinHistoryNoStore(siteCheckinConfigNoStore(siteAccountStatsReadNoStore(siteAccountStatsConfigNoStore(doubanSyncConfigNoStore(chain)))))
+	chain = auditTimelineNoStore(chain)
+	chain = webPushNoStore(chain)
+	chain = personFollowNoStore(chain)
+	return notificationNoStore(seedingConfigNoStore(bangumiCalendarNoStore(cookieCloudConfigNoStore(MediaRequestsNoStore(untrackedScopeNoStore(siteCheckinHistoryNoStore(siteCheckinConfigNoStore(siteAccountStatsReadNoStore(siteAccountStatsConfigNoStore(doubanSyncConfigNoStore(downloadGlobalRatesNoStore(settingsNoStore(namingNoStore(chain))))))))))))))
 }
 
 type authResponseRecorder struct {

@@ -35,7 +35,11 @@ func (s *ServerHandler) ConfirmCompleteTVOrganization(ctx context.Context, r Con
 	if r.Body == nil {
 		return fail(ports.ErrInvalidEpisodeMapping)
 	}
-	out, err := s.transferSvc.ConfirmCompleteTVOrganization(ctx, a, ports.CompleteTVOrganizationReferences{TaskID: r.Id, OperationID: r.Body.OperationId, TrackingJobID: r.Body.TrackingJobId}, r.Params.IdempotencyKey)
+	var namingVersion int64
+	if r.Body.NamingVersion != nil {
+		namingVersion = *r.Body.NamingVersion
+	}
+	out, err := s.transferSvc.ConfirmCompleteTVOrganization(ctx, a, ports.CompleteTVOrganizationReferences{TaskID: r.Id, OperationID: r.Body.OperationId, TrackingJobID: r.Body.TrackingJobId, NamingVersion: namingVersion}, r.Params.IdempotencyKey)
 	if err != nil {
 		return fail(err)
 	}
@@ -43,7 +47,7 @@ func (s *ServerHandler) ConfirmCompleteTVOrganization(ctx context.Context, r Con
 }
 
 // Check the original wire bytes before the generated decoder discards duplicates
-// or unknown fields. Only two scalar identifiers are accepted, including nested input.
+// and unknown fields. Only references and an optional naming version are accepted.
 func strictCompleteTVOrganizationJSON(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost || !strings.HasSuffix(r.URL.Path, "/complete-tv-organizations") {
@@ -71,17 +75,26 @@ func strictCompleteTVOrganizationJSON(next http.Handler) http.Handler {
 			fail()
 			return
 		}
-		fields := map[string]string{}
+		fields := map[string]any{}
 		for dec.More() {
 			token, err = dec.Token()
 			name, ok := token.(string)
-			if err != nil || !ok || (name != "operation_id" && name != "tracking_job_id") {
+			if err != nil || !ok || (name != "operation_id" && name != "tracking_job_id" && name != "naming_version") {
 				fail()
 				return
 			}
 			if _, exists := fields[name]; exists {
 				fail()
 				return
+			}
+			if name == "naming_version" {
+				var version *int64
+				if dec.Decode(&version) != nil || version == nil || *version < 0 {
+					fail()
+					return
+				}
+				fields[name] = *version
+				continue
 			}
 			var value string
 			if dec.Decode(&value) != nil {
@@ -95,7 +108,7 @@ func strictCompleteTVOrganizationJSON(next http.Handler) http.Handler {
 			}
 			fields[name] = value
 		}
-		if token, err = dec.Token(); err != nil || token != json.Delim('}') || dec.Decode(new(any)) != io.EOF || len(fields) != 2 {
+		if token, err = dec.Token(); err != nil || token != json.Delim('}') || dec.Decode(new(any)) != io.EOF || fields["operation_id"] == nil || fields["tracking_job_id"] == nil {
 			fail()
 			return
 		}

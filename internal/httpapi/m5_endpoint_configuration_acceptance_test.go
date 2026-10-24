@@ -289,7 +289,7 @@ func newM5EndpointNative(t *testing.T, kind, secret string) *m5EndpointNative {
 			w.Header().Set("Content-Type", "application/json")
 			_, _ = io.WriteString(w, `{"result":"success","arguments":{"version":"4.0.6"}}`)
 		default:
-			_, _ = io.WriteString(w, `{"ServerName":"owned native server"}`)
+			_, _ = io.WriteString(w, `{"ServerName":"owned native server","Version":"4.8.0"}`)
 		}
 	}))
 	t.Cleanup(server.Close)

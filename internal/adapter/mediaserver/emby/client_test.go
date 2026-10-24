@@ -23,7 +23,7 @@ func TestEmbyClientIntegration(t *testing.T) {
 			return
 		}
 
-		if r.URL.Path == "/Library/Refresh" {
+		if r.URL.Path == "/Library/Media/Updated" {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}

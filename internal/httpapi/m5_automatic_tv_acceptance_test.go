@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,6 +20,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/config"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	searchusecase "github.com/dalamudx/PulseMedia/internal/usecase/search"
 	"github.com/google/uuid"
@@ -81,7 +83,7 @@ func m5AutomaticTVTorrent() ([]byte, string, []string, [][]byte) {
 	return torrent.Bytes(), hex.EncodeToString(sum[:]), names, payloads
 }
 
-func newM5AutomaticTVAcceptance(t *testing.T, lostACK bool) *m5AutomaticTVAcceptance {
+func newM5AutomaticTVAcceptance(t *testing.T, lostACK bool, configuration ...func(*config.Config)) *m5AutomaticTVAcceptance {
 	t.Helper()
 	// This gate must precede the inherited fixture's cluster/database creation.
 	if os.Getenv("PULSE_M5_AUTOMATIC_TV_ACCEPTANCE") != "1" {
@@ -99,7 +101,7 @@ func newM5AutomaticTVAcceptance(t *testing.T, lostACK bool) *m5AutomaticTVAccept
 	t.Cleanup(qb.Close)
 	source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { h.serveSource(t, w, r) }))
 	t.Cleanup(source.Close)
-	h.f, h.metadata = newM5CreationAcceptance(t)
+	h.f, h.metadata = newM5CreationAcceptance(t, configuration...)
 	t.Cleanup(h.unblockAdd)
 	f, p := h.f, h.metadata
 	p.set("/3/tv/550", `{"id":550,"name":"Native Automatic Series","original_name":"Native Automatic Series","first_air_date":"2020-01-01","seasons":[{"season_number":1,"episode_count":3},{"season_number":2,"episode_count":1}]}`)
@@ -108,8 +110,8 @@ func newM5AutomaticTVAcceptance(t *testing.T, lostACK bool) *m5AutomaticTVAccept
 	if err := f.app.DBPool().QueryRow(t.Context(), `SELECT id,path FROM library_root WHERE media_type='tv' AND health='online' AND baseline_completed`).Scan(&h.root, &h.rootPath); err != nil {
 		t.Fatal(err)
 	}
-	if !strings.HasPrefix(h.rootPath, os.Getenv("TMPDIR")+string(os.PathSeparator)) {
-		t.Fatal("root escaped owned test temporary directory")
+	if f.dataDir == "" || h.rootPath != filepath.Join(f.dataDir, "media", "tv") {
+		t.Fatal("root escaped owned App data directory")
 	}
 	if _, err := os.Stat(filepath.Join(h.rootPath, ".pulsemedia_root")); err != nil {
 		t.Fatal("missing actual root marker", err)
@@ -499,13 +501,24 @@ func (h *m5AutomaticTVAcceptance) assertImported(t *testing.T, op uuid.UUID, rec
 	if h.count(t, `SELECT count(*) FROM automatic_tv_query q JOIN indexer_query i ON i.id=q.query_id WHERE i.query_type='tv_episode' AND i.state='succeeded' AND q.parameters=$1::jsonb AND q.parameters_hash=$2 AND q.page=0`, string(canonical), digest) != 1 {
 		t.Fatal("exact tv_episode query proof/digest missing")
 	}
+	// The ingestion sidecar shares this metadata provider; finish it before attributing requests to replay.
+	m5AutomaticTVWait(t, 30*time.Second, "ingestion sidecar metadata completed", func(ctx context.Context) (bool, error) {
+		var total, active int
+		if err := h.f.app.DBPool().QueryRow(ctx, `SELECT count(*),count(*) FILTER(WHERE state IN ('queued','running')) FROM job WHERE kind='media_sidecar'`).Scan(&total, &active); err != nil {
+			return false, errors.New("sidecar completion read failed")
+		}
+		if total != 1 {
+			return false, errors.New("expected exactly one ingestion sidecar")
+		}
+		return active == 0, nil
+	})
 	calls := h.metadata.count()
 	before := h.count(t, `SELECT count(*) FROM automatic_tv_execution_authority`)
 	replay := m5CreationPost(t, h.f, "m5-automatic-tv-original", h.body)
 	get := h.f.request(t, "GET", "/api/v1/subscription-commands/m5-automatic-tv-original", "", nil, h.f.session)
 	m5IndexerStatus(t, get, 200)
 	if !bytes.Equal(receipt.body, replay.body) || !bytes.Equal(receipt.body, get.body) || h.metadata.count() != calls || h.count(t, `SELECT count(*) FROM automatic_tv_execution_authority`) != before || h.adds.Load() != 1 || h.searches.Load() != 1 {
-		t.Fatal("original-key recovery changed receipt or caused new metadata/automatic operation")
+		t.Fatalf("original-key recovery changed protected observations: replay_equal=%t read_equal=%t metadata=%d->%d authority=%d->%d Add=%d search=%d", bytes.Equal(receipt.body, replay.body), bytes.Equal(receipt.body, get.body), calls, h.metadata.count(), before, h.count(t, `SELECT count(*) FROM automatic_tv_execution_authority`), h.adds.Load(), h.searches.Load())
 	}
 	t.Log("M5_AUTOMATIC_TV_NATIVE_APP_COOKIE_PG_REALFS_PASS: synthetic protocol arrival, no actual content transfer")
 }

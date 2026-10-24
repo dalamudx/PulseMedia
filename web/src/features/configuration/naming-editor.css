@@ -1,0 +1,9 @@
+.naming-templates-panel { margin-block-start: 1.5rem; min-width: 0; }
+.naming-templates-panel :is(fieldset,label) { min-width: 0; }
+.naming-templates-panel label { display: grid; gap: .5rem; margin-block: .75rem; }
+.naming-templates-panel :is(input,select,textarea) { box-sizing: border-box; max-width: 100%; width: 100%; min-height: 44px; }
+.naming-templates-panel textarea { font-family: var(--font-mono, monospace); }
+.naming-templates-panel button { min-height: 44px; }
+.naming-sample-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 1rem; }
+.naming-preview-result code { display: block; white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; border: 1px solid var(--border); }
+@media (max-width:600px) { .naming-sample-grid { grid-template-columns: minmax(0,1fr); } .naming-templates-panel textarea { min-height: 9.5rem; } }

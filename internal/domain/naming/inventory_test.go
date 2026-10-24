@@ -17,7 +17,7 @@ func TestMovieDirectorySelectionCompleteAndUnique(t *testing.T) {
 			total := int64(208)
 			switch mode {
 			case "two_videos":
-				files[1].Name = "release/sample.mkv"
+				files[1].Name = "release/another-feature.mkv"
 			case "partial_sidecar":
 				files[1].Progress = .5
 			case "escape":

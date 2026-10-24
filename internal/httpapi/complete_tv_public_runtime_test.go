@@ -38,7 +38,8 @@ func TestCompleteTVTrackingRuntimePublicPartialThenCompleted(t *testing.T) {
 	runCompleteTVPublicAppNative(t, true)
 }
 
-func runCompleteTVPublicAppNative(t *testing.T, tracking bool) {
+func runCompleteTVPublicAppNative(t *testing.T, tracking bool, watch ...bool) {
+	useHint := len(watch) == 1 && watch[0]
 	for _, lost := range []bool{false, true} {
 		if os.Getenv("PULSE_COMPLETE_UI_BROWSER") == "1" && lost {
 			continue
@@ -65,6 +66,11 @@ func runCompleteTVPublicAppNative(t *testing.T, tracking bool) {
 			}
 			if err = marker.Close(); err != nil {
 				t.Fatal(err)
+			}
+			if useHint {
+				if err = os.MkdirAll(filepath.Join(expectedPath, "Show"), 0755); err != nil {
+					t.Fatal(err)
+				}
 			}
 			if _, err = library.NewScanner(idgen.New(), rootfs.NewFilesystem(), postgres.NewScanObservationStore(f.f.a.DBPool())).ScanRoot(ctx, f.f.sub.RootId); err != nil {
 				t.Fatal(err)
@@ -268,7 +274,9 @@ func runCompleteTVPublicAppNative(t *testing.T, tracking bool) {
 					_ = f.f.a.DBPool().QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM job WHERE kind=$1 AND state='succeeded' AND result->>'state'='tracking')`, ports.CompleteTVTrackingJobKind).Scan(&ok)
 					return ok
 				})
-				stop()
+				if !useHint {
+					stop()
+				}
 				var partial bool
 				if err := f.f.a.DBPool().QueryRow(ctx, `SELECT state='tracking' AND progress=0 AND downloaded_bytes=0 FROM download_task WHERE operation_id=$1`, receipt.OperationID).Scan(&partial); err != nil || !partial {
 					t.Fatal("partial observation invented progress", err)
@@ -283,9 +291,13 @@ func runCompleteTVPublicAppNative(t *testing.T, tracking bool) {
 				if err := f.f.a.DBPool().QueryRow(ctx, `SELECT count(*) FROM job WHERE kind=$1`, ports.CompleteTVTrackingJobKind).Scan(&jobs); err != nil || jobs != 1 {
 					t.Fatal("partial busy loop", jobs, err)
 				}
-				remoteComplete.Store(true)
-				f.exec(t, `UPDATE job SET updated_at=clock_timestamp()-interval '31 seconds' WHERE kind=$1`, ports.CompleteTVTrackingJobKind)
-				stop = start()
+				if useHint {
+					assertCompleteTVWatchEvent(t, f.f.a.DBPool(), expectedPath, receipt.OperationID, func() { remoteComplete.Store(true) })
+				} else {
+					remoteComplete.Store(true)
+					f.exec(t, `UPDATE job SET updated_at=clock_timestamp()-interval '31 seconds' WHERE kind=$1`, ports.CompleteTVTrackingJobKind)
+					stop = start()
+				}
 				runtimeTVWait(t, func() bool {
 					var ok bool
 					_ = f.f.a.DBPool().QueryRow(ctx, `SELECT state='completed' AND progress=1 AND total_bytes=1024 AND downloaded_bytes=1024 AND organization_state='review_required' AND transfer_plan_id IS NULL FROM download_task WHERE operation_id=$1`, receipt.OperationID).Scan(&ok)

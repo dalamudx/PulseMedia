@@ -25,11 +25,12 @@ type CandidateRuleInput struct {
 	SourceVersion                      int64
 }
 type CandidateRuleDecision struct {
-	Decision    string   `json:"decision"`
-	Reason      string   `json:"reason"`
-	Score       int      `json:"score"`
-	MeetsCutoff bool     `json:"meets_cutoff"`
-	Breakdown   []string `json:"breakdown"`
+	Decision        string   `json:"decision"`
+	Reason          string   `json:"reason"`
+	Score           int      `json:"score"`
+	PreferenceScore int      `json:"preference_score,omitempty"`
+	MeetsCutoff     bool     `json:"meets_cutoff"`
+	Breakdown       []string `json:"breakdown"`
 }
 
 func CandidateInputDigest(in CandidateRuleInput) string {
@@ -87,5 +88,5 @@ func ExplainMovieCandidate(in CandidateRuleInput) CandidateRuleDecision {
 		}
 		return CandidateRuleDecision{Decision: decision, Reason: reason, Breakdown: []string{}}
 	}
-	return CandidateRuleDecision{Decision: "accept", Reason: "rules_allowed", Score: evaluation.Score, MeetsCutoff: evaluation.MeetsCutoff, Breakdown: evaluation.ScoreBreakdown}
+	return CandidateRuleDecision{Decision: "accept", Reason: "rules_allowed", Score: evaluation.Score, PreferenceScore: evaluation.PreferenceScore, MeetsCutoff: evaluation.MeetsCutoff, Breakdown: evaluation.ScoreBreakdown}
 }

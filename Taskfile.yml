@@ -245,6 +245,16 @@ tasks:
     cmds:
       - bash scripts/verify_m8_subtitle.sh
 
+  test-m8-shooter-live:
+    desc: Verify native Shooter SRT download using a published protocol hash or an explicitly selected CC BY sample
+    cmds:
+      - bash scripts/verify_m8_shooter_live.sh {{.CLI_ARGS}}
+
+  test-m8-subtitle-player:
+    desc: Verify real App subtitle publication is automatically selected and decoded by isolated mpv
+    cmds:
+      - bash scripts/verify_m8_subtitle_player.sh
+
   test-m8-site-account-stats-ui:
     desc: Verify persisted account statistics cards with Cookie, native NexusPHP, PG18 and isolated Chrome
     cmds:
@@ -265,6 +275,59 @@ tasks:
     cmds:
       - bash scripts/verify_m8_site_checkin_runtime.sh
 
+  test-m8-download-watch:
+    desc: Verify bounded Linux hints and ordinary tracking-to-hardlink acceleration with real App and PG18
+    cmds:
+      - bash scripts/verify_m8_download_watch.sh
+
+  test-m8-complete-tv-watch:
+    desc: Verify predecessor-bound COMPLETE-TV hint tracking with real inotify, App and PG18
+    cmds:
+      - bash scripts/verify_m8_complete_tv_watch.sh
+
+  test-m8-automatic-tv-watch:
+    desc: Verify exact-predecessor automatic TV hints without bypassing the two-second observation gate
+    cmds:
+      - bash scripts/verify_m8_automatic_tv_watch.sh
+
+  test-m8-upgrade-watch:
+    desc: Verify exact-predecessor movie upgrade hints while preserving the original thirty-second tracking gate
+    cmds:
+      - bash scripts/verify_m8_upgrade_watch.sh
+
+  test-m8-watch-target-budget:
+    desc: Measure real-clock automatic TV and upgrade target paging with 65 independently authorized tasks
+    cmds:
+      - bash scripts/verify_m8_watch_target_budget.sh
+  test-m8-untracked-scope:
+    desc: Verify explicit untracked-directory configuration and persistent review boundaries without collection or import
+    cmds:
+      - bash scripts/verify_m8_untracked_scope.sh
+
+  test-m8-untracked-discovery:
+    desc: Verify persistent untracked video observations with real file events and read-only Cookie pagination
+    cmds:
+      - bash scripts/verify_m8_untracked_discovery.sh
+
+  test-m8-untracked-review:
+    desc: Verify persisted untracked identity suggestions and explicit confirmation with original receipts and no organization authority
+    cmds:
+      - bash scripts/verify_m8_untracked_review.sh
+
+  test-m8-untracked-organization:
+    desc: Verify explicit external file organization, permanent execution permission, observation recovery and atomic ingestion
+    cmds:
+      - bash scripts/verify_m8_untracked_organization.sh
+
+  test-m8-untracked-commit-recovery:
+    desc: Verify actual COMMIT receipt loss and exact native hardlink publication counts across rollback and restart
+    cmds:
+      - bash scripts/verify_m8_untracked_commit_recovery.sh
+
+  test-m8-nfs-watch:
+    desc: Verify actual NFS listener unavailability, remote-write periodic discovery and explicit organization with kernel NFS
+    cmds:
+      - bash scripts/verify_m8_nfs_watch.sh
   test-m8-site-account-stats-config:
     desc: Verify administrator account statistics settings and original receipts with Cookie and PG18
     cmds:
@@ -409,6 +472,154 @@ tasks:
     desc: Run database migrations against PULSE_DATABASE_URL
     cmds:
       - goose -dir migrations postgres "${PULSE_DATABASE_URL:?PULSE_DATABASE_URL is required for migrations}" up
+
+  test-m8-regression:
+    desc: Run an isolated full Go race regression shard (base, usecase, runtime, http, postgres)
+    cmds:
+      - bash scripts/verify_m8_regression.sh {{.CLI_ARGS}}
+
+  test-m8-automation-settings-ui:
+    desc: Verify versioned Douban and site checkin settings with Cookie, PG18 and isolated Chrome
+    cmds:
+      - bash scripts/verify_m8_automation_settings_ui.sh
+
+  test-m8-media-filter:
+    desc: Verify media filtering and original-result recovery with owned PostgreSQL
+    cmds:
+      - bash scripts/verify_m8_media_filter.sh
+
+  test-m9-download-routing:
+    desc: Verify explicit downloader routing, frozen authorization and real App ingestion with owned PostgreSQL
+    cmds:
+      - bash scripts/verify_m9_download_routing.sh
+
+  test-m9-global-rates:
+    desc: Verify native global transfer rates, lease fences, read-only API and real Chrome with owned PostgreSQL
+    cmds:
+      - bash scripts/verify_m9_global_rates.sh {{.CLI_ARGS}}
+
+  test-m9-word-policy:
+    desc: Verify versioned keyword preferences, strict filters, frozen policies and native TV ingestion with owned PostgreSQL
+    cmds:
+      - bash scripts/verify_m9_word_policy.sh
+
+  test-m9-naming-templates:
+    desc: Verify safe naming templates, versioned settings, read-only preview and frozen native organization plans with owned PostgreSQL
+    cmds:
+      - bash scripts/verify_m9_naming_templates.sh
+
+  test-m9-media-requests:
+    desc: Verify account-scoped family requests, atomic administrator approval, native ingestion and original-key recovery with owned PostgreSQL and Chrome
+    cmds:
+      - bash scripts/verify_m9_media_requests.sh {{.CLI_ARGS}}
+
+  test-m9-home-inbox:
+    desc: Verify native homepage rates and exact administrator pending inbox with Cookie, PostgreSQL and Chrome
+    cmds:
+      - bash scripts/verify_m9_home_inbox.sh {{.CLI_ARGS}}
+  test-m9-configuration-editors:
+    desc: Verify visual word rules and versioned naming editors, original commands and read-only previews with real Cookie, PostgreSQL and Chrome
+    cmds:
+      - bash scripts/verify_m9_configuration_editors.sh {{.CLI_ARGS}}
+
+  test-m11-advanced-settings:
+    desc: Verify Fanart settings, audit and person-follow public contracts with PG18
+    cmds:
+      - bash scripts/verify_m11_advanced_settings.sh {{.CLI_ARGS}}
+
+  test-m11-advanced-settings-browser:
+    desc: Verify advanced settings with real Cookie, Chrome and six reviewed screenshots
+    cmds:
+      - bash scripts/verify_m11_advanced_settings_browser.sh
+
+  test-m11-person-follow:
+    desc: Verify actor and director follows, frozen credits, creation receipts and physical recovery with PG18
+    cmds:
+      - bash scripts/verify_m11_person_follow.sh {{.CLI_ARGS}}
+
+  test-m11-web-push:
+    desc: Verify encrypted Web Push, account devices, frozen recipients and App delivery with PG18
+    cmds:
+      - bash scripts/verify_m11_web_push.sh {{.CLI_ARGS}}
+
+  test-m11-web-push-browser:
+    desc: Verify native Chrome subscription, FCM delivery, receipt recovery and responsive settings
+    cmds:
+      - bash scripts/verify_m11_web_push_browser.sh
+
+  test-m11-rtorrent:
+    desc: Verify bounded native XML-RPC, encrypted rTorrent configuration and single-send App recovery with PG18
+    cmds:
+      - bash scripts/verify_m11_rtorrent.sh {{.CLI_ARGS}}
+
+  test-m11-audit:
+    desc: Verify transactional audit summaries, scoped cursor reads and real Cookie/Token access with PG18
+    cmds:
+      - bash scripts/verify_m11_audit.sh {{.CLI_ARGS}}
+
+  test-m11-tvdb:
+    desc: Verify TVDB native identity, encrypted settings, atomic supplementation and read-only translations with PG18
+    cmds:
+      - bash scripts/verify_m11_tvdb.sh {{.CLI_ARGS}}
+
+  test-m11-artwork:
+    desc: Verify Fanart identity, encrypted settings, fenced sidecars and native movie/TV ingestion with PG18
+    cmds:
+      - bash scripts/verify_m11_artwork.sh {{.CLI_ARGS}}
+
+  test-m10-cookiecloud-config:
+    desc: Verify encrypted CookieCloud configuration, scoped reads, original receipts and safe runner contracts with PG18
+    cmds:
+      - bash scripts/verify_m10_cookiecloud_configuration.sh
+
+  test-m10-emby:
+    desc: Verify precise native Emby, Jellyfin and Plex refresh, exact confirmation and PG18 transaction guards
+    cmds:
+      - bash scripts/verify_m10_emby.sh
+
+  test-m10-notifications:
+    desc: Verify native robot cards, encrypted channels, queued tests, original receipts and recipient replay with PG18
+    cmds:
+      - bash scripts/verify_m10_notifications.sh {{.CLI_ARGS}}
+
+  test-m10-seeding-management:
+    desc: Verify one-shot retain-files seeding removal, immutable permits, recovery and real App native chains with PG18
+    cmds:
+      - bash scripts/verify_m10_seeding_management.sh
+
+  test-m10-seeding-config:
+    desc: Verify versioned seeding rules, native read-only facts and administrator configuration with strict counts and PG18
+    cmds:
+      - bash scripts/verify_m10_seeding_configuration.sh
+
+  test-m10-ecosystem-settings:
+    desc: Verify CookieCloud and retain-file seeding settings, notification receipt recovery and real Cookie Chrome configuration safety
+    cmds:
+      - bash scripts/verify_m10_ecosystem_settings.sh {{.CLI_ARGS}}
+
+  test-m10-regression:
+    desc: Run one current-source full M10 race regression shard with isolated PG18 and exact manifest coverage
+    cmds:
+      - bash scripts/verify_m10_regression.sh {{.CLI_ARGS}}
+
+  test-m10-bangumi-discovery:
+    desc: Verify Bangumi calendar browsing, explicit TMDB chase review and real Cookie Chrome subscription flow
+    cmds:
+      - bash scripts/verify_m10_bangumi_discovery.sh {{.CLI_ARGS}}
+
+  test-m10-bangumi-calendar:
+    desc: Verify native Bangumi weekday metadata, bilingual filters, read-only Cookie entry and original subscription compatibility
+    cmds:
+      - bash scripts/verify_m10_bangumi_calendar.sh {{.CLI_ARGS}}
+
+  test-m10-cookiecloud-sync:
+    desc: Verify encrypted CookieCloud end-to-end sync, scoped credential validity, atomic writeback and real App lifecycle with PG18
+    cmds:
+      - bash scripts/verify_m10_cookiecloud_sync.sh
+  test-m9-regression:
+    desc: Run the current complete Go race manifest in isolated PostgreSQL shards for M9 release validation
+    cmds:
+      - bash scripts/verify_m9_regression.sh {{.CLI_ARGS}}
 
   sqlc:
     desc: Generate sqlc code

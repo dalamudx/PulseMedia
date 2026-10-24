@@ -7,6 +7,7 @@ const titles: Record<string, string> = {
   "/": "控制台仪表盘",
   "/discover": "影视探索与选季订阅",
   "/subscriptions": "媒体订阅与追更日历",
+  "/requests": "家庭请求与审批",
   "/activity": "下载活动与任务时间线",
   "/media": "媒体库与存储管理",
   "/sites": "站点管理与探针测速",

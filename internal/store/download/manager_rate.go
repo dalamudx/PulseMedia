@@ -79,7 +79,7 @@ func lockRateSnapshot(ctx context.Context, tx pgx.Tx, original db.DownloadTask, 
 		return "", err
 	}
 	if config.ID != original.ClientID || currentStamp != stamp ||
-		(currentConfig.ClientType != "qbittorrent" && currentConfig.ClientType != "transmission") ||
+		(currentConfig.ClientType != "qbittorrent" && currentConfig.ClientType != "transmission" && currentConfig.ClientType != "rtorrent") ||
 		current.ID != original.ID || current.OperationID != original.OperationID || current.ClientID != original.ClientID ||
 		current.InfoHash != original.InfoHash || current.SavePath != original.SavePath ||
 		original.State != "tracking" || current.State != "tracking" ||

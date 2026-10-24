@@ -29,16 +29,18 @@ type automaticTVReader struct{ client *Client }
 var _ ports.AutomaticTVReadClient = automaticTVReader{}
 
 type automaticTVNativeTask struct {
-	Hash         *string                  `json:"hashString"`
-	Directory    *string                  `json:"downloadDir"`
-	Labels       *[]string                `json:"labels"`
-	Status       *int64                   `json:"status"`
-	Total        *int64                   `json:"totalSize"`
-	Valid        *int64                   `json:"haveValid"`
-	Error        *int64                   `json:"error"`
-	Files        *[]automaticTVNativeFile `json:"files"`
-	Stats        *[]automaticTVNativeStat `json:"fileStats"`
-	DownloadRate json.RawMessage          `json:"rateDownload"`
+	Hash           *string                  `json:"hashString"`
+	Directory      *string                  `json:"downloadDir"`
+	Labels         *[]string                `json:"labels"`
+	Status         *int64                   `json:"status"`
+	Total          *int64                   `json:"totalSize"`
+	Valid          *int64                   `json:"haveValid"`
+	Error          *int64                   `json:"error"`
+	Files          *[]automaticTVNativeFile `json:"files"`
+	Stats          *[]automaticTVNativeStat `json:"fileStats"`
+	DownloadRate   json.RawMessage          `json:"rateDownload"`
+	SeedingSeconds json.RawMessage          `json:"secondsSeeding"`
+	ShareRatio     json.RawMessage          `json:"uploadRatio"`
 }
 
 type automaticTVNativeFile struct {
@@ -203,7 +205,35 @@ func (c *Client) automaticTVGet(ctx context.Context, hash string) ([]automaticTV
 		args["fields"] = append(fields, "files", "fileStats")
 		args["ids"] = []string{hash}
 	}
-	body, err := json.Marshal(rpcRequest{Method: "torrent-get", Arguments: args, Tag: 1})
+	return c.automaticTVReadTasks(ctx, args)
+}
+
+func (c *Client) automaticTVReadTasks(ctx context.Context, args map[string]any) ([]automaticTVNativeTask, error) {
+	raw, err := c.automaticTVReadRPC(ctx, "torrent-get", args)
+	if err != nil {
+		return nil, err
+	}
+	var response struct {
+		Torrents *[]automaticTVNativeTask `json:"torrents"`
+	}
+	if json.Unmarshal(raw, &response) != nil || response.Torrents == nil {
+		return nil, ports.ErrUnavailable
+	}
+	return *response.Torrents, nil
+}
+
+// Only native reads are permitted through this capability.
+func (c *Client) automaticTVReadRPC(ctx context.Context, method string, args map[string]any) (json.RawMessage, error) {
+	if method != "torrent-get" && method != "free-space" {
+		return nil, ports.ErrRejected
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if c == nil || c.httpClient == nil {
+		return nil, ports.ErrUnavailable
+	}
+	body, err := json.Marshal(rpcRequest{Method: method, Arguments: args, Tag: 1})
 	if err != nil {
 		return nil, ports.ErrUnavailable
 	}
@@ -261,15 +291,13 @@ func (c *Client) automaticTVGet(ctx context.Context, hash string) ([]automaticTV
 			return nil, ports.ErrUnavailable
 		}
 		var response struct {
-			Result    *string `json:"result"`
-			Arguments *struct {
-				Torrents *[]automaticTVNativeTask `json:"torrents"`
-			} `json:"arguments"`
+			Result    *string          `json:"result"`
+			Arguments *json.RawMessage `json:"arguments"`
 		}
-		if json.Unmarshal(data, &response) != nil || response.Result == nil || *response.Result != "success" || response.Arguments == nil || response.Arguments.Torrents == nil {
+		if json.Unmarshal(data, &response) != nil || response.Result == nil || *response.Result != "success" || response.Arguments == nil {
 			return nil, ports.ErrUnavailable
 		}
-		return *response.Arguments.Torrents, nil
+		return *response.Arguments, nil
 	}
 	return nil, ports.ErrUnavailable
 }
@@ -342,7 +370,7 @@ func automaticTVJSONValue(d *json.Decoder, depth int) error {
 
 func automaticTVJSONKey(name string) bool {
 	// encoding/json otherwise accepts case-insensitive aliases for required fields.
-	for _, field := range [...]string{"result", "arguments", "torrents", "hashString", "downloadDir", "labels", "status", "totalSize", "haveValid", "error", "files", "fileStats", "name", "length", "bytesCompleted", "wanted"} {
+	for _, field := range [...]string{"result", "arguments", "torrents", "hashString", "downloadDir", "labels", "status", "totalSize", "haveValid", "error", "files", "fileStats", "name", "length", "bytesCompleted", "wanted", "secondsSeeding", "uploadRatio"} {
 		if strings.EqualFold(name, field) && name != field {
 			return false
 		}

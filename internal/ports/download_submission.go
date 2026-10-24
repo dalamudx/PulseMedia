@@ -29,6 +29,7 @@ type DownloadSubmissionCommand struct {
 	TaskID, OperationID, ClientID, CandidateID uuid.UUID
 	InfoHash, SavePath                         string
 	CipherHash                                 [32]byte
+	ClientConfigStamp                          string
 }
 type DownloadSubmissionReceipt struct {
 	TaskID         uuid.UUID

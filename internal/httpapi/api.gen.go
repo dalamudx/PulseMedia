@@ -19,6 +19,21 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for BangumiCalendarResponseExecutionAllowed.
+const (
+	BangumiCalendarResponseExecutionAllowedFalse BangumiCalendarResponseExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the BangumiCalendarResponseExecutionAllowed enum.
+func (e BangumiCalendarResponseExecutionAllowed) Valid() bool {
+	switch e {
+	case BangumiCalendarResponseExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CandidateExplanationItemDecision.
 const (
 	CandidateExplanationItemDecisionAccept CandidateExplanationItemDecision = "accept"
@@ -42,16 +57,28 @@ func (e CandidateExplanationItemDecision) Valid() bool {
 
 // Defines values for ChannelReplacementRequestChannelType.
 const (
+	ChannelReplacementRequestChannelTypeBark     ChannelReplacementRequestChannelType = "bark"
+	ChannelReplacementRequestChannelTypeDingtalk ChannelReplacementRequestChannelType = "dingtalk"
+	ChannelReplacementRequestChannelTypeFeishu   ChannelReplacementRequestChannelType = "feishu"
 	ChannelReplacementRequestChannelTypeTelegram ChannelReplacementRequestChannelType = "telegram"
 	ChannelReplacementRequestChannelTypeWebhook  ChannelReplacementRequestChannelType = "webhook"
+	ChannelReplacementRequestChannelTypeWechat   ChannelReplacementRequestChannelType = "wechat"
 )
 
 // Valid indicates whether the value is a known member of the ChannelReplacementRequestChannelType enum.
 func (e ChannelReplacementRequestChannelType) Valid() bool {
 	switch e {
+	case ChannelReplacementRequestChannelTypeBark:
+		return true
+	case ChannelReplacementRequestChannelTypeDingtalk:
+		return true
+	case ChannelReplacementRequestChannelTypeFeishu:
+		return true
 	case ChannelReplacementRequestChannelTypeTelegram:
 		return true
 	case ChannelReplacementRequestChannelTypeWebhook:
+		return true
+	case ChannelReplacementRequestChannelTypeWechat:
 		return true
 	default:
 		return false
@@ -61,6 +88,7 @@ func (e ChannelReplacementRequestChannelType) Valid() bool {
 // Defines values for CreateDownloadClientRequestClientType.
 const (
 	CreateDownloadClientRequestClientTypeQbittorrent  CreateDownloadClientRequestClientType = "qbittorrent"
+	CreateDownloadClientRequestClientTypeRtorrent     CreateDownloadClientRequestClientType = "rtorrent"
 	CreateDownloadClientRequestClientTypeTransmission CreateDownloadClientRequestClientType = "transmission"
 )
 
@@ -68,6 +96,8 @@ const (
 func (e CreateDownloadClientRequestClientType) Valid() bool {
 	switch e {
 	case CreateDownloadClientRequestClientTypeQbittorrent:
+		return true
+	case CreateDownloadClientRequestClientTypeRtorrent:
 		return true
 	case CreateDownloadClientRequestClientTypeTransmission:
 		return true
@@ -99,16 +129,28 @@ func (e CreateMediaServerRequestServerType) Valid() bool {
 
 // Defines values for CreateNotificationChannelRequestChannelType.
 const (
+	CreateNotificationChannelRequestChannelTypeBark     CreateNotificationChannelRequestChannelType = "bark"
+	CreateNotificationChannelRequestChannelTypeDingtalk CreateNotificationChannelRequestChannelType = "dingtalk"
+	CreateNotificationChannelRequestChannelTypeFeishu   CreateNotificationChannelRequestChannelType = "feishu"
 	CreateNotificationChannelRequestChannelTypeTelegram CreateNotificationChannelRequestChannelType = "telegram"
 	CreateNotificationChannelRequestChannelTypeWebhook  CreateNotificationChannelRequestChannelType = "webhook"
+	CreateNotificationChannelRequestChannelTypeWechat   CreateNotificationChannelRequestChannelType = "wechat"
 )
 
 // Valid indicates whether the value is a known member of the CreateNotificationChannelRequestChannelType enum.
 func (e CreateNotificationChannelRequestChannelType) Valid() bool {
 	switch e {
+	case CreateNotificationChannelRequestChannelTypeBark:
+		return true
+	case CreateNotificationChannelRequestChannelTypeDingtalk:
+		return true
+	case CreateNotificationChannelRequestChannelTypeFeishu:
+		return true
 	case CreateNotificationChannelRequestChannelTypeTelegram:
 		return true
 	case CreateNotificationChannelRequestChannelTypeWebhook:
+		return true
+	case CreateNotificationChannelRequestChannelTypeWechat:
 		return true
 	default:
 		return false
@@ -226,6 +268,105 @@ func (e DoubanRankingItemMediaType) Valid() bool {
 	case DoubanRankingItemMediaTypeMovie:
 		return true
 	case DoubanRankingItemMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DownloadGlobalRateClientClientType.
+const (
+	DownloadGlobalRateClientClientTypeQbittorrent  DownloadGlobalRateClientClientType = "qbittorrent"
+	DownloadGlobalRateClientClientTypeTransmission DownloadGlobalRateClientClientType = "transmission"
+)
+
+// Valid indicates whether the value is a known member of the DownloadGlobalRateClientClientType enum.
+func (e DownloadGlobalRateClientClientType) Valid() bool {
+	switch e {
+	case DownloadGlobalRateClientClientTypeQbittorrent:
+		return true
+	case DownloadGlobalRateClientClientTypeTransmission:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DownloadGlobalRateClientFailureCode.
+const (
+	DownloadGlobalRateClientFailureCodeAuthRequired DownloadGlobalRateClientFailureCode = "auth_required"
+	DownloadGlobalRateClientFailureCodeBadResponse  DownloadGlobalRateClientFailureCode = "bad_response"
+	DownloadGlobalRateClientFailureCodeBlocked      DownloadGlobalRateClientFailureCode = "blocked"
+	DownloadGlobalRateClientFailureCodeEmpty        DownloadGlobalRateClientFailureCode = ""
+	DownloadGlobalRateClientFailureCodeRateLimited  DownloadGlobalRateClientFailureCode = "rate_limited"
+	DownloadGlobalRateClientFailureCodeTimeout      DownloadGlobalRateClientFailureCode = "timeout"
+	DownloadGlobalRateClientFailureCodeUnavailable  DownloadGlobalRateClientFailureCode = "unavailable"
+)
+
+// Valid indicates whether the value is a known member of the DownloadGlobalRateClientFailureCode enum.
+func (e DownloadGlobalRateClientFailureCode) Valid() bool {
+	switch e {
+	case DownloadGlobalRateClientFailureCodeAuthRequired:
+		return true
+	case DownloadGlobalRateClientFailureCodeBadResponse:
+		return true
+	case DownloadGlobalRateClientFailureCodeBlocked:
+		return true
+	case DownloadGlobalRateClientFailureCodeEmpty:
+		return true
+	case DownloadGlobalRateClientFailureCodeRateLimited:
+		return true
+	case DownloadGlobalRateClientFailureCodeTimeout:
+		return true
+	case DownloadGlobalRateClientFailureCodeUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DownloadGlobalRateClientState.
+const (
+	DownloadGlobalRateClientStateConfigurationChanged DownloadGlobalRateClientState = "configuration_changed"
+	DownloadGlobalRateClientStateDisabled             DownloadGlobalRateClientState = "disabled"
+	DownloadGlobalRateClientStateFailed               DownloadGlobalRateClientState = "failed"
+	DownloadGlobalRateClientStateObserved             DownloadGlobalRateClientState = "observed"
+	DownloadGlobalRateClientStateStale                DownloadGlobalRateClientState = "stale"
+	DownloadGlobalRateClientStateUnknown              DownloadGlobalRateClientState = "unknown"
+	DownloadGlobalRateClientStateUnobserved           DownloadGlobalRateClientState = "unobserved"
+)
+
+// Valid indicates whether the value is a known member of the DownloadGlobalRateClientState enum.
+func (e DownloadGlobalRateClientState) Valid() bool {
+	switch e {
+	case DownloadGlobalRateClientStateConfigurationChanged:
+		return true
+	case DownloadGlobalRateClientStateDisabled:
+		return true
+	case DownloadGlobalRateClientStateFailed:
+		return true
+	case DownloadGlobalRateClientStateObserved:
+		return true
+	case DownloadGlobalRateClientStateStale:
+		return true
+	case DownloadGlobalRateClientStateUnknown:
+		return true
+	case DownloadGlobalRateClientStateUnobserved:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DownloadGlobalRatesOverviewFreshnessSeconds.
+const (
+	N45 DownloadGlobalRatesOverviewFreshnessSeconds = 45
+)
+
+// Valid indicates whether the value is a known member of the DownloadGlobalRatesOverviewFreshnessSeconds enum.
+func (e DownloadGlobalRatesOverviewFreshnessSeconds) Valid() bool {
+	switch e {
+	case N45:
 		return true
 	default:
 		return false
@@ -375,13 +516,16 @@ func (e IndexerRSSRequestKind) Valid() bool {
 
 // Defines values for InteractiveReleaseSearchSnapshotSortOrder.
 const (
-	QualityDescSeedersDescIdAsc InteractiveReleaseSearchSnapshotSortOrder = "quality_desc_seeders_desc_id_asc"
+	QualityDescSeedersDescIdAsc           InteractiveReleaseSearchSnapshotSortOrder = "quality_desc_seeders_desc_id_asc"
+	QualityPreferenceDescSeedersDescIdAsc InteractiveReleaseSearchSnapshotSortOrder = "quality_preference_desc_seeders_desc_id_asc"
 )
 
 // Valid indicates whether the value is a known member of the InteractiveReleaseSearchSnapshotSortOrder enum.
 func (e InteractiveReleaseSearchSnapshotSortOrder) Valid() bool {
 	switch e {
 	case QualityDescSeedersDescIdAsc:
+		return true
+	case QualityPreferenceDescSeedersDescIdAsc:
 		return true
 	default:
 		return false
@@ -673,6 +817,48 @@ func (e MappedReleaseExplanationQualityDecision) Valid() bool {
 	}
 }
 
+// Defines values for MediaRequestDetailsState.
+const (
+	MediaRequestDetailsStateApproved  MediaRequestDetailsState = "approved"
+	MediaRequestDetailsStatePending   MediaRequestDetailsState = "pending"
+	MediaRequestDetailsStateRejected  MediaRequestDetailsState = "rejected"
+	MediaRequestDetailsStateWithdrawn MediaRequestDetailsState = "withdrawn"
+)
+
+// Valid indicates whether the value is a known member of the MediaRequestDetailsState enum.
+func (e MediaRequestDetailsState) Valid() bool {
+	switch e {
+	case MediaRequestDetailsStateApproved:
+		return true
+	case MediaRequestDetailsStatePending:
+		return true
+	case MediaRequestDetailsStateRejected:
+		return true
+	case MediaRequestDetailsStateWithdrawn:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MediaRequestIntentMediaType.
+const (
+	MediaRequestIntentMediaTypeMovie MediaRequestIntentMediaType = "movie"
+	MediaRequestIntentMediaTypeTv    MediaRequestIntentMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the MediaRequestIntentMediaType enum.
+func (e MediaRequestIntentMediaType) Valid() bool {
+	switch e {
+	case MediaRequestIntentMediaTypeMovie:
+		return true
+	case MediaRequestIntentMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for MovieSearchResultMediaType.
 const (
 	MovieSearchResultMediaTypeMovie MovieSearchResultMediaType = "movie"
@@ -685,6 +871,39 @@ func (e MovieSearchResultMediaType) Valid() bool {
 	case MovieSearchResultMediaTypeMovie:
 		return true
 	case MovieSearchResultMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for NamingPreviewRequestMediaType.
+const (
+	NamingPreviewRequestMediaTypeMovie NamingPreviewRequestMediaType = "movie"
+	NamingPreviewRequestMediaTypeTv    NamingPreviewRequestMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the NamingPreviewRequestMediaType enum.
+func (e NamingPreviewRequestMediaType) Valid() bool {
+	switch e {
+	case NamingPreviewRequestMediaTypeMovie:
+		return true
+	case NamingPreviewRequestMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for NamingPreviewResultExecutionAllowed.
+const (
+	NamingPreviewResultExecutionAllowedFalse NamingPreviewResultExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the NamingPreviewResultExecutionAllowed enum.
+func (e NamingPreviewResultExecutionAllowed) Valid() bool {
+	switch e {
+	case NamingPreviewResultExecutionAllowedFalse:
 		return true
 	default:
 		return false
@@ -766,6 +985,24 @@ func (e OperationTelemetryRateStatus) Valid() bool {
 	}
 }
 
+// Defines values for PersonFollowSettingsRole.
+const (
+	Actor    PersonFollowSettingsRole = "actor"
+	Director PersonFollowSettingsRole = "director"
+)
+
+// Valid indicates whether the value is a known member of the PersonFollowSettingsRole enum.
+func (e PersonFollowSettingsRole) Valid() bool {
+	switch e {
+	case Actor:
+		return true
+	case Director:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for RequirementDetailsState.
 const (
 	RequirementDetailsStateImported RequirementDetailsState = "imported"
@@ -796,6 +1033,39 @@ const (
 func (e RequirementWithdrawalReceiptState) Valid() bool {
 	switch e {
 	case RequirementWithdrawalReceiptStateReleased:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SeedingRuleDeleteFiles.
+const (
+	SeedingRuleDeleteFilesFalse SeedingRuleDeleteFiles = false
+)
+
+// Valid indicates whether the value is a known member of the SeedingRuleDeleteFiles enum.
+func (e SeedingRuleDeleteFiles) Valid() bool {
+	switch e {
+	case SeedingRuleDeleteFilesFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SeedingRuleMode.
+const (
+	SeedingRuleModeAll SeedingRuleMode = "all"
+	SeedingRuleModeAny SeedingRuleMode = "any"
+)
+
+// Valid indicates whether the value is a known member of the SeedingRuleMode enum.
+func (e SeedingRuleMode) Valid() bool {
+	switch e {
+	case SeedingRuleModeAll:
+		return true
+	case SeedingRuleModeAny:
 		return true
 	default:
 		return false
@@ -1306,6 +1576,54 @@ func (e TVSelectionPreviewResponseStatus) Valid() bool {
 	}
 }
 
+// Defines values for TVTranslationSourceFields.
+const (
+	Overview TVTranslationSourceFields = "overview"
+	Title    TVTranslationSourceFields = "title"
+)
+
+// Valid indicates whether the value is a known member of the TVTranslationSourceFields enum.
+func (e TVTranslationSourceFields) Valid() bool {
+	switch e {
+	case Overview:
+		return true
+	case Title:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TVTranslationSourceLanguage.
+const (
+	Zho TVTranslationSourceLanguage = "zho"
+)
+
+// Valid indicates whether the value is a known member of the TVTranslationSourceLanguage enum.
+func (e TVTranslationSourceLanguage) Valid() bool {
+	switch e {
+	case Zho:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TVTranslationSourceProvider.
+const (
+	Tvdb TVTranslationSourceProvider = "tvdb"
+)
+
+// Valid indicates whether the value is a known member of the TVTranslationSourceProvider enum.
+func (e TVTranslationSourceProvider) Valid() bool {
+	switch e {
+	case Tvdb:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for TransferRevisionPreviewAction.
 const (
 	TransferRevisionPreviewActionCopy     TransferRevisionPreviewAction = "copy"
@@ -1363,9 +1681,130 @@ func (e TransferRevisionReceiptState) Valid() bool {
 	}
 }
 
+// Defines values for UntrackedConfirmationReceiptExecutionAllowed.
+const (
+	UntrackedConfirmationReceiptExecutionAllowedFalse UntrackedConfirmationReceiptExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedConfirmationReceiptExecutionAllowed enum.
+func (e UntrackedConfirmationReceiptExecutionAllowed) Valid() bool {
+	switch e {
+	case UntrackedConfirmationReceiptExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedDiscoveryListExecutionAllowed.
+const (
+	UntrackedDiscoveryListExecutionAllowedFalse UntrackedDiscoveryListExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedDiscoveryListExecutionAllowed enum.
+func (e UntrackedDiscoveryListExecutionAllowed) Valid() bool {
+	switch e {
+	case UntrackedDiscoveryListExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedDiscoveryListInventoryComplete.
+const (
+	UntrackedDiscoveryListInventoryCompleteFalse UntrackedDiscoveryListInventoryComplete = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedDiscoveryListInventoryComplete enum.
+func (e UntrackedDiscoveryListInventoryComplete) Valid() bool {
+	switch e {
+	case UntrackedDiscoveryListInventoryCompleteFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedOrganizationReceiptExecutionAllowed.
+const (
+	UntrackedOrganizationReceiptExecutionAllowedFalse UntrackedOrganizationReceiptExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedOrganizationReceiptExecutionAllowed enum.
+func (e UntrackedOrganizationReceiptExecutionAllowed) Valid() bool {
+	switch e {
+	case UntrackedOrganizationReceiptExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedOrganizationViewExecutionAllowed.
+const (
+	UntrackedOrganizationViewExecutionAllowedFalse UntrackedOrganizationViewExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedOrganizationViewExecutionAllowed enum.
+func (e UntrackedOrganizationViewExecutionAllowed) Valid() bool {
+	switch e {
+	case UntrackedOrganizationViewExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedReviewRequestReceiptExecutionAllowed.
+const (
+	UntrackedReviewRequestReceiptExecutionAllowedFalse UntrackedReviewRequestReceiptExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedReviewRequestReceiptExecutionAllowed enum.
+func (e UntrackedReviewRequestReceiptExecutionAllowed) Valid() bool {
+	switch e {
+	case UntrackedReviewRequestReceiptExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedReviewViewExecutionAllowed.
+const (
+	UntrackedReviewViewExecutionAllowedFalse UntrackedReviewViewExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedReviewViewExecutionAllowed enum.
+func (e UntrackedReviewViewExecutionAllowed) Valid() bool {
+	switch e {
+	case UntrackedReviewViewExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedScopeReceiptExecutionAllowed.
+const (
+	UntrackedScopeReceiptExecutionAllowedFalse UntrackedScopeReceiptExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the UntrackedScopeReceiptExecutionAllowed enum.
+func (e UntrackedScopeReceiptExecutionAllowed) Valid() bool {
+	switch e {
+	case UntrackedScopeReceiptExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for UpdateDownloadClientRequestClientType.
 const (
 	UpdateDownloadClientRequestClientTypeQbittorrent  UpdateDownloadClientRequestClientType = "qbittorrent"
+	UpdateDownloadClientRequestClientTypeRtorrent     UpdateDownloadClientRequestClientType = "rtorrent"
 	UpdateDownloadClientRequestClientTypeTransmission UpdateDownloadClientRequestClientType = "transmission"
 )
 
@@ -1373,6 +1812,8 @@ const (
 func (e UpdateDownloadClientRequestClientType) Valid() bool {
 	switch e {
 	case UpdateDownloadClientRequestClientTypeQbittorrent:
+		return true
+	case UpdateDownloadClientRequestClientTypeRtorrent:
 		return true
 	case UpdateDownloadClientRequestClientTypeTransmission:
 		return true
@@ -2101,6 +2542,39 @@ func (e SkipIntegrationDelivery200JSONResponseBodyState) Valid() bool {
 	}
 }
 
+// Defines values for ListMediaRequestsParamsState.
+const (
+	ListMediaRequestsParamsStatePending ListMediaRequestsParamsState = "pending"
+)
+
+// Valid indicates whether the value is a known member of the ListMediaRequestsParamsState enum.
+func (e ListMediaRequestsParamsState) Valid() bool {
+	switch e {
+	case ListMediaRequestsParamsStatePending:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CloseMediaRequestJSONBodyAction.
+const (
+	CloseMediaRequestJSONBodyActionReject   CloseMediaRequestJSONBodyAction = "reject"
+	CloseMediaRequestJSONBodyActionWithdraw CloseMediaRequestJSONBodyAction = "withdraw"
+)
+
+// Valid indicates whether the value is a known member of the CloseMediaRequestJSONBodyAction enum.
+func (e CloseMediaRequestJSONBodyAction) Valid() bool {
+	switch e {
+	case CloseMediaRequestJSONBodyActionReject:
+		return true
+	case CloseMediaRequestJSONBodyActionWithdraw:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for GetTMDBMediaCreditsParamsMediaType.
 const (
 	GetTMDBMediaCreditsParamsMediaTypeMovie GetTMDBMediaCreditsParamsMediaType = "movie"
@@ -2113,6 +2587,21 @@ func (e GetTMDBMediaCreditsParamsMediaType) Valid() bool {
 	case GetTMDBMediaCreditsParamsMediaTypeMovie:
 		return true
 	case GetTMDBMediaCreditsParamsMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueueNotificationTest202JSONResponseBodyStatus.
+const (
+	QueueNotificationTest202JSONResponseBodyStatusQueued QueueNotificationTest202JSONResponseBodyStatus = "queued"
+)
+
+// Valid indicates whether the value is a known member of the QueueNotificationTest202JSONResponseBodyStatus enum.
+func (e QueueNotificationTest202JSONResponseBodyStatus) Valid() bool {
+	switch e {
+	case QueueNotificationTest202JSONResponseBodyStatusQueued:
 		return true
 	default:
 		return false
@@ -2308,6 +2797,27 @@ func (e ReviewTVCoverageCandidateJSONBodyConfirmed) Valid() bool {
 	}
 }
 
+// Defines values for ListAuditTimelineParamsActorType.
+const (
+	Service ListAuditTimelineParamsActorType = "service"
+	System  ListAuditTimelineParamsActorType = "system"
+	User    ListAuditTimelineParamsActorType = "user"
+)
+
+// Valid indicates whether the value is a known member of the ListAuditTimelineParamsActorType enum.
+func (e ListAuditTimelineParamsActorType) Valid() bool {
+	switch e {
+	case Service:
+		return true
+	case System:
+		return true
+	case User:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for StreamSystemLogsParamsLevel.
 const (
 	DEBUG StreamSystemLogsParamsLevel = "DEBUG"
@@ -2440,6 +2950,23 @@ type AcquireMovieResponse struct {
 	Status string `json:"status"`
 }
 
+// AuditTimelineEntry defines model for AuditTimelineEntry.
+type AuditTimelineEntry struct {
+	Action     string             `json:"action"`
+	ActorId    string             `json:"actor_id"`
+	ActorType  string             `json:"actor_type"`
+	CreatedAt  time.Time          `json:"created_at"`
+	Id         openapi_types.UUID `json:"id"`
+	TargetId   string             `json:"target_id"`
+	TargetType string             `json:"target_type"`
+}
+
+// AuditTimelinePage defines model for AuditTimelinePage.
+type AuditTimelinePage struct {
+	Items      []AuditTimelineEntry `json:"items"`
+	NextCursor *string              `json:"next_cursor,omitempty"`
+}
+
 // AuthResponse defines model for AuthResponse.
 type AuthResponse struct {
 	Token string   `json:"token"`
@@ -2451,6 +2978,36 @@ type AuthStatus struct {
 	CurrentUser *UserInfo `json:"current_user,omitempty"`
 	Initialized bool      `json:"initialized"`
 }
+
+// BangumiCalendarDay defines model for BangumiCalendarDay.
+type BangumiCalendarDay struct {
+	Items   []BangumiCalendarItem `json:"items"`
+	Name    string                `json:"name"`
+	Weekday int                   `json:"weekday"`
+}
+
+// BangumiCalendarItem defines model for BangumiCalendarItem.
+type BangumiCalendarItem struct {
+	// BangumiId Bangumi subject identity only
+	BangumiId string `json:"bangumi_id"`
+
+	// FirstAirDate Native YYYY-MM-DD first broadcast date; not an episode date
+	FirstAirDate  *string  `json:"first_air_date"`
+	OriginalTitle string   `json:"original_title"`
+	PosterUrl     *string  `json:"poster_url"`
+	Rating        *float64 `json:"rating"`
+	Title         string   `json:"title"`
+}
+
+// BangumiCalendarResponse defines model for BangumiCalendarResponse.
+type BangumiCalendarResponse struct {
+	Days             []BangumiCalendarDay                    `json:"days"`
+	ExecutionAllowed BangumiCalendarResponseExecutionAllowed `json:"execution_allowed"`
+	ObservedAt       time.Time                               `json:"observed_at"`
+}
+
+// BangumiCalendarResponseExecutionAllowed defines model for BangumiCalendarResponse.ExecutionAllowed.
+type BangumiCalendarResponseExecutionAllowed bool
 
 // CandidateExplanationItem defines model for CandidateExplanationItem.
 type CandidateExplanationItem struct {
@@ -2508,6 +3065,12 @@ type ChannelReplacementRequest struct {
 	Config           *struct {
 		BotToken *string `json:"bot_token,omitempty"`
 		ChatId   *string `json:"chat_id,omitempty"`
+
+		// ImageKey Optional existing Feishu image key; no image upload
+		ImageKey *string `json:"image_key,omitempty"`
+
+		// ImageUrl Optional public TMDB w342 cover for WeChat
+		ImageUrl *string `json:"image_url,omitempty"`
 		Secret   *string `json:"secret,omitempty"`
 		Url      *string `json:"url,omitempty"`
 	} `json:"config,omitempty"`
@@ -2529,6 +3092,40 @@ type ChannelStateReceipt struct {
 type CheckinIndexerResponse struct {
 	Message *string `json:"message,omitempty"`
 	Success *bool   `json:"success,omitempty"`
+}
+
+// CookieCloudConfig defines model for CookieCloudConfig.
+type CookieCloudConfig struct {
+	Enabled         bool               `json:"enabled"`
+	HasConnection   bool               `json:"has_connection"`
+	IntervalSeconds int32              `json:"interval_seconds"`
+	OwnerId         openapi_types.UUID `json:"owner_id"`
+
+	// ServerOrigin Safe scheme and host only; no path
+	ServerOrigin string    `json:"server_origin"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	Version      int64     `json:"version"`
+}
+
+// CookieCloudConfigInput defines model for CookieCloudConfigInput.
+type CookieCloudConfigInput struct {
+	Connection      *CookieCloudConnectionInput `json:"connection,omitempty"`
+	Enabled         bool                        `json:"enabled"`
+	ExpectedVersion int64                       `json:"expected_version"`
+	IntervalSeconds int32                       `json:"interval_seconds"`
+}
+
+// CookieCloudConfigReceipt defines model for CookieCloudConfigReceipt.
+type CookieCloudConfigReceipt struct {
+	CommandKey string            `json:"command_key"`
+	Config     CookieCloudConfig `json:"config"`
+}
+
+// CookieCloudConnectionInput defines model for CookieCloudConnectionInput.
+type CookieCloudConnectionInput struct {
+	Password  *string `json:"password,omitempty"`
+	ServerUrl *string `json:"server_url,omitempty"`
+	UserKey   *string `json:"user_key,omitempty"`
 }
 
 // CreateDownloadClientRequest defines model for CreateDownloadClientRequest.
@@ -2587,6 +3184,12 @@ type CreateNotificationChannelRequest struct {
 	Config      *struct {
 		BotToken *string `json:"bot_token,omitempty"`
 		ChatId   *string `json:"chat_id,omitempty"`
+
+		// ImageKey Optional existing Feishu image key; no image upload
+		ImageKey *string `json:"image_key,omitempty"`
+
+		// ImageUrl Optional public TMDB w342 cover for WeChat
+		ImageUrl *string `json:"image_url,omitempty"`
 		Secret   *string `json:"secret,omitempty"`
 		Url      *string `json:"url,omitempty"`
 	} `json:"config,omitempty"`
@@ -2792,6 +3395,60 @@ type DownloadClientDetails struct {
 type DownloadClientListResponse struct {
 	Items []DownloadClientDetails `json:"items"`
 }
+
+// DownloadGlobalRateClient defines model for DownloadGlobalRateClient.
+type DownloadGlobalRateClient struct {
+	ClientType             DownloadGlobalRateClientClientType  `json:"client_type"`
+	DownloadBytesPerSecond *string                             `json:"download_bytes_per_second"`
+	FailureCode            DownloadGlobalRateClientFailureCode `json:"failure_code"`
+	Id                     openapi_types.UUID                  `json:"id"`
+	LastGood               *DownloadGlobalRateValues           `json:"last_good,omitempty"`
+	Name                   string                              `json:"name"`
+	ObservedAt             *time.Time                          `json:"observed_at"`
+	State                  DownloadGlobalRateClientState       `json:"state"`
+	UploadBytesPerSecond   *string                             `json:"upload_bytes_per_second"`
+}
+
+// DownloadGlobalRateClientClientType defines model for DownloadGlobalRateClient.ClientType.
+type DownloadGlobalRateClientClientType string
+
+// DownloadGlobalRateClientFailureCode defines model for DownloadGlobalRateClient.FailureCode.
+type DownloadGlobalRateClientFailureCode string
+
+// DownloadGlobalRateClientState defines model for DownloadGlobalRateClient.State.
+type DownloadGlobalRateClientState string
+
+// DownloadGlobalRatePoint defines model for DownloadGlobalRatePoint.
+type DownloadGlobalRatePoint struct {
+	At                     time.Time `json:"at"`
+	DownloadBytesPerSecond *string   `json:"download_bytes_per_second"`
+	DownloadKnownClients   int       `json:"download_known_clients"`
+	UploadBytesPerSecond   *string   `json:"upload_bytes_per_second"`
+	UploadKnownClients     int       `json:"upload_known_clients"`
+}
+
+// DownloadGlobalRateValues defines model for DownloadGlobalRateValues.
+type DownloadGlobalRateValues struct {
+	DownloadBytesPerSecond *string   `json:"download_bytes_per_second"`
+	ObservedAt             time.Time `json:"observed_at"`
+	UploadBytesPerSecond   *string   `json:"upload_bytes_per_second"`
+}
+
+// DownloadGlobalRatesOverview defines model for DownloadGlobalRatesOverview.
+type DownloadGlobalRatesOverview struct {
+	Clients                []DownloadGlobalRateClient                  `json:"clients"`
+	DownloadBytesPerSecond *string                                     `json:"download_bytes_per_second"`
+	DownloadKnownClients   int                                         `json:"download_known_clients"`
+	Enabled                bool                                        `json:"enabled"`
+	FreshnessSeconds       DownloadGlobalRatesOverviewFreshnessSeconds `json:"freshness_seconds"`
+	ObservedAt             time.Time                                   `json:"observed_at"`
+	Series                 []DownloadGlobalRatePoint                   `json:"series"`
+	UploadBytesPerSecond   *string                                     `json:"upload_bytes_per_second"`
+	UploadKnownClients     int                                         `json:"upload_known_clients"`
+}
+
+// DownloadGlobalRatesOverviewFreshnessSeconds defines model for DownloadGlobalRatesOverview.FreshnessSeconds.
+type DownloadGlobalRatesOverviewFreshnessSeconds int
 
 // DownloadReleaseRequest defines model for DownloadReleaseRequest.
 type DownloadReleaseRequest struct {
@@ -3357,6 +4014,47 @@ type MappedReleaseExplanationIdentityDecision string
 // MappedReleaseExplanationQualityDecision defines model for MappedReleaseExplanation.QualityDecision.
 type MappedReleaseExplanationQualityDecision string
 
+// MediaRequestApprovalResult defines model for MediaRequestApprovalResult.
+type MediaRequestApprovalResult struct {
+	RequestId    openapi_types.UUID  `json:"request_id"`
+	Subscription SubscriptionDetails `json:"subscription"`
+}
+
+// MediaRequestCommandReceipt defines model for MediaRequestCommandReceipt.
+type MediaRequestCommandReceipt struct {
+	CommandKey string              `json:"command_key"`
+	Request    MediaRequestDetails `json:"request"`
+}
+
+// MediaRequestDetails defines model for MediaRequestDetails.
+type MediaRequestDetails struct {
+	CreatedAt      time.Time                `json:"created_at"`
+	DecidedAt      *time.Time               `json:"decided_at,omitempty"`
+	DecidedBy      *openapi_types.UUID      `json:"decided_by,omitempty"`
+	Id             openapi_types.UUID       `json:"id"`
+	Intent         MediaRequestIntent       `json:"intent"`
+	OwnerId        openapi_types.UUID       `json:"owner_id"`
+	Reason         string                   `json:"reason"`
+	State          MediaRequestDetailsState `json:"state"`
+	SubscriptionId *openapi_types.UUID      `json:"subscription_id,omitempty"`
+	UpdatedAt      time.Time                `json:"updated_at"`
+	Version        int64                    `json:"version"`
+}
+
+// MediaRequestDetailsState defines model for MediaRequestDetails.State.
+type MediaRequestDetailsState string
+
+// MediaRequestIntent defines model for MediaRequestIntent.
+type MediaRequestIntent struct {
+	IncludeSpecials bool                        `json:"include_specials"`
+	MediaType       MediaRequestIntentMediaType `json:"media_type"`
+	Seasons         []int                       `json:"seasons"`
+	TmdbId          int64                       `json:"tmdb_id"`
+}
+
+// MediaRequestIntentMediaType defines model for MediaRequestIntent.MediaType.
+type MediaRequestIntentMediaType string
+
 // MediaScrapeBatch defines model for MediaScrapeBatch.
 type MediaScrapeBatch struct {
 	CreatedAt time.Time          `json:"created_at"`
@@ -3461,6 +4159,43 @@ type MovieSelectionReceipt struct {
 	RootId      openapi_types.UUID `json:"root_id"`
 	Status      string             `json:"status"`
 	UnitId      openapi_types.UUID `json:"unit_id"`
+}
+
+// NamingPreviewRequest defines model for NamingPreviewRequest.
+type NamingPreviewRequest struct {
+	Episode      *int                          `json:"episode,omitempty"`
+	Extension    string                        `json:"extension"`
+	ImdbId       *string                       `json:"imdb_id,omitempty"`
+	MediaType    NamingPreviewRequestMediaType `json:"media_type"`
+	ReleaseTitle *string                       `json:"release_title,omitempty"`
+	Season       *int                          `json:"season,omitempty"`
+	Templates    *NamingTemplates              `json:"templates,omitempty"`
+	Title        string                        `json:"title"`
+	TmdbId       *int64                        `json:"tmdb_id,omitempty"`
+	Year         *int                          `json:"year,omitempty"`
+}
+
+// NamingPreviewRequestMediaType defines model for NamingPreviewRequest.MediaType.
+type NamingPreviewRequestMediaType string
+
+// NamingPreviewResult defines model for NamingPreviewResult.
+type NamingPreviewResult struct {
+	ConfigurationVersion int64                               `json:"configuration_version"`
+	Draft                bool                                `json:"draft"`
+	ExecutionAllowed     NamingPreviewResultExecutionAllowed `json:"execution_allowed"`
+	RelativePath         string                              `json:"relative_path"`
+}
+
+// NamingPreviewResultExecutionAllowed defines model for NamingPreviewResult.ExecutionAllowed.
+type NamingPreviewResultExecutionAllowed bool
+
+// NamingTemplates defines model for NamingTemplates.
+type NamingTemplates struct {
+	// EpisodeTemplate Empty uses canonical episode naming for new plans.
+	EpisodeTemplate string `json:"episode_template"`
+
+	// MovieTemplate Empty uses canonical movie naming for new plans.
+	MovieTemplate string `json:"movie_template"`
 }
 
 // NotificationBatchSummary defines model for NotificationBatchSummary.
@@ -3595,6 +4330,46 @@ type OperationTimelinePage struct {
 	PlanStatus  *string                  `json:"plan_status,omitempty"`
 }
 
+// PersonFollowBindings defines model for PersonFollowBindings.
+type PersonFollowBindings struct {
+	DownloaderId *openapi_types.UUID  `json:"downloader_id,omitempty"`
+	IndexerIds   []openapi_types.UUID `json:"indexer_ids"`
+}
+
+// PersonFollowConfiguration defines model for PersonFollowConfiguration.
+type PersonFollowConfiguration struct {
+	CreatedAt time.Time            `json:"created_at"`
+	Id        openapi_types.UUID   `json:"id"`
+	OwnerId   openapi_types.UUID   `json:"owner_id"`
+	Settings  PersonFollowSettings `json:"settings"`
+	UpdatedAt time.Time            `json:"updated_at"`
+	Version   int64                `json:"version"`
+}
+
+// PersonFollowReceipt defines model for PersonFollowReceipt.
+type PersonFollowReceipt struct {
+	CommandKey string                    `json:"command_key"`
+	Config     PersonFollowConfiguration `json:"config"`
+}
+
+// PersonFollowSettings defines model for PersonFollowSettings.
+type PersonFollowSettings struct {
+	// Bindings Omission preserves saved bindings; an empty indexer list clears them; a nonempty list requires a downloader
+	Bindings              *PersonFollowBindings    `json:"bindings,omitempty"`
+	Enabled               bool                     `json:"enabled"`
+	IntervalMinutes       int                      `json:"interval_minutes"`
+	MinReleaseDate        openapi_types.Date       `json:"min_release_date"`
+	MovieRootId           *openapi_types.UUID      `json:"movie_root_id,omitempty"`
+	PersonId              int64                    `json:"person_id"`
+	QualityPolicyId       string                   `json:"quality_policy_id"`
+	QualityPolicyRevision int64                    `json:"quality_policy_revision"`
+	Role                  PersonFollowSettingsRole `json:"role"`
+	TvRootId              *openapi_types.UUID      `json:"tv_root_id,omitempty"`
+}
+
+// PersonFollowSettingsRole defines model for PersonFollowSettings.Role.
+type PersonFollowSettingsRole string
+
 // PolicyDocument defines model for PolicyDocument.
 type PolicyDocument struct {
 	Id       string        `json:"id"`
@@ -3615,11 +4390,14 @@ type PolicyPreviewRequest struct {
 
 // PolicyPreviewResponse defines model for PolicyPreviewResponse.
 type PolicyPreviewResponse struct {
-	MeetsCutoff    bool     `json:"meets_cutoff"`
-	Passed         bool     `json:"passed"`
-	RejectedReason *string  `json:"rejected_reason,omitempty"`
-	Score          int      `json:"score"`
-	ScoreBreakdown []string `json:"score_breakdown"`
+	MeetsCutoff bool `json:"meets_cutoff"`
+	Passed      bool `json:"passed"`
+
+	// PreferenceScore Candidate-title preference used for ordering, independent of quality score and cutoff.
+	PreferenceScore *int     `json:"preference_score,omitempty"`
+	RejectedReason  *string  `json:"rejected_reason,omitempty"`
+	Score           int      `json:"score"`
+	ScoreBreakdown  []string `json:"score_breakdown"`
 }
 
 // PolicyRevisionReceipt defines model for PolicyRevisionReceipt.
@@ -3630,12 +4408,14 @@ type PolicyRevisionReceipt struct {
 
 // PolicyRuleSet defines model for PolicyRuleSet.
 type PolicyRuleSet struct {
-	CutoffScore     int            `json:"cutoff_score"`
-	PreferHdr       bool           `json:"prefer_hdr"`
-	RejectGroups    []string       `json:"reject_groups"`
-	RejectTerms     []string       `json:"reject_terms"`
-	ResolutionOrder map[string]int `json:"resolution_order"`
-	SourceOrder     map[string]int `json:"source_order"`
+	// CustomWords Literal candidate-title gates and ranking preferences; quality facts and cutoff stay unchanged. Omission or an empty list publishes no word rules.
+	CustomWords     *[]QualityWordRule `json:"custom_words,omitempty"`
+	CutoffScore     int                `json:"cutoff_score"`
+	PreferHdr       bool               `json:"prefer_hdr"`
+	RejectGroups    []string           `json:"reject_groups"`
+	RejectTerms     []string           `json:"reject_terms"`
+	ResolutionOrder map[string]int     `json:"resolution_order"`
+	SourceOrder     map[string]int     `json:"source_order"`
 }
 
 // PublishPolicyRequest defines model for PublishPolicyRequest.
@@ -3643,6 +4423,14 @@ type PublishPolicyRequest struct {
 	ExpectedRevision int64          `json:"expected_revision"`
 	RestoreRevision  *int64         `json:"restore_revision,omitempty"`
 	Rules            *PolicyRuleSet `json:"rules,omitempty"`
+}
+
+// QualityWordRule defines model for QualityWordRule.
+type QualityWordRule struct {
+	Excluded bool   `json:"excluded"`
+	Required bool   `json:"required"`
+	Score    int    `json:"score"`
+	Word     string `json:"word"`
 }
 
 // ReadyStatus defines model for ReadyStatus.
@@ -3658,12 +4446,15 @@ type ReleaseItemResult struct {
 	Id          openapi_types.UUID `json:"id"`
 	IndexerName string             `json:"indexer_name"`
 	Leechers    int                `json:"leechers"`
-	Resolution  *string            `json:"resolution,omitempty"`
-	Score       *int               `json:"score,omitempty"`
-	Seeders     int                `json:"seeders"`
-	SizeBytes   int64              `json:"size_bytes"`
-	Source      *string            `json:"source,omitempty"`
-	Title       string             `json:"title"`
+
+	// PreferenceScore Candidate-title preference used for ordering, independent of quality score and cutoff.
+	PreferenceScore *int    `json:"preference_score,omitempty"`
+	Resolution      *string `json:"resolution,omitempty"`
+	Score           *int    `json:"score,omitempty"`
+	Seeders         int     `json:"seeders"`
+	SizeBytes       int64   `json:"size_bytes"`
+	Source          *string `json:"source,omitempty"`
+	Title           string  `json:"title"`
 }
 
 // ReleaseSearchResponse defines model for ReleaseSearchResponse.
@@ -3710,6 +4501,58 @@ type ScanReorganizeItem struct {
 type ScanReorganizeResponse struct {
 	Items *[]ScanReorganizeItem `json:"items,omitempty"`
 }
+
+// SeedingConfig defines model for SeedingConfig.
+type SeedingConfig struct {
+	ClientId        openapi_types.UUID `json:"client_id"`
+	ClientUpdatedAt time.Time          `json:"client_updated_at"`
+	Enabled         bool               `json:"enabled"`
+	IntervalSeconds int32              `json:"interval_seconds"`
+	OwnerId         openapi_types.UUID `json:"owner_id"`
+	Rule            SeedingRule        `json:"rule"`
+	UpdatedAt       time.Time          `json:"updated_at"`
+	Version         int64              `json:"version"`
+}
+
+// SeedingConfigInput defines model for SeedingConfigInput.
+type SeedingConfigInput struct {
+	Enabled bool `json:"enabled"`
+
+	// ExpectedClientUpdatedAt Current timestamp from downloader configuration; compared as an instant
+	ExpectedClientUpdatedAt time.Time   `json:"expected_client_updated_at"`
+	ExpectedVersion         int64       `json:"expected_version"`
+	IntervalSeconds         int32       `json:"interval_seconds"`
+	Rule                    SeedingRule `json:"rule"`
+}
+
+// SeedingConfigRead defines model for SeedingConfigRead.
+type SeedingConfigRead struct {
+	Config *SeedingConfig `json:"config"`
+}
+
+// SeedingConfigReceipt defines model for SeedingConfigReceipt.
+type SeedingConfigReceipt struct {
+	CommandKey string        `json:"command_key"`
+	Config     SeedingConfig `json:"config"`
+}
+
+// SeedingRule defines model for SeedingRule.
+type SeedingRule struct {
+	// DeleteFiles Removal preserves all downloaded and organized files
+	DeleteFiles SeedingRuleDeleteFiles `json:"delete_files"`
+
+	// LowFreeBytes Uses only native free space bound to the exact task download path
+	LowFreeBytes      *int64          `json:"low_free_bytes,omitempty"`
+	MinSeedingSeconds *int64          `json:"min_seeding_seconds,omitempty"`
+	MinShareRatio     *float64        `json:"min_share_ratio,omitempty"`
+	Mode              SeedingRuleMode `json:"mode"`
+}
+
+// SeedingRuleDeleteFiles Removal preserves all downloaded and organized files
+type SeedingRuleDeleteFiles bool
+
+// SeedingRuleMode defines model for SeedingRule.Mode.
+type SeedingRuleMode string
 
 // SettingItem defines model for SettingItem.
 type SettingItem struct {
@@ -4158,7 +5001,10 @@ type TMDBTVDetailsResponse struct {
 	SeasonsCount  int                `json:"seasons_count"`
 	Title         string             `json:"title"`
 	TmdbId        int64              `json:"tmdb_id"`
-	Year          *int               `json:"year,omitempty"`
+
+	// TranslationSource Display-only fallback provenance; does not change the canonical TMDB identity, episode facts, subscriptions or frozen plans.
+	TranslationSource *TVTranslationSource `json:"translation_source,omitempty"`
+	Year              *int                 `json:"year,omitempty"`
 }
 
 // TMDBTVSeasonItem defines model for TMDBTVSeasonItem.
@@ -4330,6 +5176,23 @@ type TVSelectionVersion struct {
 	SelectionPolicyStamp string             `json:"selection_policy_stamp"`
 }
 
+// TVTranslationSource Display-only fallback provenance; does not change the canonical TMDB identity, episode facts, subscriptions or frozen plans.
+type TVTranslationSource struct {
+	Fields   []TVTranslationSourceFields `json:"fields"`
+	Language TVTranslationSourceLanguage `json:"language"`
+	Provider TVTranslationSourceProvider `json:"provider"`
+	SourceId int64                       `json:"source_id"`
+}
+
+// TVTranslationSourceFields defines model for TVTranslationSource.Fields.
+type TVTranslationSourceFields string
+
+// TVTranslationSourceLanguage defines model for TVTranslationSource.Language.
+type TVTranslationSourceLanguage string
+
+// TVTranslationSourceProvider defines model for TVTranslationSource.Provider.
+type TVTranslationSourceProvider string
+
 // TestConnectionResponse defines model for TestConnectionResponse.
 type TestConnectionResponse struct {
 	Alive   bool   `json:"alive"`
@@ -4376,6 +5239,282 @@ type TransferRevisionReceipt struct {
 
 // TransferRevisionReceiptState defines model for TransferRevisionReceipt.State.
 type TransferRevisionReceiptState string
+
+// UntrackedConfirmationInput defines model for UntrackedConfirmationInput.
+type UntrackedConfirmationInput struct {
+	Action string `json:"action"`
+
+	// CandidateKey Canonical positive int64 typed TMDB identity
+	CandidateKey string             `json:"candidate_key"`
+	FileRevision int64              `json:"file_revision"`
+	MaterialHash string             `json:"material_hash"`
+	ReviewId     openapi_types.UUID `json:"review_id"`
+	ScopeVersion int64              `json:"scope_version"`
+
+	// TargetRelativePath Clean relative video file path; no absolute path, backslash, NUL, dot segments or parent escape
+	TargetRelativePath string `json:"target_relative_path"`
+}
+
+// UntrackedConfirmationMaterial defines model for UntrackedConfirmationMaterial.
+type UntrackedConfirmationMaterial struct {
+	ActorId   openapi_types.UUID            `json:"actor_id"`
+	CreatedAt time.Time                     `json:"created_at"`
+	File      UntrackedDiscoveryObservation `json:"file"`
+	Id        openapi_types.UUID            `json:"id"`
+	Input     UntrackedConfirmationInput    `json:"input"`
+	Review    UntrackedReviewView           `json:"review"`
+
+	// Scope Safe owner-only saved intent. Source and target physical baselines are independent. Disabling monitoring does not remove the historical review boundary.
+	Scope UntrackedScope `json:"scope"`
+}
+
+// UntrackedConfirmationReceipt defines model for UntrackedConfirmationReceipt.
+type UntrackedConfirmationReceipt struct {
+	CommandKey       string                                       `json:"command_key"`
+	ExecutionAllowed UntrackedConfirmationReceiptExecutionAllowed `json:"execution_allowed"`
+	Material         UntrackedConfirmationMaterial                `json:"material"`
+	State            string                                       `json:"state"`
+}
+
+// UntrackedConfirmationReceiptExecutionAllowed defines model for UntrackedConfirmationReceipt.ExecutionAllowed.
+type UntrackedConfirmationReceiptExecutionAllowed bool
+
+// UntrackedDiscoveryList defines model for UntrackedDiscoveryList.
+type UntrackedDiscoveryList struct {
+	ExecutionAllowed UntrackedDiscoveryListExecutionAllowed `json:"execution_allowed"`
+
+	// HasMore More persisted query rows
+	HasMore           bool                                    `json:"has_more"`
+	InventoryComplete UntrackedDiscoveryListInventoryComplete `json:"inventory_complete"`
+	Items             []UntrackedDiscoveryObservation         `json:"items"`
+	NextCursor        string                                  `json:"next_cursor"`
+}
+
+// UntrackedDiscoveryListExecutionAllowed defines model for UntrackedDiscoveryList.ExecutionAllowed.
+type UntrackedDiscoveryListExecutionAllowed bool
+
+// UntrackedDiscoveryListInventoryComplete defines model for UntrackedDiscoveryList.InventoryComplete.
+type UntrackedDiscoveryListInventoryComplete bool
+
+// UntrackedDiscoveryObservation defines model for UntrackedDiscoveryObservation.
+type UntrackedDiscoveryObservation struct {
+	Device          int64              `json:"device"`
+	FirstObservedAt time.Time          `json:"first_observed_at"`
+	Id              openapi_types.UUID `json:"id"`
+	Inode           int64              `json:"inode"`
+	LastObservedAt  time.Time          `json:"last_observed_at"`
+	Mtime           int64              `json:"mtime"`
+
+	// Observations Distinct execution observations; never proof of write completion
+	Observations int64              `json:"observations"`
+	RelativePath string             `json:"relative_path"`
+	Revision     int64              `json:"revision"`
+	ScopeId      openapi_types.UUID `json:"scope_id"`
+
+	// ScopeVersion Configuration version under which this observation was recorded
+	ScopeVersion int64 `json:"scope_version"`
+	Size         int64 `json:"size"`
+}
+
+// UntrackedOrganizationInput defines model for UntrackedOrganizationInput.
+type UntrackedOrganizationInput struct {
+	// ConfirmationId Canonical nonzero UUID of the immutable confirmation; no paths or action overrides
+	ConfirmationId openapi_types.UUID `json:"confirmation_id"`
+}
+
+// UntrackedOrganizationOperation Frozen original intent and controlled asynchronous job identity; these twelve fields never change with execution progress
+type UntrackedOrganizationOperation struct {
+	ActorId        openapi_types.UUID `json:"actor_id"`
+	ConfirmationId openapi_types.UUID `json:"confirmation_id"`
+	CreatedAt      time.Time          `json:"created_at"`
+	FileId         openapi_types.UUID `json:"file_id"`
+	FileRevision   int64              `json:"file_revision"`
+	Id             openapi_types.UUID `json:"id"`
+	JobId          openapi_types.UUID `json:"job_id"`
+	MaterialHash   string             `json:"material_hash"`
+	PlanId         openapi_types.UUID `json:"plan_id"`
+	ScopeId        openapi_types.UUID `json:"scope_id"`
+	ScopeVersion   int64              `json:"scope_version"`
+	StepId         openapi_types.UUID `json:"step_id"`
+}
+
+// UntrackedOrganizationReceipt Immutable original queued receipt; use the separate operation view for progress. Queued means a controlled task was accepted, never physical execution permission.
+type UntrackedOrganizationReceipt struct {
+	CommandKey       string                                       `json:"command_key"`
+	ExecutionAllowed UntrackedOrganizationReceiptExecutionAllowed `json:"execution_allowed"`
+
+	// Operation Frozen original intent and controlled asynchronous job identity; these twelve fields never change with execution progress
+	Operation UntrackedOrganizationOperation `json:"operation"`
+	State     string                         `json:"state"`
+}
+
+// UntrackedOrganizationReceiptExecutionAllowed defines model for UntrackedOrganizationReceipt.ExecutionAllowed.
+type UntrackedOrganizationReceiptExecutionAllowed bool
+
+// UntrackedOrganizationView defines model for UntrackedOrganizationView.
+type UntrackedOrganizationView struct {
+	// CompletedFileId Nonzero library file UUID required for completed; null in every other state
+	CompletedFileId  *openapi_types.UUID                       `json:"completed_file_id"`
+	ExecutionAllowed UntrackedOrganizationViewExecutionAllowed `json:"execution_allowed"`
+
+	// Operation Frozen original intent and controlled asynchronous job identity; these twelve fields never change with execution progress
+	Operation UntrackedOrganizationOperation `json:"operation"`
+
+	// RecordedAt Persisted observation time at or after operation creation; required for completed and otherwise nullable
+	RecordedAt *time.Time `json:"recorded_at"`
+
+	// ReviewRequired True exactly when state is review_required
+	ReviewRequired bool   `json:"review_required"`
+	State          string `json:"state"`
+}
+
+// UntrackedOrganizationViewExecutionAllowed defines model for UntrackedOrganizationView.ExecutionAllowed.
+type UntrackedOrganizationViewExecutionAllowed bool
+
+// UntrackedReviewCandidate defines model for UntrackedReviewCandidate.
+type UntrackedReviewCandidate struct {
+	// Key Canonical positive int64 typed TMDB identity
+	Key           string                `json:"key"`
+	Namespace     string                `json:"namespace"`
+	OriginalTitle string                `json:"original_title"`
+	Title         string                `json:"title"`
+	TmdbId        int64                 `json:"tmdb_id"`
+	Units         []UntrackedReviewUnit `json:"units"`
+	Year          int                   `json:"year"`
+}
+
+// UntrackedReviewEvidence defines model for UntrackedReviewEvidence.
+type UntrackedReviewEvidence struct {
+	Candidate     *UntrackedReviewCandidate `json:"candidate"`
+	Complete      bool                      `json:"complete"`
+	ParsedTitle   string                    `json:"parsed_title"`
+	ParsedYear    int                       `json:"parsed_year"`
+	ParserVersion string                    `json:"parser_version"`
+	Reason        string                    `json:"reason"`
+	Selection     string                    `json:"selection"`
+}
+
+// UntrackedReviewInput defines model for UntrackedReviewInput.
+type UntrackedReviewInput struct {
+	FileRevision int64 `json:"file_revision"`
+
+	// MediaType Must agree with the selected target root type
+	MediaType    string `json:"media_type"`
+	ScopeVersion int64  `json:"scope_version"`
+
+	// TmdbId Zero requests an automatic suggestion; a positive ID is explicit typed identity
+	TmdbId int64 `json:"tmdb_id"`
+}
+
+// UntrackedReviewRequest defines model for UntrackedReviewRequest.
+type UntrackedReviewRequest struct {
+	ActorId   openapi_types.UUID   `json:"actor_id"`
+	CreatedAt time.Time            `json:"created_at"`
+	FileId    openapi_types.UUID   `json:"file_id"`
+	Id        openapi_types.UUID   `json:"id"`
+	Input     UntrackedReviewInput `json:"input"`
+	JobId     openapi_types.UUID   `json:"job_id"`
+	ScopeId   openapi_types.UUID   `json:"scope_id"`
+}
+
+// UntrackedReviewRequestReceipt defines model for UntrackedReviewRequestReceipt.
+type UntrackedReviewRequestReceipt struct {
+	CommandKey       string                                        `json:"command_key"`
+	ExecutionAllowed UntrackedReviewRequestReceiptExecutionAllowed `json:"execution_allowed"`
+	Request          UntrackedReviewRequest                        `json:"request"`
+}
+
+// UntrackedReviewRequestReceiptExecutionAllowed defines model for UntrackedReviewRequestReceipt.ExecutionAllowed.
+type UntrackedReviewRequestReceiptExecutionAllowed bool
+
+// UntrackedReviewUnit defines model for UntrackedReviewUnit.
+type UntrackedReviewUnit struct {
+	// AirDate Real air date only; null when unknown or not applicable
+	AirDate       *time.Time `json:"air_date"`
+	Episode       int        `json:"episode"`
+	Season        int        `json:"season"`
+	TmdbEpisodeId int64      `json:"tmdb_episode_id"`
+	UnitKey       string     `json:"unit_key"`
+}
+
+// UntrackedReviewView defines model for UntrackedReviewView.
+type UntrackedReviewView struct {
+	Evidence         *UntrackedReviewEvidence            `json:"evidence"`
+	ExecutionAllowed UntrackedReviewViewExecutionAllowed `json:"execution_allowed"`
+
+	// MaterialHash Empty before evidence is recorded; otherwise the frozen material digest
+	MaterialHash string                 `json:"material_hash"`
+	RecordedAt   *time.Time             `json:"recorded_at"`
+	Request      UntrackedReviewRequest `json:"request"`
+	Stale        bool                   `json:"stale"`
+	State        string                 `json:"state"`
+}
+
+// UntrackedReviewViewExecutionAllowed defines model for UntrackedReviewView.ExecutionAllowed.
+type UntrackedReviewViewExecutionAllowed bool
+
+// UntrackedScope Safe owner-only saved intent. Source and target physical baselines are independent. Disabling monitoring does not remove the historical review boundary.
+type UntrackedScope struct {
+	ClientId openapi_types.UUID `json:"client_id"`
+
+	// ClientStamp Digest only; no endpoint or credential plaintext
+	ClientStamp          string                 `json:"client_stamp"`
+	ClientVersion        time.Time              `json:"client_version"`
+	CreatedAt            time.Time              `json:"created_at"`
+	Enabled              bool                   `json:"enabled"`
+	Id                   openapi_types.UUID     `json:"id"`
+	LocalRoot            string                 `json:"local_root"`
+	OwnerId              openapi_types.UUID     `json:"owner_id"`
+	RemotePrefix         string                 `json:"remote_prefix"`
+	SourceIdentity       UntrackedScopeIdentity `json:"source_identity"`
+	TargetBaselineScanId openapi_types.UUID     `json:"target_baseline_scan_id"`
+	TargetIdentity       UntrackedScopeIdentity `json:"target_identity"`
+	TargetMarker         string                 `json:"target_marker"`
+	TargetMediaType      string                 `json:"target_media_type"`
+	TargetRootGeneration int64                  `json:"target_root_generation"`
+	TargetRootId         openapi_types.UUID     `json:"target_root_id"`
+	TargetRootPath       string                 `json:"target_root_path"`
+	UpdatedAt            time.Time              `json:"updated_at"`
+	Version              int64                  `json:"version"`
+}
+
+// UntrackedScopeCurrent defines model for UntrackedScopeCurrent.
+type UntrackedScopeCurrent struct {
+	Config *UntrackedScope `json:"config"`
+}
+
+// UntrackedScopeIdentity defines model for UntrackedScopeIdentity.
+type UntrackedScopeIdentity struct {
+	Device int64 `json:"device"`
+	Inode  int64 `json:"inode"`
+}
+
+// UntrackedScopeInput defines model for UntrackedScopeInput.
+type UntrackedScopeInput struct {
+	ClientId               openapi_types.UUID `json:"client_id"`
+	Enabled                bool               `json:"enabled"`
+	ExpectedClientVersion  time.Time          `json:"expected_client_version"`
+	ExpectedRootGeneration int64              `json:"expected_root_generation"`
+	ExpectedVersion        int64              `json:"expected_version"`
+
+	// RemotePrefix Exact canonical remote prefix of a configured downloader mapping; never an arbitrary local path
+	RemotePrefix string             `json:"remote_prefix"`
+	TargetRootId openapi_types.UUID `json:"target_root_id"`
+}
+
+// UntrackedScopeReceipt defines model for UntrackedScopeReceipt.
+type UntrackedScopeReceipt struct {
+	CommandKey string `json:"command_key"`
+
+	// ExecutionAllowed Saving a scope never authorizes organization or import
+	ExecutionAllowed UntrackedScopeReceiptExecutionAllowed `json:"execution_allowed"`
+
+	// Scope Safe owner-only saved intent. Source and target physical baselines are independent. Disabling monitoring does not remove the historical review boundary.
+	Scope UntrackedScope `json:"scope"`
+}
+
+// UntrackedScopeReceiptExecutionAllowed Saving a scope never authorizes organization or import
+type UntrackedScopeReceiptExecutionAllowed bool
 
 // UpdateDownloadClientRequest defines model for UpdateDownloadClientRequest.
 type UpdateDownloadClientRequest struct {
@@ -4808,8 +5947,29 @@ type WantedStatusDetailsCurrentFactStage string
 // WantedStatusDetailsStatus defines model for WantedStatusDetails.Status.
 type WantedStatusDetailsStatus string
 
+// WebPushConfiguration defines model for WebPushConfiguration.
+type WebPushConfiguration struct {
+	Enabled   bool   `json:"enabled"`
+	PublicKey string `json:"public_key"`
+	Version   string `json:"version"`
+}
+
+// WebPushDevice defines model for WebPushDevice.
+type WebPushDevice struct {
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Status    string             `json:"status"`
+	UpdatedAt time.Time          `json:"updated_at"`
+}
+
 // IdempotencyKey defines model for IdempotencyKey.
 type IdempotencyKey = string
+
+// MediaRequestKey defines model for MediaRequestKey.
+type MediaRequestKey = string
+
+// MediaRequestFailure defines model for MediaRequestFailure.
+type MediaRequestFailure = ErrorResponse
 
 // PolicyBadRequest defines model for PolicyBadRequest.
 type PolicyBadRequest = ErrorResponse
@@ -4869,8 +6029,15 @@ type GetDoubanRankingParams struct {
 // GetDoubanRankingParamsList defines parameters for GetDoubanRanking.
 type GetDoubanRankingParamsList string
 
+// SaveSeedingConfigParams defines parameters for SaveSeedingConfig.
+type SaveSeedingConfigParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
 // ConfirmCompleteTVOrganizationJSONBody defines parameters for ConfirmCompleteTVOrganization.
 type ConfirmCompleteTVOrganizationJSONBody struct {
+	// NamingVersion Version returned by the organization preview; required when naming is configured.
+	NamingVersion *int64             `json:"naming_version,omitempty"`
 	OperationId   openapi_types.UUID `json:"operation_id"`
 	TrackingJobId openapi_types.UUID `json:"tracking_job_id"`
 }
@@ -4923,6 +6090,11 @@ type SaveSiteCheckinConfigParams struct {
 type ReadSiteCheckinHistoryParams struct {
 	Limit  *int32  `form:"limit,omitempty" json:"limit,omitempty"`
 	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+}
+
+// SaveCookieCloudConfigParams defines parameters for SaveCookieCloudConfig.
+type SaveCookieCloudConfigParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
 // ReplayIntegrationDeliveryJSONBody defines parameters for ReplayIntegrationDelivery.
@@ -4997,6 +6169,78 @@ type ConfirmLibraryReuseParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
+// SaveUntrackedScopeParams defines parameters for SaveUntrackedScope.
+type SaveUntrackedScopeParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// ListUntrackedDiscoveriesParams defines parameters for ListUntrackedDiscoveries.
+type ListUntrackedDiscoveriesParams struct {
+	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// ConfirmUntrackedFileParams defines parameters for ConfirmUntrackedFile.
+type ConfirmUntrackedFileParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// RequestUntrackedOrganizationParams defines parameters for RequestUntrackedOrganization.
+type RequestUntrackedOrganizationParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// RequestUntrackedReviewParams defines parameters for RequestUntrackedReview.
+type RequestUntrackedReviewParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// ListMediaRequestsParams defines parameters for ListMediaRequests.
+type ListMediaRequestsParams struct {
+	Limit    *int                `form:"limit,omitempty" json:"limit,omitempty"`
+	BeforeId *openapi_types.UUID `form:"before_id,omitempty" json:"before_id,omitempty"`
+
+	// State Administrators only; pending excludes every terminal request
+	State *ListMediaRequestsParamsState `form:"state,omitempty" json:"state,omitempty"`
+}
+
+// ListMediaRequestsParamsState defines parameters for ListMediaRequests.
+type ListMediaRequestsParamsState string
+
+// SubmitMediaRequestParams defines parameters for SubmitMediaRequest.
+type SubmitMediaRequestParams struct {
+	IdempotencyKey MediaRequestKey `json:"Idempotency-Key"`
+}
+
+// ApproveMediaRequestJSONBody defines parameters for ApproveMediaRequest.
+type ApproveMediaRequestJSONBody struct {
+	DownloaderId    openapi_types.UUID   `json:"downloader_id"`
+	ExpectedVersion int64                `json:"expected_version"`
+	IndexerIds      []openapi_types.UUID `json:"indexer_ids"`
+	QualityPolicyId string               `json:"quality_policy_id"`
+	RootId          openapi_types.UUID   `json:"root_id"`
+}
+
+// ApproveMediaRequestParams defines parameters for ApproveMediaRequest.
+type ApproveMediaRequestParams struct {
+	IdempotencyKey MediaRequestKey `json:"Idempotency-Key"`
+}
+
+// CloseMediaRequestJSONBody defines parameters for CloseMediaRequest.
+type CloseMediaRequestJSONBody struct {
+	Action          CloseMediaRequestJSONBodyAction `json:"action"`
+	ExpectedVersion int64                           `json:"expected_version"`
+	Reason          string                          `json:"reason"`
+}
+
+// CloseMediaRequestParams defines parameters for CloseMediaRequest.
+type CloseMediaRequestParams struct {
+	IdempotencyKey MediaRequestKey `json:"Idempotency-Key"`
+}
+
+// CloseMediaRequestJSONBodyAction defines parameters for CloseMediaRequest.
+type CloseMediaRequestJSONBodyAction string
+
 // ReadMediaScrapeParams defines parameters for ReadMediaScrape.
 type ReadMediaScrapeParams struct {
 	// CommandKey Read only the current account original batch receipt for this command.
@@ -5010,6 +6254,12 @@ type StartMediaScrapeParams struct {
 
 // GetTMDBMediaCreditsParamsMediaType defines parameters for GetTMDBMediaCredits.
 type GetTMDBMediaCreditsParamsMediaType string
+
+// GetBangumiCalendarParams defines parameters for GetBangumiCalendar.
+type GetBangumiCalendarParams struct {
+	Weekday *int    `form:"weekday,omitempty" json:"weekday,omitempty"`
+	Q       *string `form:"q,omitempty" json:"q,omitempty"`
+}
 
 // AcquireMovieParams defines parameters for AcquireMovie.
 type AcquireMovieParams struct {
@@ -5037,6 +6287,19 @@ type SetNotificationChannelStateJSONBody struct {
 type SetNotificationChannelStateParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
+
+// QueueNotificationTestJSONBody defines parameters for QueueNotificationTest.
+type QueueNotificationTestJSONBody struct {
+	ExpectedUpdatedAt time.Time `json:"expected_updated_at"`
+}
+
+// QueueNotificationTestParams defines parameters for QueueNotificationTest.
+type QueueNotificationTestParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// QueueNotificationTest202JSONResponseBodyStatus defines parameters for QueueNotificationTest.
+type QueueNotificationTest202JSONResponseBodyStatus string
 
 // ListOperationsParams defines parameters for ListOperations.
 type ListOperationsParams struct {
@@ -5077,6 +6340,17 @@ type CommitSubmissionRetryJSONBodyAcknowledged bool
 type GetOperationTimelineParams struct {
 	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
 	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+}
+
+// SavePersonFollowJSONBody defines parameters for SavePersonFollow.
+type SavePersonFollowJSONBody struct {
+	ExpectedVersion int64                `json:"expected_version"`
+	Settings        PersonFollowSettings `json:"settings"`
+}
+
+// SavePersonFollowParams defines parameters for SavePersonFollow.
+type SavePersonFollowParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
 
 // CreatePolicyParams defines parameters for CreatePolicy.
@@ -5307,6 +6581,33 @@ type SaveDoubanSyncConfigParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
+// ListAuditTimelineParams defines parameters for ListAuditTimeline.
+type ListAuditTimelineParams struct {
+	// Limit Page size; defaults to 50.
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Cursor Opaque continuation bound to the account and filters.
+	Cursor    *string                           `form:"cursor,omitempty" json:"cursor,omitempty"`
+	ActorType *ListAuditTimelineParamsActorType `form:"actor_type,omitempty" json:"actor_type,omitempty"`
+
+	// ActorId Exact historical actor identifier.
+	ActorId *string `form:"actor_id,omitempty" json:"actor_id,omitempty"`
+
+	// Action Exact action; no wildcard matching.
+	Action     *string `form:"action,omitempty" json:"action,omitempty"`
+	TargetType *string `form:"target_type,omitempty" json:"target_type,omitempty"`
+	TargetId   *string `form:"target_id,omitempty" json:"target_id,omitempty"`
+
+	// From Inclusive timestamp with at most microsecond precision.
+	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+
+	// Until Exclusive timestamp with at most microsecond precision.
+	Until *time.Time `form:"until,omitempty" json:"until,omitempty"`
+}
+
+// ListAuditTimelineParamsActorType defines parameters for ListAuditTimeline.
+type ListAuditTimelineParamsActorType string
+
 // StreamSystemLogsParams defines parameters for StreamSystemLogs.
 type StreamSystemLogsParams struct {
 	// Level Minimum log level filter (DEBUG, INFO, WARN, ERROR).
@@ -5370,6 +6671,32 @@ type ScanDirectoryReorganizeJSONBody struct {
 	TargetRoot string `json:"target_root"`
 }
 
+// RegisterWebPushDeviceJSONBody defines parameters for RegisterWebPushDevice.
+type RegisterWebPushDeviceJSONBody struct {
+	Id           openapi_types.UUID `json:"id"`
+	Subscription struct {
+		Auth     string `json:"auth"`
+		Endpoint string `json:"endpoint"`
+		P256dh   string `json:"p256dh"`
+	} `json:"subscription"`
+	VapidVersion string `json:"vapid_version"`
+}
+
+// RegisterWebPushDeviceParams defines parameters for RegisterWebPushDevice.
+type RegisterWebPushDeviceParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// RevokeWebPushDeviceJSONBody defines parameters for RevokeWebPushDevice.
+type RevokeWebPushDeviceJSONBody struct {
+	ExpectedUpdatedAt time.Time `json:"expected_updated_at"`
+}
+
+// RevokeWebPushDeviceParams defines parameters for RevokeWebPushDevice.
+type RevokeWebPushDeviceParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
 // CommitSelectedMovieJSONRequestBody defines body for CommitSelectedMovie for application/json ContentType.
 type CommitSelectedMovieJSONRequestBody = MovieSelectionCommand
 
@@ -5391,6 +6718,9 @@ type CreateDownloadClientJSONRequestBody = CreateDownloadClientRequest
 // UpdateDownloadClientJSONRequestBody defines body for UpdateDownloadClient for application/json ContentType.
 type UpdateDownloadClientJSONRequestBody = UpdateDownloadClientRequest
 
+// SaveSeedingConfigJSONRequestBody defines body for SaveSeedingConfig for application/json ContentType.
+type SaveSeedingConfigJSONRequestBody = SeedingConfigInput
+
 // ConfirmCompleteTVOrganizationJSONRequestBody defines body for ConfirmCompleteTVOrganization for application/json ContentType.
 type ConfirmCompleteTVOrganizationJSONRequestBody ConfirmCompleteTVOrganizationJSONBody
 
@@ -5409,6 +6739,9 @@ type SaveSiteAccountStatsConfigJSONRequestBody = SiteAccountStatsConfigInput
 // SaveSiteCheckinConfigJSONRequestBody defines body for SaveSiteCheckinConfig for application/json ContentType.
 type SaveSiteCheckinConfigJSONRequestBody = SiteCheckinConfigInput
 
+// SaveCookieCloudConfigJSONRequestBody defines body for SaveCookieCloudConfig for application/json ContentType.
+type SaveCookieCloudConfigJSONRequestBody = CookieCloudConfigInput
+
 // ReplayIntegrationDeliveryJSONRequestBody defines body for ReplayIntegrationDelivery for application/json ContentType.
 type ReplayIntegrationDeliveryJSONRequestBody ReplayIntegrationDeliveryJSONBody
 
@@ -5423,6 +6756,27 @@ type PreviewLibraryReuseJSONRequestBody PreviewLibraryReuseJSONBody
 
 // ConfirmLibraryReuseJSONRequestBody defines body for ConfirmLibraryReuse for application/json ContentType.
 type ConfirmLibraryReuseJSONRequestBody = LibraryReuseCommand
+
+// SaveUntrackedScopeJSONRequestBody defines body for SaveUntrackedScope for application/json ContentType.
+type SaveUntrackedScopeJSONRequestBody = UntrackedScopeInput
+
+// ConfirmUntrackedFileJSONRequestBody defines body for ConfirmUntrackedFile for application/json ContentType.
+type ConfirmUntrackedFileJSONRequestBody = UntrackedConfirmationInput
+
+// RequestUntrackedOrganizationJSONRequestBody defines body for RequestUntrackedOrganization for application/json ContentType.
+type RequestUntrackedOrganizationJSONRequestBody = UntrackedOrganizationInput
+
+// RequestUntrackedReviewJSONRequestBody defines body for RequestUntrackedReview for application/json ContentType.
+type RequestUntrackedReviewJSONRequestBody = UntrackedReviewInput
+
+// SubmitMediaRequestJSONRequestBody defines body for SubmitMediaRequest for application/json ContentType.
+type SubmitMediaRequestJSONRequestBody = MediaRequestIntent
+
+// ApproveMediaRequestJSONRequestBody defines body for ApproveMediaRequest for application/json ContentType.
+type ApproveMediaRequestJSONRequestBody ApproveMediaRequestJSONBody
+
+// CloseMediaRequestJSONRequestBody defines body for CloseMediaRequest for application/json ContentType.
+type CloseMediaRequestJSONRequestBody CloseMediaRequestJSONBody
 
 // CreateMediaServerJSONRequestBody defines body for CreateMediaServer for application/json ContentType.
 type CreateMediaServerJSONRequestBody = CreateMediaServerRequest
@@ -5445,11 +6799,20 @@ type ReplaceNotificationChannelJSONRequestBody = ChannelReplacementRequest
 // SetNotificationChannelStateJSONRequestBody defines body for SetNotificationChannelState for application/json ContentType.
 type SetNotificationChannelStateJSONRequestBody SetNotificationChannelStateJSONBody
 
+// QueueNotificationTestJSONRequestBody defines body for QueueNotificationTest for application/json ContentType.
+type QueueNotificationTestJSONRequestBody QueueNotificationTestJSONBody
+
 // WithdrawOwnRequirementJSONRequestBody defines body for WithdrawOwnRequirement for application/json ContentType.
 type WithdrawOwnRequirementJSONRequestBody WithdrawOwnRequirementJSONBody
 
 // CommitSubmissionRetryJSONRequestBody defines body for CommitSubmissionRetry for application/json ContentType.
 type CommitSubmissionRetryJSONRequestBody CommitSubmissionRetryJSONBody
+
+// PreviewNamingJSONRequestBody defines body for PreviewNaming for application/json ContentType.
+type PreviewNamingJSONRequestBody = NamingPreviewRequest
+
+// SavePersonFollowJSONRequestBody defines body for SavePersonFollow for application/json ContentType.
+type SavePersonFollowJSONRequestBody SavePersonFollowJSONBody
 
 // CreatePolicyJSONRequestBody defines body for CreatePolicy for application/json ContentType.
 type CreatePolicyJSONRequestBody = CreatePolicyRequest
@@ -5558,6 +6921,12 @@ type PreviewTransferRevisionJSONRequestBody PreviewTransferRevisionJSONBody
 
 // ScanDirectoryReorganizeJSONRequestBody defines body for ScanDirectoryReorganize for application/json ContentType.
 type ScanDirectoryReorganizeJSONRequestBody ScanDirectoryReorganizeJSONBody
+
+// RegisterWebPushDeviceJSONRequestBody defines body for RegisterWebPushDevice for application/json ContentType.
+type RegisterWebPushDeviceJSONRequestBody RegisterWebPushDeviceJSONBody
+
+// RevokeWebPushDeviceJSONRequestBody defines body for RevokeWebPushDevice for application/json ContentType.
+type RevokeWebPushDeviceJSONRequestBody RevokeWebPushDeviceJSONBody
 
 // AsExplainMappedReleaseJSONBody0 returns the union data inside the ExplainMappedReleaseJSONBody as a ExplainMappedReleaseJSONBody0
 func (t ExplainMappedReleaseJSONBody) AsExplainMappedReleaseJSONBody0() (ExplainMappedReleaseJSONBody0, error) {
@@ -5716,12 +7085,24 @@ type ServerInterface interface {
 	// CreateDownloadClient Add or update a download client
 	// (POST /api/v1/download-clients)
 	CreateDownloadClient(w http.ResponseWriter, r *http.Request)
+	// GetDownloadGlobalRates Read persisted global native download and upload rates
+	// (GET /api/v1/download-clients/global-rates)
+	GetDownloadGlobalRates(w http.ResponseWriter, r *http.Request)
 	// DeleteDownloadClient Delete a download client
 	// (DELETE /api/v1/download-clients/{id})
 	DeleteDownloadClient(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// UpdateDownloadClient Update a download client
 	// (PUT /api/v1/download-clients/{id})
 	UpdateDownloadClient(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	// ReadSeedingConfig Read downloader seeding eligibility configuration
+	// (GET /api/v1/download-clients/{id}/seeding/config)
+	ReadSeedingConfig(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	// SaveSeedingConfig Save versioned keep-data seeding eligibility rules
+	// (PUT /api/v1/download-clients/{id}/seeding/config)
+	SaveSeedingConfig(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params SaveSeedingConfigParams)
+	// ReadSeedingConfigReceipt Read an administrator-scoped original seeding configuration receipt
+	// (GET /api/v1/download-clients/{id}/seeding/config/commands/{command_key})
+	ReadSeedingConfigReceipt(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, commandKey string)
 	// TestDownloadClient Test connection to a download client
 	// (POST /api/v1/download-clients/{id}/test)
 	TestDownloadClient(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
@@ -5782,6 +7163,15 @@ type ServerInterface interface {
 	// ReadSiteCheckinHistory Read persisted site checkin history
 	// (GET /api/v1/indexers/{indexer_id}/checkin/history)
 	ReadSiteCheckinHistory(w http.ResponseWriter, r *http.Request, indexerId openapi_types.UUID, params ReadSiteCheckinHistoryParams)
+	// ReadCookieCloudConfig Read the current administrator's safe CookieCloud configuration
+	// (GET /api/v1/integrations/cookiecloud/config)
+	ReadCookieCloudConfig(w http.ResponseWriter, r *http.Request)
+	// SaveCookieCloudConfig Persist an encrypted CookieCloud connection without starting synchronization
+	// (PUT /api/v1/integrations/cookiecloud/config)
+	SaveCookieCloudConfig(w http.ResponseWriter, r *http.Request, params SaveCookieCloudConfigParams)
+	// ReadCookieCloudConfigReceipt Read an account-scoped original CookieCloud configuration receipt
+	// (GET /api/v1/integrations/cookiecloud/config/commands/{command_key})
+	ReadCookieCloudConfigReceipt(w http.ResponseWriter, r *http.Request, commandKey string)
 	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
 	ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request)
@@ -5821,6 +7211,66 @@ type ServerInterface interface {
 	// ConfirmLibraryReuse Confirm complete source coverage and queue a local demand atomically
 	// (POST /api/v1/library/reuses)
 	ConfirmLibraryReuse(w http.ResponseWriter, r *http.Request, params ConfirmLibraryReuseParams)
+	// ReadUntrackedScope Read an explicitly selected untracked directory scope
+	// (GET /api/v1/library/untracked-scopes/{scope_id})
+	ReadUntrackedScope(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID)
+	// SaveUntrackedScope Save directory discovery intent without granting import authority
+	// (PUT /api/v1/library/untracked-scopes/{scope_id})
+	SaveUntrackedScope(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, params SaveUntrackedScopeParams)
+	// ReadUntrackedScopeReceipt Recover an original directory scope configuration receipt
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/commands/{command_key})
+	ReadUntrackedScopeReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, commandKey string)
+	// ListUntrackedDiscoveries Read persisted file observations for an explicit directory scope
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries)
+	ListUntrackedDiscoveries(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, params ListUntrackedDiscoveriesParams)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmation-commands/{command_key})
+	ReadUntrackedConfirmationReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, commandKey string)
+
+	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmations)
+	ConfirmUntrackedFile(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params ConfirmUntrackedFileParams)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organization-commands/{command_key})
+	ReadUntrackedOrganizationReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, commandKey string)
+
+	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations)
+	RequestUntrackedOrganization(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params RequestUntrackedOrganizationParams)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations/{operation_id})
+	ReadUntrackedOrganization(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, operationId openapi_types.UUID)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/review-commands/{command_key})
+	ReadUntrackedReviewRequestReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, commandKey string)
+
+	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews)
+	RequestUntrackedReview(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params RequestUntrackedReviewParams)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews/{review_id})
+	ReadUntrackedReview(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, reviewId openapi_types.UUID)
+	// ListMediaRequests List own requests; administrators can list all requests
+	// (GET /api/v1/media-requests)
+	ListMediaRequests(w http.ResponseWriter, r *http.Request, params ListMediaRequestsParams)
+	// SubmitMediaRequest Persist a pending request without creating a subscription or performing metadata I/O
+	// (POST /api/v1/media-requests)
+	SubmitMediaRequest(w http.ResponseWriter, r *http.Request, params SubmitMediaRequestParams)
+	// GetMediaRequestReceipt Recover the current account's original submit or close receipt without retrying a write
+	// (GET /api/v1/media-requests/commands/{idempotency_key})
+	GetMediaRequestReceipt(w http.ResponseWriter, r *http.Request, idempotencyKey string)
+	// GetMediaRequestSummary Read the administrator inbox count without scheduling or metadata access
+	// (GET /api/v1/media-requests/summary)
+	GetMediaRequestSummary(w http.ResponseWriter, r *http.Request)
+	// GetMediaRequest Read current request state in the current account's object scope
+	// (GET /api/v1/media-requests/{request_id})
+	GetMediaRequest(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID)
+	// GetMediaRequestApprovalReceipt Recover the original approving administrator's receipt without metadata or download I/O
+	// (GET /api/v1/media-requests/{request_id}/approval-commands/{idempotency_key})
+	GetMediaRequestApprovalReceipt(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID, idempotencyKey string)
+	// ApproveMediaRequest Administrator approval through the existing atomic subscription creation transaction
+	// (POST /api/v1/media-requests/{request_id}/approve)
+	ApproveMediaRequest(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID, params ApproveMediaRequestParams)
+	// CloseMediaRequest Owner withdrawal or administrator rejection of a pending request
+	// (POST /api/v1/media-requests/{request_id}/close)
+	CloseMediaRequest(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID, params CloseMediaRequestParams)
 	// ListMediaServers List configured media servers
 	// (GET /api/v1/media-servers)
 	ListMediaServers(w http.ResponseWriter, r *http.Request)
@@ -5854,6 +7304,9 @@ type ServerInterface interface {
 	// GetTMDBMediaCredits Read provider cast without creating subscription or acquisition
 	// (GET /api/v1/media/tmdb/{media_type}/{id}/credits)
 	GetTMDBMediaCredits(w http.ResponseWriter, r *http.Request, mediaType GetTMDBMediaCreditsParamsMediaType, id int64)
+	// GetBangumiCalendar Read the Bangumi broadcast-weekday calendar
+	// (GET /api/v1/metadata/bangumi/calendar)
+	GetBangumiCalendar(w http.ResponseWriter, r *http.Request, params GetBangumiCalendarParams)
 	// AcquireMovie Acquire a movie release
 	// (POST /api/v1/movies/acquire)
 	AcquireMovie(w http.ResponseWriter, r *http.Request, params AcquireMovieParams)
@@ -5874,6 +7327,9 @@ type ServerInterface interface {
 	// SetNotificationChannelState Versioned administrator enable/disable of the original recipient only; in-flight sends may finish
 	// (PUT /api/v1/notification-channels/{id}/state)
 	SetNotificationChannelState(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params SetNotificationChannelStateParams)
+	// QueueNotificationTest Queue one administrator test to the original channel; queued does not mean delivered
+	// (POST /api/v1/notification-channels/{id}/test)
+	QueueNotificationTest(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params QueueNotificationTestParams)
 	// ListOperations List visible persisted acquisition operations
 	// (GET /api/v1/operations)
 	ListOperations(w http.ResponseWriter, r *http.Request, params ListOperationsParams)
@@ -5901,6 +7357,21 @@ type ServerInterface interface {
 	// GetOperationTimeline Read the current persisted organization steps without executing work
 	// (GET /api/v1/operations/{id}/timeline)
 	GetOperationTimeline(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params GetOperationTimelineParams)
+	// PreviewNaming Preview a draft or saved naming template against sample metadata
+	// (POST /api/v1/organization/naming/preview)
+	PreviewNaming(w http.ResponseWriter, r *http.Request)
+	// ListPersonFollows List only this account's saved actor and director follow configurations
+	// (GET /api/v1/person-follows)
+	ListPersonFollows(w http.ResponseWriter, r *http.Request)
+	// GetPersonFollowReceipt Recover only the current account's original configuration receipt without metadata access
+	// (GET /api/v1/person-follows/receipts/{key})
+	GetPersonFollowReceipt(w http.ResponseWriter, r *http.Request, key string)
+	// GetPersonFollow Read only this account's current follow configuration
+	// (GET /api/v1/person-follows/{id})
+	GetPersonFollow(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	// SavePersonFollow Save versioned follow intent without requesting metadata or creating an execution task
+	// (PUT /api/v1/person-follows/{id})
+	SavePersonFollow(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params SavePersonFollowParams)
 	// ListPolicies Read current immutable policy rules
 	// (GET /api/v1/policies)
 	ListPolicies(w http.ResponseWriter, r *http.Request)
@@ -6080,6 +7551,9 @@ type ServerInterface interface {
 	// ReadDoubanSyncConfigReceipt Read the original configuration receipt without writing
 	// (GET /api/v1/sync/douban/config/commands/{command_key})
 	ReadDoubanSyncConfigReceipt(w http.ResponseWriter, r *http.Request, commandKey string)
+	// ListAuditTimeline Read the persisted system audit timeline
+	// (GET /api/v1/system/audit)
+	ListAuditTimeline(w http.ResponseWriter, r *http.Request, params ListAuditTimelineParams)
 	// StreamSystemLogs Real-time system log stream
 	// (GET /api/v1/system/logs)
 	StreamSystemLogs(w http.ResponseWriter, r *http.Request, params StreamSystemLogsParams)
@@ -6106,6 +7580,21 @@ type ServerInterface interface {
 	// ScanDirectoryReorganize Scan directory and recognize media files for reorganization
 	// (POST /api/v1/transfer/scan)
 	ScanDirectoryReorganize(w http.ResponseWriter, r *http.Request)
+	// GetWebPushConfiguration Read this deployment's browser application server key after current account authorization
+	// (GET /api/v1/web-push/config)
+	GetWebPushConfiguration(w http.ResponseWriter, r *http.Request)
+	// ListWebPushDevices List only the current account's latest 100 device summaries; contains no delivery capabilities
+	// (GET /api/v1/web-push/devices)
+	ListWebPushDevices(w http.ResponseWriter, r *http.Request)
+	// RegisterWebPushDevice Persist this account's explicitly authorized browser subscription; does not send a push
+	// (POST /api/v1/web-push/devices)
+	RegisterWebPushDevice(w http.ResponseWriter, r *http.Request, params RegisterWebPushDeviceParams)
+	// RevokeWebPushDevice Permanently revoke one of this account's devices; in-flight sends may finish
+	// (PUT /api/v1/web-push/devices/{id}/revocation)
+	RevokeWebPushDevice(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RevokeWebPushDeviceParams)
+	// GetWebPushReceipt Recover only this account's original device-command receipt without accessing a push service
+	// (GET /api/v1/web-push/receipts/{key})
+	GetWebPushReceipt(w http.ResponseWriter, r *http.Request, key string)
 	// GetHealthz Liveness check
 	// (GET /healthz)
 	GetHealthz(w http.ResponseWriter, r *http.Request)
@@ -6518,6 +8007,20 @@ func (siw *ServerInterfaceWrapper) CreateDownloadClient(w http.ResponseWriter, r
 	handler.ServeHTTP(w, r)
 }
 
+// GetDownloadGlobalRates operation middleware
+func (siw *ServerInterfaceWrapper) GetDownloadGlobalRates(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetDownloadGlobalRates(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // DeleteDownloadClient operation middleware
 func (siw *ServerInterfaceWrapper) DeleteDownloadClient(w http.ResponseWriter, r *http.Request) {
 
@@ -6561,6 +8064,121 @@ func (siw *ServerInterfaceWrapper) UpdateDownloadClient(w http.ResponseWriter, r
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.UpdateDownloadClient(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadSeedingConfig operation middleware
+func (siw *ServerInterfaceWrapper) ReadSeedingConfig(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadSeedingConfig(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SaveSeedingConfig operation middleware
+func (siw *ServerInterfaceWrapper) SaveSeedingConfig(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SaveSeedingConfigParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SaveSeedingConfig(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadSeedingConfigReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadSeedingConfigReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadSeedingConfigReceipt(w, r, id, commandKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -7329,6 +8947,91 @@ func (siw *ServerInterfaceWrapper) ReadSiteCheckinHistory(w http.ResponseWriter,
 	handler.ServeHTTP(w, r)
 }
 
+// ReadCookieCloudConfig operation middleware
+func (siw *ServerInterfaceWrapper) ReadCookieCloudConfig(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadCookieCloudConfig(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SaveCookieCloudConfig operation middleware
+func (siw *ServerInterfaceWrapper) SaveCookieCloudConfig(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SaveCookieCloudConfigParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SaveCookieCloudConfig(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadCookieCloudConfigReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadCookieCloudConfigReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadCookieCloudConfigReceipt(w, r, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListIntegrationDeliveries operation middleware
 func (siw *ServerInterfaceWrapper) ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request) {
 
@@ -7741,6 +9444,898 @@ func (siw *ServerInterfaceWrapper) ConfirmLibraryReuse(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
+// ReadUntrackedScope operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedScope(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedScope(w, r, scopeId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SaveUntrackedScope operation middleware
+func (siw *ServerInterfaceWrapper) SaveUntrackedScope(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SaveUntrackedScopeParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SaveUntrackedScope(w, r, scopeId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedScopeReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedScopeReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedScopeReceipt(w, r, scopeId, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListUntrackedDiscoveries operation middleware
+func (siw *ServerInterfaceWrapper) ListUntrackedDiscoveries(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListUntrackedDiscoveriesParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListUntrackedDiscoveries(w, r, scopeId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedConfirmationReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedConfirmationReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedConfirmationReceipt(w, r, scopeId, fileId, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ConfirmUntrackedFile operation middleware
+func (siw *ServerInterfaceWrapper) ConfirmUntrackedFile(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ConfirmUntrackedFileParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ConfirmUntrackedFile(w, r, scopeId, fileId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedOrganizationReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedOrganizationReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedOrganizationReceipt(w, r, scopeId, fileId, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RequestUntrackedOrganization operation middleware
+func (siw *ServerInterfaceWrapper) RequestUntrackedOrganization(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RequestUntrackedOrganizationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RequestUntrackedOrganization(w, r, scopeId, fileId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedOrganization operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedOrganization(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "operation_id" -------------
+	var operationId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "operation_id", r.PathValue("operation_id"), &operationId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "operation_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedOrganization(w, r, scopeId, fileId, operationId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedReviewRequestReceipt operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedReviewRequestReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedReviewRequestReceipt(w, r, scopeId, fileId, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RequestUntrackedReview operation middleware
+func (siw *ServerInterfaceWrapper) RequestUntrackedReview(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RequestUntrackedReviewParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RequestUntrackedReview(w, r, scopeId, fileId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedReview operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedReview(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "review_id" -------------
+	var reviewId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "review_id", r.PathValue("review_id"), &reviewId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "review_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedReview(w, r, scopeId, fileId, reviewId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListMediaRequests operation middleware
+func (siw *ServerInterfaceWrapper) ListMediaRequests(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListMediaRequestsParams
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "before_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "before_id", r.URL.Query(), &params.BeforeId, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "before_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "before_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "state" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "state", r.URL.Query(), &params.State, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "state"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "state", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListMediaRequests(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SubmitMediaRequest operation middleware
+func (siw *ServerInterfaceWrapper) SubmitMediaRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SubmitMediaRequestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey MediaRequestKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SubmitMediaRequest(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMediaRequestReceipt operation middleware
+func (siw *ServerInterfaceWrapper) GetMediaRequestReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "idempotency_key" -------------
+	var idempotencyKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "idempotency_key", r.PathValue("idempotency_key"), &idempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "idempotency_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMediaRequestReceipt(w, r, idempotencyKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMediaRequestSummary operation middleware
+func (siw *ServerInterfaceWrapper) GetMediaRequestSummary(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMediaRequestSummary(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMediaRequest operation middleware
+func (siw *ServerInterfaceWrapper) GetMediaRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "request_id" -------------
+	var requestId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "request_id", r.PathValue("request_id"), &requestId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "request_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMediaRequest(w, r, requestId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMediaRequestApprovalReceipt operation middleware
+func (siw *ServerInterfaceWrapper) GetMediaRequestApprovalReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "request_id" -------------
+	var requestId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "request_id", r.PathValue("request_id"), &requestId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "request_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "idempotency_key" -------------
+	var idempotencyKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "idempotency_key", r.PathValue("idempotency_key"), &idempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "idempotency_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMediaRequestApprovalReceipt(w, r, requestId, idempotencyKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ApproveMediaRequest operation middleware
+func (siw *ServerInterfaceWrapper) ApproveMediaRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "request_id" -------------
+	var requestId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "request_id", r.PathValue("request_id"), &requestId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "request_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ApproveMediaRequestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey MediaRequestKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ApproveMediaRequest(w, r, requestId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CloseMediaRequest operation middleware
+func (siw *ServerInterfaceWrapper) CloseMediaRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "request_id" -------------
+	var requestId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "request_id", r.PathValue("request_id"), &requestId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "request_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CloseMediaRequestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey MediaRequestKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CloseMediaRequest(w, r, requestId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListMediaServers operation middleware
 func (siw *ServerInterfaceWrapper) ListMediaServers(w http.ResponseWriter, r *http.Request) {
 
@@ -8047,6 +10642,52 @@ func (siw *ServerInterfaceWrapper) GetTMDBMediaCredits(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
+// GetBangumiCalendar operation middleware
+func (siw *ServerInterfaceWrapper) GetBangumiCalendar(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetBangumiCalendarParams
+
+	// ------------- Optional query parameter "weekday" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "weekday", r.URL.Query(), &params.Weekday, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "weekday"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "weekday", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "q" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "q", r.URL.Query(), &params.Q, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "q"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "q", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetBangumiCalendar(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // AcquireMovie operation middleware
 func (siw *ServerInterfaceWrapper) AcquireMovie(w http.ResponseWriter, r *http.Request) {
 
@@ -8272,6 +10913,60 @@ func (siw *ServerInterfaceWrapper) SetNotificationChannelState(w http.ResponseWr
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.SetNotificationChannelState(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// QueueNotificationTest operation middleware
+func (siw *ServerInterfaceWrapper) QueueNotificationTest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params QueueNotificationTestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.QueueNotificationTest(w, r, id, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -8633,6 +11328,140 @@ func (siw *ServerInterfaceWrapper) GetOperationTimeline(w http.ResponseWriter, r
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetOperationTimeline(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PreviewNaming operation middleware
+func (siw *ServerInterfaceWrapper) PreviewNaming(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PreviewNaming(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListPersonFollows operation middleware
+func (siw *ServerInterfaceWrapper) ListPersonFollows(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListPersonFollows(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetPersonFollowReceipt operation middleware
+func (siw *ServerInterfaceWrapper) GetPersonFollowReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "key" -------------
+	var key string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "key", r.PathValue("key"), &key, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetPersonFollowReceipt(w, r, key)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetPersonFollow operation middleware
+func (siw *ServerInterfaceWrapper) GetPersonFollow(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetPersonFollow(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SavePersonFollow operation middleware
+func (siw *ServerInterfaceWrapper) SavePersonFollow(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SavePersonFollowParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SavePersonFollow(w, r, id, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -10795,6 +13624,143 @@ func (siw *ServerInterfaceWrapper) ReadDoubanSyncConfigReceipt(w http.ResponseWr
 	handler.ServeHTTP(w, r)
 }
 
+// ListAuditTimeline operation middleware
+func (siw *ServerInterfaceWrapper) ListAuditTimeline(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListAuditTimelineParams
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "actor_type" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "actor_type", r.URL.Query(), &params.ActorType, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "actor_type"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "actor_type", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "actor_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "actor_id", r.URL.Query(), &params.ActorId, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "actor_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "actor_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "action" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "action", r.URL.Query(), &params.Action, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "action"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "action", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "target_type" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "target_type", r.URL.Query(), &params.TargetType, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "target_type"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "target_type", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "target_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "target_id", r.URL.Query(), &params.TargetId, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "target_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "target_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "from" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "from", r.URL.Query(), &params.From, runtime.BindQueryParameterOptions{Type: "string", Format: "date-time"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "from"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "from", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "until" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "until", r.URL.Query(), &params.Until, runtime.BindQueryParameterOptions{Type: "string", Format: "date-time"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "until"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "until", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListAuditTimeline(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // StreamSystemLogs operation middleware
 func (siw *ServerInterfaceWrapper) StreamSystemLogs(w http.ResponseWriter, r *http.Request) {
 
@@ -11042,6 +14008,159 @@ func (siw *ServerInterfaceWrapper) ScanDirectoryReorganize(w http.ResponseWriter
 	handler.ServeHTTP(w, r)
 }
 
+// GetWebPushConfiguration operation middleware
+func (siw *ServerInterfaceWrapper) GetWebPushConfiguration(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetWebPushConfiguration(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListWebPushDevices operation middleware
+func (siw *ServerInterfaceWrapper) ListWebPushDevices(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListWebPushDevices(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RegisterWebPushDevice operation middleware
+func (siw *ServerInterfaceWrapper) RegisterWebPushDevice(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RegisterWebPushDeviceParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RegisterWebPushDevice(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeWebPushDevice operation middleware
+func (siw *ServerInterfaceWrapper) RevokeWebPushDevice(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeWebPushDeviceParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeWebPushDevice(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetWebPushReceipt operation middleware
+func (siw *ServerInterfaceWrapper) GetWebPushReceipt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "key" -------------
+	var key string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "key", r.PathValue("key"), &key, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetWebPushReceipt(w, r, key)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // GetHealthz operation middleware
 func (siw *ServerInterfaceWrapper) GetHealthz(w http.ResponseWriter, r *http.Request) {
 
@@ -11190,10 +14309,23 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/metadata/bangumi/calendar", wrapper.GetBangumiCalendar)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/integrations/cookiecloud/config", wrapper.ReadCookieCloudConfig)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/integrations/cookiecloud/config", wrapper.SaveCookieCloudConfig)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/integrations/cookiecloud/config/commands/{command_key}", wrapper.ReadCookieCloudConfigReceipt)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media-requests/summary", wrapper.GetMediaRequestSummary)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media-requests", wrapper.ListMediaRequests)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/media-requests", wrapper.SubmitMediaRequest)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media-requests/commands/{idempotency_key}", wrapper.GetMediaRequestReceipt)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media-requests/{request_id}", wrapper.GetMediaRequest)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/media-requests/{request_id}/close", wrapper.CloseMediaRequest)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/media-requests/{request_id}/approve", wrapper.ApproveMediaRequest)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/media-requests/{request_id}/approval-commands/{idempotency_key}", wrapper.GetMediaRequestApprovalReceipt)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/healthz", wrapper.GetHealthz)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/readyz", wrapper.GetReadyz)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/status", wrapper.GetSystemStatus)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/logs", wrapper.StreamSystemLogs)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/audit", wrapper.ListAuditTimeline)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/status", wrapper.GetAuthStatus)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/setup", wrapper.SetupAdmin)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/tokens", wrapper.ListOwnTokens)
@@ -11206,6 +14338,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/settings/{key}", wrapper.UpdateSetting)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/settings/{key}/commands/{request_key}", wrapper.GetSettingCommand)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/movies/acquire", wrapper.AcquireMovie)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/organization/naming/preview", wrapper.PreviewNaming)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/download-clients/global-rates", wrapper.GetDownloadGlobalRates)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/overview", wrapper.GetLibraryOverview)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/dashboard/activity", wrapper.GetDashboardActivity)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/catalog", wrapper.ListLibraryCatalog)
@@ -11314,6 +14448,18 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/discover/douban", wrapper.GetDoubanRanking)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/account-stats", wrapper.ReadSiteAccountStats)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/history", wrapper.ReadSiteCheckinHistory)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries", wrapper.ListUntrackedDiscoveries)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations", wrapper.RequestUntrackedOrganization)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations/{operation_id}", wrapper.ReadUntrackedOrganization)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organization-commands/{command_key}", wrapper.ReadUntrackedOrganizationReceipt)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews", wrapper.RequestUntrackedReview)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews/{review_id}", wrapper.ReadUntrackedReview)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/review-commands/{command_key}", wrapper.ReadUntrackedReviewRequestReceipt)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmations", wrapper.ConfirmUntrackedFile)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmation-commands/{command_key}", wrapper.ReadUntrackedConfirmationReceipt)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}", wrapper.ReadUntrackedScope)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}", wrapper.SaveUntrackedScope)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/commands/{command_key}", wrapper.ReadUntrackedScopeReceipt)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/config", wrapper.ReadSiteCheckinConfig)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/config", wrapper.SaveSiteCheckinConfig)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/indexers/{indexer_id}/checkin/config/commands/{command_key}", wrapper.ReadSiteCheckinConfigReceipt)
@@ -11330,12 +14476,27 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/transfer/scan", wrapper.ScanDirectoryReorganize)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/notification-channels", wrapper.ListNotificationChannels)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/notification-channels", wrapper.CreateNotificationChannel)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/person-follows", wrapper.ListPersonFollows)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/person-follows/{id}", wrapper.GetPersonFollow)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/person-follows/{id}", wrapper.SavePersonFollow)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/person-follows/receipts/{key}", wrapper.GetPersonFollowReceipt)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/web-push/config", wrapper.GetWebPushConfiguration)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/web-push/devices", wrapper.ListWebPushDevices)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/web-push/devices", wrapper.RegisterWebPushDevice)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/web-push/devices/{id}/revocation", wrapper.RevokeWebPushDevice)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/web-push/receipts/{key}", wrapper.GetWebPushReceipt)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/notification-channels/{id}/test", wrapper.QueueNotificationTest)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/notification-channels/{id}/replacement", wrapper.ReplaceNotificationChannel)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/notification-channels/{id}/state", wrapper.SetNotificationChannelState)
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/api/v1/notification-channels/{id}", wrapper.DisableNotificationChannel)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/download-clients/{id}/seeding/config", wrapper.ReadSeedingConfig)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/download-clients/{id}/seeding/config", wrapper.SaveSeedingConfig)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/download-clients/{id}/seeding/config/commands/{command_key}", wrapper.ReadSeedingConfigReceipt)
 
 	return m
 }
+
+type MediaRequestFailureApplicationProblemPlusJSONResponse ErrorResponse
 
 type PolicyBadRequestJSONResponse ErrorResponse
 
@@ -12659,6 +15820,69 @@ func (response CreateDownloadClient503ApplicationProblemPlusJSONResponse) VisitC
 	return err
 }
 
+type GetDownloadGlobalRatesRequestObject struct {
+}
+
+type GetDownloadGlobalRatesResponseObject interface {
+	VisitGetDownloadGlobalRatesResponse(w http.ResponseWriter) error
+}
+
+type GetDownloadGlobalRates200JSONResponse DownloadGlobalRatesOverview
+
+func (response GetDownloadGlobalRates200JSONResponse) VisitGetDownloadGlobalRatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDownloadGlobalRates401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDownloadGlobalRates401ApplicationProblemPlusJSONResponse) VisitGetDownloadGlobalRatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDownloadGlobalRates403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDownloadGlobalRates403ApplicationProblemPlusJSONResponse) VisitGetDownloadGlobalRatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDownloadGlobalRates503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetDownloadGlobalRates503ApplicationProblemPlusJSONResponse) VisitGetDownloadGlobalRatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type DeleteDownloadClientRequestObject struct {
 	Id openapi_types.UUID `json:"id"`
 }
@@ -12974,6 +16198,126 @@ func (response UpdateDownloadClient503ApplicationProblemPlusJSONResponse) VisitU
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSeedingConfigRequestObject struct {
+	Id openapi_types.UUID `json:"id"`
+}
+
+type ReadSeedingConfigResponseObject interface {
+	VisitReadSeedingConfigResponse(w http.ResponseWriter) error
+}
+
+type ReadSeedingConfig200JSONResponse SeedingConfigRead
+
+func (response ReadSeedingConfig200JSONResponse) VisitReadSeedingConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSeedingConfigdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ReadSeedingConfigdefaultApplicationProblemPlusJSONResponse) VisitReadSeedingConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSeedingConfigRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params SaveSeedingConfigParams
+	Body   *SaveSeedingConfigJSONRequestBody
+}
+
+type SaveSeedingConfigResponseObject interface {
+	VisitSaveSeedingConfigResponse(w http.ResponseWriter) error
+}
+
+type SaveSeedingConfig200JSONResponse SeedingConfigReceipt
+
+func (response SaveSeedingConfig200JSONResponse) VisitSaveSeedingConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSeedingConfigdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response SaveSeedingConfigdefaultApplicationProblemPlusJSONResponse) VisitSaveSeedingConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSeedingConfigReceiptRequestObject struct {
+	Id         openapi_types.UUID `json:"id"`
+	CommandKey string             `json:"command_key"`
+}
+
+type ReadSeedingConfigReceiptResponseObject interface {
+	VisitReadSeedingConfigReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadSeedingConfigReceipt200JSONResponse SeedingConfigReceipt
+
+func (response ReadSeedingConfigReceipt200JSONResponse) VisitReadSeedingConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSeedingConfigReceiptdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ReadSeedingConfigReceiptdefaultApplicationProblemPlusJSONResponse) VisitReadSeedingConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -14863,6 +18207,125 @@ func (response ReadSiteCheckinHistory503ApplicationProblemPlusJSONResponse) Visi
 	return err
 }
 
+type ReadCookieCloudConfigRequestObject struct {
+}
+
+type ReadCookieCloudConfigResponseObject interface {
+	VisitReadCookieCloudConfigResponse(w http.ResponseWriter) error
+}
+
+type ReadCookieCloudConfig200JSONResponse struct {
+	Config *CookieCloudConfig `json:"config"`
+}
+
+func (response ReadCookieCloudConfig200JSONResponse) VisitReadCookieCloudConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadCookieCloudConfigdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ReadCookieCloudConfigdefaultApplicationProblemPlusJSONResponse) VisitReadCookieCloudConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveCookieCloudConfigRequestObject struct {
+	Params SaveCookieCloudConfigParams
+	Body   *SaveCookieCloudConfigJSONRequestBody
+}
+
+type SaveCookieCloudConfigResponseObject interface {
+	VisitSaveCookieCloudConfigResponse(w http.ResponseWriter) error
+}
+
+type SaveCookieCloudConfig200JSONResponse CookieCloudConfigReceipt
+
+func (response SaveCookieCloudConfig200JSONResponse) VisitSaveCookieCloudConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveCookieCloudConfigdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response SaveCookieCloudConfigdefaultApplicationProblemPlusJSONResponse) VisitSaveCookieCloudConfigResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadCookieCloudConfigReceiptRequestObject struct {
+	CommandKey string `json:"command_key"`
+}
+
+type ReadCookieCloudConfigReceiptResponseObject interface {
+	VisitReadCookieCloudConfigReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadCookieCloudConfigReceipt200JSONResponse CookieCloudConfigReceipt
+
+func (response ReadCookieCloudConfigReceipt200JSONResponse) VisitReadCookieCloudConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadCookieCloudConfigReceiptdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ReadCookieCloudConfigReceiptdefaultApplicationProblemPlusJSONResponse) VisitReadCookieCloudConfigReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListIntegrationDeliveriesRequestObject struct {
 }
 
@@ -15938,6 +19401,2171 @@ func (response ConfirmLibraryReuse503JSONResponse) VisitConfirmLibraryReuseRespo
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeRequestObject struct {
+	ScopeId openapi_types.UUID `json:"scope_id"`
+}
+
+type ReadUntrackedScopeResponseObject interface {
+	VisitReadUntrackedScopeResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedScope200JSONResponse UntrackedScopeCurrent
+
+func (response ReadUntrackedScope200JSONResponse) VisitReadUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScope400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScope400ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScope401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScope401ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScope403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScope403ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScope404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScope404ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScope409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScope409ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScope503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScope503ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveUntrackedScopeRequestObject struct {
+	ScopeId openapi_types.UUID `json:"scope_id"`
+	Params  SaveUntrackedScopeParams
+	Body    *SaveUntrackedScopeJSONRequestBody
+}
+
+type SaveUntrackedScopeResponseObject interface {
+	VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error
+}
+
+type SaveUntrackedScope200JSONResponse UntrackedScopeReceipt
+
+func (response SaveUntrackedScope200JSONResponse) VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveUntrackedScope400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveUntrackedScope400ApplicationProblemPlusJSONResponse) VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveUntrackedScope401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveUntrackedScope401ApplicationProblemPlusJSONResponse) VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveUntrackedScope403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveUntrackedScope403ApplicationProblemPlusJSONResponse) VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveUntrackedScope404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveUntrackedScope404ApplicationProblemPlusJSONResponse) VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveUntrackedScope409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveUntrackedScope409ApplicationProblemPlusJSONResponse) VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveUntrackedScope503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response SaveUntrackedScope503ApplicationProblemPlusJSONResponse) VisitSaveUntrackedScopeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeReceiptRequestObject struct {
+	ScopeId    openapi_types.UUID `json:"scope_id"`
+	CommandKey string             `json:"command_key"`
+}
+
+type ReadUntrackedScopeReceiptResponseObject interface {
+	VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedScopeReceipt200JSONResponse UntrackedScopeReceipt
+
+func (response ReadUntrackedScopeReceipt200JSONResponse) VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeReceipt400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScopeReceipt400ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeReceipt401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScopeReceipt401ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeReceipt403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScopeReceipt403ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeReceipt404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScopeReceipt404ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeReceipt409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScopeReceipt409ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedScopeReceipt503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedScopeReceipt503ApplicationProblemPlusJSONResponse) VisitReadUntrackedScopeReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedDiscoveriesRequestObject struct {
+	ScopeId openapi_types.UUID `json:"scope_id"`
+	Params  ListUntrackedDiscoveriesParams
+}
+
+type ListUntrackedDiscoveriesResponseObject interface {
+	VisitListUntrackedDiscoveriesResponse(w http.ResponseWriter) error
+}
+
+type ListUntrackedDiscoveries200JSONResponse UntrackedDiscoveryList
+
+func (response ListUntrackedDiscoveries200JSONResponse) VisitListUntrackedDiscoveriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedDiscoveries400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedDiscoveries400ApplicationProblemPlusJSONResponse) VisitListUntrackedDiscoveriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedDiscoveries401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedDiscoveries401ApplicationProblemPlusJSONResponse) VisitListUntrackedDiscoveriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedDiscoveries403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedDiscoveries403ApplicationProblemPlusJSONResponse) VisitListUntrackedDiscoveriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedDiscoveries404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedDiscoveries404ApplicationProblemPlusJSONResponse) VisitListUntrackedDiscoveriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedDiscoveries503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedDiscoveries503ApplicationProblemPlusJSONResponse) VisitListUntrackedDiscoveriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedConfirmationReceiptRequestObject struct {
+	ScopeId    openapi_types.UUID `json:"scope_id"`
+	FileId     openapi_types.UUID `json:"file_id"`
+	CommandKey string             `json:"command_key"`
+}
+
+type ReadUntrackedConfirmationReceiptResponseObject interface {
+	VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedConfirmationReceipt200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedConfirmationReceipt200JSONResponse struct {
+	Body    UntrackedConfirmationReceipt
+	Headers ReadUntrackedConfirmationReceipt200ResponseHeaders
+}
+
+func (response ReadUntrackedConfirmationReceipt200JSONResponse) VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedConfirmationReceipt400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedConfirmationReceipt400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedConfirmationReceipt400ResponseHeaders
+}
+
+func (response ReadUntrackedConfirmationReceipt400ApplicationProblemPlusJSONResponse) VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedConfirmationReceipt401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedConfirmationReceipt401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedConfirmationReceipt401ResponseHeaders
+}
+
+func (response ReadUntrackedConfirmationReceipt401ApplicationProblemPlusJSONResponse) VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedConfirmationReceipt403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedConfirmationReceipt403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedConfirmationReceipt403ResponseHeaders
+}
+
+func (response ReadUntrackedConfirmationReceipt403ApplicationProblemPlusJSONResponse) VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedConfirmationReceipt404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedConfirmationReceipt404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedConfirmationReceipt404ResponseHeaders
+}
+
+func (response ReadUntrackedConfirmationReceipt404ApplicationProblemPlusJSONResponse) VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedConfirmationReceipt409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedConfirmationReceipt409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedConfirmationReceipt409ResponseHeaders
+}
+
+func (response ReadUntrackedConfirmationReceipt409ApplicationProblemPlusJSONResponse) VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedConfirmationReceipt503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedConfirmationReceipt503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedConfirmationReceipt503ResponseHeaders
+}
+
+func (response ReadUntrackedConfirmationReceipt503ApplicationProblemPlusJSONResponse) VisitReadUntrackedConfirmationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmUntrackedFileRequestObject struct {
+	ScopeId openapi_types.UUID `json:"scope_id"`
+	FileId  openapi_types.UUID `json:"file_id"`
+	Params  ConfirmUntrackedFileParams
+	Body    *ConfirmUntrackedFileJSONRequestBody
+}
+
+type ConfirmUntrackedFileResponseObject interface {
+	VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error
+}
+
+type ConfirmUntrackedFile200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ConfirmUntrackedFile200JSONResponse struct {
+	Body    UntrackedConfirmationReceipt
+	Headers ConfirmUntrackedFile200ResponseHeaders
+}
+
+func (response ConfirmUntrackedFile200JSONResponse) VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmUntrackedFile400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ConfirmUntrackedFile400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ConfirmUntrackedFile400ResponseHeaders
+}
+
+func (response ConfirmUntrackedFile400ApplicationProblemPlusJSONResponse) VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmUntrackedFile401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ConfirmUntrackedFile401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ConfirmUntrackedFile401ResponseHeaders
+}
+
+func (response ConfirmUntrackedFile401ApplicationProblemPlusJSONResponse) VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmUntrackedFile403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ConfirmUntrackedFile403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ConfirmUntrackedFile403ResponseHeaders
+}
+
+func (response ConfirmUntrackedFile403ApplicationProblemPlusJSONResponse) VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmUntrackedFile404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ConfirmUntrackedFile404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ConfirmUntrackedFile404ResponseHeaders
+}
+
+func (response ConfirmUntrackedFile404ApplicationProblemPlusJSONResponse) VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmUntrackedFile409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ConfirmUntrackedFile409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ConfirmUntrackedFile409ResponseHeaders
+}
+
+func (response ConfirmUntrackedFile409ApplicationProblemPlusJSONResponse) VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmUntrackedFile503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ConfirmUntrackedFile503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ConfirmUntrackedFile503ResponseHeaders
+}
+
+func (response ConfirmUntrackedFile503ApplicationProblemPlusJSONResponse) VisitConfirmUntrackedFileResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationReceiptRequestObject struct {
+	ScopeId    openapi_types.UUID `json:"scope_id"`
+	FileId     openapi_types.UUID `json:"file_id"`
+	CommandKey string             `json:"command_key"`
+}
+
+type ReadUntrackedOrganizationReceiptResponseObject interface {
+	VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedOrganizationReceipt200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganizationReceipt200JSONResponse struct {
+	Body    UntrackedOrganizationReceipt
+	Headers ReadUntrackedOrganizationReceipt200ResponseHeaders
+}
+
+func (response ReadUntrackedOrganizationReceipt200JSONResponse) VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationReceipt400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganizationReceipt400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganizationReceipt400ResponseHeaders
+}
+
+func (response ReadUntrackedOrganizationReceipt400ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationReceipt401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganizationReceipt401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganizationReceipt401ResponseHeaders
+}
+
+func (response ReadUntrackedOrganizationReceipt401ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationReceipt403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganizationReceipt403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganizationReceipt403ResponseHeaders
+}
+
+func (response ReadUntrackedOrganizationReceipt403ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationReceipt404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganizationReceipt404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganizationReceipt404ResponseHeaders
+}
+
+func (response ReadUntrackedOrganizationReceipt404ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationReceipt409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganizationReceipt409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganizationReceipt409ResponseHeaders
+}
+
+func (response ReadUntrackedOrganizationReceipt409ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationReceipt503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganizationReceipt503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganizationReceipt503ResponseHeaders
+}
+
+func (response ReadUntrackedOrganizationReceipt503ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedOrganizationRequestObject struct {
+	ScopeId openapi_types.UUID `json:"scope_id"`
+	FileId  openapi_types.UUID `json:"file_id"`
+	Params  RequestUntrackedOrganizationParams
+	Body    *RequestUntrackedOrganizationJSONRequestBody
+}
+
+type RequestUntrackedOrganizationResponseObject interface {
+	VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error
+}
+
+type RequestUntrackedOrganization202ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedOrganization202JSONResponse struct {
+	Body    UntrackedOrganizationReceipt
+	Headers RequestUntrackedOrganization202ResponseHeaders
+}
+
+func (response RequestUntrackedOrganization202JSONResponse) VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(202)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedOrganization400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedOrganization400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedOrganization400ResponseHeaders
+}
+
+func (response RequestUntrackedOrganization400ApplicationProblemPlusJSONResponse) VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedOrganization401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedOrganization401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedOrganization401ResponseHeaders
+}
+
+func (response RequestUntrackedOrganization401ApplicationProblemPlusJSONResponse) VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedOrganization403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedOrganization403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedOrganization403ResponseHeaders
+}
+
+func (response RequestUntrackedOrganization403ApplicationProblemPlusJSONResponse) VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedOrganization404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedOrganization404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedOrganization404ResponseHeaders
+}
+
+func (response RequestUntrackedOrganization404ApplicationProblemPlusJSONResponse) VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedOrganization409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedOrganization409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedOrganization409ResponseHeaders
+}
+
+func (response RequestUntrackedOrganization409ApplicationProblemPlusJSONResponse) VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedOrganization503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedOrganization503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedOrganization503ResponseHeaders
+}
+
+func (response RequestUntrackedOrganization503ApplicationProblemPlusJSONResponse) VisitRequestUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganizationRequestObject struct {
+	ScopeId     openapi_types.UUID `json:"scope_id"`
+	FileId      openapi_types.UUID `json:"file_id"`
+	OperationId openapi_types.UUID `json:"operation_id"`
+}
+
+type ReadUntrackedOrganizationResponseObject interface {
+	VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedOrganization200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganization200JSONResponse struct {
+	Body    UntrackedOrganizationView
+	Headers ReadUntrackedOrganization200ResponseHeaders
+}
+
+func (response ReadUntrackedOrganization200JSONResponse) VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganization400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganization400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganization400ResponseHeaders
+}
+
+func (response ReadUntrackedOrganization400ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganization401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganization401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganization401ResponseHeaders
+}
+
+func (response ReadUntrackedOrganization401ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganization403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganization403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganization403ResponseHeaders
+}
+
+func (response ReadUntrackedOrganization403ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganization404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganization404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganization404ResponseHeaders
+}
+
+func (response ReadUntrackedOrganization404ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganization409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganization409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganization409ResponseHeaders
+}
+
+func (response ReadUntrackedOrganization409ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedOrganization503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedOrganization503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedOrganization503ResponseHeaders
+}
+
+func (response ReadUntrackedOrganization503ApplicationProblemPlusJSONResponse) VisitReadUntrackedOrganizationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestReceiptRequestObject struct {
+	ScopeId    openapi_types.UUID `json:"scope_id"`
+	FileId     openapi_types.UUID `json:"file_id"`
+	CommandKey string             `json:"command_key"`
+}
+
+type ReadUntrackedReviewRequestReceiptResponseObject interface {
+	VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedReviewRequestReceipt200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReviewRequestReceipt200JSONResponse struct {
+	Body    UntrackedReviewRequestReceipt
+	Headers ReadUntrackedReviewRequestReceipt200ResponseHeaders
+}
+
+func (response ReadUntrackedReviewRequestReceipt200JSONResponse) VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestReceipt400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReviewRequestReceipt400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReviewRequestReceipt400ResponseHeaders
+}
+
+func (response ReadUntrackedReviewRequestReceipt400ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestReceipt401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReviewRequestReceipt401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReviewRequestReceipt401ResponseHeaders
+}
+
+func (response ReadUntrackedReviewRequestReceipt401ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestReceipt403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReviewRequestReceipt403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReviewRequestReceipt403ResponseHeaders
+}
+
+func (response ReadUntrackedReviewRequestReceipt403ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestReceipt404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReviewRequestReceipt404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReviewRequestReceipt404ResponseHeaders
+}
+
+func (response ReadUntrackedReviewRequestReceipt404ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestReceipt409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReviewRequestReceipt409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReviewRequestReceipt409ResponseHeaders
+}
+
+func (response ReadUntrackedReviewRequestReceipt409ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestReceipt503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReviewRequestReceipt503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReviewRequestReceipt503ResponseHeaders
+}
+
+func (response ReadUntrackedReviewRequestReceipt503ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedReviewRequestObject struct {
+	ScopeId openapi_types.UUID `json:"scope_id"`
+	FileId  openapi_types.UUID `json:"file_id"`
+	Params  RequestUntrackedReviewParams
+	Body    *RequestUntrackedReviewJSONRequestBody
+}
+
+type RequestUntrackedReviewResponseObject interface {
+	VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error
+}
+
+type RequestUntrackedReview202ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedReview202JSONResponse struct {
+	Body    UntrackedReviewRequestReceipt
+	Headers RequestUntrackedReview202ResponseHeaders
+}
+
+func (response RequestUntrackedReview202JSONResponse) VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(202)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedReview400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedReview400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedReview400ResponseHeaders
+}
+
+func (response RequestUntrackedReview400ApplicationProblemPlusJSONResponse) VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedReview401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedReview401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedReview401ResponseHeaders
+}
+
+func (response RequestUntrackedReview401ApplicationProblemPlusJSONResponse) VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedReview403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedReview403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedReview403ResponseHeaders
+}
+
+func (response RequestUntrackedReview403ApplicationProblemPlusJSONResponse) VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedReview404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedReview404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedReview404ResponseHeaders
+}
+
+func (response RequestUntrackedReview404ApplicationProblemPlusJSONResponse) VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedReview409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedReview409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedReview409ResponseHeaders
+}
+
+func (response RequestUntrackedReview409ApplicationProblemPlusJSONResponse) VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RequestUntrackedReview503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type RequestUntrackedReview503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers RequestUntrackedReview503ResponseHeaders
+}
+
+func (response RequestUntrackedReview503ApplicationProblemPlusJSONResponse) VisitRequestUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewRequestObject struct {
+	ScopeId  openapi_types.UUID `json:"scope_id"`
+	FileId   openapi_types.UUID `json:"file_id"`
+	ReviewId openapi_types.UUID `json:"review_id"`
+}
+
+type ReadUntrackedReviewResponseObject interface {
+	VisitReadUntrackedReviewResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedReview200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReview200JSONResponse struct {
+	Body    UntrackedReviewView
+	Headers ReadUntrackedReview200ResponseHeaders
+}
+
+func (response ReadUntrackedReview200JSONResponse) VisitReadUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReview400ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReview400ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReview400ResponseHeaders
+}
+
+func (response ReadUntrackedReview400ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReview401ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReview401ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReview401ResponseHeaders
+}
+
+func (response ReadUntrackedReview401ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReview403ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReview403ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReview403ResponseHeaders
+}
+
+func (response ReadUntrackedReview403ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReview404ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReview404ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReview404ResponseHeaders
+}
+
+func (response ReadUntrackedReview404ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReview409ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReview409ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReview409ResponseHeaders
+}
+
+func (response ReadUntrackedReview409ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReview503ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedReview503ApplicationProblemPlusJSONResponse struct {
+	Body    ErrorResponse
+	Headers ReadUntrackedReview503ResponseHeaders
+}
+
+func (response ReadUntrackedReview503ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMediaRequestsRequestObject struct {
+	Params ListMediaRequestsParams
+}
+
+type ListMediaRequestsResponseObject interface {
+	VisitListMediaRequestsResponse(w http.ResponseWriter) error
+}
+
+type ListMediaRequests200JSONResponse struct {
+	Items []MediaRequestDetails `json:"items"`
+}
+
+func (response ListMediaRequests200JSONResponse) VisitListMediaRequestsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListMediaRequestsdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ListMediaRequestsdefaultApplicationProblemPlusJSONResponse) VisitListMediaRequestsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SubmitMediaRequestRequestObject struct {
+	Params SubmitMediaRequestParams
+	Body   *SubmitMediaRequestJSONRequestBody
+}
+
+type SubmitMediaRequestResponseObject interface {
+	VisitSubmitMediaRequestResponse(w http.ResponseWriter) error
+}
+
+type SubmitMediaRequest201JSONResponse MediaRequestCommandReceipt
+
+func (response SubmitMediaRequest201JSONResponse) VisitSubmitMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SubmitMediaRequestdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response SubmitMediaRequestdefaultApplicationProblemPlusJSONResponse) VisitSubmitMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestReceiptRequestObject struct {
+	IdempotencyKey string `json:"idempotency_key"`
+}
+
+type GetMediaRequestReceiptResponseObject interface {
+	VisitGetMediaRequestReceiptResponse(w http.ResponseWriter) error
+}
+
+type GetMediaRequestReceipt200JSONResponse MediaRequestCommandReceipt
+
+func (response GetMediaRequestReceipt200JSONResponse) VisitGetMediaRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestReceiptdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetMediaRequestReceiptdefaultApplicationProblemPlusJSONResponse) VisitGetMediaRequestReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestSummaryRequestObject struct {
+}
+
+type GetMediaRequestSummaryResponseObject interface {
+	VisitGetMediaRequestSummaryResponse(w http.ResponseWriter) error
+}
+
+type GetMediaRequestSummary200JSONResponse struct {
+	ObservedAt time.Time `json:"observed_at"`
+
+	// PendingCount Exact nonnegative decimal count
+	PendingCount string `json:"pending_count"`
+}
+
+func (response GetMediaRequestSummary200JSONResponse) VisitGetMediaRequestSummaryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestSummarydefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetMediaRequestSummarydefaultApplicationProblemPlusJSONResponse) VisitGetMediaRequestSummaryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestRequestObject struct {
+	RequestId openapi_types.UUID `json:"request_id"`
+}
+
+type GetMediaRequestResponseObject interface {
+	VisitGetMediaRequestResponse(w http.ResponseWriter) error
+}
+
+type GetMediaRequest200JSONResponse MediaRequestDetails
+
+func (response GetMediaRequest200JSONResponse) VisitGetMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetMediaRequestdefaultApplicationProblemPlusJSONResponse) VisitGetMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestApprovalReceiptRequestObject struct {
+	RequestId      openapi_types.UUID `json:"request_id"`
+	IdempotencyKey string             `json:"idempotency_key"`
+}
+
+type GetMediaRequestApprovalReceiptResponseObject interface {
+	VisitGetMediaRequestApprovalReceiptResponse(w http.ResponseWriter) error
+}
+
+type GetMediaRequestApprovalReceipt200JSONResponse MediaRequestApprovalResult
+
+func (response GetMediaRequestApprovalReceipt200JSONResponse) VisitGetMediaRequestApprovalReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMediaRequestApprovalReceiptdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetMediaRequestApprovalReceiptdefaultApplicationProblemPlusJSONResponse) VisitGetMediaRequestApprovalReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ApproveMediaRequestRequestObject struct {
+	RequestId openapi_types.UUID `json:"request_id"`
+	Params    ApproveMediaRequestParams
+	Body      *ApproveMediaRequestJSONRequestBody
+}
+
+type ApproveMediaRequestResponseObject interface {
+	VisitApproveMediaRequestResponse(w http.ResponseWriter) error
+}
+
+type ApproveMediaRequest201JSONResponse MediaRequestApprovalResult
+
+func (response ApproveMediaRequest201JSONResponse) VisitApproveMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ApproveMediaRequestdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ApproveMediaRequestdefaultApplicationProblemPlusJSONResponse) VisitApproveMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CloseMediaRequestRequestObject struct {
+	RequestId openapi_types.UUID `json:"request_id"`
+	Params    CloseMediaRequestParams
+	Body      *CloseMediaRequestJSONRequestBody
+}
+
+type CloseMediaRequestResponseObject interface {
+	VisitCloseMediaRequestResponse(w http.ResponseWriter) error
+}
+
+type CloseMediaRequest200JSONResponse MediaRequestCommandReceipt
+
+func (response CloseMediaRequest200JSONResponse) VisitCloseMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CloseMediaRequestdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response CloseMediaRequestdefaultApplicationProblemPlusJSONResponse) VisitCloseMediaRequestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -17259,6 +22887,84 @@ func (response GetTMDBMediaCredits503ApplicationProblemPlusJSONResponse) VisitGe
 	return err
 }
 
+type GetBangumiCalendarRequestObject struct {
+	Params GetBangumiCalendarParams
+}
+
+type GetBangumiCalendarResponseObject interface {
+	VisitGetBangumiCalendarResponse(w http.ResponseWriter) error
+}
+
+type GetBangumiCalendar200JSONResponse BangumiCalendarResponse
+
+func (response GetBangumiCalendar200JSONResponse) VisitGetBangumiCalendarResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetBangumiCalendar400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetBangumiCalendar400ApplicationProblemPlusJSONResponse) VisitGetBangumiCalendarResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetBangumiCalendar401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetBangumiCalendar401ApplicationProblemPlusJSONResponse) VisitGetBangumiCalendarResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetBangumiCalendar403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetBangumiCalendar403ApplicationProblemPlusJSONResponse) VisitGetBangumiCalendarResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetBangumiCalendar503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetBangumiCalendar503ApplicationProblemPlusJSONResponse) VisitGetBangumiCalendarResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type AcquireMovieRequestObject struct {
 	Params AcquireMovieParams
 	Body   *AcquireMovieJSONRequestBody
@@ -17956,6 +23662,118 @@ func (response SetNotificationChannelState503JSONResponse) VisitSetNotificationC
 	return err
 }
 
+type QueueNotificationTestRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params QueueNotificationTestParams
+	Body   *QueueNotificationTestJSONRequestBody
+}
+
+type QueueNotificationTestResponseObject interface {
+	VisitQueueNotificationTestResponse(w http.ResponseWriter) error
+}
+
+type QueueNotificationTest202JSONResponse struct {
+	ChannelId openapi_types.UUID                             `json:"channel_id"`
+	EventId   openapi_types.UUID                             `json:"event_id"`
+	Status    QueueNotificationTest202JSONResponseBodyStatus `json:"status"`
+}
+
+func (response QueueNotificationTest202JSONResponse) VisitQueueNotificationTestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(202)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QueueNotificationTest400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response QueueNotificationTest400JSONResponse) VisitQueueNotificationTestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QueueNotificationTest401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response QueueNotificationTest401JSONResponse) VisitQueueNotificationTestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QueueNotificationTest403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response QueueNotificationTest403JSONResponse) VisitQueueNotificationTestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QueueNotificationTest404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response QueueNotificationTest404JSONResponse) VisitQueueNotificationTestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QueueNotificationTest409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response QueueNotificationTest409JSONResponse) VisitQueueNotificationTestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QueueNotificationTest503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response QueueNotificationTest503JSONResponse) VisitQueueNotificationTestResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListOperationsRequestObject struct {
 	Params ListOperationsParams
 }
@@ -18382,8 +24200,11 @@ type ListCompleteTVOrganizationsResponseObject interface {
 
 type ListCompleteTVOrganizations200JSONResponse struct {
 	Items []struct {
-		AttachmentCount   int                `json:"attachment_count"`
-		CanConfirm        bool               `json:"can_confirm"`
+		AttachmentCount int  `json:"attachment_count"`
+		CanConfirm      bool `json:"can_confirm"`
+
+		// NamingVersion Frozen naming configuration version; omission preserves legacy version zero.
+		NamingVersion     *int64             `json:"naming_version,omitempty"`
 		OperationId       openapi_types.UUID `json:"operation_id"`
 		OrganizationState string             `json:"organization_state"`
 		Season            int                `json:"season"`
@@ -18944,6 +24765,467 @@ func (response GetOperationTimeline503ApplicationProblemPlusJSONResponse) VisitG
 		return err
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewNamingRequestObject struct {
+	Body *PreviewNamingJSONRequestBody
+}
+
+type PreviewNamingResponseObject interface {
+	VisitPreviewNamingResponse(w http.ResponseWriter) error
+}
+
+type PreviewNaming200JSONResponse NamingPreviewResult
+
+func (response PreviewNaming200JSONResponse) VisitPreviewNamingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewNaming400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response PreviewNaming400ApplicationProblemPlusJSONResponse) VisitPreviewNamingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewNaming401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response PreviewNaming401ApplicationProblemPlusJSONResponse) VisitPreviewNamingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewNaming403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response PreviewNaming403ApplicationProblemPlusJSONResponse) VisitPreviewNamingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewNaming503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response PreviewNaming503ApplicationProblemPlusJSONResponse) VisitPreviewNamingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListPersonFollowsRequestObject struct {
+}
+
+type ListPersonFollowsResponseObject interface {
+	VisitListPersonFollowsResponse(w http.ResponseWriter) error
+}
+
+type ListPersonFollows200JSONResponse []PersonFollowConfiguration
+
+func (response ListPersonFollows200JSONResponse) VisitListPersonFollowsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListPersonFollows400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response ListPersonFollows400JSONResponse) VisitListPersonFollowsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListPersonFollows401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response ListPersonFollows401JSONResponse) VisitListPersonFollowsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListPersonFollows403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response ListPersonFollows403JSONResponse) VisitListPersonFollowsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListPersonFollows503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response ListPersonFollows503JSONResponse) VisitListPersonFollowsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowReceiptRequestObject struct {
+	Key string `json:"key"`
+}
+
+type GetPersonFollowReceiptResponseObject interface {
+	VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error
+}
+
+type GetPersonFollowReceipt200JSONResponse PersonFollowReceipt
+
+func (response GetPersonFollowReceipt200JSONResponse) VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowReceipt400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response GetPersonFollowReceipt400JSONResponse) VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowReceipt401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response GetPersonFollowReceipt401JSONResponse) VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowReceipt403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response GetPersonFollowReceipt403JSONResponse) VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowReceipt404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response GetPersonFollowReceipt404JSONResponse) VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowReceipt409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response GetPersonFollowReceipt409JSONResponse) VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowReceipt503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetPersonFollowReceipt503JSONResponse) VisitGetPersonFollowReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollowRequestObject struct {
+	Id openapi_types.UUID `json:"id"`
+}
+
+type GetPersonFollowResponseObject interface {
+	VisitGetPersonFollowResponse(w http.ResponseWriter) error
+}
+
+type GetPersonFollow200JSONResponse PersonFollowConfiguration
+
+func (response GetPersonFollow200JSONResponse) VisitGetPersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollow400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response GetPersonFollow400JSONResponse) VisitGetPersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollow401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response GetPersonFollow401JSONResponse) VisitGetPersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollow403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response GetPersonFollow403JSONResponse) VisitGetPersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollow404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response GetPersonFollow404JSONResponse) VisitGetPersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetPersonFollow503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetPersonFollow503JSONResponse) VisitGetPersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SavePersonFollowRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params SavePersonFollowParams
+	Body   *SavePersonFollowJSONRequestBody
+}
+
+type SavePersonFollowResponseObject interface {
+	VisitSavePersonFollowResponse(w http.ResponseWriter) error
+}
+
+type SavePersonFollow200JSONResponse PersonFollowReceipt
+
+func (response SavePersonFollow200JSONResponse) VisitSavePersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SavePersonFollow400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response SavePersonFollow400JSONResponse) VisitSavePersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SavePersonFollow401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response SavePersonFollow401JSONResponse) VisitSavePersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SavePersonFollow403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response SavePersonFollow403JSONResponse) VisitSavePersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SavePersonFollow404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response SavePersonFollow404JSONResponse) VisitSavePersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SavePersonFollow409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response SavePersonFollow409JSONResponse) VisitSavePersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SavePersonFollow503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response SavePersonFollow503JSONResponse) VisitSavePersonFollowResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -25026,6 +31308,94 @@ func (response ReadDoubanSyncConfigReceipt503ApplicationProblemPlusJSONResponse)
 	return err
 }
 
+type ListAuditTimelineRequestObject struct {
+	Params ListAuditTimelineParams
+}
+
+type ListAuditTimelineResponseObject interface {
+	VisitListAuditTimelineResponse(w http.ResponseWriter) error
+}
+
+type ListAuditTimeline200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ListAuditTimeline200JSONResponse struct {
+	Body    AuditTimelinePage
+	Headers ListAuditTimeline200ResponseHeaders
+}
+
+func (response ListAuditTimeline200JSONResponse) VisitListAuditTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAuditTimeline400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListAuditTimeline400ApplicationProblemPlusJSONResponse) VisitListAuditTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAuditTimeline401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListAuditTimeline401ApplicationProblemPlusJSONResponse) VisitListAuditTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAuditTimeline403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListAuditTimeline403ApplicationProblemPlusJSONResponse) VisitListAuditTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAuditTimeline503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListAuditTimeline503ApplicationProblemPlusJSONResponse) VisitListAuditTimelineResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type StreamSystemLogsRequestObject struct {
 	Params StreamSystemLogsParams
 }
@@ -25695,6 +32065,425 @@ func (response ScanDirectoryReorganize401ApplicationProblemPlusJSONResponse) Vis
 	return err
 }
 
+type GetWebPushConfigurationRequestObject struct {
+}
+
+type GetWebPushConfigurationResponseObject interface {
+	VisitGetWebPushConfigurationResponse(w http.ResponseWriter) error
+}
+
+type GetWebPushConfiguration200JSONResponse WebPushConfiguration
+
+func (response GetWebPushConfiguration200JSONResponse) VisitGetWebPushConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushConfiguration401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response GetWebPushConfiguration401JSONResponse) VisitGetWebPushConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushConfiguration403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response GetWebPushConfiguration403JSONResponse) VisitGetWebPushConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushConfiguration503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetWebPushConfiguration503JSONResponse) VisitGetWebPushConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListWebPushDevicesRequestObject struct {
+}
+
+type ListWebPushDevicesResponseObject interface {
+	VisitListWebPushDevicesResponse(w http.ResponseWriter) error
+}
+
+type ListWebPushDevices200JSONResponse []WebPushDevice
+
+func (response ListWebPushDevices200JSONResponse) VisitListWebPushDevicesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListWebPushDevices401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response ListWebPushDevices401JSONResponse) VisitListWebPushDevicesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListWebPushDevices403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response ListWebPushDevices403JSONResponse) VisitListWebPushDevicesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListWebPushDevices503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response ListWebPushDevices503JSONResponse) VisitListWebPushDevicesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegisterWebPushDeviceRequestObject struct {
+	Params RegisterWebPushDeviceParams
+	Body   *RegisterWebPushDeviceJSONRequestBody
+}
+
+type RegisterWebPushDeviceResponseObject interface {
+	VisitRegisterWebPushDeviceResponse(w http.ResponseWriter) error
+}
+
+type RegisterWebPushDevice201JSONResponse WebPushDevice
+
+func (response RegisterWebPushDevice201JSONResponse) VisitRegisterWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegisterWebPushDevice400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response RegisterWebPushDevice400JSONResponse) VisitRegisterWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegisterWebPushDevice401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response RegisterWebPushDevice401JSONResponse) VisitRegisterWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegisterWebPushDevice403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response RegisterWebPushDevice403JSONResponse) VisitRegisterWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegisterWebPushDevice409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response RegisterWebPushDevice409JSONResponse) VisitRegisterWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegisterWebPushDevice503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response RegisterWebPushDevice503JSONResponse) VisitRegisterWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeWebPushDeviceRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params RevokeWebPushDeviceParams
+	Body   *RevokeWebPushDeviceJSONRequestBody
+}
+
+type RevokeWebPushDeviceResponseObject interface {
+	VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error
+}
+
+type RevokeWebPushDevice200JSONResponse WebPushDevice
+
+func (response RevokeWebPushDevice200JSONResponse) VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeWebPushDevice400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response RevokeWebPushDevice400JSONResponse) VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeWebPushDevice401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response RevokeWebPushDevice401JSONResponse) VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeWebPushDevice403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response RevokeWebPushDevice403JSONResponse) VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeWebPushDevice404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response RevokeWebPushDevice404JSONResponse) VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeWebPushDevice409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response RevokeWebPushDevice409JSONResponse) VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeWebPushDevice503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response RevokeWebPushDevice503JSONResponse) VisitRevokeWebPushDeviceResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushReceiptRequestObject struct {
+	Key string `json:"key"`
+}
+
+type GetWebPushReceiptResponseObject interface {
+	VisitGetWebPushReceiptResponse(w http.ResponseWriter) error
+}
+
+type GetWebPushReceipt200JSONResponse WebPushDevice
+
+func (response GetWebPushReceipt200JSONResponse) VisitGetWebPushReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushReceipt400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response GetWebPushReceipt400JSONResponse) VisitGetWebPushReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushReceipt401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response GetWebPushReceipt401JSONResponse) VisitGetWebPushReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushReceipt403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response GetWebPushReceipt403JSONResponse) VisitGetWebPushReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushReceipt404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response GetWebPushReceipt404JSONResponse) VisitGetWebPushReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetWebPushReceipt503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetWebPushReceipt503JSONResponse) VisitGetWebPushReceiptResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type GetHealthzRequestObject struct {
 }
 
@@ -25798,12 +32587,24 @@ type StrictServerInterface interface {
 	// CreateDownloadClient Add or update a download client
 	// (POST /api/v1/download-clients)
 	CreateDownloadClient(ctx context.Context, request CreateDownloadClientRequestObject) (CreateDownloadClientResponseObject, error)
+	// GetDownloadGlobalRates Read persisted global native download and upload rates
+	// (GET /api/v1/download-clients/global-rates)
+	GetDownloadGlobalRates(ctx context.Context, request GetDownloadGlobalRatesRequestObject) (GetDownloadGlobalRatesResponseObject, error)
 	// DeleteDownloadClient Delete a download client
 	// (DELETE /api/v1/download-clients/{id})
 	DeleteDownloadClient(ctx context.Context, request DeleteDownloadClientRequestObject) (DeleteDownloadClientResponseObject, error)
 	// UpdateDownloadClient Update a download client
 	// (PUT /api/v1/download-clients/{id})
 	UpdateDownloadClient(ctx context.Context, request UpdateDownloadClientRequestObject) (UpdateDownloadClientResponseObject, error)
+	// ReadSeedingConfig Read downloader seeding eligibility configuration
+	// (GET /api/v1/download-clients/{id}/seeding/config)
+	ReadSeedingConfig(ctx context.Context, request ReadSeedingConfigRequestObject) (ReadSeedingConfigResponseObject, error)
+	// SaveSeedingConfig Save versioned keep-data seeding eligibility rules
+	// (PUT /api/v1/download-clients/{id}/seeding/config)
+	SaveSeedingConfig(ctx context.Context, request SaveSeedingConfigRequestObject) (SaveSeedingConfigResponseObject, error)
+	// ReadSeedingConfigReceipt Read an administrator-scoped original seeding configuration receipt
+	// (GET /api/v1/download-clients/{id}/seeding/config/commands/{command_key})
+	ReadSeedingConfigReceipt(ctx context.Context, request ReadSeedingConfigReceiptRequestObject) (ReadSeedingConfigReceiptResponseObject, error)
 	// TestDownloadClient Test connection to a download client
 	// (POST /api/v1/download-clients/{id}/test)
 	TestDownloadClient(ctx context.Context, request TestDownloadClientRequestObject) (TestDownloadClientResponseObject, error)
@@ -25864,6 +32665,15 @@ type StrictServerInterface interface {
 	// ReadSiteCheckinHistory Read persisted site checkin history
 	// (GET /api/v1/indexers/{indexer_id}/checkin/history)
 	ReadSiteCheckinHistory(ctx context.Context, request ReadSiteCheckinHistoryRequestObject) (ReadSiteCheckinHistoryResponseObject, error)
+	// ReadCookieCloudConfig Read the current administrator's safe CookieCloud configuration
+	// (GET /api/v1/integrations/cookiecloud/config)
+	ReadCookieCloudConfig(ctx context.Context, request ReadCookieCloudConfigRequestObject) (ReadCookieCloudConfigResponseObject, error)
+	// SaveCookieCloudConfig Persist an encrypted CookieCloud connection without starting synchronization
+	// (PUT /api/v1/integrations/cookiecloud/config)
+	SaveCookieCloudConfig(ctx context.Context, request SaveCookieCloudConfigRequestObject) (SaveCookieCloudConfigResponseObject, error)
+	// ReadCookieCloudConfigReceipt Read an account-scoped original CookieCloud configuration receipt
+	// (GET /api/v1/integrations/cookiecloud/config/commands/{command_key})
+	ReadCookieCloudConfigReceipt(ctx context.Context, request ReadCookieCloudConfigReceiptRequestObject) (ReadCookieCloudConfigReceiptResponseObject, error)
 	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
 	ListIntegrationDeliveries(ctx context.Context, request ListIntegrationDeliveriesRequestObject) (ListIntegrationDeliveriesResponseObject, error)
@@ -25903,6 +32713,66 @@ type StrictServerInterface interface {
 	// ConfirmLibraryReuse Confirm complete source coverage and queue a local demand atomically
 	// (POST /api/v1/library/reuses)
 	ConfirmLibraryReuse(ctx context.Context, request ConfirmLibraryReuseRequestObject) (ConfirmLibraryReuseResponseObject, error)
+	// ReadUntrackedScope Read an explicitly selected untracked directory scope
+	// (GET /api/v1/library/untracked-scopes/{scope_id})
+	ReadUntrackedScope(ctx context.Context, request ReadUntrackedScopeRequestObject) (ReadUntrackedScopeResponseObject, error)
+	// SaveUntrackedScope Save directory discovery intent without granting import authority
+	// (PUT /api/v1/library/untracked-scopes/{scope_id})
+	SaveUntrackedScope(ctx context.Context, request SaveUntrackedScopeRequestObject) (SaveUntrackedScopeResponseObject, error)
+	// ReadUntrackedScopeReceipt Recover an original directory scope configuration receipt
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/commands/{command_key})
+	ReadUntrackedScopeReceipt(ctx context.Context, request ReadUntrackedScopeReceiptRequestObject) (ReadUntrackedScopeReceiptResponseObject, error)
+	// ListUntrackedDiscoveries Read persisted file observations for an explicit directory scope
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries)
+	ListUntrackedDiscoveries(ctx context.Context, request ListUntrackedDiscoveriesRequestObject) (ListUntrackedDiscoveriesResponseObject, error)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmation-commands/{command_key})
+	ReadUntrackedConfirmationReceipt(ctx context.Context, request ReadUntrackedConfirmationReceiptRequestObject) (ReadUntrackedConfirmationReceiptResponseObject, error)
+
+	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmations)
+	ConfirmUntrackedFile(ctx context.Context, request ConfirmUntrackedFileRequestObject) (ConfirmUntrackedFileResponseObject, error)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organization-commands/{command_key})
+	ReadUntrackedOrganizationReceipt(ctx context.Context, request ReadUntrackedOrganizationReceiptRequestObject) (ReadUntrackedOrganizationReceiptResponseObject, error)
+
+	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations)
+	RequestUntrackedOrganization(ctx context.Context, request RequestUntrackedOrganizationRequestObject) (RequestUntrackedOrganizationResponseObject, error)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations/{operation_id})
+	ReadUntrackedOrganization(ctx context.Context, request ReadUntrackedOrganizationRequestObject) (ReadUntrackedOrganizationResponseObject, error)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/review-commands/{command_key})
+	ReadUntrackedReviewRequestReceipt(ctx context.Context, request ReadUntrackedReviewRequestReceiptRequestObject) (ReadUntrackedReviewRequestReceiptResponseObject, error)
+
+	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews)
+	RequestUntrackedReview(ctx context.Context, request RequestUntrackedReviewRequestObject) (RequestUntrackedReviewResponseObject, error)
+
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews/{review_id})
+	ReadUntrackedReview(ctx context.Context, request ReadUntrackedReviewRequestObject) (ReadUntrackedReviewResponseObject, error)
+	// ListMediaRequests List own requests; administrators can list all requests
+	// (GET /api/v1/media-requests)
+	ListMediaRequests(ctx context.Context, request ListMediaRequestsRequestObject) (ListMediaRequestsResponseObject, error)
+	// SubmitMediaRequest Persist a pending request without creating a subscription or performing metadata I/O
+	// (POST /api/v1/media-requests)
+	SubmitMediaRequest(ctx context.Context, request SubmitMediaRequestRequestObject) (SubmitMediaRequestResponseObject, error)
+	// GetMediaRequestReceipt Recover the current account's original submit or close receipt without retrying a write
+	// (GET /api/v1/media-requests/commands/{idempotency_key})
+	GetMediaRequestReceipt(ctx context.Context, request GetMediaRequestReceiptRequestObject) (GetMediaRequestReceiptResponseObject, error)
+	// GetMediaRequestSummary Read the administrator inbox count without scheduling or metadata access
+	// (GET /api/v1/media-requests/summary)
+	GetMediaRequestSummary(ctx context.Context, request GetMediaRequestSummaryRequestObject) (GetMediaRequestSummaryResponseObject, error)
+	// GetMediaRequest Read current request state in the current account's object scope
+	// (GET /api/v1/media-requests/{request_id})
+	GetMediaRequest(ctx context.Context, request GetMediaRequestRequestObject) (GetMediaRequestResponseObject, error)
+	// GetMediaRequestApprovalReceipt Recover the original approving administrator's receipt without metadata or download I/O
+	// (GET /api/v1/media-requests/{request_id}/approval-commands/{idempotency_key})
+	GetMediaRequestApprovalReceipt(ctx context.Context, request GetMediaRequestApprovalReceiptRequestObject) (GetMediaRequestApprovalReceiptResponseObject, error)
+	// ApproveMediaRequest Administrator approval through the existing atomic subscription creation transaction
+	// (POST /api/v1/media-requests/{request_id}/approve)
+	ApproveMediaRequest(ctx context.Context, request ApproveMediaRequestRequestObject) (ApproveMediaRequestResponseObject, error)
+	// CloseMediaRequest Owner withdrawal or administrator rejection of a pending request
+	// (POST /api/v1/media-requests/{request_id}/close)
+	CloseMediaRequest(ctx context.Context, request CloseMediaRequestRequestObject) (CloseMediaRequestResponseObject, error)
 	// ListMediaServers List configured media servers
 	// (GET /api/v1/media-servers)
 	ListMediaServers(ctx context.Context, request ListMediaServersRequestObject) (ListMediaServersResponseObject, error)
@@ -25936,6 +32806,9 @@ type StrictServerInterface interface {
 	// GetTMDBMediaCredits Read provider cast without creating subscription or acquisition
 	// (GET /api/v1/media/tmdb/{media_type}/{id}/credits)
 	GetTMDBMediaCredits(ctx context.Context, request GetTMDBMediaCreditsRequestObject) (GetTMDBMediaCreditsResponseObject, error)
+	// GetBangumiCalendar Read the Bangumi broadcast-weekday calendar
+	// (GET /api/v1/metadata/bangumi/calendar)
+	GetBangumiCalendar(ctx context.Context, request GetBangumiCalendarRequestObject) (GetBangumiCalendarResponseObject, error)
 	// AcquireMovie Acquire a movie release
 	// (POST /api/v1/movies/acquire)
 	AcquireMovie(ctx context.Context, request AcquireMovieRequestObject) (AcquireMovieResponseObject, error)
@@ -25956,6 +32829,9 @@ type StrictServerInterface interface {
 	// SetNotificationChannelState Versioned administrator enable/disable of the original recipient only; in-flight sends may finish
 	// (PUT /api/v1/notification-channels/{id}/state)
 	SetNotificationChannelState(ctx context.Context, request SetNotificationChannelStateRequestObject) (SetNotificationChannelStateResponseObject, error)
+	// QueueNotificationTest Queue one administrator test to the original channel; queued does not mean delivered
+	// (POST /api/v1/notification-channels/{id}/test)
+	QueueNotificationTest(ctx context.Context, request QueueNotificationTestRequestObject) (QueueNotificationTestResponseObject, error)
 	// ListOperations List visible persisted acquisition operations
 	// (GET /api/v1/operations)
 	ListOperations(ctx context.Context, request ListOperationsRequestObject) (ListOperationsResponseObject, error)
@@ -25983,6 +32859,21 @@ type StrictServerInterface interface {
 	// GetOperationTimeline Read the current persisted organization steps without executing work
 	// (GET /api/v1/operations/{id}/timeline)
 	GetOperationTimeline(ctx context.Context, request GetOperationTimelineRequestObject) (GetOperationTimelineResponseObject, error)
+	// PreviewNaming Preview a draft or saved naming template against sample metadata
+	// (POST /api/v1/organization/naming/preview)
+	PreviewNaming(ctx context.Context, request PreviewNamingRequestObject) (PreviewNamingResponseObject, error)
+	// ListPersonFollows List only this account's saved actor and director follow configurations
+	// (GET /api/v1/person-follows)
+	ListPersonFollows(ctx context.Context, request ListPersonFollowsRequestObject) (ListPersonFollowsResponseObject, error)
+	// GetPersonFollowReceipt Recover only the current account's original configuration receipt without metadata access
+	// (GET /api/v1/person-follows/receipts/{key})
+	GetPersonFollowReceipt(ctx context.Context, request GetPersonFollowReceiptRequestObject) (GetPersonFollowReceiptResponseObject, error)
+	// GetPersonFollow Read only this account's current follow configuration
+	// (GET /api/v1/person-follows/{id})
+	GetPersonFollow(ctx context.Context, request GetPersonFollowRequestObject) (GetPersonFollowResponseObject, error)
+	// SavePersonFollow Save versioned follow intent without requesting metadata or creating an execution task
+	// (PUT /api/v1/person-follows/{id})
+	SavePersonFollow(ctx context.Context, request SavePersonFollowRequestObject) (SavePersonFollowResponseObject, error)
 	// ListPolicies Read current immutable policy rules
 	// (GET /api/v1/policies)
 	ListPolicies(ctx context.Context, request ListPoliciesRequestObject) (ListPoliciesResponseObject, error)
@@ -26162,6 +33053,9 @@ type StrictServerInterface interface {
 	// ReadDoubanSyncConfigReceipt Read the original configuration receipt without writing
 	// (GET /api/v1/sync/douban/config/commands/{command_key})
 	ReadDoubanSyncConfigReceipt(ctx context.Context, request ReadDoubanSyncConfigReceiptRequestObject) (ReadDoubanSyncConfigReceiptResponseObject, error)
+	// ListAuditTimeline Read the persisted system audit timeline
+	// (GET /api/v1/system/audit)
+	ListAuditTimeline(ctx context.Context, request ListAuditTimelineRequestObject) (ListAuditTimelineResponseObject, error)
 	// StreamSystemLogs Real-time system log stream
 	// (GET /api/v1/system/logs)
 	StreamSystemLogs(ctx context.Context, request StreamSystemLogsRequestObject) (StreamSystemLogsResponseObject, error)
@@ -26188,6 +33082,21 @@ type StrictServerInterface interface {
 	// ScanDirectoryReorganize Scan directory and recognize media files for reorganization
 	// (POST /api/v1/transfer/scan)
 	ScanDirectoryReorganize(ctx context.Context, request ScanDirectoryReorganizeRequestObject) (ScanDirectoryReorganizeResponseObject, error)
+	// GetWebPushConfiguration Read this deployment's browser application server key after current account authorization
+	// (GET /api/v1/web-push/config)
+	GetWebPushConfiguration(ctx context.Context, request GetWebPushConfigurationRequestObject) (GetWebPushConfigurationResponseObject, error)
+	// ListWebPushDevices List only the current account's latest 100 device summaries; contains no delivery capabilities
+	// (GET /api/v1/web-push/devices)
+	ListWebPushDevices(ctx context.Context, request ListWebPushDevicesRequestObject) (ListWebPushDevicesResponseObject, error)
+	// RegisterWebPushDevice Persist this account's explicitly authorized browser subscription; does not send a push
+	// (POST /api/v1/web-push/devices)
+	RegisterWebPushDevice(ctx context.Context, request RegisterWebPushDeviceRequestObject) (RegisterWebPushDeviceResponseObject, error)
+	// RevokeWebPushDevice Permanently revoke one of this account's devices; in-flight sends may finish
+	// (PUT /api/v1/web-push/devices/{id}/revocation)
+	RevokeWebPushDevice(ctx context.Context, request RevokeWebPushDeviceRequestObject) (RevokeWebPushDeviceResponseObject, error)
+	// GetWebPushReceipt Recover only this account's original device-command receipt without accessing a push service
+	// (GET /api/v1/web-push/receipts/{key})
+	GetWebPushReceipt(ctx context.Context, request GetWebPushReceiptRequestObject) (GetWebPushReceiptResponseObject, error)
 	// GetHealthz Liveness check
 	// (GET /healthz)
 	GetHealthz(ctx context.Context, request GetHealthzRequestObject) (GetHealthzResponseObject, error)
@@ -26650,6 +33559,30 @@ func (sh *strictHandler) CreateDownloadClient(w http.ResponseWriter, r *http.Req
 	}
 }
 
+// GetDownloadGlobalRates operation middleware
+func (sh *strictHandler) GetDownloadGlobalRates(w http.ResponseWriter, r *http.Request) {
+	var request GetDownloadGlobalRatesRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDownloadGlobalRates(ctx, request.(GetDownloadGlobalRatesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDownloadGlobalRates")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetDownloadGlobalRatesResponseObject); ok {
+		if err := validResponse.VisitGetDownloadGlobalRatesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // DeleteDownloadClient operation middleware
 func (sh *strictHandler) DeleteDownloadClient(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
 	var request DeleteDownloadClientRequestObject
@@ -26702,6 +33635,93 @@ func (sh *strictHandler) UpdateDownloadClient(w http.ResponseWriter, r *http.Req
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(UpdateDownloadClientResponseObject); ok {
 		if err := validResponse.VisitUpdateDownloadClientResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadSeedingConfig operation middleware
+func (sh *strictHandler) ReadSeedingConfig(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+	var request ReadSeedingConfigRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadSeedingConfig(ctx, request.(ReadSeedingConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadSeedingConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadSeedingConfigResponseObject); ok {
+		if err := validResponse.VisitReadSeedingConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SaveSeedingConfig operation middleware
+func (sh *strictHandler) SaveSeedingConfig(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params SaveSeedingConfigParams) {
+	var request SaveSeedingConfigRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	var body SaveSeedingConfigJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SaveSeedingConfig(ctx, request.(SaveSeedingConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SaveSeedingConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SaveSeedingConfigResponseObject); ok {
+		if err := validResponse.VisitSaveSeedingConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadSeedingConfigReceipt operation middleware
+func (sh *strictHandler) ReadSeedingConfigReceipt(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, commandKey string) {
+	var request ReadSeedingConfigReceiptRequestObject
+
+	request.Id = id
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadSeedingConfigReceipt(ctx, request.(ReadSeedingConfigReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadSeedingConfigReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadSeedingConfigReceiptResponseObject); ok {
+		if err := validResponse.VisitReadSeedingConfigReceiptResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -27277,6 +34297,89 @@ func (sh *strictHandler) ReadSiteCheckinHistory(w http.ResponseWriter, r *http.R
 	}
 }
 
+// ReadCookieCloudConfig operation middleware
+func (sh *strictHandler) ReadCookieCloudConfig(w http.ResponseWriter, r *http.Request) {
+	var request ReadCookieCloudConfigRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadCookieCloudConfig(ctx, request.(ReadCookieCloudConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadCookieCloudConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadCookieCloudConfigResponseObject); ok {
+		if err := validResponse.VisitReadCookieCloudConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SaveCookieCloudConfig operation middleware
+func (sh *strictHandler) SaveCookieCloudConfig(w http.ResponseWriter, r *http.Request, params SaveCookieCloudConfigParams) {
+	var request SaveCookieCloudConfigRequestObject
+
+	request.Params = params
+
+	var body SaveCookieCloudConfigJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SaveCookieCloudConfig(ctx, request.(SaveCookieCloudConfigRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SaveCookieCloudConfig")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SaveCookieCloudConfigResponseObject); ok {
+		if err := validResponse.VisitSaveCookieCloudConfigResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadCookieCloudConfigReceipt operation middleware
+func (sh *strictHandler) ReadCookieCloudConfigReceipt(w http.ResponseWriter, r *http.Request, commandKey string) {
+	var request ReadCookieCloudConfigReceiptRequestObject
+
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadCookieCloudConfigReceipt(ctx, request.(ReadCookieCloudConfigReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadCookieCloudConfigReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadCookieCloudConfigReceiptResponseObject); ok {
+		if err := validResponse.VisitReadCookieCloudConfigReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // ListIntegrationDeliveries operation middleware
 func (sh *strictHandler) ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request) {
 	var request ListIntegrationDeliveriesRequestObject
@@ -27642,6 +34745,595 @@ func (sh *strictHandler) ConfirmLibraryReuse(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// ReadUntrackedScope operation middleware
+func (sh *strictHandler) ReadUntrackedScope(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID) {
+	var request ReadUntrackedScopeRequestObject
+
+	request.ScopeId = scopeId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedScope(ctx, request.(ReadUntrackedScopeRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedScope")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedScopeResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedScopeResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SaveUntrackedScope operation middleware
+func (sh *strictHandler) SaveUntrackedScope(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, params SaveUntrackedScopeParams) {
+	var request SaveUntrackedScopeRequestObject
+
+	request.ScopeId = scopeId
+	request.Params = params
+
+	var body SaveUntrackedScopeJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SaveUntrackedScope(ctx, request.(SaveUntrackedScopeRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SaveUntrackedScope")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SaveUntrackedScopeResponseObject); ok {
+		if err := validResponse.VisitSaveUntrackedScopeResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedScopeReceipt operation middleware
+func (sh *strictHandler) ReadUntrackedScopeReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, commandKey string) {
+	var request ReadUntrackedScopeReceiptRequestObject
+
+	request.ScopeId = scopeId
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedScopeReceipt(ctx, request.(ReadUntrackedScopeReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedScopeReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedScopeReceiptResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedScopeReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListUntrackedDiscoveries operation middleware
+func (sh *strictHandler) ListUntrackedDiscoveries(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, params ListUntrackedDiscoveriesParams) {
+	var request ListUntrackedDiscoveriesRequestObject
+
+	request.ScopeId = scopeId
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListUntrackedDiscoveries(ctx, request.(ListUntrackedDiscoveriesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListUntrackedDiscoveries")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListUntrackedDiscoveriesResponseObject); ok {
+		if err := validResponse.VisitListUntrackedDiscoveriesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedConfirmationReceipt operation middleware
+func (sh *strictHandler) ReadUntrackedConfirmationReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, commandKey string) {
+	var request ReadUntrackedConfirmationReceiptRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedConfirmationReceipt(ctx, request.(ReadUntrackedConfirmationReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedConfirmationReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedConfirmationReceiptResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedConfirmationReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ConfirmUntrackedFile operation middleware
+func (sh *strictHandler) ConfirmUntrackedFile(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params ConfirmUntrackedFileParams) {
+	var request ConfirmUntrackedFileRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.Params = params
+
+	var body ConfirmUntrackedFileJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ConfirmUntrackedFile(ctx, request.(ConfirmUntrackedFileRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ConfirmUntrackedFile")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ConfirmUntrackedFileResponseObject); ok {
+		if err := validResponse.VisitConfirmUntrackedFileResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedOrganizationReceipt operation middleware
+func (sh *strictHandler) ReadUntrackedOrganizationReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, commandKey string) {
+	var request ReadUntrackedOrganizationReceiptRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedOrganizationReceipt(ctx, request.(ReadUntrackedOrganizationReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedOrganizationReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedOrganizationReceiptResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedOrganizationReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RequestUntrackedOrganization operation middleware
+func (sh *strictHandler) RequestUntrackedOrganization(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params RequestUntrackedOrganizationParams) {
+	var request RequestUntrackedOrganizationRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.Params = params
+
+	var body RequestUntrackedOrganizationJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RequestUntrackedOrganization(ctx, request.(RequestUntrackedOrganizationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RequestUntrackedOrganization")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RequestUntrackedOrganizationResponseObject); ok {
+		if err := validResponse.VisitRequestUntrackedOrganizationResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedOrganization operation middleware
+func (sh *strictHandler) ReadUntrackedOrganization(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, operationId openapi_types.UUID) {
+	var request ReadUntrackedOrganizationRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.OperationId = operationId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedOrganization(ctx, request.(ReadUntrackedOrganizationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedOrganization")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedOrganizationResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedOrganizationResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedReviewRequestReceipt operation middleware
+func (sh *strictHandler) ReadUntrackedReviewRequestReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, commandKey string) {
+	var request ReadUntrackedReviewRequestReceiptRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedReviewRequestReceipt(ctx, request.(ReadUntrackedReviewRequestReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedReviewRequestReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedReviewRequestReceiptResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedReviewRequestReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RequestUntrackedReview operation middleware
+func (sh *strictHandler) RequestUntrackedReview(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params RequestUntrackedReviewParams) {
+	var request RequestUntrackedReviewRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.Params = params
+
+	var body RequestUntrackedReviewJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RequestUntrackedReview(ctx, request.(RequestUntrackedReviewRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RequestUntrackedReview")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RequestUntrackedReviewResponseObject); ok {
+		if err := validResponse.VisitRequestUntrackedReviewResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedReview operation middleware
+func (sh *strictHandler) ReadUntrackedReview(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, reviewId openapi_types.UUID) {
+	var request ReadUntrackedReviewRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.ReviewId = reviewId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedReview(ctx, request.(ReadUntrackedReviewRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedReview")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedReviewResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedReviewResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListMediaRequests operation middleware
+func (sh *strictHandler) ListMediaRequests(w http.ResponseWriter, r *http.Request, params ListMediaRequestsParams) {
+	var request ListMediaRequestsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListMediaRequests(ctx, request.(ListMediaRequestsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListMediaRequests")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListMediaRequestsResponseObject); ok {
+		if err := validResponse.VisitListMediaRequestsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SubmitMediaRequest operation middleware
+func (sh *strictHandler) SubmitMediaRequest(w http.ResponseWriter, r *http.Request, params SubmitMediaRequestParams) {
+	var request SubmitMediaRequestRequestObject
+
+	request.Params = params
+
+	var body SubmitMediaRequestJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SubmitMediaRequest(ctx, request.(SubmitMediaRequestRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SubmitMediaRequest")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SubmitMediaRequestResponseObject); ok {
+		if err := validResponse.VisitSubmitMediaRequestResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMediaRequestReceipt operation middleware
+func (sh *strictHandler) GetMediaRequestReceipt(w http.ResponseWriter, r *http.Request, idempotencyKey string) {
+	var request GetMediaRequestReceiptRequestObject
+
+	request.IdempotencyKey = idempotencyKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMediaRequestReceipt(ctx, request.(GetMediaRequestReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMediaRequestReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMediaRequestReceiptResponseObject); ok {
+		if err := validResponse.VisitGetMediaRequestReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMediaRequestSummary operation middleware
+func (sh *strictHandler) GetMediaRequestSummary(w http.ResponseWriter, r *http.Request) {
+	var request GetMediaRequestSummaryRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMediaRequestSummary(ctx, request.(GetMediaRequestSummaryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMediaRequestSummary")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMediaRequestSummaryResponseObject); ok {
+		if err := validResponse.VisitGetMediaRequestSummaryResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMediaRequest operation middleware
+func (sh *strictHandler) GetMediaRequest(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID) {
+	var request GetMediaRequestRequestObject
+
+	request.RequestId = requestId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMediaRequest(ctx, request.(GetMediaRequestRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMediaRequest")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMediaRequestResponseObject); ok {
+		if err := validResponse.VisitGetMediaRequestResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMediaRequestApprovalReceipt operation middleware
+func (sh *strictHandler) GetMediaRequestApprovalReceipt(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID, idempotencyKey string) {
+	var request GetMediaRequestApprovalReceiptRequestObject
+
+	request.RequestId = requestId
+	request.IdempotencyKey = idempotencyKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMediaRequestApprovalReceipt(ctx, request.(GetMediaRequestApprovalReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMediaRequestApprovalReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMediaRequestApprovalReceiptResponseObject); ok {
+		if err := validResponse.VisitGetMediaRequestApprovalReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ApproveMediaRequest operation middleware
+func (sh *strictHandler) ApproveMediaRequest(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID, params ApproveMediaRequestParams) {
+	var request ApproveMediaRequestRequestObject
+
+	request.RequestId = requestId
+	request.Params = params
+
+	var body ApproveMediaRequestJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ApproveMediaRequest(ctx, request.(ApproveMediaRequestRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ApproveMediaRequest")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ApproveMediaRequestResponseObject); ok {
+		if err := validResponse.VisitApproveMediaRequestResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CloseMediaRequest operation middleware
+func (sh *strictHandler) CloseMediaRequest(w http.ResponseWriter, r *http.Request, requestId openapi_types.UUID, params CloseMediaRequestParams) {
+	var request CloseMediaRequestRequestObject
+
+	request.RequestId = requestId
+	request.Params = params
+
+	var body CloseMediaRequestJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.CloseMediaRequest(ctx, request.(CloseMediaRequestRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CloseMediaRequest")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(CloseMediaRequestResponseObject); ok {
+		if err := validResponse.VisitCloseMediaRequestResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // ListMediaServers operation middleware
 func (sh *strictHandler) ListMediaServers(w http.ResponseWriter, r *http.Request) {
 	var request ListMediaServersRequestObject
@@ -27947,6 +35639,32 @@ func (sh *strictHandler) GetTMDBMediaCredits(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// GetBangumiCalendar operation middleware
+func (sh *strictHandler) GetBangumiCalendar(w http.ResponseWriter, r *http.Request, params GetBangumiCalendarParams) {
+	var request GetBangumiCalendarRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetBangumiCalendar(ctx, request.(GetBangumiCalendarRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetBangumiCalendar")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetBangumiCalendarResponseObject); ok {
+		if err := validResponse.VisitGetBangumiCalendarResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // AcquireMovie operation middleware
 func (sh *strictHandler) AcquireMovie(w http.ResponseWriter, r *http.Request, params AcquireMovieParams) {
 	var request AcquireMovieRequestObject
@@ -28124,6 +35842,40 @@ func (sh *strictHandler) SetNotificationChannelState(w http.ResponseWriter, r *h
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(SetNotificationChannelStateResponseObject); ok {
 		if err := validResponse.VisitSetNotificationChannelStateResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// QueueNotificationTest operation middleware
+func (sh *strictHandler) QueueNotificationTest(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params QueueNotificationTestParams) {
+	var request QueueNotificationTestRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	var body QueueNotificationTestJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.QueueNotificationTest(ctx, request.(QueueNotificationTestRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "QueueNotificationTest")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(QueueNotificationTestResponseObject); ok {
+		if err := validResponse.VisitQueueNotificationTestResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -28376,6 +36128,147 @@ func (sh *strictHandler) GetOperationTimeline(w http.ResponseWriter, r *http.Req
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetOperationTimelineResponseObject); ok {
 		if err := validResponse.VisitGetOperationTimelineResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PreviewNaming operation middleware
+func (sh *strictHandler) PreviewNaming(w http.ResponseWriter, r *http.Request) {
+	var request PreviewNamingRequestObject
+
+	var body PreviewNamingJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PreviewNaming(ctx, request.(PreviewNamingRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PreviewNaming")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PreviewNamingResponseObject); ok {
+		if err := validResponse.VisitPreviewNamingResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListPersonFollows operation middleware
+func (sh *strictHandler) ListPersonFollows(w http.ResponseWriter, r *http.Request) {
+	var request ListPersonFollowsRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListPersonFollows(ctx, request.(ListPersonFollowsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListPersonFollows")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListPersonFollowsResponseObject); ok {
+		if err := validResponse.VisitListPersonFollowsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetPersonFollowReceipt operation middleware
+func (sh *strictHandler) GetPersonFollowReceipt(w http.ResponseWriter, r *http.Request, key string) {
+	var request GetPersonFollowReceiptRequestObject
+
+	request.Key = key
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetPersonFollowReceipt(ctx, request.(GetPersonFollowReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetPersonFollowReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetPersonFollowReceiptResponseObject); ok {
+		if err := validResponse.VisitGetPersonFollowReceiptResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetPersonFollow operation middleware
+func (sh *strictHandler) GetPersonFollow(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+	var request GetPersonFollowRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetPersonFollow(ctx, request.(GetPersonFollowRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetPersonFollow")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetPersonFollowResponseObject); ok {
+		if err := validResponse.VisitGetPersonFollowResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SavePersonFollow operation middleware
+func (sh *strictHandler) SavePersonFollow(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params SavePersonFollowParams) {
+	var request SavePersonFollowRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	var body SavePersonFollowJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SavePersonFollow(ctx, request.(SavePersonFollowRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SavePersonFollow")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SavePersonFollowResponseObject); ok {
+		if err := validResponse.VisitSavePersonFollowResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -30099,6 +37992,32 @@ func (sh *strictHandler) ReadDoubanSyncConfigReceipt(w http.ResponseWriter, r *h
 	}
 }
 
+// ListAuditTimeline operation middleware
+func (sh *strictHandler) ListAuditTimeline(w http.ResponseWriter, r *http.Request, params ListAuditTimelineParams) {
+	var request ListAuditTimelineRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListAuditTimeline(ctx, request.(ListAuditTimelineRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListAuditTimeline")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListAuditTimelineResponseObject); ok {
+		if err := validResponse.VisitListAuditTimelineResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // StreamSystemLogs operation middleware
 func (sh *strictHandler) StreamSystemLogs(w http.ResponseWriter, r *http.Request, params StreamSystemLogsParams) {
 	var request StreamSystemLogsRequestObject
@@ -30326,6 +38245,147 @@ func (sh *strictHandler) ScanDirectoryReorganize(w http.ResponseWriter, r *http.
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(ScanDirectoryReorganizeResponseObject); ok {
 		if err := validResponse.VisitScanDirectoryReorganizeResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetWebPushConfiguration operation middleware
+func (sh *strictHandler) GetWebPushConfiguration(w http.ResponseWriter, r *http.Request) {
+	var request GetWebPushConfigurationRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetWebPushConfiguration(ctx, request.(GetWebPushConfigurationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetWebPushConfiguration")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetWebPushConfigurationResponseObject); ok {
+		if err := validResponse.VisitGetWebPushConfigurationResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListWebPushDevices operation middleware
+func (sh *strictHandler) ListWebPushDevices(w http.ResponseWriter, r *http.Request) {
+	var request ListWebPushDevicesRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListWebPushDevices(ctx, request.(ListWebPushDevicesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListWebPushDevices")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListWebPushDevicesResponseObject); ok {
+		if err := validResponse.VisitListWebPushDevicesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RegisterWebPushDevice operation middleware
+func (sh *strictHandler) RegisterWebPushDevice(w http.ResponseWriter, r *http.Request, params RegisterWebPushDeviceParams) {
+	var request RegisterWebPushDeviceRequestObject
+
+	request.Params = params
+
+	var body RegisterWebPushDeviceJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RegisterWebPushDevice(ctx, request.(RegisterWebPushDeviceRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RegisterWebPushDevice")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RegisterWebPushDeviceResponseObject); ok {
+		if err := validResponse.VisitRegisterWebPushDeviceResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RevokeWebPushDevice operation middleware
+func (sh *strictHandler) RevokeWebPushDevice(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RevokeWebPushDeviceParams) {
+	var request RevokeWebPushDeviceRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	var body RevokeWebPushDeviceJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RevokeWebPushDevice(ctx, request.(RevokeWebPushDeviceRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RevokeWebPushDevice")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RevokeWebPushDeviceResponseObject); ok {
+		if err := validResponse.VisitRevokeWebPushDeviceResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetWebPushReceipt operation middleware
+func (sh *strictHandler) GetWebPushReceipt(w http.ResponseWriter, r *http.Request, key string) {
+	var request GetWebPushReceiptRequestObject
+
+	request.Key = key
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetWebPushReceipt(ctx, request.(GetWebPushReceiptRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetWebPushReceipt")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetWebPushReceiptResponseObject); ok {
+		if err := validResponse.VisitGetWebPushReceiptResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

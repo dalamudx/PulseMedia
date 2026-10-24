@@ -10,6 +10,19 @@ import (
 
 var _ ports.DownloadFileInventoryClient = (*Client)(nil)
 
+type torrentFileObservation struct {
+	Hash  *string `json:"hashString"`
+	Files []struct {
+		Name     *string `json:"name"`
+		Length   *int64  `json:"length"`
+		Complete *int64  `json:"bytesCompleted"`
+	} `json:"files"`
+	Stats []struct {
+		Complete *int64 `json:"bytesCompleted"`
+		Wanted   *bool  `json:"wanted"`
+	} `json:"fileStats"`
+}
+
 func (c *Client) GetTorrentFiles(ctx context.Context, hash string) ([]ports.TorrentFile, error) {
 	if len(hash) != 40 && len(hash) != 64 {
 		return nil, ports.ErrBadResponse
@@ -18,18 +31,7 @@ func (c *Client) GetTorrentFiles(ctx context.Context, hash string) ([]ports.Torr
 		return nil, ports.ErrBadResponse
 	}
 	var result struct {
-		Torrents []struct {
-			Hash  *string `json:"hashString"`
-			Files []struct {
-				Name     *string `json:"name"`
-				Length   *int64  `json:"length"`
-				Complete *int64  `json:"bytesCompleted"`
-			} `json:"files"`
-			Stats []struct {
-				Complete *int64 `json:"bytesCompleted"`
-				Wanted   *bool  `json:"wanted"`
-			} `json:"fileStats"`
-		} `json:"torrents"`
+		Torrents []torrentFileObservation `json:"torrents"`
 	}
 	if e := c.doRPC(ctx, "torrent-get", map[string]any{"fields": []string{"hashString", "files", "fileStats"}, "ids": []string{strings.ToLower(hash)}}, &result); e != nil {
 		return nil, e
@@ -40,7 +42,10 @@ func (c *Client) GetTorrentFiles(ctx context.Context, hash string) ([]ports.Torr
 	if len(result.Torrents) != 1 {
 		return nil, ports.ErrBadResponse
 	}
-	t := result.Torrents[0]
+	return result.Torrents[0].inventory(hash)
+}
+
+func (t torrentFileObservation) inventory(hash string) ([]ports.TorrentFile, error) {
 	if t.Hash == nil || !strings.EqualFold(*t.Hash, hash) || len(t.Files) == 0 || len(t.Files) > 1000 || len(t.Stats) != len(t.Files) {
 		return nil, ports.ErrBadResponse
 	}

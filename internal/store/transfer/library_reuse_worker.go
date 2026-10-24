@@ -134,9 +134,24 @@ func (r *Repository) ExecuteLibraryReuse(ctx context.Context, l ports.JobLease) 
 		}
 		var result ports.FileIdentity
 		var proof *ports.TransferContent
+		eligible := s.reuseMediaEligible(f)
+		targetID, inspectErr := target.Inspect(c, p.TargetRel)
+		targetExists := inspectErr == nil
+		if inspectErr != nil && !errors.Is(inspectErr, fs.ErrNotExist) {
+			return inspectErr
+		}
 		if p.Action == "hardlink" {
-			if err = s.files.Hardlink(c, source, f.Source.RelPath, target, p.TargetRel, f.SourceIdentity); err != nil {
-				return err
+			if eligible && !targetExists {
+				if err = s.files.Hardlink(c, source, f.Source.RelPath, target, p.TargetRel, f.SourceIdentity); err != nil {
+					return err
+				}
+			} else {
+				if !targetExists {
+					return ports.ErrLibraryReuseChanged
+				}
+				if targetID != f.SourceIdentity {
+					return ports.ErrFileIdentity
+				}
 			}
 			result = f.SourceIdentity
 		} else {
@@ -147,6 +162,9 @@ func (r *Repository) ExecuteLibraryReuse(ctx context.Context, l ports.JobLease) 
 			raw, readErr := s.queries.GetLibraryReuseContent(c, p.ID)
 			value := ports.TransferContent{}
 			if errors.Is(readErr, pgx.ErrNoRows) {
+				if !eligible || targetExists {
+					return ports.ErrLibraryReuseChanged
+				}
 				value, err = cap.InspectContent(c, source, f.Source.RelPath, f.SourceIdentity)
 				if err != nil {
 					return err
@@ -160,7 +178,11 @@ func (r *Repository) ExecuteLibraryReuse(ctx context.Context, l ports.JobLease) 
 				return ErrReviewRequired
 			}
 			proof = &value
-			got, err := cap.TransferVerified(c, source, f.Source.RelPath, target, p.TargetRel, value, p.Action, p.ID)
+			apply := cap.TransferVerified
+			if !eligible || targetExists {
+				apply = cap.ObserveTransfer
+			}
+			got, err := apply(c, source, f.Source.RelPath, target, p.TargetRel, value, p.Action, p.ID)
 			if err != nil {
 				return err
 			}

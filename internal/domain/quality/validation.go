@@ -28,6 +28,9 @@ func ValidateRules(r PolicyRules) error {
 			return ErrInvalidRules
 		}
 	}
+	if ValidateCustomWords(r.CustomWords) != nil {
+		return ErrInvalidRules
+	}
 	for _, items := range [][]string{r.RejectTerms, r.RejectGroups} {
 		if len(items) > 100 {
 			return ErrInvalidRules

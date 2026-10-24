@@ -24,7 +24,9 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/library"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"io"
 	"net"
 	"net/http"
@@ -425,16 +427,51 @@ func TestUpgradePreviewPGExpiryAfterBlockedLastRead(t *testing.T) {
 	for _, kind := range []string{"source", "projection", "fact"} {
 		t.Run(kind, func(t *testing.T) {
 			f := newUpgradeFixture(t)
+			// This test crosses a ten-second expiry while holding the final row lock.
+			// Give only its preview connection a longer lock wait; production keeps 2s.
+			previewConfig := f.a.DBPool().Config()
+			configureConnection := previewConfig.AfterConnect
+			previewConfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+				if configureConnection != nil {
+					if err := configureConnection(ctx, conn); err != nil {
+						return err
+					}
+				}
+				_, err := conn.Exec(ctx, "SET lock_timeout='15s'")
+				return err
+			}
+			previewPool, err := pgxpool.NewWithConfig(t.Context(), previewConfig)
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Cleanup(previewPool.Close)
+			f.svc = acquisition.NewUpgradePreviewService(postgres.NewUpgradePreviewStore(previewPool))
+			var expires time.Time
+			var update string
+			var id uuid.UUID
 			switch kind {
 			case "source":
-				f.exec(t, "UPDATE indexer_query SET finished_at=clock_timestamp()-interval '30 minutes'+interval '1 second' WHERE id=$1", f.query)
+				update = "UPDATE indexer_query SET finished_at=clock_timestamp()-interval '30 minutes'+interval '10 seconds' WHERE id=$1 RETURNING finished_at+interval '30 minutes'"
+				id = f.query
 			case "projection":
-				f.exec(t, "UPDATE wanted_item SET projection_valid_until=clock_timestamp()+interval '1 second' WHERE subscription_id=$1", f.request.SubscriptionID)
+				update = "UPDATE wanted_item SET projection_valid_until=clock_timestamp()+interval '10 seconds' WHERE subscription_id=$1 RETURNING projection_valid_until"
+				id = f.request.SubscriptionID
 			case "fact":
-				f.exec(t, "UPDATE unit_fact SET expires_at=clock_timestamp()+interval '1 second' WHERE id=$1", f.fact)
+				update = "UPDATE unit_fact SET expires_at=clock_timestamp()+interval '10 seconds' WHERE id=$1 RETURNING expires_at"
+				id = f.fact
+			}
+			if e := f.a.DBPool().QueryRow(t.Context(), update, id).Scan(&expires); e != nil {
+				t.Fatal(e)
+			}
+			if kind == "fact" {
 				f.project(t)
 			}
-			ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
+			// Prove the fixture is usable before expiry, including its projection stamp.
+			initial, e := f.svc.Preview(t.Context(), f.actor, f.request)
+			if e != nil || initial == nil || !initial.Improvement {
+				t.Fatal("pre-expiry fixture unavailable", kind, initial, e)
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
 			defer cancel()
 			tx, e := f.a.DBPool().Begin(ctx)
 			if e != nil {
@@ -452,7 +489,10 @@ func TestUpgradePreviewPGExpiryAfterBlockedLastRead(t *testing.T) {
 				_ = f.a.DBPool().QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE '%LockUpgradeCandidate%')").Scan(&waiting)
 				return waiting
 			})
-			time.Sleep(1100 * time.Millisecond)
+			// Wait on the actual database deadline after the last read is blocked.
+			if _, e = f.a.DBPool().Exec(ctx, "SELECT pg_sleep_until($1::timestamptz+interval '50 milliseconds')", expires); e != nil {
+				t.Fatal(e)
+			}
 			if e = tx.Commit(ctx); e != nil {
 				t.Fatal(e)
 			}

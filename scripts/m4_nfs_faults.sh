@@ -38,7 +38,27 @@ if [[ ${1:-} == --client ]]; then
   if [[ ${PULSE_M4_NFS_MOUNT_ONLY:-0} == 1 ]]; then exit 0; fi
   export PULSE_M4_NFS_FAULTS=1
   cd "$repo"
-  bash scripts/with_podman_test_postgres.sh go test -race ./internal/app -run '^TestM4KernelNFSFaults$' -count=1 -timeout=8m -v
+  if [[ ${PULSE_M8_NFS_WATCH_ACCEPTANCE:-0} == 1 ]]; then
+    export PULSE_M8_UNTRACKED_ORGANIZATION_ACCEPTANCE=1
+    nas_log="$PULSE_M4_NFS_WORK/m8-nfs-watch.log"
+    if ! bash scripts/with_podman_test_postgres.sh go test -race ./internal/app -run '^TestM8NFS(RemoteWritePeriodicOrganization|OrganizationBlockedCancellation)$' -count=1 -timeout=12m -v >"$nas_log" 2>&1; then
+      cat "$nas_log"
+      exit 1
+    fi
+    cat "$nas_log"
+    if command grep -q -- '--- SKIP:' "$nas_log"; then exit 1; fi
+    test "$(command grep -c '^--- PASS: TestM8NFSRemoteWritePeriodicOrganization ' "$nas_log")" = 1
+    test "$(command grep -c 'M8_NFS_PERIODIC_ORGANIZATION_PASS action=hardlink ' "$nas_log")" = 1
+    for action in copy move; do
+      test "$(command grep -Ec "M8_NFS_(PERIODIC_ORGANIZATION|UNSUPPORTED_PROTECTION)_PASS action=$action " "$nas_log")" = 1
+    done
+    test "$(command grep -c 'M8_NFS_ROLLBACK_RECOVERY_PASS action=hardlink ' "$nas_log")" = 1
+    test "$(command grep -c '^--- PASS: TestM8NFSOrganizationBlockedCancellation ' "$nas_log")" = 1
+    test "$(command grep -c 'M8_NFS_BLOCKED_ORGANIZATION_PASS ' "$nas_log")" = 1
+    printf 'M8_NFS_WATCH_PERIODIC_ACCEPTANCE_PASS parents=2 scenarios=5 PG=18.6 mount=NFS41 watcher=UNAVAILABLE fallback=REAL_PERIODIC remote_write=SERVER_EXPORT hardlink=IMPORTED hardlink_tail_rollback=TOKEN2_OBSERVATION same_target_inode=true copy_move=CAPABILITY_CHECKED unsupported_noreplace=SOURCE_PRESERVED_NO_IMPORT original_receipts=true downloader_calls=0 immediate_latency=NOT_CLAIMED blocked_organization=CANCEL_WAITS_ACTUAL_IO retry_same_operation=TOKEN2 milestone=NOT_RELEASED\n'
+  else
+    bash scripts/with_podman_test_postgres.sh go test -race ./internal/app -run '^TestM4KernelNFSFaults$' -count=1 -timeout=8m -v
+  fi
   exit
 fi
 : "${PULSE_M4_POSTGRES_IMAGE:?Use mise exec}" "${PULSE_M4_GANESHA_VERSION:?Use mise exec}"
@@ -64,7 +84,12 @@ cleanup() {
   fi
   if [[ -n $cid ]]; then
     if [[ $rc != 0 ]]; then podman logs --tail 180 "$cid" >&2 || true; fi
-    podman rm -f --volumes --time 15 "$cid" >/dev/null
+    if ! podman rm -f --volumes --time 15 "$cid" >/dev/null; then
+      if podman container exists "$cid"; then
+        printf 'OWNED_NFS_CONTAINER_CLEANUP_BLOCKED work=%s cid=%s\n' "$work" "$cid" >&2
+        exit 98
+      fi
+    fi
   fi
   if podman network exists "$network"; then
     test "$(podman network inspect -f '{{index .Labels "io.pulsemedia.nfs-owner"}}' "$network")" = "$work" || exit 98
@@ -95,7 +120,7 @@ ENTRYPOINT ["/bin/sh", "-ec", "mkdir -p /run/rpcbind; /usr/sbin/rpcbind; exec /u
 EOF
 cat > "$work/ganesha.conf" <<'EOF'
 NFS_CORE_PARAM { Allow_Set_Io_Flusher_Fail = true; Protocols = 4; NFS_Port = 2049; Enable_NLM = false; Enable_RQUOTA = false; }
-NFSv4 { Minor_Versions = 1; Graceless = true; }
+NFSv4 { Minor_Versions = 1; Graceless = true; Only_Numeric_Owners = true; }
 EXPORT { Export_Id = 101; Path = /export; Pseudo = /pulse; Protocols = 4; Transports = TCP; Access_Type = RW; Squash = No_Root_Squash; SecType = sys; FSAL { Name = VFS; } }
 LOG { Default_Log_Level = EVENT; }
 EOF

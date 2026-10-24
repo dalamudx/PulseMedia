@@ -68,7 +68,11 @@ func (a *App) runMediaAttachmentWorker(ctx context.Context, queue *jobs.Queue, s
 // Cancellation fences writeback; it cannot detach a still-running physical call.
 // This child is locally owned, canceled and synchronously awaited on every exit.
 func runMediaSidecarPhysical(ctx context.Context, renew func(context.Context) error, execute func(context.Context) error, heartbeat time.Duration) error {
-	workCtx, cancel := context.WithTimeout(ctx, 90*time.Second)
+	return runOwnedPhysical(ctx, 90*time.Second, renew, execute, heartbeat)
+}
+
+func runOwnedPhysical(ctx context.Context, timeout time.Duration, renew func(context.Context) error, execute func(context.Context) error, heartbeat time.Duration) error {
+	workCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	done := make(chan error, 1)
 	go func() { done <- execute(workCtx) }()

@@ -39,6 +39,9 @@ func integrationRecipient(ctx context.Context, q *db.Queries, consumer string) (
 		if channel.ChannelType == "telegram" {
 			risk = "telegram_may_duplicate"
 		}
+		if channel.ChannelType != "webhook" && channel.ChannelType != "telegram" {
+			risk = "robot_may_duplicate"
+		}
 		return channel.Name, channel.IsEnabled, risk, nil
 	}
 	if kind == "mediaserver.refresh" {

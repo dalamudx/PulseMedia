@@ -86,7 +86,7 @@ func TestOperationRatePublisherAutomaticTVPG(t *testing.T) {
 // using creation/review/acquisition/preparation stores directly, without App.
 func publisherCompleteTV(t *testing.T) (*pgxpool.Pool, *postgres.CompleteTVTrackingStore, ports.CompleteTVTrackingRequest) {
 	t.Helper()
-	f := newCreationFixture(t, 93)
+	f := newCreationFixture(t, postgres.CurrentMigrationVersion)
 	execIntent(t, f.pool, `UPDATE app_user SET role='admin' WHERE id=$1`, uuid.MustParse(f.actor.ID))
 	f.actor.Role = ports.RoleAdmin
 	encrypted, e := crypto.Encrypt(make([]byte, 32), []byte("publisher-password"))

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
@@ -20,14 +21,21 @@ import (
 )
 
 type MovieLinkStore struct {
-	pool            *pgxpool.Pool
-	ids             ports.IDGen
-	work            *ports.MovieRecognitionWork
-	requirePhysical bool
+	pool              *pgxpool.Pool
+	ids               ports.IDGen
+	work              *ports.MovieRecognitionWork
+	requirePhysical   bool
+	minimumMediaBytes int64
 }
 
 func NewMovieLinkStore(pool *pgxpool.Pool, ids ports.IDGen) *MovieLinkStore {
-	return &MovieLinkStore{pool: pool, ids: ids}
+	return &MovieLinkStore{pool: pool, ids: ids, minimumMediaBytes: 1}
+}
+
+func NewMovieLinkStoreWithMinimumMediaBytes(pool *pgxpool.Pool, ids ports.IDGen, minimum int64) *MovieLinkStore {
+	s := NewMovieLinkStore(pool, ids)
+	s.minimumMediaBytes = minimum
+	return s
 }
 
 var _ ports.MovieLinkRepository = (*MovieLinkStore)(nil)
@@ -56,8 +64,14 @@ func (s *MovieLinkStore) LoadSource(ctx context.Context, root uuid.UUID, path st
 		return ports.MovieFileSnapshot{}, movieLinkError(e)
 	}
 	source := movieFileSnapshot(row)
+	if eligible, _ := naming.IsEligibleMediaFile(source.RelPath, source.SizeBytes, s.minimumMediaBytes); !eligible {
+		return ports.MovieFileSnapshot{}, ports.ErrMovieLinkStale
+	}
 	if source.Root.Health != "online" || source.Root.MediaType != "movie" {
 		return ports.MovieFileSnapshot{}, ports.ErrMovieLinkStale
+	}
+	if e = GuardUntrackedMovieRecognition(ctx, db.New(s.pool), root, path); e != nil {
+		return ports.MovieFileSnapshot{}, e
 	}
 	if s.work != nil {
 		if source.FileID != s.work.FileID || source.Root.Generation != s.work.Generation || path != s.work.RelPath {
@@ -92,6 +106,9 @@ func (s *MovieLinkStore) Link(ctx context.Context, in ports.MovieLinkInput) (por
 	var empty ports.MovieLinkResult
 	meta := in.Metadata
 	source := in.Source
+	if eligible, _ := naming.IsEligibleMediaFile(source.RelPath, source.SizeBytes, s.minimumMediaBytes); !eligible {
+		return empty, ports.ErrMovieLinkStale
+	}
 	var quality map[string]json.RawMessage
 	imdb, validIMDb := normalizeMovieIMDb(meta.IMDbID)
 	if meta.TMDBID <= 0 || strings.TrimSpace(meta.Title) == "" || meta.Year < 0 || meta.Year > 9999 || (meta.MediaType != "" && meta.MediaType != "movie") || !validIMDb || json.Unmarshal(in.QualityJSON, &quality) != nil || quality == nil {
@@ -118,6 +135,9 @@ func (s *MovieLinkStore) Link(ctx context.Context, in ports.MovieLinkInput) (por
 	}
 	if scanRootSnapshot(root) != source.Root || root.Health != "online" || root.MediaType != "movie" {
 		return empty, ports.ErrMovieLinkStale
+	}
+	if e = GuardUntrackedMovieRecognition(ctx, q, source.Root.ID, source.RelPath); e != nil {
+		return empty, e
 	}
 	tmdb := strconv.FormatInt(meta.TMDBID, 10)
 	keys := []string{"movie_link:tmdb.movie:" + tmdb}
@@ -216,6 +236,9 @@ func (s *MovieLinkStore) Link(ctx context.Context, in ports.MovieLinkInput) (por
 		return empty, movieLinkError(e)
 	}
 	current := movieFileSnapshot(row)
+	if eligible, _ := naming.IsEligibleMediaFile(current.RelPath, current.SizeBytes, s.minimumMediaBytes); !eligible {
+		return empty, ports.ErrMovieLinkStale
+	}
 	if !sameMovieFile(source, current) {
 		return empty, ports.ErrMovieLinkStale
 	}
@@ -246,6 +269,12 @@ func (s *MovieLinkStore) Link(ctx context.Context, in ports.MovieLinkInput) (por
 		if e = s.finishRecognition(ctx, q, result, ""); e != nil {
 			return empty, e
 		}
+		if _, e = tx.Exec(ctx, `SET CONSTRAINTS ALL IMMEDIATE`); e != nil {
+			return empty, e
+		}
+		if e = GuardUntrackedMovieRecognition(ctx, q, source.Root.ID, source.RelPath); e != nil {
+			return empty, e
+		}
 		if e = tx.Commit(ctx); e != nil {
 			return empty, e
 		}
@@ -268,6 +297,12 @@ func (s *MovieLinkStore) Link(ctx context.Context, in ports.MovieLinkInput) (por
 		return empty, e
 	}
 	if e = s.finishRecognition(ctx, q, result, ""); e != nil {
+		return empty, e
+	}
+	if _, e = tx.Exec(ctx, `SET CONSTRAINTS ALL IMMEDIATE`); e != nil {
+		return empty, e
+	}
+	if e = GuardUntrackedMovieRecognition(ctx, q, source.Root.ID, source.RelPath); e != nil {
 		return empty, e
 	}
 	if e = tx.Commit(ctx); e != nil {

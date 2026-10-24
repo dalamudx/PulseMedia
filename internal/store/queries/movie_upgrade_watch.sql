@@ -1,0 +1,167 @@
+-- Read projections only. The original 30-second gate remains in schema72/73.
+-- name: ListMovieUpgradeWatchRoots :many
+WITH eligible AS (
+ SELECT t.*,a.root_id,p.actor_id,o.observation_id AS prior_observation_id,r.recorded_at,
+ p.evidence->'proof'->'files' AS prepared_files,
+ encode(sha256(convert_to(jsonb_build_array(to_jsonb(a),to_jsonb(p),to_jsonb(o),to_jsonb(r),
+ pulse_upgrade_tracking_original_digest(a.operation_id),pulse_upgrade_observation_protected_digest(a.operation_id),
+ to_jsonb(owner.*)-'password_hash',to_jsonb(pol),to_jsonb(pr),
+ (SELECT jsonb_build_array(to_jsonb(s),to_jsonb(f)) FROM scan_finalization f JOIN scan_run s ON s.id=f.scan_run_id WHERE f.root_id=a.root_id AND s.generation=root.generation AND s.state='succeeded' AND f.completed_at IS NOT NULL ORDER BY s.created_at,s.id LIMIT 1),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM audit_log x WHERE x.action IN ('upgrade.tracking-admit','upgrade.tracking-result') AND x.payload->>'observation_id' IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM outbox_event x WHERE x.event_type IN ('upgrade.tracking-admit','upgrade.tracking-result') AND x.aggregate_id IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM idempotency_record x WHERE x.idempotency_key LIKE 'upgrade.tracking-%' AND x.resource_id IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(jsonb_build_array(to_jsonb(x),to_jsonb(y),to_jsonb(z)) ORDER BY x.observation_id) FROM movie_upgrade_tracking_observation x LEFT JOIN movie_upgrade_tracking_result y USING(observation_id) LEFT JOIN movie_upgrade_tracking_permit z USING(observation_id) WHERE x.operation_id=a.operation_id),
+ (SELECT jsonb_agg(jsonb_build_array(to_jsonb(bj),to_jsonb(jj),to_jsonb(cj)) ORDER BY bj.job_id) FROM movie_upgrade_tracking_job bj JOIN job jj ON jj.id=bj.job_id LEFT JOIN movie_upgrade_tracking_job_claim cj USING(job_id) WHERE bj.operation_id=a.operation_id AND bj.job_id<>'00000000-0000-0000-0000-000000000000'::uuid),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM audit_log x WHERE x.action='upgrade.send-result' AND x.payload->>'operation_id'=a.operation_id::text),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM outbox_event x WHERE x.event_type='upgrade.send-result' AND x.aggregate_id=a.operation_id::text),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM idempotency_record x WHERE x.idempotency_key LIKE 'upgrade.send-result:%' AND x.resource_id=a.operation_id::text)
+ )::text,'UTF8')),'hex') AS capture_digest
+ FROM movie_upgrade_preparation p
+ JOIN movie_upgrade_authority a USING(operation_id)
+ JOIN movie_upgrade_send_result sent USING(operation_id)
+ JOIN download_task t ON t.id=p.task_id AND t.operation_id=p.operation_id
+ JOIN movie_upgrade_tracking_observation o ON o.operation_id=p.operation_id AND o.task_id=t.id
+ JOIN movie_upgrade_tracking_result r USING(observation_id)
+ JOIN library_root root ON root.id=a.root_id
+ JOIN app_user owner ON owner.id=a.actor_id AND owner.is_active AND owner.role IN ('member','admin')
+ JOIN subscription sub ON sub.id=a.subscription_id AND sub.user_id=a.actor_id AND sub.state='active'
+ JOIN policy pol ON pol.id=a.policy_id AND pol.current_revision=a.policy_revision
+ JOIN policy_revision pr ON pr.policy_id=pol.id AND pr.revision=pol.current_revision
+ JOIN media_unit u ON u.id=a.unit_id AND NOT u.retired
+ WHERE sent.status='confirmed' AND t.state='submitting' AND r.outcome='tracking' AND r.disposition='tracking'
+ AND a.goal='upgrade' AND a.status='reserved_not_executable'
+ AND root.media_type='movie' AND root.health='online' AND root.baseline_completed AND root.generation=a.root_generation
+ AND sub.root_id=a.root_id AND sub.media_id=u.media_id AND sub.intent_version=a.intent_version
+ AND sub.quality_policy_id=a.policy_id AND sub.quality_policy_revision=a.policy_revision AND sub.upgrade_mode<>'disabled'
+ AND sub.downloader_id=a.client_id AND t.client_id=a.client_id AND t.candidate_id=a.candidate_id
+ AND o.original_sha256=pulse_upgrade_tracking_original_digest(p.operation_id)
+ AND o.protected_sha256=pulse_upgrade_observation_protected_digest(p.operation_id)
+ AND r.observation_sha256=sha256(convert_to(to_jsonb(o)::text,'UTF8'))
+ AND EXISTS(SELECT 1 FROM movie_upgrade_tracking_permit pp WHERE pp.observation_id=o.observation_id AND r.permit_sha256=sha256(convert_to(to_jsonb(pp)::text,'UTF8')))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_observation child WHERE child.prior_observation_id=o.observation_id)
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_job next WHERE next.operation_id=p.operation_id AND next.prior_observation_id=o.observation_id AND next.job_id<>'00000000-0000-0000-0000-000000000000'::uuid)
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_observation x LEFT JOIN movie_upgrade_tracking_result y USING(observation_id) WHERE x.operation_id=p.operation_id AND (y.observation_id IS NULL OR y.outcome<>'tracking'))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_job b JOIN job j ON j.id=b.job_id LEFT JOIN movie_upgrade_tracking_job_claim claim USING(job_id) LEFT JOIN movie_upgrade_tracking_result result ON result.observation_id=claim.observation_id WHERE b.operation_id=p.operation_id AND b.job_id<>'00000000-0000-0000-0000-000000000000'::uuid AND (j.state<>'succeeded' OR result.outcome IS DISTINCT FROM 'tracking' OR to_jsonb(j) IS DISTINCT FROM pulse_upgrade_tracking_terminal_job(claim.observation_id)))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_observation x WHERE x.operation_id=p.operation_id)
+ AND NOT EXISTS(SELECT 1 FROM job j WHERE j.payload->>'operation_id'=p.operation_id::text AND (j.state='queued' OR (j.state='running' AND j.lease_until>clock_timestamp())))
+ AND NOT EXISTS(SELECT 1 FROM pg_lock_status() l WHERE to_jsonb(l)->>'locktype'='advisory' AND (to_jsonb(l)->>'granted')::boolean AND to_jsonb(l)->>'mode'='ExclusiveLock' AND (to_jsonb(l)->>'objsubid')::int=1 AND (to_jsonb(l)->>'pid')::int<>pg_backend_pid() AND (to_jsonb(l)->>'classid')::bigint=((o.advisory_key>>32)&4294967295) AND (to_jsonb(l)->>'objid')::bigint=(o.advisory_key&4294967295))
+ AND (SELECT count(*) FROM acquisition_reservation x WHERE x.operation_id=p.operation_id)=1
+ AND (SELECT count(*) FROM unit_reservation x WHERE x.operation_id=p.operation_id)=1
+ AND (SELECT count(*) FROM download_requirement x WHERE x.operation_id=p.operation_id)=1
+ AND EXISTS(SELECT 1 FROM acquisition_reservation x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'lane' AND x.released_at IS NULL AND NOT x.legacy_conflict)
+ AND EXISTS(SELECT 1 FROM unit_reservation x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'reservation' AND x.state='reserved' AND x.purpose='upgrade')
+ AND EXISTS(SELECT 1 FROM download_requirement x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'requirement' AND x.state='pending' AND x.released_at IS NULL)
+)
+SELECT jsonb_build_object('client_id',c.id,'client_version',c.updated_at,'client_stamp',encode(sha256(convert_to(jsonb_build_object('id',c.id,'type',c.client_type,'version',c.updated_at AT TIME ZONE 'UTC','url',c.url,'username',c.username,'password',c.password_encrypted,'mapping',c.remote_path_map)::text,'UTF8')),'hex'),'mapping',CASE WHEN pg_column_size(c.remote_path_map)<=65536 THEN c.remote_path_map ELSE NULL END,'client_type',c.client_type,'root_id',r.id,'root_path',r.path,'generation',r.generation,'media_type',r.media_type,'marker',r.marker_filename,'online',r.health='online','baseline_completed',r.baseline_completed,'baseline_id',b.scan_run_id,'device',b.root_device,'inode',b.root_inode,'baseline_path',b.expected_path,'baseline_media_type',b.expected_media_type,'baseline_marker',b.expected_marker_filename) AS material FROM download_client c CROSS JOIN library_root r
+LEFT JOIN LATERAL (SELECT f.scan_run_id,f.root_device,f.root_inode,f.expected_path,f.expected_media_type,f.expected_marker_filename FROM scan_finalization f JOIN scan_run s ON s.id=f.scan_run_id WHERE f.root_id=r.id AND s.generation=r.generation AND s.state='succeeded' AND f.completed_at IS NOT NULL ORDER BY s.created_at,s.id LIMIT 1) b ON true
+WHERE EXISTS(SELECT 1 FROM eligible e WHERE e.client_id=c.id AND e.root_id=r.id) AND ((c.id::text||':'||r.id::text)>sqlc.arg(after_key)::text OR (sqlc.arg(resume_current)::boolean AND (c.id::text||':'||r.id::text)=sqlc.arg(after_key)::text)) ORDER BY c.id,r.id LIMIT sqlc.arg(page_size)::int;
+
+-- name: ListMovieUpgradeWatchTasks :many
+WITH eligible AS (
+ SELECT t.*,a.root_id,p.actor_id,o.observation_id AS prior_observation_id,r.recorded_at,
+ p.evidence->'proof'->'files' AS prepared_files,
+ encode(sha256(convert_to(jsonb_build_array(to_jsonb(a),to_jsonb(p),to_jsonb(o),to_jsonb(r),
+ pulse_upgrade_tracking_original_digest(a.operation_id),pulse_upgrade_observation_protected_digest(a.operation_id),
+ to_jsonb(owner.*)-'password_hash',to_jsonb(pol),to_jsonb(pr),
+ (SELECT jsonb_build_array(to_jsonb(s),to_jsonb(f)) FROM scan_finalization f JOIN scan_run s ON s.id=f.scan_run_id WHERE f.root_id=a.root_id AND s.generation=root.generation AND s.state='succeeded' AND f.completed_at IS NOT NULL ORDER BY s.created_at,s.id LIMIT 1),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM audit_log x WHERE x.action IN ('upgrade.tracking-admit','upgrade.tracking-result') AND x.payload->>'observation_id' IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM outbox_event x WHERE x.event_type IN ('upgrade.tracking-admit','upgrade.tracking-result') AND x.aggregate_id IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM idempotency_record x WHERE x.idempotency_key LIKE 'upgrade.tracking-%' AND x.resource_id IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(jsonb_build_array(to_jsonb(x),to_jsonb(y),to_jsonb(z)) ORDER BY x.observation_id) FROM movie_upgrade_tracking_observation x LEFT JOIN movie_upgrade_tracking_result y USING(observation_id) LEFT JOIN movie_upgrade_tracking_permit z USING(observation_id) WHERE x.operation_id=a.operation_id),
+ (SELECT jsonb_agg(jsonb_build_array(to_jsonb(bj),to_jsonb(jj),to_jsonb(cj)) ORDER BY bj.job_id) FROM movie_upgrade_tracking_job bj JOIN job jj ON jj.id=bj.job_id LEFT JOIN movie_upgrade_tracking_job_claim cj USING(job_id) WHERE bj.operation_id=a.operation_id AND bj.job_id<>'00000000-0000-0000-0000-000000000000'::uuid),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM audit_log x WHERE x.action='upgrade.send-result' AND x.payload->>'operation_id'=a.operation_id::text),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM outbox_event x WHERE x.event_type='upgrade.send-result' AND x.aggregate_id=a.operation_id::text),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM idempotency_record x WHERE x.idempotency_key LIKE 'upgrade.send-result:%' AND x.resource_id=a.operation_id::text)
+ )::text,'UTF8')),'hex') AS capture_digest
+ FROM movie_upgrade_preparation p
+ JOIN movie_upgrade_authority a USING(operation_id)
+ JOIN movie_upgrade_send_result sent USING(operation_id)
+ JOIN download_task t ON t.id=p.task_id AND t.operation_id=p.operation_id
+ JOIN movie_upgrade_tracking_observation o ON o.operation_id=p.operation_id AND o.task_id=t.id
+ JOIN movie_upgrade_tracking_result r USING(observation_id)
+ JOIN library_root root ON root.id=a.root_id
+ JOIN app_user owner ON owner.id=a.actor_id AND owner.is_active AND owner.role IN ('member','admin')
+ JOIN subscription sub ON sub.id=a.subscription_id AND sub.user_id=a.actor_id AND sub.state='active'
+ JOIN policy pol ON pol.id=a.policy_id AND pol.current_revision=a.policy_revision
+ JOIN policy_revision pr ON pr.policy_id=pol.id AND pr.revision=pol.current_revision
+ JOIN media_unit u ON u.id=a.unit_id AND NOT u.retired
+ WHERE sent.status='confirmed' AND t.state='submitting' AND r.outcome='tracking' AND r.disposition='tracking'
+ AND a.goal='upgrade' AND a.status='reserved_not_executable'
+ AND root.media_type='movie' AND root.health='online' AND root.baseline_completed AND root.generation=a.root_generation
+ AND sub.root_id=a.root_id AND sub.media_id=u.media_id AND sub.intent_version=a.intent_version
+ AND sub.quality_policy_id=a.policy_id AND sub.quality_policy_revision=a.policy_revision AND sub.upgrade_mode<>'disabled'
+ AND sub.downloader_id=a.client_id AND t.client_id=a.client_id AND t.candidate_id=a.candidate_id
+ AND o.original_sha256=pulse_upgrade_tracking_original_digest(p.operation_id)
+ AND o.protected_sha256=pulse_upgrade_observation_protected_digest(p.operation_id)
+ AND r.observation_sha256=sha256(convert_to(to_jsonb(o)::text,'UTF8'))
+ AND EXISTS(SELECT 1 FROM movie_upgrade_tracking_permit pp WHERE pp.observation_id=o.observation_id AND r.permit_sha256=sha256(convert_to(to_jsonb(pp)::text,'UTF8')))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_observation child WHERE child.prior_observation_id=o.observation_id)
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_job next WHERE next.operation_id=p.operation_id AND next.prior_observation_id=o.observation_id AND next.job_id<>'00000000-0000-0000-0000-000000000000'::uuid)
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_observation x LEFT JOIN movie_upgrade_tracking_result y USING(observation_id) WHERE x.operation_id=p.operation_id AND (y.observation_id IS NULL OR y.outcome<>'tracking'))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_job b JOIN job j ON j.id=b.job_id LEFT JOIN movie_upgrade_tracking_job_claim claim USING(job_id) LEFT JOIN movie_upgrade_tracking_result result ON result.observation_id=claim.observation_id WHERE b.operation_id=p.operation_id AND b.job_id<>'00000000-0000-0000-0000-000000000000'::uuid AND (j.state<>'succeeded' OR result.outcome IS DISTINCT FROM 'tracking' OR to_jsonb(j) IS DISTINCT FROM pulse_upgrade_tracking_terminal_job(claim.observation_id)))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_observation x WHERE x.operation_id=p.operation_id)
+ AND NOT EXISTS(SELECT 1 FROM job j WHERE j.payload->>'operation_id'=p.operation_id::text AND (j.state='queued' OR (j.state='running' AND j.lease_until>clock_timestamp())))
+ AND NOT EXISTS(SELECT 1 FROM pg_lock_status() l WHERE to_jsonb(l)->>'locktype'='advisory' AND (to_jsonb(l)->>'granted')::boolean AND to_jsonb(l)->>'mode'='ExclusiveLock' AND (to_jsonb(l)->>'objsubid')::int=1 AND (to_jsonb(l)->>'pid')::int<>pg_backend_pid() AND (to_jsonb(l)->>'classid')::bigint=((o.advisory_key>>32)&4294967295) AND (to_jsonb(l)->>'objid')::bigint=(o.advisory_key&4294967295))
+ AND (SELECT count(*) FROM acquisition_reservation x WHERE x.operation_id=p.operation_id)=1
+ AND (SELECT count(*) FROM unit_reservation x WHERE x.operation_id=p.operation_id)=1
+ AND (SELECT count(*) FROM download_requirement x WHERE x.operation_id=p.operation_id)=1
+ AND EXISTS(SELECT 1 FROM acquisition_reservation x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'lane' AND x.released_at IS NULL AND NOT x.legacy_conflict)
+ AND EXISTS(SELECT 1 FROM unit_reservation x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'reservation' AND x.state='reserved' AND x.purpose='upgrade')
+ AND EXISTS(SELECT 1 FROM download_requirement x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'requirement' AND x.state='pending' AND x.released_at IS NULL)
+)
+SELECT jsonb_build_object('task_id',e.id,'operation_id',e.operation_id,'client_id',e.client_id,'actor_id',e.actor_id,'root_id',e.root_id,'state',e.state,'save_path',e.save_path,'content_path',e.content_path,'prior_observation_id',e.prior_observation_id,'due',e.recorded_at+interval '30 seconds','prepared_paths',(SELECT jsonb_agg(f->>'Path') FROM jsonb_array_elements(e.prepared_files) f),'task_stamp',e.capture_digest) AS material FROM eligible e WHERE e.client_id=sqlc.arg(client_id)::uuid AND e.root_id=sqlc.arg(root_id)::uuid AND e.recorded_at<=sqlc.arg(manifest_at)::timestamptz AND e.id>sqlc.arg(after_id)::uuid ORDER BY e.id LIMIT sqlc.arg(page_size)::int;
+
+-- name: GetMovieUpgradeWatchTask :one
+WITH eligible AS (
+ SELECT t.*,a.root_id,p.actor_id,o.observation_id AS prior_observation_id,r.recorded_at,
+ p.evidence->'proof'->'files' AS prepared_files,
+ encode(sha256(convert_to(jsonb_build_array(to_jsonb(a),to_jsonb(p),to_jsonb(o),to_jsonb(r),
+ pulse_upgrade_tracking_original_digest(a.operation_id),pulse_upgrade_observation_protected_digest(a.operation_id),
+ to_jsonb(owner.*)-'password_hash',to_jsonb(pol),to_jsonb(pr),
+ (SELECT jsonb_build_array(to_jsonb(s),to_jsonb(f)) FROM scan_finalization f JOIN scan_run s ON s.id=f.scan_run_id WHERE f.root_id=a.root_id AND s.generation=root.generation AND s.state='succeeded' AND f.completed_at IS NOT NULL ORDER BY s.created_at,s.id LIMIT 1),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM audit_log x WHERE x.action IN ('upgrade.tracking-admit','upgrade.tracking-result') AND x.payload->>'observation_id' IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM outbox_event x WHERE x.event_type IN ('upgrade.tracking-admit','upgrade.tracking-result') AND x.aggregate_id IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM idempotency_record x WHERE x.idempotency_key LIKE 'upgrade.tracking-%' AND x.resource_id IN (SELECT observation_id::text FROM movie_upgrade_tracking_observation WHERE operation_id=a.operation_id)),
+ (SELECT jsonb_agg(jsonb_build_array(to_jsonb(x),to_jsonb(y),to_jsonb(z)) ORDER BY x.observation_id) FROM movie_upgrade_tracking_observation x LEFT JOIN movie_upgrade_tracking_result y USING(observation_id) LEFT JOIN movie_upgrade_tracking_permit z USING(observation_id) WHERE x.operation_id=a.operation_id),
+ (SELECT jsonb_agg(jsonb_build_array(to_jsonb(bj),to_jsonb(jj),to_jsonb(cj)) ORDER BY bj.job_id) FROM movie_upgrade_tracking_job bj JOIN job jj ON jj.id=bj.job_id LEFT JOIN movie_upgrade_tracking_job_claim cj USING(job_id) WHERE bj.operation_id=a.operation_id AND bj.job_id<>sqlc.arg(own_job)::uuid),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM audit_log x WHERE x.action='upgrade.send-result' AND x.payload->>'operation_id'=a.operation_id::text),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM outbox_event x WHERE x.event_type='upgrade.send-result' AND x.aggregate_id=a.operation_id::text),
+ (SELECT jsonb_agg(to_jsonb(x) ORDER BY x.id) FROM idempotency_record x WHERE x.idempotency_key LIKE 'upgrade.send-result:%' AND x.resource_id=a.operation_id::text)
+ )::text,'UTF8')),'hex') AS capture_digest
+ FROM movie_upgrade_preparation p
+ JOIN movie_upgrade_authority a USING(operation_id)
+ JOIN movie_upgrade_send_result sent USING(operation_id)
+ JOIN download_task t ON t.id=p.task_id AND t.operation_id=p.operation_id
+ JOIN movie_upgrade_tracking_observation o ON o.operation_id=p.operation_id AND o.task_id=t.id
+ JOIN movie_upgrade_tracking_result r USING(observation_id)
+ JOIN library_root root ON root.id=a.root_id
+ JOIN app_user owner ON owner.id=a.actor_id AND owner.is_active AND owner.role IN ('member','admin')
+ JOIN subscription sub ON sub.id=a.subscription_id AND sub.user_id=a.actor_id AND sub.state='active'
+ JOIN policy pol ON pol.id=a.policy_id AND pol.current_revision=a.policy_revision
+ JOIN policy_revision pr ON pr.policy_id=pol.id AND pr.revision=pol.current_revision
+ JOIN media_unit u ON u.id=a.unit_id AND NOT u.retired
+ WHERE sent.status='confirmed' AND t.state='submitting' AND r.outcome='tracking' AND r.disposition='tracking'
+ AND a.goal='upgrade' AND a.status='reserved_not_executable'
+ AND root.media_type='movie' AND root.health='online' AND root.baseline_completed AND root.generation=a.root_generation
+ AND sub.root_id=a.root_id AND sub.media_id=u.media_id AND sub.intent_version=a.intent_version
+ AND sub.quality_policy_id=a.policy_id AND sub.quality_policy_revision=a.policy_revision AND sub.upgrade_mode<>'disabled'
+ AND sub.downloader_id=a.client_id AND t.client_id=a.client_id AND t.candidate_id=a.candidate_id
+ AND o.original_sha256=pulse_upgrade_tracking_original_digest(p.operation_id)
+ AND o.protected_sha256=pulse_upgrade_observation_protected_digest(p.operation_id)
+ AND r.observation_sha256=sha256(convert_to(to_jsonb(o)::text,'UTF8'))
+ AND EXISTS(SELECT 1 FROM movie_upgrade_tracking_permit pp WHERE pp.observation_id=o.observation_id AND r.permit_sha256=sha256(convert_to(to_jsonb(pp)::text,'UTF8')))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_observation child WHERE child.prior_observation_id=o.observation_id)
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_job next WHERE next.operation_id=p.operation_id AND next.prior_observation_id=o.observation_id AND next.job_id<>sqlc.arg(own_job)::uuid)
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_observation x LEFT JOIN movie_upgrade_tracking_result y USING(observation_id) WHERE x.operation_id=p.operation_id AND (y.observation_id IS NULL OR y.outcome<>'tracking'))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_tracking_job b JOIN job j ON j.id=b.job_id LEFT JOIN movie_upgrade_tracking_job_claim claim USING(job_id) LEFT JOIN movie_upgrade_tracking_result result ON result.observation_id=claim.observation_id WHERE b.operation_id=p.operation_id AND b.job_id<>sqlc.arg(own_job)::uuid AND (j.state<>'succeeded' OR result.outcome IS DISTINCT FROM 'tracking' OR to_jsonb(j) IS DISTINCT FROM pulse_upgrade_tracking_terminal_job(claim.observation_id)))
+ AND NOT EXISTS(SELECT 1 FROM movie_upgrade_observation x WHERE x.operation_id=p.operation_id)
+ AND NOT EXISTS(SELECT 1 FROM job j WHERE j.payload->>'operation_id'=p.operation_id::text AND (j.state='queued' OR (j.state='running' AND j.lease_until>clock_timestamp())))
+ AND NOT EXISTS(SELECT 1 FROM pg_lock_status() l WHERE to_jsonb(l)->>'locktype'='advisory' AND (to_jsonb(l)->>'granted')::boolean AND to_jsonb(l)->>'mode'='ExclusiveLock' AND (to_jsonb(l)->>'objsubid')::int=1 AND (to_jsonb(l)->>'pid')::int<>pg_backend_pid() AND (to_jsonb(l)->>'classid')::bigint=((o.advisory_key>>32)&4294967295) AND (to_jsonb(l)->>'objid')::bigint=(o.advisory_key&4294967295))
+ AND (SELECT count(*) FROM acquisition_reservation x WHERE x.operation_id=p.operation_id)=1
+ AND (SELECT count(*) FROM unit_reservation x WHERE x.operation_id=p.operation_id)=1
+ AND (SELECT count(*) FROM download_requirement x WHERE x.operation_id=p.operation_id)=1
+ AND EXISTS(SELECT 1 FROM acquisition_reservation x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'lane' AND x.released_at IS NULL AND NOT x.legacy_conflict)
+ AND EXISTS(SELECT 1 FROM unit_reservation x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'reservation' AND x.state='reserved' AND x.purpose='upgrade')
+ AND EXISTS(SELECT 1 FROM download_requirement x WHERE x.operation_id=p.operation_id AND to_jsonb(x)=p.evidence->'requirement' AND x.state='pending' AND x.released_at IS NULL)
+)
+SELECT jsonb_build_object('task_id',e.id,'operation_id',e.operation_id,'client_id',e.client_id,'actor_id',e.actor_id,'root_id',e.root_id,'state',e.state,'save_path',e.save_path,'content_path',e.content_path,'prior_observation_id',e.prior_observation_id,'due',e.recorded_at+interval '30 seconds','prepared_paths',(SELECT jsonb_agg(f->>'Path') FROM jsonb_array_elements(e.prepared_files) f),'task_stamp',e.capture_digest) AS material FROM eligible e WHERE e.operation_id=sqlc.arg(operation_id)::uuid AND e.id=sqlc.arg(task_id)::uuid AND e.prior_observation_id=sqlc.arg(prior_observation_id)::uuid AND e.recorded_at<=sqlc.arg(manifest_at)::timestamptz;

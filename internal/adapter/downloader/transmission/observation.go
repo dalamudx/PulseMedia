@@ -3,10 +3,12 @@ package transmission
 import (
 	"encoding/json"
 	"github.com/dalamudx/PulseMedia/internal/ports"
+	"path"
 	"strings"
 )
 
 type torrentObservation struct {
+	torrentFileObservation
 	HashString   string          `json:"hashString"`
 	Name         string          `json:"name"`
 	DownloadDir  string          `json:"downloadDir"`
@@ -44,5 +46,21 @@ func (t torrentObservation) info() (*ports.TorrentInfo, error) {
 	case 0:
 		state = "pausedUP"
 	}
-	return &ports.TorrentInfo{InfoHash: strings.ToLower(t.HashString), Name: t.Name, SavePath: t.DownloadDir, Progress: t.PercentDone, TotalBytes: t.TotalSize, DownloadedBytes: downloaded, State: state, Tags: strings.Join(t.Labels, ","), DownloadRateBytesPerSecond: nativeDownloadRate(t.DownloadRate)}, nil
+	contentPath := ""
+	// The display name is not file evidence; derive only from a complete native singleton inventory.
+	if len(t.Files) == 1 && len(t.Stats) == 1 && t.TotalSize > 0 && downloaded == t.TotalSize && t.PercentDone == 1 && (t.Status == 0 || t.Status == 5 || t.Status == 6) {
+		inventory := t.torrentFileObservation
+		inventory.Hash = &t.HashString
+		files, err := inventory.inventory(t.HashString)
+		if err != nil {
+			return nil, err
+		}
+		if !automaticTVPath(t.DownloadDir, true) {
+			return nil, ports.ErrBadResponse
+		}
+		if files[0].SizeBytes == t.TotalSize && files[0].Progress == 1 {
+			contentPath = path.Join(t.DownloadDir, files[0].Name)
+		}
+	}
+	return &ports.TorrentInfo{InfoHash: strings.ToLower(t.HashString), Name: t.Name, SavePath: t.DownloadDir, ContentPath: contentPath, Progress: t.PercentDone, TotalBytes: t.TotalSize, DownloadedBytes: downloaded, State: state, Tags: strings.Join(t.Labels, ","), DownloadRateBytesPerSecond: nativeDownloadRate(t.DownloadRate)}, nil
 }

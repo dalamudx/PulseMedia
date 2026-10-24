@@ -7,6 +7,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/endpoint"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
@@ -18,13 +19,18 @@ import (
 // StartRound is a controlled internal/manual candidate round; automatic runtime
 // must use StartScheduledRound so only this round's network evidence is consumed.
 type SearchRoundStore struct {
-	pool    *pgxpool.Pool
-	idgen   ports.IDGen
-	queries *db.Queries
+	pool           *pgxpool.Pool
+	idgen          ports.IDGen
+	queries        *db.Queries
+	routingRules   []endpoint.DownloadRouteRule
+	routingEnabled bool
 }
 
 func NewSearchRoundStore(pool *pgxpool.Pool, ids ports.IDGen) *SearchRoundStore {
 	return &SearchRoundStore{pool: pool, idgen: ids, queries: Queries(pool)}
+}
+func NewSearchRoundStoreWithRouting(pool *pgxpool.Pool, ids ports.IDGen, rules []endpoint.DownloadRouteRule) *SearchRoundStore {
+	return &SearchRoundStore{pool: pool, idgen: ids, queries: Queries(pool), routingEnabled: true, routingRules: append([]endpoint.DownloadRouteRule(nil), rules...)}
 }
 func (c *SearchRoundStore) StartRound(ctx context.Context, spec ports.SearchRoundStart) (*ports.SearchRound, error) {
 	wantedID, window, scheduled := spec.WantedID, spec.Window, spec.Scheduled
@@ -177,24 +183,38 @@ func (c *SearchRoundStore) StartRound(ctx context.Context, spec ports.SearchRoun
 		if len(snap.Indexers) == 0 {
 			return nil, ports.ErrUnavailable
 		}
-		selected := snap.DownloaderID
-		if selected == nil {
-			clients, e := q.ListDownloadClients(ctx)
+		if snap.DownloaderID == nil && c.routingEnabled {
+			active := make([]string, 0, len(snap.Indexers))
+			for _, key := range keys {
+				if _, ok := snap.Indexers[key]; ok {
+					active = append(active, key)
+				}
+			}
+			routes, e := freezeDownloadRoutes(ctx, q, root.Path, "movie", active, c.routingRules)
 			if e != nil {
 				return nil, e
 			}
-			if len(clients) == 0 {
-				return nil, ports.ErrUnavailable
+			snap.RoutedDownloaders = routes
+		} else {
+			selected := snap.DownloaderID
+			if selected == nil {
+				clients, e := q.ListDownloadClients(ctx)
+				if e != nil {
+					return nil, e
+				}
+				if len(clients) == 0 {
+					return nil, ports.ErrUnavailable
+				}
+				id := clients[0].ID
+				selected = &id
 			}
-			id := clients[0].ID
-			selected = &id
+			config, e := q.GetSearchDownloaderSnapshot(ctx, *selected)
+			if e != nil {
+				return nil, e
+			}
+			snap.SelectedDownloaderID = selected
+			snap.DownloaderConfigDigest = config.ConfigDigest
 		}
-		config, e := q.GetSearchDownloaderSnapshot(ctx, *selected)
-		if e != nil {
-			return nil, e
-		}
-		snap.SelectedDownloaderID = selected
-		snap.DownloaderConfigDigest = config.ConfigDigest
 	} else {
 		snap.SelectedDownloaderID = snap.DownloaderID
 	}

@@ -39,7 +39,7 @@ func MovieDirectoryVideo(save, directory string, files []InventoryFile, total in
 		names[f.Name] = true
 		indices[f.Index] = true
 		sum += f.SizeBytes
-		if IsVideoPath(f.Name) {
+		if eligible, _ := IsEligibleMediaFile(f.Name, f.SizeBytes, 1); eligible {
 			count++
 			selected = f
 			result = full

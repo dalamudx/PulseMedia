@@ -50,6 +50,10 @@ func newAutomaticTVFixture(t *testing.T, through ...int64) automaticTVFixture {
 	in.IndexerIDs = []uuid.UUID{indexer}
 	in.DownloaderID = &client
 	season := creationSeason(2, 3)
+	// Historical query-ledger tests need a known episode, without season retirement.
+	if len(through) > 0 && through[0] < 117 {
+		season.Complete = false
+	}
 	aired := time.Date(2020, 3, 4, 0, 0, 0, 0, time.UTC)
 	season.Episodes[0].AirDate = &aired
 	prepared := creationTV(55101, season)

@@ -2,7 +2,7 @@ import type { MediaItem } from "@/components/cards/MediaCard";
 
 export type TMDBDiscoveryCategory = "trending" | "movie" | "tv" | "top_rated" | "now_playing";
 export type DoubanDiscoveryCategory = "douban_hot_movie" | "douban_hot_tv" | "douban_weekly_chinese" | "douban_weekly_global" | "douban_top250";
-export type DiscoveryCategory = TMDBDiscoveryCategory | DoubanDiscoveryCategory;
+export type DiscoveryCategory = TMDBDiscoveryCategory | DoubanDiscoveryCategory | "bangumi";
 
 export const doubanCategoryToList: Record<DoubanDiscoveryCategory, "hot_movie" | "hot_tv" | "weekly_chinese" | "weekly_global" | "top250"> = {
   douban_hot_movie: "hot_movie",

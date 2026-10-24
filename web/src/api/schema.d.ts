@@ -4,6 +4,193 @@
  */
 
 export interface paths {
+    "/api/v1/metadata/bangumi/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the Bangumi broadcast-weekday calendar
+         * @description Read-only metadata. Titles preserve Chinese and original names. First broadcast dates are not episode air dates. Bangumi subject IDs never grant TMDB or subscription execution authority. Every response is private, no-store.
+         */
+        get: operations["getBangumiCalendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/integrations/cookiecloud/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the current administrator's safe CookieCloud configuration
+         * @description Cookie session only. Database read; does not fetch cookies, enqueue synchronization or update sites. Every response is private, no-store.
+         */
+        get: operations["readCookieCloudConfig"];
+        /**
+         * Persist an encrypted CookieCloud connection without starting synchronization
+         * @description Current administrator session and expected version required. Omitted connection preserves its exact stored ciphertext; null does not clear it. Original commands restore before new version validation. Receipts never contain the URL prefix, user key or password.
+         */
+        put: operations["saveCookieCloudConfig"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/integrations/cookiecloud/config/commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read an account-scoped original CookieCloud configuration receipt
+         * @description Cookie session only. Does not decrypt the connection, fetch cookies, retry a write or start synchronization. Every response is private, no-store.
+         */
+        get: operations["readCookieCloudConfigReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media-requests/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the administrator inbox count without scheduling or metadata access */
+        get: operations["getMediaRequestSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List own requests; administrators can list all requests */
+        get: operations["listMediaRequests"];
+        put?: never;
+        /** Persist a pending request without creating a subscription or performing metadata I/O */
+        post: operations["submitMediaRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media-requests/commands/{idempotency_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recover the current account's original submit or close receipt without retrying a write */
+        get: operations["getMediaRequestReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media-requests/{request_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read current request state in the current account's object scope */
+        get: operations["getMediaRequest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media-requests/{request_id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Owner withdrawal or administrator rejection of a pending request */
+        post: operations["closeMediaRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media-requests/{request_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Administrator approval through the existing atomic subscription creation transaction
+         * @description Media identity, owner, and season scope come from the saved request. Approval does not send a download directly. The ordinary scheduler consumes eligible Wanted after commit.
+         */
+        post: operations["approveMediaRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/media-requests/{request_id}/approval-commands/{idempotency_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recover the original approving administrator's receipt without metadata or download I/O */
+        get: operations["getMediaRequestApprovalReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/healthz": {
         parameters: {
             query?: never;
@@ -70,6 +257,26 @@ export interface paths {
          * @description Real-time Server-Sent Events stream of system logs and audit records. Restricted to current administrator sessions.
          */
         get: operations["streamSystemLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/system/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the persisted system audit timeline
+         * @description Current administrators only, using a session or a valid read-scoped API token. Reads existing transactional audit records without emitting new audit entries. Historical JSON payloads are never returned. Descending timestamp and UUID cursor pagination; no total count or cross-page snapshot guarantee. Cursors retain their position if the corresponding old record is removed by retention.
+         */
+        get: operations["listAuditTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -260,6 +467,46 @@ export interface paths {
         put?: never;
         /** Acquire a movie release */
         post: operations["acquireMovie"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/organization/naming/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Preview a draft or saved naming template against sample metadata
+         * @description Current administrator sessions only. Formats sample metadata without network or file I/O, creating jobs, or granting organization authority. Omit templates to use the committed settings; supply both template strings for a draft. Empty templates preserve canonical naming. Unknown facts required by a template are rejected. release_title supplies parsed sample quality facts only; all output remains a preview and must not be used as execution evidence.
+         */
+        post: operations["previewNaming"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/download-clients/global-rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read persisted global native download and upload rates
+         * @description Administrator sessions only. Reads a consistent database snapshot without probing clients, creating jobs, or changing limits. Missing, failed, stale and configuration-mismatched samples are unknown. A direction has a global total only when every configured supported client contributes a fresh value. Decimal strings preserve integer precision. Historical points use the latest observation as of each time and preserve gaps; last-good values are historical.
+         */
+        get: operations["getDownloadGlobalRates"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1964,6 +2211,242 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Read persisted file observations for an explicit directory scope
+         * @description Current owner administrator session only. Reads persisted positive video observations without filesystem access, network requests or task scheduling. Observations do not establish write completion, trusted media identity, ownership or complete directory coverage. Pagination is scoped to the current configuration and a fixed database horizon.
+         */
+        get: operations["listUntrackedDiscoveries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Current owner administrator Cookie session only; members and API Tokens are forbidden, and administrators have no foreign-owner grant. No query string, including a bare question mark, is accepted. Exactly one canonical Idempotency-Key and a case-sensitive JSON object containing only confirmation_id (canonical nonzero UUID), at most 4095 bytes, are required; unknown, duplicate, null or missing fields and additional JSON values are rejected. Queues a controlled asynchronous task from immutable confirmation intent. The immutable original receipt always remains queued, including same-key replay after completion. Queueing is not a physical execution grant, does not call Add or download, and execution_allowed is always false. */
+        post: operations["requestUntrackedOrganization"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations/{operation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                operation_id: string;
+            };
+            cookie?: never;
+        };
+        /** @description Current owner administrator Cookie session only; no Token or foreign-owner grants. Scope, file and operation IDs must be canonical nonzero UUIDs. Rejects all query strings including bare question marks, request bodies and Idempotency-Key. Reads persisted state without network or filesystem work or queueing. A completed operation requires a nonzero completed_file_id and recorded_at; every other state has null completed_file_id. execution_allowed remains false in every state. */
+        get: operations["readUntrackedOrganization"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organization-commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        /** @description Current owner administrator Cookie session only; no Token or foreign-owner grants. Scope and file IDs must be canonical nonzero UUIDs. Rejects all query strings including bare question marks, request bodies and Idempotency-Key. Restores the immutable original queued receipt, operation IDs and asynchronous job by original command key, even after completion or subsequent configuration changes. Does not execute a command or perform network or filesystem work. execution_allowed is always false. */
+        get: operations["readUntrackedOrganizationReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. A single canonical Idempotency-Key and an exact JSON object of at most 4095 bytes are required. A zero TMDB ID requests an automatic suggestion; a positive ID expresses typed identity and must match the target root media type. The durable original request and job are returned without granting execution. */
+        post: operations["requestUntrackedReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews/{review_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                review_id: string;
+            };
+            cookie?: never;
+        };
+        /** @description Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. GET accepts no body or Idempotency-Key and performs no command, network or filesystem work. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps. */
+        get: operations["readUntrackedReview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/review-commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        /** @description Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. GET accepts no body or Idempotency-Key and performs no command, network or filesystem work. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps. */
+        get: operations["readUntrackedReviewRequestReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. A single canonical Idempotency-Key and an exact JSON object of at most 4095 bytes are required. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps. */
+        post: operations["confirmUntrackedFile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmation-commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        /** @description Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. GET accepts no body or Idempotency-Key and performs no command, network or filesystem work. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps. */
+        get: operations["readUntrackedConfirmationReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Read an explicitly selected untracked directory scope
+         * @description Current active owner administrator session only. Saving records versioned intent and a persistent review boundary only; it performs no discovery or filesystem work in this request. The owned background runtime may monitor enabled scopes and enqueue observation-only sweeps asynchronously. Observations never publish import facts or authorize organization.
+         */
+        get: operations["readUntrackedScope"];
+        /**
+         * Save directory discovery intent without granting import authority
+         * @description Current active owner administrator session only. Saving records versioned intent and a persistent review boundary only; it performs no discovery or filesystem work in this request. The owned background runtime may monitor enabled scopes and enqueue observation-only sweeps asynchronously. Observations never publish import facts or authorize organization.
+         */
+        put: operations["saveUntrackedScope"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Recover an original directory scope configuration receipt
+         * @description Current active owner administrator session only. Saving records versioned intent and a persistent review boundary only; it performs no discovery or filesystem work in this request. The owned background runtime may monitor enabled scopes and enqueue observation-only sweeps asynchronously. Observations never publish import facts or authorize organization.
+         */
+        get: operations["readUntrackedScopeReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/indexers/{indexer_id}/checkin/config": {
         parameters: {
             query?: never;
@@ -2184,6 +2667,146 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/person-follows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List only this account's saved actor and director follow configurations */
+        get: operations["listPersonFollows"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/person-follows/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** Read only this account's current follow configuration */
+        get: operations["getPersonFollow"];
+        /** Save versioned follow intent without requesting metadata or creating an execution task */
+        put: operations["savePersonFollow"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/person-follows/receipts/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recover only the current account's original configuration receipt without metadata access */
+        get: operations["getPersonFollowReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/web-push/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read this deployment's browser application server key after current account authorization */
+        get: operations["getWebPushConfiguration"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/web-push/devices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List only the current account's latest 100 device summaries; contains no delivery capabilities */
+        get: operations["listWebPushDevices"];
+        put?: never;
+        /** Persist this account's explicitly authorized browser subscription; does not send a push */
+        post: operations["registerWebPushDevice"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/web-push/devices/{id}/revocation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Permanently revoke one of this account's devices; in-flight sends may finish */
+        put: operations["revokeWebPushDevice"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/web-push/receipts/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recover only this account's original device-command receipt without accessing a push service */
+        get: operations["getWebPushReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notification-channels/{id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Queue one administrator test to the original channel; queued does not mean delivered */
+        post: operations["queueNotificationTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notification-channels/{id}/replacement": {
         parameters: {
             query?: never;
@@ -2238,10 +2861,273 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/download-clients/{id}/seeding/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Read downloader seeding eligibility configuration
+         * @description Current administrator Cookie session only. Database read; no native calls or tasks. All responses are private, no-store.
+         */
+        get: operations["readSeedingConfig"];
+        /**
+         * Save versioned keep-data seeding eligibility rules
+         * @description Binds the current downloader timestamp and configuration digest. Original-key recovery precedes current-version validation. Saving atomically persists rules, audit, event and receipt without scheduling removal or performing network or file I/O. All responses are private, no-store.
+         */
+        put: operations["saveSeedingConfig"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/download-clients/{id}/seeding/config/commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read an administrator-scoped original seeding configuration receipt
+         * @description Read-only original result for this account and downloader. Does not read the native client, retry a save or schedule removal. All responses are private, no-store.
+         */
+        get: operations["readSeedingConfigReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        PersonFollowBindings: {
+            indexer_ids: string[];
+            /** Format: uuid */
+            downloader_id?: string;
+        };
+        PersonFollowSettings: {
+            /** Format: int64 */
+            person_id: number;
+            /** @enum {string} */
+            role: "actor" | "director";
+            enabled: boolean;
+            /** Format: date */
+            min_release_date: string;
+            interval_minutes: number;
+            /** Format: uuid */
+            movie_root_id?: string;
+            /** Format: uuid */
+            tv_root_id?: string;
+            quality_policy_id: string;
+            /** Format: int64 */
+            quality_policy_revision: number;
+            /** @description Omission preserves saved bindings; an empty indexer list clears them; a nonempty list requires a downloader */
+            bindings?: components["schemas"]["PersonFollowBindings"];
+        };
+        PersonFollowConfiguration: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            owner_id: string;
+            /** Format: int64 */
+            version: number;
+            settings: components["schemas"]["PersonFollowSettings"];
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        PersonFollowReceipt: {
+            command_key: string;
+            config: components["schemas"]["PersonFollowConfiguration"];
+        };
+        WebPushConfiguration: {
+            enabled: boolean;
+            version: string;
+            public_key: string;
+        };
+        WebPushDevice: {
+            /** Format: uuid */
+            id: string;
+            status: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        AuditTimelineEntry: {
+            /** Format: uuid */
+            id: string;
+            actor_type: string;
+            actor_id: string;
+            action: string;
+            target_type: string;
+            target_id: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        AuditTimelinePage: {
+            items: components["schemas"]["AuditTimelineEntry"][];
+            next_cursor?: string;
+        };
+        BangumiCalendarResponse: {
+            days: components["schemas"]["BangumiCalendarDay"][];
+            /** Format: date-time */
+            observed_at: string;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        BangumiCalendarDay: {
+            weekday: number;
+            name: string;
+            items: components["schemas"]["BangumiCalendarItem"][];
+        };
+        BangumiCalendarItem: {
+            /** @description Bangumi subject identity only */
+            bangumi_id: string;
+            title: string;
+            original_title: string;
+            /** @description Native YYYY-MM-DD first broadcast date; not an episode date */
+            first_air_date: string | null;
+            poster_url: string | null;
+            /** Format: double */
+            rating: number | null;
+        };
+        CookieCloudConnectionInput: {
+            server_url: string;
+            user_key: string;
+            password: string;
+        };
+        CookieCloudConfigInput: {
+            /** Format: int64 */
+            expected_version: number;
+            enabled: boolean;
+            /** Format: int32 */
+            interval_seconds: number;
+            connection?: components["schemas"]["CookieCloudConnectionInput"];
+        };
+        SeedingRule: {
+            /** @enum {string} */
+            mode: "any" | "all";
+            /**
+             * @description Removal preserves all downloaded and organized files
+             * @enum {boolean}
+             */
+            delete_files: false;
+            /** Format: int64 */
+            min_seeding_seconds?: number;
+            /** Format: double */
+            min_share_ratio?: number;
+            /**
+             * Format: int64
+             * @description Uses only native free space bound to the exact task download path
+             */
+            low_free_bytes?: number;
+        };
+        SeedingConfigInput: {
+            /** Format: int64 */
+            expected_version: number;
+            /**
+             * Format: date-time
+             * @description Current timestamp from downloader configuration; compared as an instant
+             */
+            expected_client_updated_at: string;
+            enabled: boolean;
+            /** Format: int32 */
+            interval_seconds: number;
+            rule: components["schemas"]["SeedingRule"];
+        };
+        SeedingConfig: {
+            /** Format: uuid */
+            client_id: string;
+            /** Format: uuid */
+            owner_id: string;
+            /** Format: int64 */
+            version: number;
+            /** Format: date-time */
+            client_updated_at: string;
+            enabled: boolean;
+            /** Format: int32 */
+            interval_seconds: number;
+            rule: components["schemas"]["SeedingRule"];
+            /** Format: date-time */
+            updated_at: string;
+        };
+        SeedingConfigRead: {
+            config: components["schemas"]["SeedingConfig"] | null;
+        };
+        SeedingConfigReceipt: {
+            command_key: string;
+            config: components["schemas"]["SeedingConfig"];
+        };
+        CookieCloudConfig: {
+            /** Format: uuid */
+            owner_id: string;
+            /** Format: int64 */
+            version: number;
+            enabled: boolean;
+            /** Format: int32 */
+            interval_seconds: number;
+            /** @description Safe scheme and host only; no path */
+            server_origin: string;
+            has_connection: boolean;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        CookieCloudConfigReceipt: {
+            command_key: string;
+            config: components["schemas"]["CookieCloudConfig"];
+        };
+        MediaRequestIntent: {
+            /** @enum {string} */
+            media_type: "movie" | "tv";
+            /** Format: int64 */
+            tmdb_id: number;
+            seasons: number[];
+            include_specials: boolean;
+        };
+        MediaRequestDetails: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            owner_id: string;
+            intent: components["schemas"]["MediaRequestIntent"];
+            /** @enum {string} */
+            state: "pending" | "approved" | "rejected" | "withdrawn";
+            /** Format: int64 */
+            version: number;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: uuid */
+            decided_by?: string;
+            /** Format: date-time */
+            decided_at?: string;
+            /** Format: uuid */
+            subscription_id?: string;
+            reason: string;
+        };
+        MediaRequestCommandReceipt: {
+            command_key: string;
+            request: components["schemas"]["MediaRequestDetails"];
+        };
+        MediaRequestApprovalResult: {
+            /** Format: uuid */
+            request_id: string;
+            subscription: components["schemas"]["SubscriptionDetails"];
+        };
         /** @description Explicit endpoint intent. Empty indexer_ids clears bindings and forbids downloader_id; 1–64 unique nonzero indexer UUIDs require a nonzero downloader_id. Null is never accepted. No endpoints are selected automatically. */
         DoubanSyncBindings: {
             indexer_ids: string[];
@@ -2281,6 +3167,293 @@ export interface components {
             /** Format: int64 */
             source_version: number;
             restore_acknowledged: boolean;
+        };
+        UntrackedScopeInput: {
+            enabled: boolean;
+            /** Format: int64 */
+            expected_version: number;
+            /** Format: uuid */
+            client_id: string;
+            /** Format: date-time */
+            expected_client_version: string;
+            /** @description Exact canonical remote prefix of a configured downloader mapping; never an arbitrary local path */
+            remote_prefix: string;
+            /** Format: uuid */
+            target_root_id: string;
+            /** Format: int64 */
+            expected_root_generation: number;
+        };
+        UntrackedScopeIdentity: {
+            /** Format: int64 */
+            device: number;
+            /** Format: int64 */
+            inode: number;
+        };
+        /** @description Safe owner-only saved intent. Source and target physical baselines are independent. Disabling monitoring does not remove the historical review boundary. */
+        UntrackedScope: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            owner_id: string;
+            enabled: boolean;
+            /** Format: int64 */
+            version: number;
+            /** Format: uuid */
+            client_id: string;
+            /** Format: date-time */
+            client_version: string;
+            /** @description Digest only; no endpoint or credential plaintext */
+            client_stamp: string;
+            remote_prefix: string;
+            local_root: string;
+            source_identity: components["schemas"]["UntrackedScopeIdentity"];
+            /** Format: uuid */
+            target_root_id: string;
+            target_root_path: string;
+            /** Format: int64 */
+            target_root_generation: number;
+            target_media_type: string;
+            target_marker: string;
+            /** Format: uuid */
+            target_baseline_scan_id: string;
+            target_identity: components["schemas"]["UntrackedScopeIdentity"];
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        UntrackedDiscoveryObservation: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            scope_id: string;
+            /**
+             * Format: int64
+             * @description Configuration version under which this observation was recorded
+             */
+            scope_version: number;
+            /** Format: int64 */
+            revision: number;
+            relative_path: string;
+            /** Format: int64 */
+            device: number;
+            /** Format: int64 */
+            inode: number;
+            /** Format: int64 */
+            size: number;
+            /** Format: int64 */
+            mtime: number;
+            /** Format: date-time */
+            first_observed_at: string;
+            /** Format: date-time */
+            last_observed_at: string;
+            /**
+             * Format: int64
+             * @description Distinct execution observations; never proof of write completion
+             */
+            observations: number;
+        };
+        UntrackedDiscoveryList: {
+            items: components["schemas"]["UntrackedDiscoveryObservation"][];
+            next_cursor: string;
+            /** @description More persisted query rows */
+            has_more: boolean;
+            /** @enum {boolean} */
+            inventory_complete: false;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        UntrackedScopeCurrent: {
+            config: components["schemas"]["UntrackedScope"] | null;
+        };
+        UntrackedScopeReceipt: {
+            command_key: string;
+            scope: components["schemas"]["UntrackedScope"];
+            /**
+             * @description Saving a scope never authorizes organization or import
+             * @enum {boolean}
+             */
+            execution_allowed: false;
+        };
+        UntrackedOrganizationInput: {
+            /**
+             * Format: uuid
+             * @description Canonical nonzero UUID of the immutable confirmation; no paths or action overrides
+             */
+            confirmation_id: string;
+        };
+        /** @description Frozen original intent and controlled asynchronous job identity; these twelve fields never change with execution progress */
+        UntrackedOrganizationOperation: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            actor_id: string;
+            /** Format: uuid */
+            scope_id: string;
+            /** Format: uuid */
+            file_id: string;
+            /** Format: uuid */
+            confirmation_id: string;
+            /** Format: uuid */
+            plan_id: string;
+            /** Format: uuid */
+            step_id: string;
+            /** Format: uuid */
+            job_id: string;
+            /** Format: int64 */
+            scope_version: number;
+            /** Format: int64 */
+            file_revision: number;
+            material_hash: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        /** @description Immutable original queued receipt; use the separate operation view for progress. Queued means a controlled task was accepted, never physical execution permission. */
+        UntrackedOrganizationReceipt: {
+            command_key: string;
+            operation: components["schemas"]["UntrackedOrganizationOperation"];
+            /** @enum {string} */
+            state: "queued";
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        UntrackedOrganizationView: {
+            operation: components["schemas"]["UntrackedOrganizationOperation"];
+            /** @enum {string} */
+            state: "queued" | "running" | "completed" | "review_required" | "failed";
+            /** @description True exactly when state is review_required */
+            review_required: boolean;
+            /**
+             * Format: uuid
+             * @description Nonzero library file UUID required for completed; null in every other state
+             */
+            completed_file_id: string | null;
+            /**
+             * Format: date-time
+             * @description Persisted observation time at or after operation creation; required for completed and otherwise nullable
+             */
+            recorded_at: string | null;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        UntrackedReviewInput: {
+            /** Format: int64 */
+            scope_version: number;
+            /** Format: int64 */
+            file_revision: number;
+            /**
+             * @description Must agree with the selected target root type
+             * @enum {string}
+             */
+            media_type: "movie" | "tv";
+            /**
+             * Format: int64
+             * @description Zero requests an automatic suggestion; a positive ID is explicit typed identity
+             */
+            tmdb_id: number;
+        };
+        UntrackedReviewRequest: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            scope_id: string;
+            /** Format: uuid */
+            file_id: string;
+            /** Format: uuid */
+            actor_id: string;
+            input: components["schemas"]["UntrackedReviewInput"];
+            /** Format: uuid */
+            job_id: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        UntrackedReviewRequestReceipt: {
+            command_key: string;
+            request: components["schemas"]["UntrackedReviewRequest"];
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        UntrackedReviewUnit: {
+            unit_key: string;
+            /** Format: int64 */
+            tmdb_episode_id: number;
+            season: number;
+            episode: number;
+            /**
+             * Format: date-time
+             * @description Real air date only; null when unknown or not applicable
+             */
+            air_date: string | null;
+        };
+        UntrackedReviewCandidate: {
+            /** @description Canonical positive int64 typed TMDB identity */
+            key: string;
+            /** @enum {string} */
+            namespace: "tmdb.movie" | "tmdb.tv";
+            /** Format: int64 */
+            tmdb_id: number;
+            title: string;
+            original_title: string;
+            year: number;
+            units: components["schemas"]["UntrackedReviewUnit"][];
+        };
+        UntrackedReviewEvidence: {
+            parser_version: string;
+            parsed_title: string;
+            parsed_year: number;
+            /** @enum {string} */
+            selection: "automatic" | "explicit";
+            complete: boolean;
+            reason: string;
+            candidate: components["schemas"]["UntrackedReviewCandidate"] | null;
+        };
+        UntrackedReviewView: {
+            request: components["schemas"]["UntrackedReviewRequest"];
+            /** @enum {string} */
+            state: "queued" | "running" | "ready" | "review_required" | "dead";
+            evidence: components["schemas"]["UntrackedReviewEvidence"] | null;
+            /** @description Empty before evidence is recorded; otherwise the frozen material digest */
+            material_hash: string;
+            /** Format: date-time */
+            recorded_at: string | null;
+            stale: boolean;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        UntrackedConfirmationInput: {
+            /** Format: uuid */
+            review_id: string;
+            material_hash: string;
+            /** Format: int64 */
+            scope_version: number;
+            /** Format: int64 */
+            file_revision: number;
+            /** @description Canonical positive int64 typed TMDB identity */
+            candidate_key: string;
+            /** @enum {string} */
+            action: "hardlink" | "copy" | "reflink" | "move";
+            /** @description Clean relative video file path; no absolute path, backslash, NUL, dot segments or parent escape */
+            target_relative_path: string;
+        };
+        UntrackedConfirmationMaterial: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            actor_id: string;
+            scope: components["schemas"]["UntrackedScope"];
+            file: components["schemas"]["UntrackedDiscoveryObservation"];
+            review: components["schemas"]["UntrackedReviewView"];
+            input: components["schemas"]["UntrackedConfirmationInput"];
+            /** Format: date-time */
+            created_at: string;
+        };
+        UntrackedConfirmationReceipt: {
+            command_key: string;
+            material: components["schemas"]["UntrackedConfirmationMaterial"];
+            /** @enum {string} */
+            state: "confirmed_pending_organization";
+            /** @enum {boolean} */
+            execution_allowed: false;
         };
         /** @description Configuration intent for NexusPHP 1.10.3 only. Explicit site timezone is required and never inferred from PHP defaults. No captcha bypass, daily execution command, unknown-result retry, or manual side-effect endpoint. */
         SiteCheckinConfigInput: {
@@ -2592,10 +3765,14 @@ export interface components {
             expected_updated_at: string;
             name: string;
             /** @enum {string} */
-            channel_type: "webhook" | "telegram";
+            channel_type: "webhook" | "telegram" | "wechat" | "dingtalk" | "feishu" | "bark";
             /** @description Explicit acknowledgement that historical waiting deliveries are not moved to the new channel */
             accept_old_pending: boolean;
             config: {
+                /** @description Optional public TMDB w342 cover for WeChat */
+                image_url?: string;
+                /** @description Optional existing Feishu image key; no image upload */
+                image_key?: string;
                 url?: string;
                 secret?: string;
                 bot_token?: string;
@@ -2624,8 +3801,12 @@ export interface components {
         CreateNotificationChannelRequest: {
             name: string;
             /** @enum {string} */
-            channel_type: "webhook" | "telegram";
+            channel_type: "webhook" | "telegram" | "wechat" | "dingtalk" | "feishu" | "bark";
             config: {
+                /** @description Optional public TMDB w342 cover for WeChat */
+                image_url?: string;
+                /** @description Optional existing Feishu image key; no image upload */
+                image_key?: string;
                 url?: string;
                 secret?: string;
                 bot_token?: string;
@@ -3771,6 +4952,77 @@ export interface components {
              */
             poster_url?: string;
         };
+        DownloadGlobalRateValues: {
+            /** Format: date-time */
+            observed_at: string;
+            download_bytes_per_second: string | null;
+            upload_bytes_per_second: string | null;
+        };
+        DownloadGlobalRateClient: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** @enum {string} */
+            client_type: "qbittorrent" | "transmission";
+            /** @enum {string} */
+            state: "disabled" | "unobserved" | "configuration_changed" | "unknown" | "failed" | "stale" | "observed";
+            /** @enum {string} */
+            failure_code: "" | "unavailable" | "auth_required" | "timeout" | "blocked" | "bad_response" | "rate_limited";
+            /** Format: date-time */
+            observed_at: string | null;
+            download_bytes_per_second: string | null;
+            upload_bytes_per_second: string | null;
+            last_good?: components["schemas"]["DownloadGlobalRateValues"];
+        };
+        DownloadGlobalRatePoint: {
+            /** Format: date-time */
+            at: string;
+            download_bytes_per_second: string | null;
+            upload_bytes_per_second: string | null;
+            download_known_clients: number;
+            upload_known_clients: number;
+        };
+        NamingTemplates: {
+            /** @description Empty uses canonical movie naming for new plans. */
+            movie_template: string;
+            /** @description Empty uses canonical episode naming for new plans. */
+            episode_template: string;
+        };
+        NamingPreviewRequest: {
+            /** @enum {string} */
+            media_type: "movie" | "tv";
+            title: string;
+            extension: string;
+            year?: number;
+            season?: number;
+            episode?: number;
+            /** Format: int64 */
+            tmdb_id?: number;
+            imdb_id?: string;
+            release_title?: string;
+            templates?: components["schemas"]["NamingTemplates"];
+        };
+        NamingPreviewResult: {
+            relative_path: string;
+            /** Format: int64 */
+            configuration_version: number;
+            draft: boolean;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        DownloadGlobalRatesOverview: {
+            enabled: boolean;
+            /** Format: date-time */
+            observed_at: string;
+            /** @enum {integer} */
+            freshness_seconds: 45;
+            download_bytes_per_second: string | null;
+            upload_bytes_per_second: string | null;
+            download_known_clients: number;
+            upload_known_clients: number;
+            clients: components["schemas"]["DownloadGlobalRateClient"][];
+            series: components["schemas"]["DownloadGlobalRatePoint"][];
+        };
         LibraryOverview: {
             counts: components["schemas"]["LibraryOverviewCounts"];
             roots: components["schemas"]["LibraryRootOverview"][];
@@ -3862,6 +5114,14 @@ export interface components {
             };
             reject_terms: string[];
             reject_groups: string[];
+            /** @description Literal candidate-title gates and ranking preferences; quality facts and cutoff stay unchanged. Omission or an empty list publishes no word rules. */
+            custom_words?: components["schemas"]["QualityWordRule"][];
+        };
+        QualityWordRule: {
+            word: string;
+            score: number;
+            required: boolean;
+            excluded: boolean;
         };
         PolicyDocument: {
             id: string;
@@ -3900,6 +5160,8 @@ export interface components {
             passed: boolean;
             rejected_reason?: string;
             score: number;
+            /** @description Candidate-title preference used for ordering, independent of quality score and cutoff. */
+            preference_score?: number;
             meets_cutoff: boolean;
             score_breakdown: string[];
         };
@@ -4082,7 +5344,7 @@ export interface components {
             /** @enum {string} */
             statistics_mode: "latest_persisted";
             /** @enum {string} */
-            sort_order: "quality_desc_seeders_desc_id_asc";
+            sort_order: "quality_desc_seeders_desc_id_asc" | "quality_preference_desc_seeders_desc_id_asc";
         };
         ReleaseItemResult: {
             /** Format: uuid */
@@ -4097,6 +5359,8 @@ export interface components {
             source?: string;
             codec?: string;
             score?: number;
+            /** @description Candidate-title preference used for ordering, independent of quality score and cutoff. */
+            preference_score?: number;
         };
         ReleaseSearchResponse: {
             /** @description Some online endpoints failed or could not be queried; successful candidates are not a complete search result */
@@ -4161,7 +5425,7 @@ export interface components {
              * @default qbittorrent
              * @enum {string}
              */
-            client_type: "qbittorrent" | "transmission";
+            client_type: "qbittorrent" | "transmission" | "rtorrent";
             /** @example http://192.168.1.100:8080 */
             url: string;
             /** @example admin */
@@ -4180,7 +5444,7 @@ export interface components {
             expected_updated_at: string;
             name: string;
             /** @enum {string} */
-            client_type: "qbittorrent" | "transmission";
+            client_type: "qbittorrent" | "transmission" | "rtorrent";
             /** @description Complete replacement URL, or the unchanged display URL with the original version to retain its encrypted credentials. */
             url: string;
             username: string;
@@ -4305,6 +5569,16 @@ export interface components {
             air_date?: string;
             poster_url?: string;
         };
+        /** @description Display-only fallback provenance; does not change the canonical TMDB identity, episode facts, subscriptions or frozen plans. */
+        TVTranslationSource: {
+            /** @enum {string} */
+            provider: "tvdb";
+            /** Format: int64 */
+            source_id: number;
+            /** @enum {string} */
+            language: "zho";
+            fields: ("title" | "overview")[];
+        };
         TMDBTVDetailsResponse: {
             /** Format: int64 */
             tmdb_id: number;
@@ -4319,6 +5593,7 @@ export interface components {
             seasons_count: number;
             episodes_count: number;
             seasons: components["schemas"]["TMDBTVSeasonItem"][];
+            translation_source?: components["schemas"]["TVTranslationSource"];
         };
         DiscoverMediaItem: {
             /** Format: int64 */
@@ -4405,6 +5680,15 @@ export interface components {
         };
     };
     responses: {
+        /** @description Cookie session required (401/403); invalid input (400/422), missing record (404), version or original-key conflict (409), pending limit (429), or unverifiable storage/metadata result (503). All responses are private and no-store. */
+        MediaRequestFailure: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["ErrorResponse"];
+            };
+        };
         /** @description Invalid policy command or draft rules */
         PolicyBadRequest: {
             headers: {
@@ -4461,6 +5745,7 @@ export interface components {
         };
     };
     parameters: {
+        MediaRequestKey: string;
         IdempotencyKey: string;
     };
     requestBodies: never;
@@ -4469,6 +5754,386 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getBangumiCalendar: {
+        parameters: {
+            query?: {
+                weekday?: number;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Valid current calendar, including a valid empty result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BangumiCalendarResponse"];
+                };
+            };
+            /** @description Invalid weekday or query */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Metadata read access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Calendar temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readCookieCloudConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Existing configuration or explicit null */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        config: components["schemas"]["CookieCloudConfig"] | null;
+                    };
+                };
+            };
+            /** @description Authentication, validation or storage failure */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    saveCookieCloudConfig: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CookieCloudConfigInput"];
+            };
+        };
+        responses: {
+            /** @description Original saved configuration result; persistence only */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CookieCloudConfigReceipt"];
+                };
+            };
+            /** @description Authentication, validation, conflict or storage failure */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readCookieCloudConfigReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original saved safe result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CookieCloudConfigReceipt"];
+                };
+            };
+            /** @description Authentication, validation or storage failure */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getMediaRequestSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Exact global count of pending requests; known zero is explicit */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description Exact nonnegative decimal count */
+                        pending_count: string;
+                        /** Format: date-time */
+                        observed_at: string;
+                    };
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
+    listMediaRequests: {
+        parameters: {
+            query?: {
+                limit?: number;
+                before_id?: string;
+                /** @description Administrators only; pending excludes every terminal request */
+                state?: "pending";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Read-only account-scoped page; pagination is not a complete inventory */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: components["schemas"]["MediaRequestDetails"][];
+                    };
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
+    submitMediaRequest: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["MediaRequestKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MediaRequestIntent"];
+            };
+        };
+        responses: {
+            /** @description Original pending snapshot, including after a later decision */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaRequestCommandReceipt"];
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
+    getMediaRequestReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                idempotency_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original immutable command receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaRequestCommandReceipt"];
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
+    getMediaRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                request_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current request, not an execution permit */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaRequestDetails"];
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
+    closeMediaRequest: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["MediaRequestKey"];
+            };
+            path: {
+                request_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: int64 */
+                    expected_version: number;
+                    /** @enum {string} */
+                    action: "reject" | "withdraw";
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Original terminal decision snapshot */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaRequestCommandReceipt"];
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
+    approveMediaRequest: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["MediaRequestKey"];
+            };
+            path: {
+                request_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: int64 */
+                    expected_version: number;
+                    /** Format: uuid */
+                    root_id: string;
+                    quality_policy_id: string;
+                    indexer_ids: string[];
+                    /** Format: uuid */
+                    downloader_id: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Original subscription result; approval and creation are committed together */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaRequestApprovalResult"];
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
+    getMediaRequestApprovalReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                request_id: string;
+                idempotency_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original approved subscription result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaRequestApprovalResult"];
+                };
+            };
+            default: components["responses"]["MediaRequestFailure"];
+        };
+    };
     getHealthz: {
         parameters: {
             query?: never;
@@ -4606,6 +6271,79 @@ export interface operations {
                 };
             };
             /** @description Log stream unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    listAuditTimeline: {
+        parameters: {
+            query?: {
+                /** @description Page size; defaults to 50. */
+                limit?: number;
+                /** @description Opaque continuation bound to the account and filters. */
+                cursor?: string;
+                actor_type?: "user" | "service" | "system";
+                /** @description Exact historical actor identifier. */
+                actor_id?: string;
+                /** @description Exact action; no wildcard matching. */
+                action?: string;
+                target_type?: string;
+                target_id?: string;
+                /** @description Inclusive timestamp with at most microsecond precision. */
+                from?: string;
+                /** @description Exclusive timestamp with at most microsecond precision. */
+                until?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted audit summaries; an empty list is a successful read, not a storage failure. */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditTimelinePage"];
+                };
+            };
+            /** @description Invalid filter or cursor */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator access required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Audit storage unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;
@@ -5174,6 +6912,113 @@ export interface operations {
             };
         };
     };
+    previewNaming: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NamingPreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Relative sample path and configuration version, without execution permission */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NamingPreviewResult"];
+                };
+            };
+            /** @description Invalid template, sample metadata or unavailable required field */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Settings snapshot unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getDownloadGlobalRates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted native rate snapshot including collection state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DownloadGlobalRatesOverview"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator session required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Snapshot unavailable, never an empty successful fallback */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getLibraryOverview: {
         parameters: {
             query?: {
@@ -5624,6 +7469,11 @@ export interface operations {
                             operation_id: string;
                             /** Format: uuid */
                             tracking_job_id: string;
+                            /**
+                             * Format: int64
+                             * @description Frozen naming configuration version; omission preserves legacy version zero.
+                             */
+                            naming_version?: number;
                             season: number;
                             attachment_count: number;
                             organization_state: string;
@@ -7536,6 +9386,11 @@ export interface operations {
                     operation_id: string;
                     /** Format: uuid */
                     tracking_job_id: string;
+                    /**
+                     * Format: int64
+                     * @description Version returned by the organization preview; required when naming is configured.
+                     */
+                    naming_version?: number;
                 };
             };
         };
@@ -10484,6 +12339,1006 @@ export interface operations {
             };
         };
     };
+    listUntrackedDiscoveries: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                scope_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted observations only; inventory completeness and execution permission remain false */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedDiscoveryList"];
+                };
+            };
+            /** @description Invalid request or expired pagination context */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Administrator session or object permission required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope unavailable */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Observations temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    requestUntrackedOrganization: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UntrackedOrganizationInput"];
+            };
+        };
+        responses: {
+            /** @description Immutable original queued receipt and asynchronous job; no physical execution grant */
+            202: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedOrganizationReceipt"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, operation or original receipt not found */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Frozen organization material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Organization service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedOrganization: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                operation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted operation view; no physical execution grant */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedOrganizationView"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, operation or original receipt not found */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Frozen organization material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Organization service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedOrganizationReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Immutable original queued receipt; no physical execution grant */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedOrganizationReceipt"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, operation or original receipt not found */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Frozen organization material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Organization service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    requestUntrackedReview: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UntrackedReviewInput"];
+            };
+        };
+        responses: {
+            /** @description Original durable review request and job; execution remains unauthorized */
+            202: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedReviewRequestReceipt"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, review or original receipt unavailable */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                review_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted review or immutable receipt; execution remains unauthorized */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedReviewView"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, review or original receipt unavailable */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedReviewRequestReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted review or immutable receipt; execution remains unauthorized */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedReviewRequestReceipt"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, review or original receipt unavailable */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    confirmUntrackedFile: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UntrackedConfirmationInput"];
+            };
+        };
+        responses: {
+            /** @description Persisted review or immutable receipt; execution remains unauthorized */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedConfirmationReceipt"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, review or original receipt unavailable */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedConfirmationReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted review or immutable receipt; execution remains unauthorized */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedConfirmationReceipt"];
+                };
+            };
+            /** @description Invalid request */
+            400: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Owner administrator Cookie session required */
+            403: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Scope, file, review or original receipt unavailable */
+            404: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review material is stale or command conflicts */
+            409: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Review service temporarily unavailable */
+            503: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedScope: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Saved configuration intent or original immutable receipt; execution remains unauthorized */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedScopeCurrent"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    saveUntrackedScope: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                scope_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UntrackedScopeInput"];
+            };
+        };
+        responses: {
+            /** @description Saved configuration intent or original immutable receipt; execution remains unauthorized */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedScopeReceipt"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedScopeReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Saved configuration intent or original immutable receipt; execution remains unauthorized */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedScopeReceipt"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration request rejected or unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     readSiteCheckinConfig: {
         parameters: {
             query?: never;
@@ -11499,6 +14354,317 @@ export interface operations {
             };
         };
     };
+    listPersonFollows: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current account configurations, without creating subscriptions or tasks */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonFollowConfiguration"][];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    getPersonFollow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Saved configuration, not proof of an external identity or subscription */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonFollowConfiguration"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    savePersonFollow: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: int64 */
+                    expected_version: number;
+                    settings: components["schemas"]["PersonFollowSettings"];
+                };
+            };
+        };
+        responses: {
+            /** @description Immutable original-key configuration receipt; saving does not establish or complete a subscription */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonFollowReceipt"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    getPersonFollowReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Historical configuration receipt, independent of current target availability */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PersonFollowReceipt"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    getWebPushConfiguration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public VAPID identity, or disabled with empty identity */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebPushConfiguration"];
+                };
+            };
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    listWebPushDevices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Account-scoped device summaries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebPushDevice"][];
+                };
+            };
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    registerWebPushDevice: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    id: string;
+                    vapid_version: string;
+                    subscription: {
+                        endpoint: string;
+                        p256dh: string;
+                        auth: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description Original registration receipt, not delivery confirmation */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebPushDevice"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    revokeWebPushDevice: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: date-time */
+                    expected_updated_at: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Original revocation receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebPushDevice"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    getWebPushReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Historical command receipt, not a current device observation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebPushDevice"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    queueNotificationTest: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: date-time */
+                    expected_updated_at: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Original queued test receipt; retry the same command key to restore without creating another delivery */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        channel_id: string;
+                        /** Format: uuid */
+                        event_id: string;
+                        /** @enum {string} */
+                        status: "queued";
+                    };
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
     replaceNotificationChannel: {
         parameters: {
             query?: never;
@@ -11611,6 +14777,106 @@ export interface operations {
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSeedingConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current configuration or explicit null */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedingConfigRead"];
+                };
+            };
+            /** @description Authentication, validation, missing client or storage failure */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    saveSeedingConfig: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SeedingConfigInput"];
+            };
+        };
+        responses: {
+            /** @description Original saved configuration result; persistence only */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedingConfigReceipt"];
+                };
+            };
+            /** @description Authentication, validation, version conflict or storage failure */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readSeedingConfigReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original saved configuration result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedingConfigReceipt"];
+                };
+            };
+            /** @description Authentication, validation, missing receipt or storage failure */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

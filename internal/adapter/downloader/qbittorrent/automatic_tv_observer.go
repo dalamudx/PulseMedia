@@ -61,6 +61,10 @@ func automaticTVOperationTag(tag string) bool {
 }
 
 func (r *automaticTVReader) read(ctx context.Context, endpoint string, query url.Values) ([]byte, error) {
+	return r.readNative(ctx, "torrents/"+endpoint, query)
+}
+
+func (r *automaticTVReader) readNative(ctx context.Context, endpoint string, query url.Values) ([]byte, error) {
 	c := r.client
 	if err := c.ensureLogin(ctx); err != nil {
 		return nil, err
@@ -69,8 +73,8 @@ func (r *automaticTVReader) read(ctx context.Context, endpoint string, query url
 	if err != nil {
 		return nil, ports.ErrBadResponse
 	}
-	u.RawPath = strings.TrimRight(u.EscapedPath(), "/") + "/api/v2/torrents/" + endpoint
-	u.Path = strings.TrimRight(u.Path, "/") + "/api/v2/torrents/" + endpoint
+	u.RawPath = strings.TrimRight(u.EscapedPath(), "/") + "/api/v2/" + endpoint
+	u.Path = strings.TrimRight(u.Path, "/") + "/api/v2/" + endpoint
 	q := u.Query()
 	// Configured query parameters must not narrow or change the native lookup.
 	for _, key := range []string{"tag", "hash", "hashes", "filter", "limit", "offset", "sort", "reverse", "indexes"} {
@@ -107,6 +111,10 @@ func (r *automaticTVReader) tasks(ctx context.Context, query url.Values) ([]port
 	if err != nil {
 		return nil, err
 	}
+	return decodeAutomaticTVTasks(body)
+}
+
+func decodeAutomaticTVTasks(body []byte) ([]ports.AutomaticTVRemoteTask, error) {
 	if !automaticTVUniqueJSON(body) {
 		return nil, ports.ErrUnavailable
 	}

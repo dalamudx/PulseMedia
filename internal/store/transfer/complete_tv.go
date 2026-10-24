@@ -237,6 +237,9 @@ func (r *Repository) ConfirmCompleteTVOrganization(ctx context.Context, a *ports
 		if obs.identity.Size != obs.file.Size || obs.identity.Device != rootIdentity.Device {
 			return nil, ErrReviewRequired
 		}
+		if eligible, _ := naming.IsEligibleMediaFile(obs.rel, obs.identity.Size, s.minimumMediaBytes); !eligible {
+			return nil, ErrReviewRequired
+		}
 	}
 	tx, e := s.pool.Begin(ctx)
 	if e != nil {
@@ -286,6 +289,13 @@ func (r *Repository) ConfirmCompleteTVOrganization(ctx context.Context, a *ports
 	if e != nil {
 		return nil, e
 	}
+	namingRules, namingVersion, e := lockTransferNaming(ctx, q)
+	if e != nil {
+		return nil, e
+	}
+	if c.NamingVersion < 0 || c.NamingVersion != namingVersion {
+		return nil, ErrReviewRequired
+	}
 	plan, e := q.CreateTransferPlan(ctx, db.CreateTransferPlanParams{ID: s.idgen.NewUUID(), OperationID: c.OperationID, RootID: root.ID, State: "approved", RequiresApproval: true, Strategy: "hardlink"})
 	if e != nil {
 		return nil, e
@@ -305,6 +315,16 @@ func (r *Repository) ConfirmCompleteTVOrganization(ctx context.Context, a *ports
 			return nil, e
 		}
 		obs.target, e = naming.FormatEpisodeRel(parent.Title, int(parent.Year.Int32), int(u.SeasonNumber.Int32), int(u.EpisodeNumber.Int32), profile, filepath.Ext(obs.source))
+		if namingRules.EpisodeTemplate != "" {
+			input, err := transferNamingInput(ctx, q, parent, u, profile, filepath.Ext(obs.source), namingRules.EpisodeTemplate)
+			if err != nil {
+				return nil, err
+			}
+			obs.target, e = namingRules.EpisodeRelative(input)
+			if e != nil {
+				return nil, ErrReviewRequired
+			}
+		}
 		if e != nil {
 			return nil, e
 		}
@@ -323,7 +343,7 @@ func (r *Repository) ConfirmCompleteTVOrganization(ctx context.Context, a *ports
 	}
 	qualityJSON, _ := json.Marshal(profile)
 	for i, obs := range observations {
-		evidence, _ := json.Marshal(transferTargetEvidence{CompleteTVPlanID: plan.ID, ParserVersion: media.EpisodeParserVersion, UnitID: obs.file.Unit.UnitID, UnitKey: obs.file.Unit.UnitKey, UnitVersion: obs.file.Unit.UnitVersion, MediaID: f.MediaID, MediaVersion: f.MediaVersion, InventoryTaskID: c.TaskID, InventorySourcePath: obs.source, InventorySizeBytes: obs.file.Size})
+		evidence, _ := json.Marshal(transferTargetEvidence{CompleteTVPlanID: plan.ID, NamingVersion: namingVersion, ParserVersion: media.EpisodeParserVersion, UnitID: obs.file.Unit.UnitID, UnitKey: obs.file.Unit.UnitKey, UnitVersion: obs.file.Unit.UnitVersion, MediaID: f.MediaID, MediaVersion: f.MediaVersion, InventoryTaskID: c.TaskID, InventorySourcePath: obs.source, InventorySizeBytes: obs.file.Size})
 		if e = q.FreezeTransferStep(ctx, db.FreezeTransferStepParams{ID: steps[i].ID, SourceRoot: text(obs.root), SourceRel: text(obs.rel), TargetRel: text(obs.target), SourceDevice: integer(obs.identity.Device), SourceInode: integer(obs.identity.Inode), QualityProfile: qualityJSON, TargetEvidence: evidence}); e != nil {
 			return nil, e
 		}

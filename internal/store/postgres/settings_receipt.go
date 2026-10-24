@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/dalamudx/PulseMedia/internal/command"
+	"github.com/dalamudx/PulseMedia/internal/domain/artwork"
+	tvdbconfig "github.com/dalamudx/PulseMedia/internal/domain/tvdb"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/jackc/pgx/v5"
@@ -38,7 +40,7 @@ func (s *SettingsStore) ReadSettingReceipt(ctx context.Context, a *ports.Actor, 
 	if e = json.Unmarshal(old.ResponseBody, &item); e != nil || item.Key != key {
 		return nil, ports.ErrCommandConflict
 	}
-	if key == "tmdb.api_key" {
+	if key == "tmdb.api_key" || key == artwork.APIKeySetting || key == tvdbconfig.CredentialsSetting {
 		item.Value = map[string]any{"configured": true}
 	}
 	if e = tx.Commit(ctx); e != nil {

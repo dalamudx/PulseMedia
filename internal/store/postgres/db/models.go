@@ -336,6 +336,27 @@ type CompleteTvSubmissionUnit struct {
 	VideoSize         int64
 }
 
+type CompleteTvTrackingHint struct {
+	JobID             uuid.UUID
+	TaskID            uuid.UUID
+	OperationID       uuid.UUID
+	PriorJobID        uuid.UUID
+	HintID            uuid.UUID
+	InstanceID        uuid.UUID
+	Sequence          int64
+	Kind              string
+	RelativePath      string
+	Binding           []byte
+	SourceDevice      int64
+	SourceInode       int64
+	PriorDigest       string
+	AuthorityDigest   string
+	PreparationDigest string
+	ProtectionDigest  string
+	RequestDigest     string
+	AcceptedAt        pgtype.Timestamptz
+}
+
 type CompleteTvTransferEvidence struct {
 	PlanID         uuid.UUID
 	TaskID         uuid.UUID
@@ -344,6 +365,42 @@ type CompleteTvTransferEvidence struct {
 	TrackingResult []byte
 	Baseline       []byte
 	CreatedAt      pgtype.Timestamptz
+}
+
+type CookiecloudConfiguration struct {
+	OwnerID             uuid.UUID
+	Version             int64
+	Enabled             bool
+	IntervalSeconds     int32
+	ServerOrigin        string
+	ConnectionEncrypted []byte
+	CreatedAt           pgtype.Timestamptz
+	UpdatedAt           pgtype.Timestamptz
+}
+
+type CookiecloudSyncAttempt struct {
+	JobID          uuid.UUID
+	OwnerID        uuid.UUID
+	ConfigVersion  int64
+	State          string
+	ExecutionOwner pgtype.Text
+	ExecutionToken pgtype.Int8
+	ExecutionPid   pgtype.Int4
+	CreatedAt      pgtype.Timestamptz
+	StartedAt      pgtype.Timestamptz
+	FinishedAt     pgtype.Timestamptz
+	ValidUntil     pgtype.Timestamptz
+	Result         []byte
+	FailureCode    string
+}
+
+type CookiecloudSyncSchedule struct {
+	OwnerID       uuid.UUID
+	ConfigVersion int64
+	NextDueAt     pgtype.Timestamptz
+	ActiveJobID   pgtype.UUID
+	State         string
+	UpdatedAt     pgtype.Timestamptz
 }
 
 type DoubanSyncConfig struct {
@@ -434,6 +491,30 @@ type DownloadFileInventory struct {
 	ObservedAt  pgtype.Timestamptz
 }
 
+type DownloadGlobalRateAttempt struct {
+	JobID                  uuid.UUID
+	ClientID               uuid.UUID
+	ConfigStamp            string
+	State                  string
+	ExecutionOwner         pgtype.Text
+	ExecutionToken         pgtype.Int8
+	StartedAt              pgtype.Timestamptz
+	ObservedAt             pgtype.Timestamptz
+	FinishedAt             pgtype.Timestamptz
+	DownloadBytesPerSecond pgtype.Int8
+	UploadBytesPerSecond   pgtype.Int8
+	FailureCode            string
+}
+
+type DownloadGlobalRateSchedule struct {
+	ClientID      uuid.UUID
+	ActiveJobID   pgtype.UUID
+	LatestJobID   pgtype.UUID
+	LastGoodJobID pgtype.UUID
+	NextDueAt     pgtype.Timestamptz
+	UpdatedAt     pgtype.Timestamptz
+}
+
 type DownloadRateObservation struct {
 	TaskID                     uuid.UUID
 	ClientID                   uuid.UUID
@@ -479,6 +560,16 @@ type DownloadTask struct {
 	OrganizationState  string
 	OrganizationReason pgtype.Text
 	TransferPlanID     pgtype.UUID
+}
+
+type DownloadTaskClientBinding struct {
+	TaskID      uuid.UUID
+	ClientID    uuid.UUID
+	ClientStamp string
+	JobID       uuid.UUID
+	LeaseOwner  string
+	LeaseToken  int64
+	PreparedAt  pgtype.Timestamptz
 }
 
 type EpisodeCandidateReview struct {
@@ -578,6 +669,15 @@ type IndexerConfiguration struct {
 	BehaviorVersion      string
 	ConfigurationVersion int64
 	CreatedAt            pgtype.Timestamptz
+}
+
+type IndexerCookiecloudCredential struct {
+	JobID            uuid.UUID
+	IndexerID        uuid.UUID
+	SourceVersion    int64
+	CredentialDigest []byte
+	ValidUntil       pgtype.Timestamptz
+	RecordedAt       pgtype.Timestamptz
 }
 
 type IndexerLifecycle struct {
@@ -762,6 +862,28 @@ type MediaIdentity struct {
 	Namespace  string
 	ExternalID string
 	CreatedAt  pgtype.Timestamptz
+}
+
+type MediaRequest struct {
+	ID              uuid.UUID
+	OwnerID         uuid.UUID
+	MediaType       string
+	TmdbID          int64
+	Seasons         []int32
+	IncludeSpecials bool
+	State           string
+	Version         int64
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	CreationKey     string
+	InputHash       string
+	CreationReceipt []byte
+	DecisionActorID pgtype.UUID
+	DecidedAt       pgtype.Timestamptz
+	Reason          string
+	SubscriptionID  pgtype.UUID
+	DecisionKey     pgtype.Text
+	DecisionHash    pgtype.Text
 }
 
 type MediaScrapeBatch struct {
@@ -1286,6 +1408,94 @@ type OutboxEvent struct {
 	CreatedAt     pgtype.Timestamptz
 }
 
+type PersonFollowConfig struct {
+	ID                    uuid.UUID
+	OwnerID               uuid.UUID
+	PersonID              int64
+	Role                  string
+	Enabled               bool
+	MinReleaseDate        pgtype.Date
+	IntervalMinutes       int32
+	MovieRootID           pgtype.UUID
+	TvRootID              pgtype.UUID
+	QualityPolicyID       string
+	QualityPolicyRevision int64
+	BindingsConfigured    bool
+	DownloaderID          pgtype.UUID
+	Version               int64
+	CreatedAt             pgtype.Timestamptz
+	UpdatedAt             pgtype.Timestamptz
+}
+
+type PersonFollowConfigHistory struct {
+	ConfigID    uuid.UUID
+	OwnerID     uuid.UUID
+	Version     int64
+	CommandKey  string
+	RequestHash string
+	Input       []byte
+	Snapshot    []byte
+	CreatedAt   pgtype.Timestamptz
+}
+
+type PersonFollowExecution struct {
+	ID         uuid.UUID
+	JobID      uuid.UUID
+	RunID      uuid.UUID
+	LeaseOwner string
+	LeaseToken int64
+	BackendPid int32
+	AcquiredAt pgtype.Timestamptz
+	ReleasedAt pgtype.Timestamptz
+}
+
+type PersonFollowIndexer struct {
+	ConfigID  uuid.UUID
+	IndexerID uuid.UUID
+}
+
+type PersonFollowSyncItem struct {
+	ID                uuid.UUID
+	RunID             uuid.UUID
+	Ordinal           int32
+	TmdbID            int64
+	MediaType         string
+	Source            []byte
+	RootID            pgtype.UUID
+	CommandKey        string
+	State             string
+	WriterExecutionID uuid.UUID
+	SubscriptionID    pgtype.UUID
+	Receipt           []byte
+}
+
+type PersonFollowSyncPage struct {
+	JobID     uuid.UUID
+	RunID     uuid.UUID
+	PageStart int32
+	Finished  bool
+}
+
+type PersonFollowSyncRun struct {
+	ID             uuid.UUID
+	ConfigID       uuid.UUID
+	ConfigVersion  int64
+	OwnerID        uuid.UUID
+	ConfigSnapshot []byte
+	Status         string
+	CreatedAt      pgtype.Timestamptz
+	FinishedAt     pgtype.Timestamptz
+}
+
+type PersonFollowSyncSource struct {
+	RunID       uuid.UUID
+	ExecutionID uuid.UUID
+	Source      []byte
+	SourceHash  string
+	WorkCount   int32
+	ObservedAt  pgtype.Timestamptz
+}
+
 type Policy struct {
 	ID              string
 	Name            string
@@ -1459,6 +1669,81 @@ type SearchRoundEndpointPage struct {
 type SearchRoundRssQuery struct {
 	RoundID uuid.UUID
 	QueryID uuid.UUID
+}
+
+type SeedingConfiguration struct {
+	ClientID          uuid.UUID
+	OwnerID           uuid.UUID
+	Version           int64
+	ClientUpdatedAt   pgtype.Timestamptz
+	ClientStamp       string
+	Enabled           bool
+	IntervalSeconds   int32
+	MatchMode         string
+	MinSeedingSeconds pgtype.Int8
+	MinShareRatio     pgtype.Float8
+	LowFreeBytes      pgtype.Int8
+	DeleteFiles       bool
+	CreatedAt         pgtype.Timestamptz
+	UpdatedAt         pgtype.Timestamptz
+}
+
+type SeedingRemovalDispatch struct {
+	JobID         uuid.UUID
+	TaskID        uuid.UUID
+	ClientID      uuid.UUID
+	ClientStamp   string
+	ConfigVersion int64
+	OwnerID       uuid.UUID
+	CreatedAt     pgtype.Timestamptz
+}
+
+type SeedingRemovalExecution struct {
+	JobID       uuid.UUID
+	LeaseToken  int64
+	LeaseOwner  string
+	ClientID    uuid.UUID
+	BackendPid  int32
+	ObserveOnly bool
+	Requests    int32
+	OpenedAt    pgtype.Timestamptz
+	StartedAt   pgtype.Timestamptz
+	Result      pgtype.Text
+	FinishedAt  pgtype.Timestamptz
+	ReleasedAt  pgtype.Timestamptz
+}
+
+type SeedingRemovalPermit struct {
+	TaskID             uuid.UUID
+	OperationID        uuid.UUID
+	ClientID           uuid.UUID
+	ClientStamp        string
+	ConfigVersion      int64
+	OwnerID            uuid.UUID
+	JobID              uuid.UUID
+	LeaseOwner         string
+	LeaseToken         int64
+	InfoHash           string
+	OperationTag       string
+	SavePath           string
+	TotalBytes         int64
+	Complete           bool
+	SeedingSeconds     pgtype.Int8
+	ShareRatio         pgtype.Float8
+	InfiniteShareRatio bool
+	FreeBytes          pgtype.Int8
+	FreeSpacePath      pgtype.Text
+	ObservedAt         pgtype.Timestamptz
+	PreparedAt         pgtype.Timestamptz
+}
+
+type SeedingRemovalSchedule struct {
+	TaskID        uuid.UUID
+	ConfigVersion int64
+	NextDueAt     pgtype.Timestamptz
+	ActiveJobID   pgtype.UUID
+	State         string
+	UpdatedAt     pgtype.Timestamptz
 }
 
 type Setting struct {
@@ -1685,6 +1970,27 @@ type TvSeasonMetadataSnapshot struct {
 	CreatedAt    pgtype.Timestamptz
 }
 
+type TvdbEpisodeEvidence struct {
+	UnitID            uuid.UUID
+	MediaID           uuid.UUID
+	TmdbSeriesID      int64
+	TvdbSeriesID      int64
+	TmdbEpisodeID     int64
+	TvdbEpisodeID     int64
+	SeasonNumber      int32
+	EpisodeNumber     int32
+	CredentialVersion int64
+	FallbackVersion   int64
+	CreatedAt         pgtype.Timestamptz
+}
+
+type TvdbSeriesIdentity struct {
+	MediaID      uuid.UUID
+	TmdbSeriesID int64
+	TvdbSeriesID int64
+	CreatedAt    pgtype.Timestamptz
+}
+
 type UnitFact struct {
 	ID               uuid.UUID
 	UnitID           uuid.UUID
@@ -1710,6 +2016,155 @@ type UnitReservation struct {
 	ExpiresAt   pgtype.Timestamptz
 	CreatedAt   pgtype.Timestamptz
 	UpdatedAt   pgtype.Timestamptz
+}
+
+type UntrackedDirectoryScope struct {
+	ID           uuid.UUID
+	OwnerID      uuid.UUID
+	Enabled      bool
+	Version      int64
+	ClientID     uuid.UUID
+	TargetRootID uuid.UUID
+	LocalRoot    string
+	Snapshot     []byte
+	CreatedAt    pgtype.Timestamptz
+	UpdatedAt    pgtype.Timestamptz
+}
+
+type UntrackedDirectoryScopeReceipt struct {
+	ScopeID     uuid.UUID
+	OwnerID     uuid.UUID
+	CommandKey  string
+	Version     int64
+	Enabled     bool
+	LocalRoot   string
+	RequestHash string
+	Input       []byte
+	Snapshot    []byte
+}
+
+type UntrackedDiscoveredFile struct {
+	ID              uuid.UUID
+	ScopeID         uuid.UUID
+	ScopeVersion    int64
+	RelativePath    string
+	Revision        int64
+	Device          int64
+	Inode           int64
+	Size            int64
+	Mtime           int64
+	CreatedAt       pgtype.Timestamptz
+	FirstObservedAt pgtype.Timestamptz
+	LastObservedAt  pgtype.Timestamptz
+	Observations    int64
+	LastJobID       uuid.UUID
+	LastToken       int64
+}
+
+type UntrackedDiscoveryState struct {
+	ScopeID               uuid.UUID
+	RequestedVersion      int64
+	RequestedSequence     int64
+	CompletedSequence     int64
+	ActiveJobID           pgtype.UUID
+	ActiveSequence        int64
+	ScheduledScopeVersion int64
+	NextSweepAt           pgtype.Timestamptz
+}
+
+type UntrackedOrganizationCompletion struct {
+	OperationID   uuid.UUID
+	StepID        uuid.UUID
+	FileID        uuid.UUID
+	ObservationID uuid.UUID
+	Result        []byte
+	RecordedAt    pgtype.Timestamptz
+}
+
+type UntrackedOrganizationObservation struct {
+	ID          uuid.UUID
+	OperationID uuid.UUID
+	JobID       uuid.UUID
+	JobOwner    string
+	JobToken    int64
+	Result      []byte
+	RecordedAt  pgtype.Timestamptz
+}
+
+type UntrackedOrganizationOperation struct {
+	ID             uuid.UUID
+	OwnerID        uuid.UUID
+	ScopeID        uuid.UUID
+	FileID         uuid.UUID
+	ConfirmationID uuid.UUID
+	PlanID         uuid.UUID
+	StepID         uuid.UUID
+	JobID          uuid.UUID
+	CommandKey     string
+	InputHash      string
+	Material       []byte
+	Receipt        []byte
+}
+
+type UntrackedOrganizationPermit struct {
+	OperationID    uuid.UUID
+	JobID          uuid.UUID
+	JobOwner       string
+	JobToken       int64
+	ExecutionOwner string
+	ExecutionToken int64
+	ContentSize    int64
+	ContentSha256  []byte
+	ProofHash      string
+	IssuedAt       pgtype.Timestamptz
+}
+
+type UntrackedOrganizationUnit struct {
+	OperationID          uuid.UUID
+	UnitID               uuid.UUID
+	MediaID              uuid.UUID
+	MetadataVersion      int64
+	MediaMetadataVersion int64
+	UnitKey              string
+	TmdbEpisodeID        int64
+	CandidateUnit        []byte
+	MediaIdentity        []byte
+}
+
+type UntrackedReviewConfirmation struct {
+	ID         uuid.UUID
+	OwnerID    uuid.UUID
+	ScopeID    uuid.UUID
+	FileID     uuid.UUID
+	ReviewID   uuid.UUID
+	CommandKey string
+	InputHash  string
+	Receipt    []byte
+}
+
+type UntrackedReviewRequest struct {
+	ID            uuid.UUID
+	OwnerID       uuid.UUID
+	ScopeID       uuid.UUID
+	FileID        uuid.UUID
+	JobID         uuid.UUID
+	CommandKey    string
+	InputHash     string
+	Request       []byte
+	ScopeSnapshot []byte
+	FileSnapshot  []byte
+}
+
+type UntrackedReviewRequestReceipt struct {
+	RequestID uuid.UUID
+	Receipt   []byte
+}
+
+type UntrackedReviewResult struct {
+	RequestID    uuid.UUID
+	MaterialHash string
+	Review       []byte
+	RecordedAt   pgtype.Timestamptz
 }
 
 type WantedItem struct {
@@ -1748,4 +2203,26 @@ type WantedItem struct {
 type WantedProjectionValidity struct {
 	ID            uuid.UUID
 	InputsCurrent interface{}
+}
+
+type WebPushDeliveryBinding struct {
+	DeliveryID   uuid.UUID
+	DeviceID     uuid.UUID
+	UserID       uuid.UUID
+	VapidVersion string
+	UnitID       uuid.UUID
+	FileID       uuid.UUID
+	RootID       uuid.UUID
+	CreatedAt    pgtype.Timestamptz
+}
+
+type WebPushDevice struct {
+	ID                    uuid.UUID
+	UserID                uuid.UUID
+	VapidVersion          string
+	EndpointDigest        string
+	SubscriptionEncrypted []byte
+	Status                string
+	CreatedAt             pgtype.Timestamptz
+	UpdatedAt             pgtype.Timestamptz
 }

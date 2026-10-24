@@ -53,6 +53,12 @@ func policyRules(in PolicyRuleSet) quality.PolicyRules {
 	for k, v := range in.SourceOrder {
 		r.SourceOrder[quality.Source(k)] = v
 	}
+	if in.CustomWords != nil {
+		r.CustomWords = make([]quality.CustomWordRule, 0, len(*in.CustomWords))
+		for _, word := range *in.CustomWords {
+			r.CustomWords = append(r.CustomWords, quality.CustomWordRule{Word: word.Word, Score: word.Score, Required: word.Required, Excluded: word.Excluded})
+		}
+	}
 	return r
 }
 func policyDocument(in ports.PolicyDocument) PolicyDocument {
@@ -68,6 +74,13 @@ func policyDocument(in ports.PolicyDocument) PolicyDocument {
 	}
 	for k, v := range in.Rules.SourceOrder {
 		r.SourceOrder[string(k)] = v
+	}
+	if len(in.Rules.CustomWords) != 0 {
+		words := make([]QualityWordRule, 0, len(in.Rules.CustomWords))
+		for _, word := range in.Rules.CustomWords {
+			words = append(words, QualityWordRule{Word: word.Word, Score: word.Score, Required: word.Required, Excluded: word.Excluded})
+		}
+		r.CustomWords = &words
 	}
 	return PolicyDocument{Id: in.ID, Name: in.Name, Revision: in.Revision, Rules: r}
 }

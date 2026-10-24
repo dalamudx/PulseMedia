@@ -21,10 +21,11 @@ var (
 )
 
 type Outbox struct {
-	pool    *pgxpool.Pool
-	idgen   ports.IDGen
-	clock   ports.Clock
-	queries *db.Queries
+	pool           *pgxpool.Pool
+	idgen          ports.IDGen
+	clock          ports.Clock
+	queries        *db.Queries
+	webPushVersion string
 }
 
 func New(pool *pgxpool.Pool, idgen ports.IDGen, clock ports.Clock) *Outbox {
@@ -35,6 +36,9 @@ func New(pool *pgxpool.Pool, idgen ports.IDGen, clock ports.Clock) *Outbox {
 		queries: postgres.Queries(pool),
 	}
 }
+
+// EnableWebPush freezes the deployment public-key version before workers start.
+func (o *Outbox) EnableWebPush(version string) { o.webPushVersion = version }
 
 // Publish atomically assigns the next monotonic seq for the aggregate and inserts event + deliveries inside the calling transaction.
 func (o *Outbox) Publish(ctx context.Context, qtx *db.Queries, aggregateType, aggregateID, eventType string, payload any, consumers []string) (*db.OutboxEvent, error) {

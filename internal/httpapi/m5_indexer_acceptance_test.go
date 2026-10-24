@@ -32,6 +32,9 @@ type m5IndexerAcceptance struct {
 	base, session, rawURL, origin string
 	key                           []byte
 	calls, caps, searches         atomic.Int32
+	stopRuntime                   func()
+	newRuntime                    func() (*app.App, error)
+	dataDir                       string
 }
 type m5IndexerHTTPResult struct {
 	status int

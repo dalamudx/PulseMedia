@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,13 +27,21 @@ type ServerConfig struct {
 type DatabaseConfig struct {
 	URL string `yaml:"url"`
 }
+type OrganizationConfig struct {
+	MinMediaBytes int64 `yaml:"min_media_bytes"`
+}
 
 type Config struct {
-	Server    ServerConfig   `yaml:"server"`
-	Database  DatabaseConfig `yaml:"database"`
-	DataDir   string         `yaml:"data_dir"`
-	LogLevel  string         `yaml:"log_level"`
-	SecretKey string         `yaml:"secret_key"`
+	Server          ServerConfig          `yaml:"server"`
+	Database        DatabaseConfig        `yaml:"database"`
+	Organization    OrganizationConfig    `yaml:"organization"`
+	DownloadRouting DownloadRoutingConfig `yaml:"download_routing"`
+
+	WebPush             WebPushConfig             `yaml:"web_push"`
+	DownloadGlobalRates DownloadGlobalRatesConfig `yaml:"download_global_rates"`
+	DataDir             string                    `yaml:"data_dir"`
+	LogLevel            string                    `yaml:"log_level"`
+	SecretKey           string                    `yaml:"secret_key"`
 }
 
 // Option configures how options are loaded.
@@ -95,8 +104,9 @@ func NewDefault() *Config {
 		Database: DatabaseConfig{
 			URL: "",
 		},
-		DataDir:  ".data",
-		LogLevel: "info",
+		Organization: OrganizationConfig{MinMediaBytes: 1},
+		DataDir:      ".data",
+		LogLevel:     "info",
 	}
 }
 
@@ -131,6 +141,37 @@ func Load(opts ...Option) (*Config, error) {
 	}
 
 	// 2. Environment variables override
+	if err := l.loadWebPush(cfg); err != nil {
+		return nil, err
+	}
+	if raw, ok := l.envLookup(l.envPrefix + "DOWNLOAD_GLOBAL_RATES_ENABLED"); ok {
+		enabled, err := strconv.ParseBool(raw)
+		if err != nil {
+			return nil, fmt.Errorf("%w: invalid download global rates switch", ErrInvalidConfig)
+		}
+		cfg.DownloadGlobalRates.Enabled = enabled
+	}
+	if raw, ok := l.envLookup(l.envPrefix + "DOWNLOAD_ROUTING_ENABLED"); ok {
+		enabled, err := strconv.ParseBool(raw)
+		if err != nil {
+			return nil, routingConfigError()
+		}
+		cfg.DownloadRouting.Enabled = &enabled
+	}
+	if raw, ok := l.envLookup(l.envPrefix + "DOWNLOAD_ROUTE_RULES"); ok {
+		rules, err := decodeDownloadRouteRules(raw)
+		if err != nil {
+			return nil, err
+		}
+		cfg.DownloadRouting.Rules = rules
+	}
+	if val, ok := l.envLookup(l.envPrefix + "ORGANIZATION_MIN_MEDIA_BYTES"); ok {
+		minimum, err := strconv.ParseInt(val, 10, 64)
+		if err != nil || minimum < 1 {
+			return nil, fmt.Errorf("%w: invalid organization minimum media bytes", ErrInvalidConfig)
+		}
+		cfg.Organization.MinMediaBytes = minimum
+	}
 	if val, ok := l.envLookup(l.envPrefix + "HTTP_ADDR"); ok && val != "" {
 		cfg.Server.HTTPAddr = val
 	}
@@ -172,6 +213,15 @@ func Load(opts ...Option) (*Config, error) {
 
 // Validate checks all configuration constraints and invariants.
 func (c *Config) Validate() error {
+	if err := c.WebPush.validate(); err != nil {
+		return err
+	}
+	if err := c.DownloadRouting.validate(); err != nil {
+		return err
+	}
+	if c.Organization.MinMediaBytes < 1 {
+		return fmt.Errorf("%w: organization.min_media_bytes must be positive", ErrInvalidConfig)
+	}
 	if strings.TrimSpace(c.DataDir) == "" {
 		return fmt.Errorf("%w: data_dir cannot be empty", ErrInvalidConfig)
 	}

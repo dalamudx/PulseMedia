@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
@@ -13,12 +14,19 @@ import (
 )
 
 type MovieRecognitionStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool              *pgxpool.Pool
+	ids               ports.IDGen
+	minimumMediaBytes int64
 }
 
 func NewMovieRecognitionStore(pool *pgxpool.Pool, ids ports.IDGen) *MovieRecognitionStore {
-	return &MovieRecognitionStore{pool: pool, ids: ids}
+	return &MovieRecognitionStore{pool: pool, ids: ids, minimumMediaBytes: 1}
+}
+
+func NewMovieRecognitionStoreWithMinimumMediaBytes(pool *pgxpool.Pool, ids ports.IDGen, minimum int64) *MovieRecognitionStore {
+	s := NewMovieRecognitionStore(pool, ids)
+	s.minimumMediaBytes = minimum
+	return s
 }
 
 var _ ports.MovieRecognitionScheduler = (*MovieRecognitionStore)(nil)
@@ -34,21 +42,53 @@ func (s *MovieRecognitionStore) QueueDue(ctx context.Context, limit int32) (int,
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
 	q := db.New(tx)
-	roots, err := q.LockMovieRecognitionRoots(ctx, limit)
-	if err != nil {
-		return 0, err
-	}
 	n := 0
-	for _, root := range roots {
-		files, e := q.ListMovieRecognitionFiles(ctx, root)
-		if e != nil {
-			return 0, e
+	var afterRoot uuid.UUID
+	var productive int32
+	for productive < limit {
+		batch := limit - productive
+		roots, err := q.LockMovieRecognitionRoots(ctx, db.LockMovieRecognitionRootsParams{MaxRoots: batch, AfterRootID: pgtype.UUID{Bytes: afterRoot, Valid: afterRoot != uuid.Nil}, MinimumMediaBytes: s.minimumMediaBytes})
+		if err != nil {
+			return 0, err
 		}
-		for _, file := range files {
-			if e = q.InsertMovieRecognitionJob(ctx, db.InsertMovieRecognitionJobParams{JobID: s.ids.NewUUID(), RootID: root, FileID: file.ID, Generation: file.Generation}); e != nil {
-				return 0, e
+		for _, root := range roots {
+			afterRoot = root
+			var after uuid.UUID
+			queued := 0
+			for queued < 25 {
+				files, e := q.ListMovieRecognitionFiles(ctx, db.ListMovieRecognitionFilesParams{RootID: root, AfterID: pgtype.UUID{Bytes: after, Valid: after != uuid.Nil}, MinimumMediaBytes: s.minimumMediaBytes})
+				if e != nil {
+					return 0, e
+				}
+				for _, file := range files {
+					after = file.ID
+					if eligible, _ := naming.IsEligibleMediaFile(file.RelPath, file.SizeBytes, s.minimumMediaBytes); !eligible {
+						continue
+					}
+					if e = GuardUntrackedMovieRecognition(ctx, q, root, file.RelPath); errors.Is(e, ports.ErrMovieLinkStale) {
+						continue
+					} else if e != nil {
+						return 0, e
+					}
+					if e = q.InsertMovieRecognitionJob(ctx, db.InsertMovieRecognitionJobParams{JobID: s.ids.NewUUID(), RootID: root, FileID: file.ID, Generation: file.Generation}); e != nil {
+						return 0, e
+					}
+					n++
+					queued++
+					if queued == 25 {
+						break
+					}
+				}
+				if len(files) < 25 {
+					break
+				}
 			}
-			n++
+			if queued > 0 {
+				productive++
+			}
+		}
+		if len(roots) < int(batch) {
+			break
 		}
 	}
 	if err = tx.Commit(ctx); err != nil {
@@ -76,7 +116,7 @@ func recognitionLeaseError(err error) error {
 	return err
 }
 func NewLeasedMovieLinkStore(pool *pgxpool.Pool, ids ports.IDGen, work ports.MovieRecognitionWork) *MovieLinkStore {
-	return &MovieLinkStore{pool: pool, ids: ids, work: &work}
+	return &MovieLinkStore{pool: pool, ids: ids, work: &work, minimumMediaBytes: 1}
 }
 func (s *MovieLinkStore) guardRecognition(ctx context.Context, q *db.Queries, root, file uuid.UUID) error {
 	if s.work == nil {
@@ -157,7 +197,12 @@ func (s *MovieLinkStore) Review(ctx context.Context, reason string) error {
 }
 
 func NewCheckedMovieRecognitionStore(pool *pgxpool.Pool, ids ports.IDGen, work ports.MovieRecognitionWork) *MovieLinkStore {
-	return &MovieLinkStore{pool: pool, ids: ids, work: &work, requirePhysical: true}
+	return &MovieLinkStore{pool: pool, ids: ids, work: &work, requirePhysical: true, minimumMediaBytes: 1}
+}
+func NewCheckedMovieRecognitionStoreWithMinimumMediaBytes(pool *pgxpool.Pool, ids ports.IDGen, work ports.MovieRecognitionWork, minimum int64) *MovieLinkStore {
+	s := NewCheckedMovieRecognitionStore(pool, ids, work)
+	s.minimumMediaBytes = minimum
+	return s
 }
 
 var _ ports.CheckedMovieRecognitionRepository = (*MovieLinkStore)(nil)

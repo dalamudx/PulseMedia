@@ -20,7 +20,7 @@ func (r *Repository) ConfirmCompleteTVOrganizationReferences(ctx context.Context
 			err = ports.ErrUnavailable
 		}
 	}()
-	c := ports.CompleteTVOrganizationCommand{TaskID: refs.TaskID, OperationID: refs.OperationID, TrackingJobID: refs.TrackingJobID, Confirmed: true}
+	c := ports.CompleteTVOrganizationCommand{TaskID: refs.TaskID, OperationID: refs.OperationID, TrackingJobID: refs.TrackingJobID, Confirmed: true, NamingVersion: refs.NamingVersion}
 	tx, err := r.execution.pool.Begin(ctx)
 	if err != nil {
 		return nil, err

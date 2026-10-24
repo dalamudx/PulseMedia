@@ -9,6 +9,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/ports"
+	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"io/fs"
@@ -19,14 +20,15 @@ import (
 )
 
 type upgradeOrganizationPhysical struct {
-	RootPath   string             `json:"root_path"`
-	SourceRoot string             `json:"source_root"`
-	SourceRel  string             `json:"source_rel"`
-	TargetRel  string             `json:"target_rel"`
-	Root       ports.FileIdentity `json:"root"`
-	Source     ports.FileIdentity `json:"source"`
-	OldRel     string             `json:"old_rel"`
-	Old        ports.FileIdentity `json:"old"`
+	RootPath      string             `json:"root_path"`
+	SourceRoot    string             `json:"source_root"`
+	SourceRel     string             `json:"source_rel"`
+	TargetRel     string             `json:"target_rel"`
+	NamingVersion int64              `json:"naming_version,omitempty"`
+	Root          ports.FileIdentity `json:"root"`
+	Source        ports.FileIdentity `json:"source"`
+	OldRel        string             `json:"old_rel"`
+	Old           ports.FileIdentity `json:"old"`
 }
 type upgradeOrganizationPlanInputs struct {
 	authorization  json.RawMessage
@@ -41,6 +43,12 @@ type upgradeOrganizationPlanInputs struct {
 }
 
 func (r *movieUpgradeOrganizationPreparationRepository) inputs(ctx context.Context, tx pgx.Tx, a *ports.Actor, c ports.PrepareMovieUpgradeOrganization) (*upgradeOrganizationPlanInputs, error) {
+	return r.readInputs(ctx, tx, a, c, nil)
+}
+
+// A prepared plan has already fixed its target. Revalidate its current business
+// authority without consulting a later naming configuration.
+func (r *movieUpgradeOrganizationPreparationRepository) readInputs(ctx context.Context, tx pgx.Tx, a *ports.Actor, c ports.PrepareMovieUpgradeOrganization, prepared *upgradeOrganizationPhysical) (*upgradeOrganizationPlanInputs, error) {
 	var raw json.RawMessage
 	var key string
 	var obs uuid.UUID
@@ -135,7 +143,31 @@ func (r *movieUpgradeOrganizationPreparationRepository) inputs(ctx context.Conte
 	if out.physical.SourceRoot == "" {
 		return nil, preparationConflict()
 	}
-	target, e := naming.CleanRelPath(filepath.Join(naming.FormatMovieDir(f.Proof.Target.OriginalTitle, f.Proof.Target.Year), naming.FormatMovieFile(f.Proof.Target.OriginalTitle, f.Proof.Target.Year, f.Profile, filepath.Ext(clean))))
+	var target string
+	if prepared != nil {
+		target, e = naming.CleanRelPath(prepared.TargetRel)
+		if e != nil || target != prepared.TargetRel || prepared.NamingVersion < 0 || !strings.EqualFold(filepath.Ext(target), filepath.Ext(clean)) {
+			return nil, preparationConflict()
+		}
+		out.physical.NamingVersion = prepared.NamingVersion
+	} else {
+		namingRules, namingVersion, err := lockOrganizationNaming(ctx, db.New(tx))
+		if err != nil {
+			if errors.Is(err, ports.ErrTransferReviewRequired) {
+				return nil, preparationConflict()
+			}
+			return nil, err
+		}
+		out.physical.NamingVersion = namingVersion
+		target, e = naming.CleanRelPath(filepath.Join(naming.FormatMovieDir(f.Proof.Target.OriginalTitle, f.Proof.Target.Year), naming.FormatMovieFile(f.Proof.Target.OriginalTitle, f.Proof.Target.Year, f.Profile, filepath.Ext(clean))))
+		if namingRules.MovieTemplate != "" {
+			input, err := upgradeNamingInput(f.Proof.Target, f.Profile, filepath.Ext(clean), namingRules.MovieTemplate)
+			if err != nil {
+				return nil, err
+			}
+			target, e = namingRules.MovieRelative(input)
+		}
+	}
 	if e != nil || target == "" {
 		return nil, preparationConflict()
 	}

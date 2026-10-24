@@ -16,6 +16,13 @@ var _ ports.TransferRepository = (*Repository)(nil)
 func NewRepository(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem) *Repository {
 	return &Repository{NewService(pool, ids, events, files)}
 }
+
+// NewRepositoryWithMinimumMediaBytes applies deployment filtering to new physical attempts.
+func NewRepositoryWithMinimumMediaBytes(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem, minimum int64) *Repository {
+	r := NewRepository(pool, ids, events, files)
+	r.execution.minimumMediaBytes = minimum
+	return r
+}
 func (r *Repository) PrepareMovieTransfer(ctx context.Context, c ports.MovieTransferRequest) (ports.PreparedMovieTransfer, error) {
 	old := pgtype.UUID{}
 	if c.OldFileID != nil {

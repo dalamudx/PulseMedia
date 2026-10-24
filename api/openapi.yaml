@@ -4,6 +4,247 @@ info:
   version: 0.1.0
   description: HTTP API specification for PulseMedia media automation hub.
 paths:
+  /api/v1/metadata/bangumi/calendar:
+    get:
+      operationId: getBangumiCalendar
+      summary: Read the Bangumi broadcast-weekday calendar
+      description: Read-only metadata. Titles preserve Chinese and original names. First broadcast dates are not episode air dates. Bangumi subject IDs never grant TMDB or subscription execution authority. Every response is private, no-store.
+      parameters:
+        - {name: weekday, in: query, schema: {type: integer, minimum: 1, maximum: 7}}
+        - {name: q, in: query, schema: {type: string, maxLength: 120}}
+      responses:
+        '200':
+          description: Valid current calendar, including a valid empty result
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/BangumiCalendarResponse'}
+        '400':
+          description: Invalid weekday or query
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Metadata read access denied
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Calendar temporarily unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/integrations/cookiecloud/config:
+    get:
+      operationId: readCookieCloudConfig
+      summary: Read the current administrator's safe CookieCloud configuration
+      description: Cookie session only. Database read; does not fetch cookies, enqueue synchronization or update sites. Every response is private, no-store.
+      responses:
+        '200':
+          description: Existing configuration or explicit null
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [config]
+                properties:
+                  config: {allOf: [{$ref: '#/components/schemas/CookieCloudConfig'}], nullable: true}
+        default:
+          description: Authentication, validation or storage failure
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+    put:
+      operationId: saveCookieCloudConfig
+      summary: Persist an encrypted CookieCloud connection without starting synchronization
+      description: Current administrator session and expected version required. Omitted connection preserves its exact stored ciphertext; null does not clear it. Original commands restore before new version validation. Receipts never contain the URL prefix, user key or password.
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 128, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CookieCloudConfigInput'}
+      responses:
+        '200':
+          description: Original saved configuration result; persistence only
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CookieCloudConfigReceipt'}
+        default:
+          description: Authentication, validation, conflict or storage failure
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/integrations/cookiecloud/config/commands/{command_key}:
+    get:
+      operationId: readCookieCloudConfigReceipt
+      summary: Read an account-scoped original CookieCloud configuration receipt
+      description: Cookie session only. Does not decrypt the connection, fetch cookies, retry a write or start synchronization. Every response is private, no-store.
+      parameters:
+        - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 128, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      responses:
+        '200':
+          description: Original saved safe result
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/CookieCloudConfigReceipt'}
+        default:
+          description: Authentication, validation or storage failure
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/media-requests/summary:
+    get:
+      operationId: getMediaRequestSummary
+      summary: Read the administrator inbox count without scheduling or metadata access
+      responses:
+        '200':
+          description: Exact global count of pending requests; known zero is explicit
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [pending_count, observed_at]
+                properties:
+                  pending_count: {type: string, pattern: '^(0|[1-9][0-9]*)$', description: Exact nonnegative decimal count}
+                  observed_at: {type: string, format: date-time}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
+  /api/v1/media-requests:
+    get:
+      operationId: listMediaRequests
+      summary: List own requests; administrators can list all requests
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 25}}
+        - {name: before_id, in: query, schema: {type: string, format: uuid}}
+        - {name: state, in: query, description: Administrators only; pending excludes every terminal request, schema: {type: string, enum: [pending]}}
+      responses:
+        '200':
+          description: Read-only account-scoped page; pagination is not a complete inventory
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/MediaRequestDetails'}}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
+    post:
+      operationId: submitMediaRequest
+      summary: Persist a pending request without creating a subscription or performing metadata I/O
+      parameters:
+        - $ref: '#/components/parameters/MediaRequestKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/MediaRequestIntent'}
+      responses:
+        '201':
+          description: Original pending snapshot, including after a later decision
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MediaRequestCommandReceipt'}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
+  /api/v1/media-requests/commands/{idempotency_key}:
+    get:
+      operationId: getMediaRequestReceipt
+      summary: Recover the current account's original submit or close receipt without retrying a write
+      parameters:
+        - {name: idempotency_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      responses:
+        '200':
+          description: Original immutable command receipt
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MediaRequestCommandReceipt'}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
+  /api/v1/media-requests/{request_id}:
+    get:
+      operationId: getMediaRequest
+      summary: Read current request state in the current account's object scope
+      parameters:
+        - {name: request_id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200':
+          description: Current request, not an execution permit
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MediaRequestDetails'}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
+  /api/v1/media-requests/{request_id}/close:
+    post:
+      operationId: closeMediaRequest
+      summary: Owner withdrawal or administrator rejection of a pending request
+      parameters:
+        - {name: request_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - $ref: '#/components/parameters/MediaRequestKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expected_version, action, reason]
+              properties:
+                expected_version: {type: integer, format: int64, minimum: 1, maximum: 9007199254740991}
+                action: {type: string, enum: [reject, withdraw]}
+                reason: {type: string, maxLength: 512}
+      responses:
+        '200':
+          description: Original terminal decision snapshot
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MediaRequestCommandReceipt'}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
+  /api/v1/media-requests/{request_id}/approve:
+    post:
+      operationId: approveMediaRequest
+      summary: Administrator approval through the existing atomic subscription creation transaction
+      description: Media identity, owner, and season scope come from the saved request. Approval does not send a download directly. The ordinary scheduler consumes eligible Wanted after commit.
+      parameters:
+        - {name: request_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - $ref: '#/components/parameters/MediaRequestKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expected_version, root_id, quality_policy_id, indexer_ids, downloader_id]
+              properties:
+                expected_version: {type: integer, format: int64, minimum: 1, maximum: 9007199254740991}
+                root_id: {type: string, format: uuid}
+                quality_policy_id: {type: string, minLength: 1, maxLength: 128}
+                indexer_ids: {type: array, minItems: 1, maxItems: 64, uniqueItems: true, items: {type: string, format: uuid}}
+                downloader_id: {type: string, format: uuid}
+      responses:
+        '201':
+          description: Original subscription result; approval and creation are committed together
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MediaRequestApprovalResult'}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
+  /api/v1/media-requests/{request_id}/approval-commands/{idempotency_key}:
+    get:
+      operationId: getMediaRequestApprovalReceipt
+      summary: Recover the original approving administrator's receipt without metadata or download I/O
+      parameters:
+        - {name: request_id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: idempotency_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      responses:
+        '200':
+          description: Original approved subscription result
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MediaRequestApprovalResult'}
+        default: {$ref: '#/components/responses/MediaRequestFailure'}
   /healthz:
     get:
       summary: Liveness check
@@ -106,6 +347,50 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/system/audit:
+    get:
+      operationId: listAuditTimeline
+      summary: Read the persisted system audit timeline
+      description: Current administrators only, using a session or a valid read-scoped API token. Reads existing transactional audit records without emitting new audit entries. Historical JSON payloads are never returned. Descending timestamp and UUID cursor pagination; no total count or cross-page snapshot guarantee. Cursors retain their position if the corresponding old record is removed by retention.
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 200}, description: Page size; defaults to 50.}
+        - {name: cursor, in: query, schema: {type: string, minLength: 1, maxLength: 1024}, description: Opaque continuation bound to the account and filters.}
+        - {name: actor_type, in: query, schema: {type: string, enum: [user, service, system]}}
+        - {name: actor_id, in: query, schema: {type: string, minLength: 1, maxLength: 256}, description: Exact historical actor identifier.}
+        - {name: action, in: query, schema: {type: string, minLength: 1, maxLength: 256}, description: Exact action; no wildcard matching.}
+        - {name: target_type, in: query, schema: {type: string, minLength: 1, maxLength: 256}}
+        - {name: target_id, in: query, schema: {type: string, minLength: 1, maxLength: 256}}
+        - {name: from, in: query, schema: {type: string, format: date-time}, description: Inclusive timestamp with at most microsecond precision.}
+        - {name: until, in: query, schema: {type: string, format: date-time}, description: Exclusive timestamp with at most microsecond precision.}
+      responses:
+        '200':
+          description: Persisted audit summaries; an empty list is a successful read, not a storage failure.
+          headers:
+            Cache-Control: {schema: {type: string, enum: ['private, no-store']}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AuditTimelinePage'}
+        '400':
+          description: Invalid filter or cursor
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current administrator access required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Audit storage unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
 
   /api/v1/auth/status:
     get:
@@ -557,6 +842,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /api/v1/organization/naming/preview:
+    post:
+      operationId: previewNaming
+      summary: Preview a draft or saved naming template against sample metadata
+      description: >-
+        Current administrator sessions only. Formats sample metadata without network or file I/O,
+        creating jobs, or granting organization authority. Omit templates to use the committed settings;
+        supply both template strings for a draft. Empty templates preserve canonical naming.
+        Unknown facts required by a template are rejected. release_title supplies parsed sample quality
+        facts only; all output remains a preview and must not be used as execution evidence.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/NamingPreviewRequest'}
+      responses:
+        '200':
+          description: Relative sample path and configuration version, without execution permission
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/NamingPreviewResult'}
+        '400':
+          description: Invalid template, sample metadata or unavailable required field
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current administrator session required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Settings snapshot unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+
+  /api/v1/download-clients/global-rates:
+    get:
+      operationId: getDownloadGlobalRates
+      summary: Read persisted global native download and upload rates
+      description: >-
+        Administrator sessions only. Reads a consistent database snapshot without probing clients,
+        creating jobs, or changing limits. Missing, failed, stale and configuration-mismatched samples
+        are unknown. A direction has a global total only when every configured supported client
+        contributes a fresh value. Decimal strings preserve integer precision. Historical points
+        use the latest observation as of each time and preserve gaps; last-good values are historical.
+      responses:
+        '200':
+          description: Persisted native rate snapshot including collection state
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DownloadGlobalRatesOverview'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current administrator session required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Snapshot unavailable, never an empty successful fallback
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+
   /api/v1/library/overview:
     get:
       operationId: getLibraryOverview
@@ -943,6 +1302,7 @@ paths:
                         task_id: {type: string, format: uuid}
                         operation_id: {type: string, format: uuid}
                         tracking_job_id: {type: string, format: uuid}
+                        naming_version: {type: integer, format: int64, minimum: 0, description: Frozen naming configuration version; omission preserves legacy version zero.}
                         season: {type: integer, minimum: 1}
                         attachment_count: {type: integer, minimum: 0}
                         organization_state: {type: string}
@@ -2469,6 +2829,7 @@ paths:
               properties:
                 operation_id: {type: string, format: uuid}
                 tracking_job_id: {type: string, format: uuid}
+                naming_version: {type: integer, format: int64, minimum: 0, description: Version returned by the organization preview; required when naming is configured.}
       responses:
         '202':
           description: Original durable frozen receipt; queued does not mean imported
@@ -4659,6 +5020,719 @@ paths:
           content:
             application/problem+json:
               schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: listUntrackedDiscoveries
+      summary: Read persisted file observations for an explicit directory scope
+      description: Current owner administrator session only. Reads persisted positive video observations without filesystem access, network requests or task scheduling. Observations do not establish write completion, trusted media identity, ownership or complete directory coverage. Pagination is scoped to the current configuration and a fixed database horizon.
+      parameters:
+        - {name: cursor, in: query, schema: {type: string, maxLength: 2048}}
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 64, default: 64}}
+      responses:
+        '200':
+          description: Persisted observations only; inventory completeness and execution permission remain false
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedDiscoveryList'}
+        '400':
+          description: Invalid request or expired pagination context
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Administrator session or object permission required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Observations temporarily unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      operationId: requestUntrackedOrganization
+      description: Current owner administrator Cookie session only; members and API Tokens are forbidden, and administrators have no foreign-owner grant. No query string, including a bare question mark, is accepted. Exactly one canonical Idempotency-Key and a case-sensitive JSON object containing only confirmation_id (canonical nonzero UUID), at most 4095 bytes, are required; unknown, duplicate, null or missing fields and additional JSON values are rejected. Queues a controlled asynchronous task from immutable confirmation intent. The immutable original receipt always remains queued, including same-key replay after completion. Queueing is not a physical execution grant, does not call Add or download, and execution_allowed is always false.
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/UntrackedOrganizationInput'}
+      responses:
+        '202':
+          description: Immutable original queued receipt and asynchronous job; no physical execution grant
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedOrganizationReceipt'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, operation or original receipt not found
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Frozen organization material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Organization service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organizations/{operation_id}:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: operation_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readUntrackedOrganization
+      description: Current owner administrator Cookie session only; no Token or foreign-owner grants. Scope, file and operation IDs must be canonical nonzero UUIDs. Rejects all query strings including bare question marks, request bodies and Idempotency-Key. Reads persisted state without network or filesystem work or queueing. A completed operation requires a nonzero completed_file_id and recorded_at; every other state has null completed_file_id. execution_allowed remains false in every state.
+      responses:
+        '200':
+          description: Persisted operation view; no physical execution grant
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedOrganizationView'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, operation or original receipt not found
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Frozen organization material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Organization service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organization-commands/{command_key}:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+    get:
+      operationId: readUntrackedOrganizationReceipt
+      description: Current owner administrator Cookie session only; no Token or foreign-owner grants. Scope and file IDs must be canonical nonzero UUIDs. Rejects all query strings including bare question marks, request bodies and Idempotency-Key. Restores the immutable original queued receipt, operation IDs and asynchronous job by original command key, even after completion or subsequent configuration changes. Does not execute a command or perform network or filesystem work. execution_allowed is always false.
+      responses:
+        '200':
+          description: Immutable original queued receipt; no physical execution grant
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedOrganizationReceipt'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, operation or original receipt not found
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Frozen organization material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Organization service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      operationId: requestUntrackedReview
+      description: Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. A single canonical Idempotency-Key and an exact JSON object of at most 4095 bytes are required. A zero TMDB ID requests an automatic suggestion; a positive ID expresses typed identity and must match the target root media type. The durable original request and job are returned without granting execution.
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/UntrackedReviewInput'}
+      responses:
+        '202':
+          description: Original durable review request and job; execution remains unauthorized
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedReviewRequestReceipt'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, review or original receipt unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Review material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Review service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/reviews/{review_id}:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: review_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readUntrackedReview
+      description: Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. GET accepts no body or Idempotency-Key and performs no command, network or filesystem work. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps.
+      responses:
+        '200':
+          description: Persisted review or immutable receipt; execution remains unauthorized
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedReviewView'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, review or original receipt unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Review material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Review service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/review-commands/{command_key}:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+    get:
+      operationId: readUntrackedReviewRequestReceipt
+      description: Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. GET accepts no body or Idempotency-Key and performs no command, network or filesystem work. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps.
+      responses:
+        '200':
+          description: Persisted review or immutable receipt; execution remains unauthorized
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedReviewRequestReceipt'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, review or original receipt unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Review material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Review service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmations:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      operationId: confirmUntrackedFile
+      description: Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. A single canonical Idempotency-Key and an exact JSON object of at most 4095 bytes are required. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps.
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/UntrackedConfirmationInput'}
+      responses:
+        '200':
+          description: Persisted review or immutable receipt; execution remains unauthorized
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedConfirmationReceipt'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, review or original receipt unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Review material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Review service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmation-commands/{command_key}:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+    get:
+      operationId: readUntrackedConfirmationReceipt
+      description: Current owner administrator Cookie session only; members and API Tokens are forbidden. No query string, including a bare question mark, is accepted. GET accepts no body or Idempotency-Key and performs no command, network or filesystem work. Confirmation records frozen intent only; confirmed_pending_organization never means organization or import succeeded. Historical reads preserve the original material and timestamps.
+      responses:
+        '200':
+          description: Persisted review or immutable receipt; execution remains unauthorized
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedConfirmationReceipt'}
+        '400':
+          description: Invalid request
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Authentication required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Owner administrator Cookie session required
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Scope, file, review or original receipt unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Review material is stale or command conflicts
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Review service temporarily unavailable
+          headers:
+            Cache-Control:
+              schema: {type: string, enum: ['private, no-store']}
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readUntrackedScope
+      summary: Read an explicitly selected untracked directory scope
+      description: Current active owner administrator session only. Saving records versioned intent and a persistent review boundary only; it performs no discovery or filesystem work in this request. The owned background runtime may monitor enabled scopes and enqueue observation-only sweeps asynchronously. Observations never publish import facts or authorize organization.
+      responses:
+        '200':
+          description: Saved configuration intent or original immutable receipt; execution remains unauthorized
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedScopeCurrent'}
+        '400':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+    put:
+      operationId: saveUntrackedScope
+      summary: Save directory discovery intent without granting import authority
+      description: Current active owner administrator session only. Saving records versioned intent and a persistent review boundary only; it performs no discovery or filesystem work in this request. The owned background runtime may monitor enabled scopes and enqueue observation-only sweeps asynchronously. Observations never publish import facts or authorize organization.
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/UntrackedScopeInput'}
+      responses:
+        '200':
+          description: Saved configuration intent or original immutable receipt; execution remains unauthorized
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedScopeReceipt'}
+        '400':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/library/untracked-scopes/{scope_id}/commands/{command_key}:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}}
+    get:
+      operationId: readUntrackedScopeReceipt
+      summary: Recover an original directory scope configuration receipt
+      description: Current active owner administrator session only. Saving records versioned intent and a persistent review boundary only; it performs no discovery or filesystem work in this request. The owned background runtime may monitor enabled scopes and enqueue observation-only sweeps asynchronously. Observations never publish import facts or authorize organization.
+      responses:
+        '200':
+          description: Saved configuration intent or original immutable receipt; execution remains unauthorized
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedScopeReceipt'}
+        '400':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '401':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '404':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '409':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Configuration request rejected or unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
   /api/v1/indexers/{indexer_id}/checkin/config:
     parameters:
       - {name: indexer_id, in: path, required: true, schema: {type: string, format: uuid}}
@@ -5333,6 +6407,226 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/person-follows:
+    get:
+      operationId: listPersonFollows
+      summary: List only this account's saved actor and director follow configurations
+      responses:
+        '200':
+          description: Current account configurations, without creating subscriptions or tasks
+          content:
+            application/json:
+              schema: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/PersonFollowConfiguration'}}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/person-follows/{id}:
+    parameters:
+      - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: getPersonFollow
+      summary: Read only this account's current follow configuration
+      responses:
+        '200':
+          description: Saved configuration, not proof of an external identity or subscription
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PersonFollowConfiguration'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+    put:
+      operationId: savePersonFollow
+      summary: Save versioned follow intent without requesting metadata or creating an execution task
+      parameters:
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expected_version, settings]
+              properties:
+                expected_version: {type: integer, format: int64, minimum: 0}
+                settings: {$ref: '#/components/schemas/PersonFollowSettings'}
+      responses:
+        '200':
+          description: Immutable original-key configuration receipt; saving does not establish or complete a subscription
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PersonFollowReceipt'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/person-follows/receipts/{key}:
+    get:
+      operationId: getPersonFollowReceipt
+      summary: Recover only the current account's original configuration receipt without metadata access
+      parameters:
+        - {name: key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160}}
+      responses:
+        '200':
+          description: Historical configuration receipt, independent of current target availability
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PersonFollowReceipt'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/web-push/config:
+    get:
+      operationId: getWebPushConfiguration
+      summary: Read this deployment's browser application server key after current account authorization
+      responses:
+        '200':
+          description: Public VAPID identity, or disabled with empty identity
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/WebPushConfiguration'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/web-push/devices:
+    get:
+      operationId: listWebPushDevices
+      summary: List only the current account's latest 100 device summaries; contains no delivery capabilities
+      responses:
+        '200':
+          description: Account-scoped device summaries
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/WebPushDevice'}}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+    post:
+      operationId: registerWebPushDevice
+      summary: Persist this account's explicitly authorized browser subscription; does not send a push
+      parameters:
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [id, vapid_version, subscription]
+              properties:
+                id: {type: string, format: uuid}
+                vapid_version: {type: string, minLength: 64, maxLength: 64}
+                subscription:
+                  type: object
+                  additionalProperties: false
+                  required: [endpoint, p256dh, auth]
+                  properties:
+                    endpoint: {type: string, maxLength: 4096}
+                    p256dh: {type: string, maxLength: 87}
+                    auth: {type: string, maxLength: 22}
+      responses:
+        '201':
+          description: Original registration receipt, not delivery confirmation
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/WebPushDevice'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/web-push/devices/{id}/revocation:
+    put:
+      operationId: revokeWebPushDevice
+      summary: Permanently revoke one of this account's devices; in-flight sends may finish
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expected_updated_at]
+              properties:
+                expected_updated_at: {type: string, format: date-time}
+      responses:
+        '200':
+          description: Original revocation receipt
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/WebPushDevice'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/web-push/receipts/{key}:
+    get:
+      operationId: getWebPushReceipt
+      summary: Recover only this account's original device-command receipt without accessing a push service
+      parameters:
+        - {name: key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160}}
+      responses:
+        '200':
+          description: Historical command receipt, not a current device observation
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/WebPushDevice'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/notification-channels/{id}/test:
+    post:
+      operationId: queueNotificationTest
+      summary: Queue one administrator test to the original channel; queued does not mean delivered
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [expected_updated_at]
+              properties:
+                expected_updated_at: {type: string, format: date-time}
+      responses:
+        '202':
+          description: Original queued test receipt; retry the same command key to restore without creating another delivery
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [channel_id, event_id, status]
+                properties:
+                  channel_id: {type: string, format: uuid}
+                  event_id: {type: string, format: uuid}
+                  status: {type: string, enum: [queued]}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+
   /api/v1/notification-channels/{id}/replacement:
     post:
       operationId: replaceNotificationChannel
@@ -5431,14 +6725,84 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /api/v1/download-clients/{id}/seeding/config:
+    parameters:
+      - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readSeedingConfig
+      summary: Read downloader seeding eligibility configuration
+      description: Current administrator Cookie session only. Database read; no native calls or tasks. All responses are private, no-store.
+      responses:
+        '200':
+          description: Current configuration or explicit null
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SeedingConfigRead'}
+        default:
+          description: Authentication, validation, missing client or storage failure
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+    put:
+      operationId: saveSeedingConfig
+      summary: Save versioned keep-data seeding eligibility rules
+      description: Binds the current downloader timestamp and configuration digest. Original-key recovery precedes current-version validation. Saving atomically persists rules, audit, event and receipt without scheduling removal or performing network or file I/O. All responses are private, no-store.
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 128, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SeedingConfigInput'}
+      responses:
+        '200':
+          description: Original saved configuration result; persistence only
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SeedingConfigReceipt'}
+        default:
+          description: Authentication, validation, version conflict or storage failure
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/download-clients/{id}/seeding/config/commands/{command_key}:
+    get:
+      operationId: readSeedingConfigReceipt
+      summary: Read an administrator-scoped original seeding configuration receipt
+      description: Read-only original result for this account and downloader. Does not read the native client, retry a save or schedule removal. All responses are private, no-store.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 128, pattern: '^[A-Za-z0-9:_.-]+$'}}
+      responses:
+        '200':
+          description: Original saved configuration result
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SeedingConfigReceipt'}
+        default:
+          description: Authentication, validation, missing receipt or storage failure
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+
 components:
   parameters:
+    MediaRequestKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string, minLength: 1, maxLength: 80, pattern: '^[A-Za-z0-9:_.-]+$'}
     IdempotencyKey:
       name: Idempotency-Key
       in: header
       required: true
       schema: {type: string, minLength: 1, maxLength: 160}
   responses:
+    MediaRequestFailure:
+      description: Cookie session required (401/403); invalid input (400/422), missing record (404), version or original-key conflict (409), pending limit (429), or unverifiable storage/metadata result (503). All responses are private and no-store.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/ErrorResponse'}
     PolicyBadRequest:
       description: Invalid policy command or draft rules
       content:
@@ -5470,6 +6834,236 @@ components:
         application/json:
           schema: {$ref: '#/components/schemas/ErrorResponse'}
   schemas:
+    PersonFollowBindings:
+      type: object
+      additionalProperties: false
+      required: [indexer_ids]
+      properties:
+        indexer_ids:
+          type: array
+          maxItems: 64
+          uniqueItems: true
+          items: {type: string, format: uuid}
+        downloader_id: {type: string, format: uuid}
+    PersonFollowSettings:
+      type: object
+      additionalProperties: false
+      required: [person_id, role, enabled, min_release_date, interval_minutes, quality_policy_id, quality_policy_revision]
+      properties:
+        person_id: {type: integer, format: int64, minimum: 1}
+        role: {type: string, enum: [actor, director]}
+        enabled: {type: boolean}
+        min_release_date: {type: string, format: date}
+        interval_minutes: {type: integer, minimum: 15, maximum: 10080}
+        movie_root_id: {type: string, format: uuid}
+        tv_root_id: {type: string, format: uuid}
+        quality_policy_id: {type: string, minLength: 1, maxLength: 128}
+        quality_policy_revision: {type: integer, format: int64, minimum: 1}
+        bindings:
+          allOf:
+            - {$ref: '#/components/schemas/PersonFollowBindings'}
+          description: Omission preserves saved bindings; an empty indexer list clears them; a nonempty list requires a downloader
+    PersonFollowConfiguration:
+      type: object
+      additionalProperties: false
+      required: [id, owner_id, version, settings, created_at, updated_at]
+      properties:
+        id: {type: string, format: uuid}
+        owner_id: {type: string, format: uuid}
+        version: {type: integer, format: int64, minimum: 1}
+        settings: {$ref: '#/components/schemas/PersonFollowSettings'}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+    PersonFollowReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, config]
+      properties:
+        command_key: {type: string}
+        config: {$ref: '#/components/schemas/PersonFollowConfiguration'}
+    WebPushConfiguration:
+      type: object
+      required: [enabled, version, public_key]
+      properties:
+        enabled: {type: boolean}
+        version: {type: string}
+        public_key: {type: string}
+    WebPushDevice:
+      type: object
+      required: [id, status, created_at, updated_at]
+      properties:
+        id: {type: string, format: uuid}
+        status: {type: string}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+    AuditTimelineEntry:
+      type: object
+      additionalProperties: false
+      required: [id, actor_type, actor_id, action, target_type, target_id, created_at]
+      properties:
+        id: {type: string, format: uuid}
+        actor_type: {type: string}
+        actor_id: {type: string}
+        action: {type: string}
+        target_type: {type: string}
+        target_id: {type: string}
+        created_at: {type: string, format: date-time}
+    AuditTimelinePage:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/AuditTimelineEntry'}
+        next_cursor: {type: string}
+    BangumiCalendarResponse:
+      type: object
+      required: [days, observed_at, execution_allowed]
+      properties:
+        days:
+          type: array
+          maxItems: 7
+          items: {$ref: '#/components/schemas/BangumiCalendarDay'}
+        observed_at: {type: string, format: date-time}
+        execution_allowed: {type: boolean, enum: [false]}
+    BangumiCalendarDay:
+      type: object
+      required: [weekday, name, items]
+      properties:
+        weekday: {type: integer, minimum: 1, maximum: 7}
+        name: {type: string}
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/BangumiCalendarItem'}
+    BangumiCalendarItem:
+      type: object
+      required: [bangumi_id, title, original_title, first_air_date, poster_url, rating]
+      properties:
+        bangumi_id: {type: string, pattern: '^[1-9][0-9]*$', description: Bangumi subject identity only}
+        title: {type: string}
+        original_title: {type: string}
+        first_air_date: {type: string, nullable: true, description: Native YYYY-MM-DD first broadcast date; not an episode date}
+        poster_url: {type: string, nullable: true}
+        rating: {type: number, format: double, minimum: 0, maximum: 10, nullable: true}
+    CookieCloudConnectionInput:
+      type: object
+      additionalProperties: false
+      required: [server_url, user_key, password]
+      properties:
+        server_url: {type: string, minLength: 1, maxLength: 2048, writeOnly: true}
+        user_key: {type: string, minLength: 1, maxLength: 128, pattern: '^[A-Za-z0-9_-]+$', writeOnly: true}
+        password: {type: string, minLength: 1, maxLength: 4096, writeOnly: true}
+    CookieCloudConfigInput:
+      type: object
+      additionalProperties: false
+      required: [expected_version, enabled, interval_seconds]
+      properties:
+        expected_version: {type: integer, format: int64, minimum: 0, maximum: 9223372036854775806}
+        enabled: {type: boolean}
+        interval_seconds: {type: integer, format: int32, minimum: 60, maximum: 86400}
+        connection: {$ref: '#/components/schemas/CookieCloudConnectionInput'}
+    SeedingRule:
+      type: object
+      additionalProperties: false
+      required: [mode, delete_files]
+      properties:
+        mode: {type: string, enum: [any, all]}
+        delete_files: {type: boolean, enum: [false], description: Removal preserves all downloaded and organized files}
+        min_seeding_seconds: {type: integer, format: int64, minimum: 1, maximum: 315360000}
+        min_share_ratio: {type: number, format: double, minimum: 0, exclusiveMinimum: true, maximum: 1000000}
+        low_free_bytes: {type: integer, format: int64, minimum: 1, description: Uses only native free space bound to the exact task download path}
+    SeedingConfigInput:
+      type: object
+      additionalProperties: false
+      required: [expected_version, expected_client_updated_at, enabled, interval_seconds, rule]
+      properties:
+        expected_version: {type: integer, format: int64, minimum: 0}
+        expected_client_updated_at: {type: string, format: date-time, description: Current timestamp from downloader configuration; compared as an instant}
+        enabled: {type: boolean}
+        interval_seconds: {type: integer, format: int32, minimum: 60, maximum: 86400}
+        rule: {$ref: '#/components/schemas/SeedingRule'}
+    SeedingConfig:
+      type: object
+      additionalProperties: false
+      required: [client_id, owner_id, version, client_updated_at, enabled, interval_seconds, rule, updated_at]
+      properties:
+        client_id: {type: string, format: uuid}
+        owner_id: {type: string, format: uuid}
+        version: {type: integer, format: int64, minimum: 1}
+        client_updated_at: {type: string, format: date-time}
+        enabled: {type: boolean}
+        interval_seconds: {type: integer, format: int32, minimum: 60, maximum: 86400}
+        rule: {$ref: '#/components/schemas/SeedingRule'}
+        updated_at: {type: string, format: date-time}
+    SeedingConfigRead:
+      type: object
+      additionalProperties: false
+      required: [config]
+      properties:
+        config: {allOf: [{$ref: '#/components/schemas/SeedingConfig'}], nullable: true}
+    SeedingConfigReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, config]
+      properties:
+        command_key: {type: string}
+        config: {$ref: '#/components/schemas/SeedingConfig'}
+    CookieCloudConfig:
+      type: object
+      additionalProperties: false
+      required: [owner_id, version, enabled, interval_seconds, server_origin, has_connection, updated_at]
+      properties:
+        owner_id: {type: string, format: uuid}
+        version: {type: integer, format: int64, minimum: 1}
+        enabled: {type: boolean}
+        interval_seconds: {type: integer, format: int32, minimum: 60, maximum: 86400}
+        server_origin: {type: string, description: Safe scheme and host only; no path, user info, query or fragment}
+        has_connection: {type: boolean}
+        updated_at: {type: string, format: date-time}
+    CookieCloudConfigReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, config]
+      properties:
+        command_key: {type: string}
+        config: {$ref: '#/components/schemas/CookieCloudConfig'}
+    MediaRequestIntent:
+      type: object
+      additionalProperties: false
+      required: [media_type, tmdb_id, seasons, include_specials]
+      properties:
+        media_type: {type: string, enum: [movie, tv]}
+        tmdb_id: {type: integer, format: int64, minimum: 1, maximum: 9007199254740991}
+        seasons: {type: array, maxItems: 64, uniqueItems: true, items: {type: integer, minimum: 0, maximum: 999}}
+        include_specials: {type: boolean}
+    MediaRequestDetails:
+      type: object
+      required: [id, owner_id, intent, state, version, created_at, updated_at, reason]
+      properties:
+        id: {type: string, format: uuid}
+        owner_id: {type: string, format: uuid}
+        intent: {$ref: '#/components/schemas/MediaRequestIntent'}
+        state: {type: string, enum: [pending, approved, rejected, withdrawn]}
+        version: {type: integer, format: int64, minimum: 1, maximum: 9007199254740991}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+        decided_by: {type: string, format: uuid}
+        decided_at: {type: string, format: date-time}
+        subscription_id: {type: string, format: uuid}
+        reason: {type: string}
+    MediaRequestCommandReceipt:
+      type: object
+      required: [command_key, request]
+      properties:
+        command_key: {type: string}
+        request: {$ref: '#/components/schemas/MediaRequestDetails'}
+    MediaRequestApprovalResult:
+      type: object
+      required: [request_id, subscription]
+      properties:
+        request_id: {type: string, format: uuid}
+        subscription: {$ref: '#/components/schemas/SubscriptionDetails'}
     DoubanSyncBindings:
       type: object
       additionalProperties: false
@@ -5530,6 +7124,257 @@ components:
         config_version: {type: integer, format: int64, minimum: 1}
         source_version: {type: integer, format: int64, minimum: 1}
         restore_acknowledged: {type: boolean}
+    UntrackedScopeInput:
+      type: object
+      additionalProperties: false
+      required: [enabled, expected_version, client_id, expected_client_version, remote_prefix, target_root_id, expected_root_generation]
+      properties:
+        enabled: {type: boolean}
+        expected_version: {type: integer, format: int64, minimum: 0, maximum: 9223372036854775806}
+        client_id: {type: string, format: uuid}
+        expected_client_version: {type: string, format: date-time}
+        remote_prefix: {type: string, minLength: 1, description: Exact canonical remote prefix of a configured downloader mapping; never an arbitrary local path}
+        target_root_id: {type: string, format: uuid}
+        expected_root_generation: {type: integer, format: int64, minimum: 1}
+    UntrackedScopeIdentity:
+      type: object
+      additionalProperties: false
+      required: [device, inode]
+      properties:
+        device: {type: integer, format: int64, minimum: 0}
+        inode: {type: integer, format: int64, minimum: 0}
+    UntrackedScope:
+      type: object
+      additionalProperties: false
+      description: Safe owner-only saved intent. Source and target physical baselines are independent. Disabling monitoring does not remove the historical review boundary.
+      required: [id, owner_id, enabled, version, client_id, client_version, client_stamp, remote_prefix, local_root, source_identity, target_root_id, target_root_path, target_root_generation, target_media_type, target_marker, target_baseline_scan_id, target_identity, created_at, updated_at]
+      properties:
+        id: {type: string, format: uuid}
+        owner_id: {type: string, format: uuid}
+        enabled: {type: boolean}
+        version: {type: integer, format: int64, minimum: 1}
+        client_id: {type: string, format: uuid}
+        client_version: {type: string, format: date-time}
+        client_stamp: {type: string, minLength: 1, description: Digest only; no endpoint or credential plaintext}
+        remote_prefix: {type: string}
+        local_root: {type: string}
+        source_identity: {$ref: '#/components/schemas/UntrackedScopeIdentity'}
+        target_root_id: {type: string, format: uuid}
+        target_root_path: {type: string}
+        target_root_generation: {type: integer, format: int64, minimum: 1}
+        target_media_type: {type: string}
+        target_marker: {type: string}
+        target_baseline_scan_id: {type: string, format: uuid}
+        target_identity: {$ref: '#/components/schemas/UntrackedScopeIdentity'}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+    UntrackedDiscoveryObservation:
+      type: object
+      additionalProperties: false
+      required: [id, scope_id, scope_version, revision, relative_path, device, inode, size, mtime, first_observed_at, last_observed_at, observations]
+      properties:
+        id: {type: string, format: uuid}
+        scope_id: {type: string, format: uuid}
+        scope_version: {type: integer, format: int64, minimum: 1, description: Configuration version under which this observation was recorded}
+        revision: {type: integer, format: int64, minimum: 1}
+        relative_path: {type: string}
+        device: {type: integer, format: int64, minimum: 0}
+        inode: {type: integer, format: int64, minimum: 1}
+        size: {type: integer, format: int64, minimum: 0}
+        mtime: {type: integer, format: int64}
+        first_observed_at: {type: string, format: date-time}
+        last_observed_at: {type: string, format: date-time}
+        observations: {type: integer, format: int64, minimum: 1, description: Distinct execution observations; never proof of write completion}
+    UntrackedDiscoveryList:
+      type: object
+      additionalProperties: false
+      required: [items, next_cursor, has_more, inventory_complete, execution_allowed]
+      properties:
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/UntrackedDiscoveryObservation'}
+        next_cursor: {type: string}
+        has_more: {type: boolean, description: More persisted query rows, independent of physical directory coverage}
+        inventory_complete: {type: boolean, enum: [false]}
+        execution_allowed: {type: boolean, enum: [false]}
+    UntrackedScopeCurrent:
+      type: object
+      additionalProperties: false
+      required: [config]
+      properties:
+        config:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/UntrackedScope'}
+    UntrackedScopeReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, scope, execution_allowed]
+      properties:
+        command_key: {type: string}
+        scope: {$ref: '#/components/schemas/UntrackedScope'}
+        execution_allowed: {type: boolean, enum: [false], description: Saving a scope never authorizes organization or import}
+    UntrackedOrganizationInput:
+      type: object
+      additionalProperties: false
+      required: [confirmation_id]
+      properties:
+        confirmation_id: {type: string, format: uuid, description: Canonical nonzero UUID of the immutable confirmation; no paths or action overrides}
+    UntrackedOrganizationOperation:
+      type: object
+      additionalProperties: false
+      description: Frozen original intent and controlled asynchronous job identity; these twelve fields never change with execution progress
+      required: [id, actor_id, scope_id, file_id, confirmation_id, plan_id, step_id, job_id, scope_version, file_revision, material_hash, created_at]
+      properties:
+        id: {type: string, format: uuid}
+        actor_id: {type: string, format: uuid}
+        scope_id: {type: string, format: uuid}
+        file_id: {type: string, format: uuid}
+        confirmation_id: {type: string, format: uuid}
+        plan_id: {type: string, format: uuid}
+        step_id: {type: string, format: uuid}
+        job_id: {type: string, format: uuid}
+        scope_version: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        file_revision: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        material_hash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        created_at: {type: string, format: date-time}
+    UntrackedOrganizationReceipt:
+      type: object
+      additionalProperties: false
+      description: Immutable original queued receipt; use the separate operation view for progress. Queued means a controlled task was accepted, never physical execution permission.
+      required: [command_key, operation, state, execution_allowed]
+      properties:
+        command_key: {type: string, minLength: 1, maxLength: 160, pattern: '^[A-Za-z0-9:_.-]+$'}
+        operation: {$ref: '#/components/schemas/UntrackedOrganizationOperation'}
+        state: {type: string, enum: [queued], x-go-type: string}
+        execution_allowed: {type: boolean, enum: [false]}
+    UntrackedOrganizationView:
+      type: object
+      additionalProperties: false
+      required: [operation, state, review_required, completed_file_id, recorded_at, execution_allowed]
+      properties:
+        operation: {$ref: '#/components/schemas/UntrackedOrganizationOperation'}
+        state: {type: string, enum: [queued, running, completed, review_required, failed], x-go-type: string}
+        review_required: {type: boolean, description: True exactly when state is review_required}
+        completed_file_id: {type: string, format: uuid, nullable: true, description: Nonzero library file UUID required for completed; null in every other state}
+        recorded_at: {type: string, format: date-time, nullable: true, description: Persisted observation time at or after operation creation; required for completed and otherwise nullable}
+        execution_allowed: {type: boolean, enum: [false]}
+    UntrackedReviewInput:
+      type: object
+      additionalProperties: false
+      required: [scope_version, file_revision, media_type, tmdb_id]
+      properties:
+        scope_version: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        file_revision: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        media_type: {type: string, enum: [movie, tv], x-go-type: string, description: Must agree with the selected target root type}
+        tmdb_id: {type: integer, format: int64, minimum: 0, description: Zero requests an automatic suggestion; a positive ID is explicit typed identity}
+    UntrackedReviewRequest:
+      type: object
+      additionalProperties: false
+      required: [id, scope_id, file_id, actor_id, input, job_id, created_at]
+      properties:
+        id: {type: string, format: uuid}
+        scope_id: {type: string, format: uuid}
+        file_id: {type: string, format: uuid}
+        actor_id: {type: string, format: uuid}
+        input: {$ref: '#/components/schemas/UntrackedReviewInput'}
+        job_id: {type: string, format: uuid}
+        created_at: {type: string, format: date-time}
+    UntrackedReviewRequestReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, request, execution_allowed]
+      properties:
+        command_key: {type: string}
+        request: {$ref: '#/components/schemas/UntrackedReviewRequest'}
+        execution_allowed: {type: boolean, enum: [false]}
+    UntrackedReviewUnit:
+      type: object
+      additionalProperties: false
+      required: [unit_key, tmdb_episode_id, season, episode, air_date]
+      properties:
+        unit_key: {type: string}
+        tmdb_episode_id: {type: integer, format: int64, minimum: 0}
+        season: {type: integer, minimum: 0}
+        episode: {type: integer, minimum: 0}
+        air_date: {type: string, format: date-time, nullable: true, description: Real air date only; null when unknown or not applicable}
+    UntrackedReviewCandidate:
+      type: object
+      additionalProperties: false
+      required: [key, namespace, tmdb_id, title, original_title, year, units]
+      properties:
+        key: {type: string, pattern: '^tmdb\.(movie|tv):[1-9][0-9]*$', description: Canonical positive int64 typed TMDB identity}
+        namespace: {type: string, enum: [tmdb.movie, tmdb.tv], x-go-type: string}
+        tmdb_id: {type: integer, format: int64, minimum: 1}
+        title: {type: string}
+        original_title: {type: string}
+        year: {type: integer}
+        units:
+          type: array
+          items: {$ref: '#/components/schemas/UntrackedReviewUnit'}
+    UntrackedReviewEvidence:
+      type: object
+      additionalProperties: false
+      required: [parser_version, parsed_title, parsed_year, selection, complete, reason, candidate]
+      properties:
+        parser_version: {type: string}
+        parsed_title: {type: string}
+        parsed_year: {type: integer}
+        selection: {type: string, enum: [automatic, explicit], x-go-type: string}
+        complete: {type: boolean}
+        reason: {type: string}
+        candidate:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/UntrackedReviewCandidate'}
+    UntrackedReviewView:
+      type: object
+      additionalProperties: false
+      required: [request, state, evidence, material_hash, recorded_at, stale, execution_allowed]
+      properties:
+        request: {$ref: '#/components/schemas/UntrackedReviewRequest'}
+        state: {type: string, enum: [queued, running, ready, review_required, dead], x-go-type: string}
+        evidence:
+          nullable: true
+          allOf:
+            - {$ref: '#/components/schemas/UntrackedReviewEvidence'}
+        material_hash: {type: string, pattern: '^([0-9a-f]{64})?$', description: Empty before evidence is recorded; otherwise the frozen material digest}
+        recorded_at: {type: string, format: date-time, nullable: true}
+        stale: {type: boolean}
+        execution_allowed: {type: boolean, enum: [false]}
+    UntrackedConfirmationInput:
+      type: object
+      additionalProperties: false
+      required: [review_id, material_hash, scope_version, file_revision, candidate_key, action, target_relative_path]
+      properties:
+        review_id: {type: string, format: uuid}
+        material_hash: {type: string, pattern: '^[0-9a-f]{64}$'}
+        scope_version: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        file_revision: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        candidate_key: {type: string, pattern: '^tmdb\.(movie|tv):[1-9][0-9]*$', description: Canonical positive int64 typed TMDB identity}
+        action: {type: string, enum: [hardlink, copy, reflink, move], x-go-type: string}
+        target_relative_path: {type: string, minLength: 1, maxLength: 4096, description: 'Clean relative video file path; no absolute path, backslash, NUL, dot segments or parent escape'}
+    UntrackedConfirmationMaterial:
+      type: object
+      additionalProperties: false
+      required: [id, actor_id, scope, file, review, input, created_at]
+      properties:
+        id: {type: string, format: uuid}
+        actor_id: {type: string, format: uuid}
+        scope: {$ref: '#/components/schemas/UntrackedScope'}
+        file: {$ref: '#/components/schemas/UntrackedDiscoveryObservation'}
+        review: {$ref: '#/components/schemas/UntrackedReviewView'}
+        input: {$ref: '#/components/schemas/UntrackedConfirmationInput'}
+        created_at: {type: string, format: date-time}
+    UntrackedConfirmationReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_key, material, state, execution_allowed]
+      properties:
+        command_key: {type: string}
+        material: {$ref: '#/components/schemas/UntrackedConfirmationMaterial'}
+        state: {type: string, enum: [confirmed_pending_organization], x-go-type: string}
+        execution_allowed: {type: boolean, enum: [false]}
     SiteCheckinConfigInput:
       type: object
       additionalProperties: false
@@ -5857,13 +7702,15 @@ components:
       properties:
         expected_updated_at: {type: string, format: date-time}
         name: {type: string, minLength: 1, maxLength: 120}
-        channel_type: {type: string, enum: [webhook, telegram]}
+        channel_type: {type: string, enum: [webhook, telegram, wechat, dingtalk, feishu, bark]}
         accept_old_pending: {type: boolean, description: Explicit acknowledgement that historical waiting deliveries are not moved to the new channel}
         config:
           type: object
           writeOnly: true
           additionalProperties: false
           properties:
+            image_url: {type: string, maxLength: 1024, writeOnly: true, description: Optional public TMDB w342 cover for WeChat, DingTalk or Bark; no application-side image fetch}
+            image_key: {type: string, maxLength: 256, writeOnly: true, description: Optional existing Feishu image key; no image upload}
             url: {type: string, maxLength: 4000, writeOnly: true}
             secret: {type: string, maxLength: 1000, writeOnly: true}
             bot_token: {type: string, maxLength: 1000, writeOnly: true}
@@ -5896,11 +7743,13 @@ components:
           maxLength: 120
         channel_type:
           type: string
-          enum: [webhook, telegram]
+          enum: [webhook, telegram, wechat, dingtalk, feishu, bark]
         config:
           type: object
           writeOnly: true
           properties:
+            image_url: {type: string, maxLength: 1024, writeOnly: true, description: Optional public TMDB w342 cover for WeChat, DingTalk or Bark; no application-side image fetch}
+            image_key: {type: string, maxLength: 256, writeOnly: true, description: Optional existing Feishu image key; no image upload}
             url:
               type: string
               writeOnly: true
@@ -7224,6 +9073,80 @@ components:
           type: string
           format: uri
           description: Optional version-bound trusted TMDB image projection; never an arbitrary stored URL.
+    DownloadGlobalRateValues:
+      type: object
+      required: [observed_at, download_bytes_per_second, upload_bytes_per_second]
+      properties:
+        observed_at: {type: string, format: date-time}
+        download_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+        upload_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+    DownloadGlobalRateClient:
+      type: object
+      required: [id, name, client_type, state, failure_code, observed_at, download_bytes_per_second, upload_bytes_per_second]
+      properties:
+        id: {type: string, format: uuid}
+        name: {type: string}
+        client_type: {type: string, enum: [qbittorrent, transmission]}
+        state: {type: string, enum: [disabled, unobserved, configuration_changed, unknown, failed, stale, observed]}
+        failure_code: {type: string, enum: ['', unavailable, auth_required, timeout, blocked, bad_response, rate_limited]}
+        observed_at: {type: string, format: date-time, nullable: true}
+        download_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+        upload_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+        last_good: {$ref: '#/components/schemas/DownloadGlobalRateValues'}
+    DownloadGlobalRatePoint:
+      type: object
+      required: [at, download_bytes_per_second, upload_bytes_per_second, download_known_clients, upload_known_clients]
+      properties:
+        at: {type: string, format: date-time}
+        download_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+        upload_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+        download_known_clients: {type: integer, minimum: 0}
+        upload_known_clients: {type: integer, minimum: 0}
+    NamingTemplates:
+      type: object
+      additionalProperties: false
+      required: [movie_template, episode_template]
+      properties:
+        movie_template: {type: string, maxLength: 4096, description: 'Empty uses canonical movie naming for new plans.'}
+        episode_template: {type: string, maxLength: 4096, description: 'Empty uses canonical episode naming for new plans.'}
+    NamingPreviewRequest:
+      type: object
+      additionalProperties: false
+      required: [media_type, title, extension]
+      properties:
+        media_type: {type: string, enum: [movie, tv]}
+        title: {type: string, minLength: 1, maxLength: 1024}
+        extension: {type: string, minLength: 1, maxLength: 16}
+        year: {type: integer, minimum: 1, maximum: 9999}
+        season: {type: integer, minimum: 0, maximum: 999}
+        episode: {type: integer, minimum: 1, maximum: 9999}
+        tmdb_id: {type: integer, format: int64, minimum: 1}
+        imdb_id: {type: string, maxLength: 32}
+        release_title: {type: string, maxLength: 1024}
+        templates: {$ref: '#/components/schemas/NamingTemplates'}
+    NamingPreviewResult:
+      type: object
+      required: [relative_path, configuration_version, draft, execution_allowed]
+      properties:
+        relative_path: {type: string}
+        configuration_version: {type: integer, format: int64, minimum: 0}
+        draft: {type: boolean}
+        execution_allowed: {type: boolean, enum: [false]}
+
+    DownloadGlobalRatesOverview:
+      type: object
+      required: [enabled, observed_at, freshness_seconds, download_bytes_per_second, upload_bytes_per_second, download_known_clients, upload_known_clients, clients, series]
+      properties:
+        enabled: {type: boolean}
+        observed_at: {type: string, format: date-time}
+        freshness_seconds: {type: integer, enum: [45]}
+        download_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+        upload_bytes_per_second: {type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$'}
+        download_known_clients: {type: integer, minimum: 0}
+        upload_known_clients: {type: integer, minimum: 0}
+        clients: {type: array, items: {$ref: '#/components/schemas/DownloadGlobalRateClient'}}
+        series: {type: array, maxItems: 62, items: {$ref: '#/components/schemas/DownloadGlobalRatePoint'}}
+
     LibraryOverview:
       type: object
       required: [counts, roots, recent, observed_at]
@@ -7328,6 +9251,20 @@ components:
           additionalProperties: {type: integer, minimum: 0, maximum: 100000}
         reject_terms: {type: array, maxItems: 100, uniqueItems: true, items: {type: string, minLength: 1, maxLength: 128}}
         reject_groups: {type: array, maxItems: 100, uniqueItems: true, items: {type: string, minLength: 1, maxLength: 128}}
+        custom_words:
+          type: array
+          maxItems: 64
+          description: Literal candidate-title gates and ranking preferences; quality facts and cutoff stay unchanged. Omission or an empty list publishes no word rules.
+          items: {$ref: '#/components/schemas/QualityWordRule'}
+    QualityWordRule:
+      type: object
+      additionalProperties: false
+      required: [word, score, required, excluded]
+      properties:
+        word: {type: string, minLength: 1, maxLength: 128}
+        score: {type: integer, minimum: -1000, maximum: 1000}
+        required: {type: boolean}
+        excluded: {type: boolean}
     PolicyDocument:
       type: object
       required: [id, name, revision, rules]
@@ -7382,6 +9319,11 @@ components:
           type: string
         score:
           type: integer
+        preference_score:
+          type: integer
+          minimum: -64000
+          maximum: 64000
+          description: Candidate-title preference used for ordering, independent of quality score and cutoff.
         meets_cutoff:
           type: boolean
         score_breakdown:
@@ -7648,7 +9590,7 @@ components:
         truncated: {type: boolean}
         total_candidates: {type: integer}
         statistics_mode: {type: string, enum: [latest_persisted]}
-        sort_order: {type: string, enum: [quality_desc_seeders_desc_id_asc]}
+        sort_order: {type: string, enum: [quality_desc_seeders_desc_id_asc, quality_preference_desc_seeders_desc_id_asc]}
 
     ReleaseItemResult:
       type: object
@@ -7676,6 +9618,11 @@ components:
           type: string
         score:
           type: integer
+        preference_score:
+          type: integer
+          minimum: -64000
+          maximum: 64000
+          description: Candidate-title preference used for ordering, independent of quality score and cutoff.
 
     ReleaseSearchResponse:
       type: object
@@ -7757,7 +9704,7 @@ components:
           example: "qBittorrent Primary"
         client_type:
           type: string
-          enum: [qbittorrent, transmission]
+          enum: [qbittorrent, transmission, rtorrent]
           default: qbittorrent
         url:
           type: string
@@ -7785,7 +9732,7 @@ components:
         name: {type: string}
         client_type:
           type: string
-          enum: [qbittorrent, transmission]
+          enum: [qbittorrent, transmission, rtorrent]
         url:
           type: string
           description: Complete replacement URL, or the unchanged display URL with the original version to retain its encrypted credentials.
@@ -8018,6 +9965,30 @@ components:
         poster_url:
           type: string
 
+    TVTranslationSource:
+      type: object
+      description: Display-only fallback provenance; does not change the canonical TMDB identity, episode facts, subscriptions or frozen plans.
+      required: [provider, source_id, language, fields]
+      properties:
+        provider:
+          type: string
+          enum: [tvdb]
+        source_id:
+          type: integer
+          format: int64
+          minimum: 1
+        language:
+          type: string
+          enum: [zho]
+        fields:
+          type: array
+          minItems: 1
+          maxItems: 2
+          uniqueItems: true
+          items:
+            type: string
+            enum: [title, overview]
+
     TMDBTVDetailsResponse:
       type: object
       required: [tmdb_id, title, seasons, seasons_count, episodes_count]
@@ -8053,6 +10024,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TMDBTVSeasonItem'
+        translation_source:
+          $ref: '#/components/schemas/TVTranslationSource'
 
 
     DiscoverMediaItem:

@@ -21,7 +21,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func preparePublicUpgradePhysicalFiles(t *testing.T, f *publicUpgradeFixture) {
+func preparePublicUpgradePhysicalFiles(t *testing.T, f *publicUpgradeFixture) (string, string) {
 	t.Helper()
 	root, source := t.TempDir(), t.TempDir()
 	if e := os.WriteFile(filepath.Join(root, ".pulsemedia_root"), []byte("root"), 0600); e != nil {
@@ -51,6 +51,7 @@ func preparePublicUpgradePhysicalFiles(t *testing.T, f *publicUpgradeFixture) {
 	if e = os.WriteFile(filepath.Join(source, "Fight.Club.1999.2160p.Bluray.x265.mkv"), bytes.Repeat([]byte("v"), 120), 0600); e != nil {
 		t.Fatal(e)
 	}
+	return root, source
 }
 func publicUpgradeOrganizationState(t *testing.T, f *publicPreparationFixture, sub uuid.UUID) (*ports.MovieUpgradeOrganizationState, int) {
 	t.Helper()

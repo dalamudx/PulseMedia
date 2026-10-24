@@ -85,10 +85,10 @@ func TestContainerInstallUpgrade(t *testing.T) {
 					t.Fatal("install fixture was already migrated")
 				}
 				out := s.migrate(true)
-				if !strings.Contains(out, "schema 0 -> 83") {
-					t.Fatal("image CLI did not report a fresh schema83 installation")
+				if !strings.Contains(out, fmt.Sprintf("schema 0 -> %d", postgres.CurrentMigrationVersion)) {
+					t.Fatal("image CLI did not report a fresh current-schema installation")
 				}
-				s.version(83)
+				s.version(postgres.CurrentMigrationVersion)
 				if _, e := os.Lstat(filepath.Join(s.data, "secret.key")); !os.IsNotExist(e) {
 					t.Fatal("installer invented a master key")
 				}
@@ -102,7 +102,7 @@ func TestContainerInstallUpgrade(t *testing.T) {
 		})
 	}
 	if !t.Failed() {
-		t.Logf("CONTAINER_INSTALL_UPGRADE_PASSED arch=%s image=%s uid=10001 schema=83 empty_image_install=true no_invented_key=true image_backup=true recovery_refusals_unchanged=true credential_preserved=true isolation_history_preserved=true read_only_root=true capabilities=none network=none", arch, imageID)
+		t.Logf("CONTAINER_INSTALL_UPGRADE_PASSED arch=%s image=%s uid=10001 schema=%d empty_image_install=true no_invented_key=true image_backup=true recovery_refusals_unchanged=true credential_preserved=true isolation_history_preserved=true read_only_root=true capabilities=none network=none", arch, imageID, postgres.CurrentMigrationVersion)
 	}
 }
 
@@ -364,10 +364,10 @@ func (s *containerUpgradeSmoke) verifyUpgrade() {
 	s.put("schema82.age", archive[:len(archive)-1])
 	refusedUnchanged(recovery82...)
 	s.put("schema82.age", archive)
-	if !strings.Contains(s.migrate(true, recovery82...), "schema 82 -> 83") {
+	if !strings.Contains(s.migrate(true, recovery82...), fmt.Sprintf("schema 82 -> %d", postgres.CurrentMigrationVersion)) {
 		s.t.Fatal("image CLI did not report schema82 upgrade")
 	}
-	s.version(83)
+	s.version(postgres.CurrentMigrationVersion)
 	preserved()
 
 	// Activate a real persistent fence with its required offline directory lock.
@@ -396,13 +396,13 @@ func (s *containerUpgradeSmoke) verifyUpgrade() {
 		return b
 	}
 	isolationBefore = isolationSnapshot()
-	// Old schema82 recovery is insufficient for a repeat call on schema83.
+	// The old schema82 recovery cannot authorize a repeat call on the current schema.
 	s.migrate(false, recovery82...)
-	recovery83 := export("isolated83")
-	if !strings.Contains(s.migrate(true, recovery83...), "schema 83 -> 83") {
+	recoveryCurrent := export("isolated-current")
+	if !strings.Contains(s.migrate(true, recoveryCurrent...), fmt.Sprintf("schema %d -> %d", postgres.CurrentMigrationVersion, postgres.CurrentMigrationVersion)) {
 		s.t.Fatal("authenticated current-schema image CLI invocation failed")
 	}
-	s.version(83)
+	s.version(postgres.CurrentMigrationVersion)
 	preserved()
 	var isolated bool
 	var gotID uuid.UUID

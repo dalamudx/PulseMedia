@@ -17,7 +17,7 @@ const completeTVLease = 90 * time.Second
 
 // runCompleteTVWorker is owned and drained by App.Run. It never delegates
 // physical I/O to an unjoined goroutine or to the generic single-unit worker.
-func (a *App) runCompleteTVWorker(ctx context.Context, queue *jobs.Queue, executor ports.CompleteTVExecutor, observer ports.CompleteTVObservationRepository, recovery ports.CompleteTVRecoveryRepository, tracking ports.CompleteTVTrackingRepository, inspector ports.TorrentMetainfoInspector, scheduler ports.CompleteTVTrackingScheduler) {
+func (a *App) runCompleteTVWorker(ctx context.Context, queue *jobs.Queue, executor ports.CompleteTVExecutor, observer ports.CompleteTVObservationRepository, recovery ports.CompleteTVRecoveryRepository, tracking ports.CompleteTVTrackingRepository, inspector ports.TorrentMetainfoInspector, scheduler ports.CompleteTVTrackingScheduler, trackingWake <-chan struct{}) {
 	owner := a.idgen.NewUUID().String()
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
@@ -42,10 +42,27 @@ func (a *App) runCompleteTVWorker(ctx context.Context, queue *jobs.Queue, execut
 				continue
 			}
 		}
-		select {
-		case <-ctx.Done():
-			return
-		case <-ticker.C:
+		waiting := true
+		for waiting {
+			select {
+			case <-ctx.Done():
+				return
+			case _, open := <-trackingWake:
+				if !open {
+					trackingWake = nil
+					continue
+				}
+				job, err := queue.Claim(ctx, []string{ports.CompleteTVTrackingJobKind}, owner, completeTVLease)
+				if err != nil {
+					if ctx.Err() == nil {
+						a.logger.Error("complete TV hinted tracking claim unavailable")
+					}
+				} else if job != nil && job.Kind == ports.CompleteTVTrackingJobKind {
+					a.executeCompleteTVJob(ctx, queue, executor, nil, tracking, inspector, job)
+				}
+			case <-ticker.C:
+				waiting = false
+			}
 		}
 	}
 }
@@ -108,6 +125,9 @@ func handleCompleteTVJob(ctx context.Context, executor ports.CompleteTVExecutor,
 	case ports.CompleteTVTrackingJobKind:
 		if payload.Task == uuid.Nil {
 			return errors.New("invalid complete TV tracking task")
+		}
+		if executor == nil || tracking == nil || inspector == nil {
+			return ports.ErrUnavailable
 		}
 		_, err := executor.ObserveCompleteTVTracking(ctx, tracking, inspector, ports.CompleteTVTrackingRequest{Lease: lease, TaskID: payload.Task, OperationID: payload.Operation})
 		return err

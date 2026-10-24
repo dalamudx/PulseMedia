@@ -15,6 +15,8 @@ type NotificationChannelConfig struct {
 	Secret   string `json:"secret,omitempty"`
 	BotToken string `json:"bot_token,omitempty"`
 	ChatID   string `json:"chat_id,omitempty"`
+	ImageURL string `json:"image_url,omitempty"`
+	ImageKey string `json:"image_key,omitempty"`
 }
 type ChannelReplacementCommand struct {
 	ExpectedUpdatedAt time.Time                 `json:"expected_updated_at"`

@@ -12,48 +12,65 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/ports"
 )
 
-// RankInteractiveSearchCandidates returns independent rows sorted globally by
-// quality score descending, persisted seeders descending, then UUID ascending.
-// The persisted JSON decoder enforces parser evidence; titles are never parsed.
-// Malformed, oversized (>16 KiB), null, or incomplete/unknown quality profiles
-// receive zero score. In particular both current resolution and source evidence
-// are required; valid HDR evidence alone cannot promote an unknown profile.
-// Old source/resolution parser versions therefore remain unknown for this view.
-// Negative policy weights are rejected; negative swarm counts stay below zero
-// naturally without subtraction overflow. Stored QualityScore is always ignored.
-// No display limit applies here: Read caps only after sorting every candidate.
+// RankInteractiveSearchCandidates sorts all persisted observations before any
+// display cap. Title words are preferences, never inferred quality facts.
+// Unknown profiles retain zero for legacy display. With explicit word rules,
+// unknown evidence cannot outrank known evidence solely through a penalty.
+// Stored scores are ignored; every score belongs to this frozen policy.
 func RankInteractiveSearchCandidates(rows []ports.InteractiveSearchCandidate, policy quality.Policy) ([]ports.InteractiveSearchCandidate, error) {
 	if policy.ID == "" || len(policy.ID) > 128 || !utf8.ValidString(policy.ID) || strings.TrimSpace(policy.ID) != policy.ID || strings.ContainsFunc(policy.ID, unicode.IsControl) || policy.Revision < 1 {
 		return nil, ports.ErrRejected
 	}
-	if err := quality.ValidateRules(quality.PolicyRules{ResolutionOrder: policy.ResolutionOrder, SourceOrder: policy.SourceOrder, PreferHDR: policy.PreferHDR}); err != nil {
+	if err := quality.ValidateRules(quality.PolicyRules{ResolutionOrder: policy.ResolutionOrder, SourceOrder: policy.SourceOrder, PreferHDR: policy.PreferHDR, CustomWords: policy.CustomWords}); err != nil {
 		return nil, ports.ErrRejected
 	}
-	out := make([]ports.InteractiveSearchCandidate, len(rows))
-	for i, row := range rows {
-		out[i] = cloneInteractiveSearchCandidate(row)
-		out[i].QualityScore = 0
+	type ranked struct {
+		row   ports.InteractiveSearchCandidate
+		known bool
+	}
+	rankedRows := make([]ranked, 0, len(rows))
+	for _, row := range rows {
+		words := quality.EvaluateCustomWords(row.Candidate.Title, policy.CustomWords)
+		if !words.Passed {
+			continue
+		}
+		entry := ranked{row: cloneInteractiveSearchCandidate(row)}
+		entry.row.QualityScore, entry.row.PreferenceScore = 0, 0
 		raw := row.Candidate.QualityProfile
 		var profile quality.Profile
-		if len(raw) <= 16384 && json.Unmarshal(raw, &profile) == nil && quality.KnownProfile(profile) {
-			out[i].QualityScore = policy.Score(profile)
+		entry.known = len(raw) <= 16384 && json.Unmarshal(raw, &profile) == nil && quality.KnownProfile(profile)
+		if entry.known {
+			entry.row.QualityScore = policy.Score(profile)
+			entry.row.PreferenceScore = words.BonusScore
 		}
+		rankedRows = append(rankedRows, entry)
 	}
-	slices.SortStableFunc(out, func(a, b ports.InteractiveSearchCandidate) int {
-		if a.QualityScore > b.QualityScore {
-			return -1
-		}
-		if a.QualityScore < b.QualityScore {
+	slices.SortStableFunc(rankedRows, func(a, b ranked) int {
+		if len(policy.CustomWords) != 0 && a.known != b.known {
+			if a.known {
+				return -1
+			}
 			return 1
 		}
-		if a.Candidate.Seeders > b.Candidate.Seeders {
+		left, right := a.row.QualityScore+a.row.PreferenceScore, b.row.QualityScore+b.row.PreferenceScore
+		if left > right {
 			return -1
 		}
-		if a.Candidate.Seeders < b.Candidate.Seeders {
+		if left < right {
 			return 1
 		}
-		return bytes.Compare(a.Candidate.ID[:], b.Candidate.ID[:])
+		if a.row.Candidate.Seeders > b.row.Candidate.Seeders {
+			return -1
+		}
+		if a.row.Candidate.Seeders < b.row.Candidate.Seeders {
+			return 1
+		}
+		return bytes.Compare(a.row.Candidate.ID[:], b.row.Candidate.ID[:])
 	})
+	out := make([]ports.InteractiveSearchCandidate, len(rankedRows))
+	for i := range rankedRows {
+		out[i] = rankedRows[i].row
+	}
 	return out, nil
 }
 

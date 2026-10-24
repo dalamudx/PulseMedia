@@ -88,6 +88,13 @@ func (m *Manager) ObserveCompleteTVTracking(ctx context.Context, repository port
 		return nil, ports.ErrCompleteTVObservationStale
 	}
 
+	probe, e := m.completeTVHintProbe(ctx, repository, request)
+	if e != nil {
+		return nil, e
+	}
+	if e = probe(ctx); e != nil {
+		return nil, e
+	}
 	// The repository's short snapshot transaction has ended. Resolve the actual
 	// configuration after admission, then bind that exact instance to its stamp.
 	config, e := m.queries.GetDownloadClientByID(ctx, snapshot.ClientID)
@@ -116,6 +123,7 @@ func (m *Manager) ObserveCompleteTVTracking(ctx context.Context, repository port
 	if observer == nil {
 		return nil, ports.ErrUnavailable
 	}
+	observer = completeTVHintReadClient{CompleteTVTrackingClient: observer, probe: probe}
 	// Check that the original session is alive immediately before native I/O too.
 	if e = conn.Ping(ctx); e != nil {
 		return nil, e
@@ -167,6 +175,9 @@ func (m *Manager) ObserveCompleteTVTracking(ctx context.Context, repository port
 	// for bounded fact writeback. Neither physical permit is released before it.
 	resultCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Second)
 	defer cancel()
+	if e = probe(resultCtx); e != nil {
+		return nil, e
+	}
 	if e = conn.Ping(resultCtx); e != nil {
 		return nil, ports.ErrUnavailable
 	}

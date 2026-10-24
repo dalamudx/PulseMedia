@@ -28,9 +28,11 @@ import (
 // SubscriptionCreationStore publishes provider observations and subscription
 // intent in one transaction. Provider calls belong to its caller.
 type SubscriptionCreationStore struct {
-	pool      *pgxpool.Pool
-	ids       ports.IDGen
-	wishFence *ports.DoubanWishCreationFence
+	pool         *pgxpool.Pool
+	ids          ports.IDGen
+	wishFence    *ports.DoubanWishCreationFence
+	requestFence *ports.MediaRequestApprovalFence
+	personFence  *ports.PersonFollowCreationFence
 }
 
 func NewSubscriptionCreationStore(pool *pgxpool.Pool, ids ports.IDGen) *SubscriptionCreationStore {
@@ -40,6 +42,9 @@ func NewSubscriptionCreationStore(pool *pgxpool.Pool, ids ports.IDGen) *Subscrip
 var _ ports.SubscriptionCreationRepository = (*SubscriptionCreationStore)(nil)
 
 func creationError(ctx context.Context, err error) error {
+	if errors.Is(err, ports.ErrMediaRequestConflict) {
+		return ports.ErrMediaRequestConflict
+	}
 	if errors.Is(err, ports.ErrNoSubscriptionRoot) || errors.Is(err, ports.ErrAmbiguousSubscriptionRoot) {
 		return err
 	}
@@ -270,6 +275,13 @@ func (s *SubscriptionCreationStore) ReadSubscriptionCreationReceipt(ctx context.
 		return nil, err
 	}
 	out, err = creationReceipt(ctx, q, actor, key, "", nil)
+	if err == nil && out != nil && s.requestFence != nil {
+		originalKey := "media.request.approve:" + s.requestFence.RequestID.String() + ":" + s.requestFence.Key
+		if key != "subscription.creation:"+originalKey {
+			return nil, ports.ErrMediaRequestConflict
+		}
+		_, err = s.requestCreationAuthorize(ctx, q, actor, nil, ports.SubscriptionCreationIdentity{Key: originalKey}, false)
+	}
 	if err == nil && out == nil {
 		err = ports.ErrNotFound
 	}
@@ -289,6 +301,11 @@ func (s *SubscriptionCreationStore) ReadSubscriptionCreationContext(ctx context.
 			return out, nil, err
 		}
 	}
+	if s.personFence != nil {
+		if err = personFollowLockOwner(ctx, q, actor); err != nil {
+			return out, nil, err
+		}
+	}
 	if err = lockAcquisitionUser(ctx, q, actor); err != nil {
 		return out, nil, err
 	}
@@ -296,8 +313,18 @@ func (s *SubscriptionCreationStore) ReadSubscriptionCreationContext(ctx context.
 	if err != nil {
 		return out, nil, err
 	}
+	if s.requestFence != nil {
+		if _, err = s.requestCreationAuthorize(ctx, q, actor, &in, id, false); err != nil {
+			return out, nil, err
+		}
+	}
 	if s.wishFence != nil {
 		if err = s.wishCreationAuthorize(ctx, q, actor, in, id, nil, false); err != nil {
+			return out, nil, err
+		}
+	}
+	if s.personFence != nil {
+		if err = s.personCreationAuthorize(ctx, q, actor, in, id, nil, false); err != nil {
 			return out, nil, err
 		}
 	}
@@ -310,6 +337,14 @@ func (s *SubscriptionCreationStore) ReadSubscriptionCreationContext(ctx context.
 	}
 	receipt, err = creationReceipt(ctx, q, actor, key, id.RequestHash, &owner)
 	if err != nil || receipt != nil {
+		if err == nil && receipt != nil && s.personFence != nil {
+			if err = s.personCreationFinish(ctx, q, actor, in, id, receipt); err != nil {
+				return out, nil, err
+			}
+			if err = tx.Commit(ctx); err != nil {
+				return out, nil, err
+			}
+		}
 		if err == nil && receipt != nil && s.wishFence != nil {
 			if err = s.wishCreationFinish(ctx, q, actor, in, id, receipt); err != nil {
 				return out, nil, err
@@ -456,6 +491,11 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 			return nil, err
 		}
 	}
+	if s.personFence != nil {
+		if err = personFollowLockOwner(ctx, q, actor); err != nil {
+			return nil, err
+		}
+	}
 	if err = lockAcquisitionUser(ctx, q, actor); err != nil {
 		return nil, err
 	}
@@ -463,8 +503,18 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	if err != nil {
 		return nil, err
 	}
+	if s.requestFence != nil {
+		if _, err = s.requestCreationAuthorize(ctx, q, actor, &in, id, false); err != nil {
+			return nil, err
+		}
+	}
 	if s.wishFence != nil {
 		if err = s.wishCreationAuthorize(ctx, q, actor, in, id, nil, false); err != nil {
+			return nil, err
+		}
+	}
+	if s.personFence != nil {
+		if err = s.personCreationAuthorize(ctx, q, actor, in, id, nil, false); err != nil {
 			return nil, err
 		}
 	}
@@ -480,6 +530,14 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 		return nil, err
 	}
 	if old, e := creationReceipt(ctx, q, actor, key, id.RequestHash, &owner); e != nil || old != nil {
+		if e == nil && old != nil && s.personFence != nil {
+			if err = s.personCreationFinish(ctx, q, actor, in, id, old); err != nil {
+				return nil, err
+			}
+			if err = tx.Commit(ctx); err != nil {
+				return nil, err
+			}
+		}
 		if e == nil && old != nil && s.wishFence != nil {
 			if err = s.wishCreationFinish(ctx, q, actor, in, id, old); err != nil {
 				return nil, err
@@ -499,6 +557,11 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	}
 	if s.wishFence != nil {
 		if err = s.wishCreationAuthorize(ctx, q, actor, in, id, prepared, true); err != nil {
+			return nil, err
+		}
+	}
+	if s.personFence != nil {
+		if err = s.personCreationAuthorize(ctx, q, actor, in, id, prepared, true); err != nil {
 			return nil, err
 		}
 	}
@@ -782,6 +845,16 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	}
 	if s.wishFence != nil {
 		if err = s.wishCreationFinish(ctx, q, actor, in, id, out); err != nil {
+			return nil, err
+		}
+	}
+	if s.requestFence != nil {
+		if err = s.requestCreationFinish(ctx, q, actor, in, id, out); err != nil {
+			return nil, err
+		}
+	}
+	if s.personFence != nil {
+		if err = s.personCreationFinish(ctx, q, actor, in, id, out); err != nil {
 			return nil, err
 		}
 	}

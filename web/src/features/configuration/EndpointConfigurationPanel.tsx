@@ -6,7 +6,7 @@ export function EndpointConfigurationPanel({ family }: { family: EndpointFamily 
   const download = family === "download_client", label = download ? "下载器" : "媒体服务器";
   const { draft, editing } = model;
   const prefix = `endpoint-${family}`;
-  const options = download ? [["qbittorrent", "qBittorrent"], ["transmission", "Transmission"]] : [["jellyfin", "Jellyfin"], ["emby", "Emby"]];
+  const options = download ? [["qbittorrent", "qBittorrent"], ["transmission", "Transmission"], ["rtorrent", "rTorrent / ruTorrent"]] : [["jellyfin", "Jellyfin"], ["emby", "Emby"]];
   const legacy = !options.some(([value]) => value === draft.type);
   const reread = model.gate === "conflict";
   if (!model.isAdmin) return <div className="card"><p className="card-desc">仅管理员可管理{label}配置。</p></div>;
@@ -51,9 +51,9 @@ export function EndpointConfigurationPanel({ family }: { family: EndpointFamily 
               <input id={`${prefix}-name`} type="text" required value={draft.name} onChange={event => model.change("name", event.target.value)} />
             </div>
             <div className="form-group">
-              <label htmlFor={`${prefix}-url`}>{download ? "Web UI 地址" : "服务地址 URL"}</label>
+              <label htmlFor={`${prefix}-url`}>{download ? draft.type === "rtorrent" ? "XML-RPC 地址" : "Web UI 地址" : "服务地址 URL"}</label>
               <input id={`${prefix}-url`} type="url" required autoComplete="off" spellCheck={false} value={draft.url} onChange={event => model.change("url", event.target.value)} aria-describedby={`${prefix}-url-help`} />
-              <p id={`${prefix}-url-help`} className="config-description">支持明确配置的本地 HTTP(S) 地址。含 *** 的地址可原样保留；修改时请填写完整地址。</p>
+              <p id={`${prefix}-url-help`} className="config-description">{download && draft.type === "rtorrent" ? "填写 HTTP(S) XML-RPC 入口（例如 /RPC2），不要填写 ruTorrent 首页。 " : ""}支持明确配置的本地 HTTP(S) 地址。含 *** 的地址可原样保留；修改时请填写完整地址。</p>
             </div>
             {download ? <div className="form-group">
               <label htmlFor={`${prefix}-username`}>Web 账号</label>

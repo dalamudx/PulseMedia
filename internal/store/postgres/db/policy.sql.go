@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const bumpPolicyCurrentRevision = `-- name: BumpPolicyCurrentRevision :one
@@ -48,6 +49,29 @@ func (q *Queries) CreatePolicy(ctx context.Context, arg CreatePolicyParams) (Pol
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
+	return i, err
+}
+
+const getInteractiveRankingPolicy = `-- name: GetInteractiveRankingPolicy :one
+SELECT r.policy_id, r.revision, r.rules
+FROM policy p
+JOIN policy_revision r ON r.policy_id=p.id
+LEFT JOIN subscription s ON s.id=$1::uuid
+WHERE p.id=COALESCE(s.quality_policy_id,'default')
+ AND r.revision=COALESCE(s.quality_policy_revision,p.current_revision)
+`
+
+type GetInteractiveRankingPolicyRow struct {
+	PolicyID string
+	Revision int64
+	Rules    []byte
+}
+
+// Scope authorization precedes this immutable revision read in the same RR snapshot.
+func (q *Queries) GetInteractiveRankingPolicy(ctx context.Context, subscriptionID pgtype.UUID) (GetInteractiveRankingPolicyRow, error) {
+	row := q.db.QueryRow(ctx, getInteractiveRankingPolicy, subscriptionID)
+	var i GetInteractiveRankingPolicyRow
+	err := row.Scan(&i.PolicyID, &i.Revision, &i.Rules)
 	return i, err
 }
 

@@ -32,18 +32,19 @@ type TVSeasonDetails struct {
 }
 
 type TVDetails struct {
-	TMDBID        int64             `json:"tmdb_id"`
-	Title         string            `json:"title"`
-	OriginalTitle string            `json:"original_title,omitempty"`
-	Year          int               `json:"year,omitempty"`
-	Overview      string            `json:"overview,omitempty"`
-	PosterURL     string            `json:"poster_url,omitempty"`
-	BackdropURL   string            `json:"backdrop_url,omitempty"`
-	Rating        float64           `json:"rating,omitempty"`
-	Genres        []string          `json:"genres,omitempty"`
-	SeasonsCount  int               `json:"seasons_count"`
-	EpisodesCount int               `json:"episodes_count"`
-	Seasons       []TVSeasonDetails `json:"seasons"`
+	TMDBID            int64                `json:"tmdb_id"`
+	Title             string               `json:"title"`
+	OriginalTitle     string               `json:"original_title,omitempty"`
+	Year              int                  `json:"year,omitempty"`
+	Overview          string               `json:"overview,omitempty"`
+	PosterURL         string               `json:"poster_url,omitempty"`
+	BackdropURL       string               `json:"backdrop_url,omitempty"`
+	Rating            float64              `json:"rating,omitempty"`
+	Genres            []string             `json:"genres,omitempty"`
+	SeasonsCount      int                  `json:"seasons_count"`
+	EpisodesCount     int                  `json:"episodes_count"`
+	Seasons           []TVSeasonDetails    `json:"seasons"`
+	TranslationSource *TVTranslationSource `json:"translation_source,omitempty"`
 }
 
 // MetadataProvider abstracts movie and TV metadata lookup.

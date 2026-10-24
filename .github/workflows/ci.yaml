@@ -47,6 +47,9 @@ jobs:
       - name: Typecheck frontend
         run: mise exec -- task test-web
 
+      - name: Run frontend behavior tests
+        run: mise exec -- node --test web/tests/*.test.mjs
+
       - name: Build frontend assets required by Go embedding
         run: mise exec -- task build-web
       - name: Lint Go and check dependency boundaries
@@ -62,11 +65,7 @@ jobs:
 
       - name: Require vulnerability scan
         run: mise exec -- task vuln
-      - name: Run unit and PostgreSQL integration tests
-        run: mise exec -- task test
-
-      - name: Run tests with race detector
-        run: mise exec -- task test-race
+      # Full race coverage runs in independently bounded regression jobs below.
 
       - name: Install locked browser and test embedded authentication UI
         run: |
@@ -75,10 +74,11 @@ jobs:
           PULSE_TEST_BROWSER_EXECUTABLE="$chrome" mise exec -- task test-auth-ui
 
       - name: Build binary with embedded frontend
-        run: mise exec -- task build
+        run: mise exec -- task build BIN_DIR="$CI_OWNED_TEMP/bin"
 
       - name: Smoke check executable
-        run: ./bin/pulsemedia --version
+        run: |
+          "$CI_OWNED_TEMP/bin/pulsemedia" --version
 
       - name: Remove owned temporary artifacts
         if: always()
@@ -86,6 +86,126 @@ jobs:
           if [ -n "${CI_OWNED_TEMP:-}" ]; then
             case "$CI_OWNED_TEMP" in
               "/data/temp/pulse-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}") rm -rf -- "$CI_OWNED_TEMP" ;;
+              *) echo "Unexpected CI temporary path" >&2; exit 1 ;;
+            esac
+            test ! -e "$CI_OWNED_TEMP"
+          fi
+
+  regression:
+    name: Race ${{ matrix.shard }} ${{ matrix.part }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include:
+          - {shard: base, part: ""}
+          - {shard: usecase, part: ""}
+          - {shard: runtime, part: "1/16"}
+          - {shard: runtime, part: "2/16"}
+          - {shard: runtime, part: "3/16"}
+          - {shard: runtime, part: "4/16"}
+          - {shard: runtime, part: "5/16"}
+          - {shard: runtime, part: "6/16"}
+          - {shard: runtime, part: "7/16"}
+          - {shard: runtime, part: "8/16"}
+          - {shard: runtime, part: "9/16"}
+          - {shard: runtime, part: "10/16"}
+          - {shard: runtime, part: "11/16"}
+          - {shard: runtime, part: "12/16"}
+          - {shard: runtime, part: "13/16"}
+          - {shard: runtime, part: "14/16"}
+          - {shard: runtime, part: "15/16"}
+          - {shard: runtime, part: "16/16"}
+          - {shard: http, part: "1/16"}
+          - {shard: http, part: "2/16"}
+          - {shard: http, part: "3/16"}
+          - {shard: http, part: "4/16"}
+          - {shard: http, part: "5/16"}
+          - {shard: http, part: "6/16"}
+          - {shard: http, part: "7/16"}
+          - {shard: http, part: "8/16"}
+          - {shard: http, part: "9/16"}
+          - {shard: http, part: "10/16"}
+          - {shard: http, part: "11/16"}
+          - {shard: http, part: "12/16"}
+          - {shard: http, part: "13/16"}
+          - {shard: http, part: "15/16"}
+          - {shard: http, part: "16/16"}
+          - {shard: http, part: "14/32"}
+          - {shard: http, part: "30/32"}
+          - {shard: postgres, part: "1/32"}
+          - {shard: postgres, part: "2/32"}
+          - {shard: postgres, part: "3/32"}
+          - {shard: postgres, part: "4/32"}
+          - {shard: postgres, part: "5/32"}
+          - {shard: postgres, part: "6/32"}
+          - {shard: postgres, part: "7/32"}
+          - {shard: postgres, part: "8/32"}
+          - {shard: postgres, part: "9/32"}
+          - {shard: postgres, part: "10/32"}
+          - {shard: postgres, part: "11/32"}
+          - {shard: postgres, part: "12/32"}
+          - {shard: postgres, part: "13/32"}
+          - {shard: postgres, part: "14/32"}
+          - {shard: postgres, part: "15/32"}
+          - {shard: postgres, part: "16/32"}
+          - {shard: postgres, part: "17/32"}
+          - {shard: postgres, part: "18/32"}
+          - {shard: postgres, part: "19/32"}
+          - {shard: postgres, part: "20/32"}
+          - {shard: postgres, part: "21/32"}
+          - {shard: postgres, part: "22/32"}
+          - {shard: postgres, part: "23/32"}
+          - {shard: postgres, part: "24/32"}
+          - {shard: postgres, part: "25/32"}
+          - {shard: postgres, part: "26/32"}
+          - {shard: postgres, part: "27/32"}
+          - {shard: postgres, part: "28/32"}
+          - {shard: postgres, part: "29/32"}
+          - {shard: postgres, part: "30/32"}
+          - {shard: postgres, part: "31/32"}
+          - {shard: postgres, part: "32/32"}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Prepare owned temporary paths
+        run: |
+          ci_tmp="/data/temp/pulse-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${{ matrix.shard }}-${{ strategy.job-index }}"
+          sudo mkdir -p /data/temp
+          sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" "$ci_tmp"
+          for key in TMPDIR TMP TEMP CI_OWNED_TEMP; do echo "$key=$ci_tmp" >> "$GITHUB_ENV"; done
+      - name: Install mise tools
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
+      - name: Prepare container engine and locked dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman uidmap
+          mise exec -- pnpm --dir web install --frozen-lockfile
+          mise exec -- go mod download
+          mise exec -- go mod verify
+          mise exec -- task build-web
+      - name: Run current-source regression partition
+        env:
+          REGRESSION_SHARD: ${{ matrix.shard }}
+          REGRESSION_PART: ${{ matrix.part }}
+        run: |
+          set -euo pipefail
+          if [ -n "$REGRESSION_PART" ]; then
+            mise exec -- bash scripts/verify_m11_regression.sh "$REGRESSION_SHARD" "$REGRESSION_PART"
+          else
+            mise exec -- bash scripts/verify_m11_regression.sh "$REGRESSION_SHARD"
+          fi
+      - name: Remove owned temporary artifacts
+        if: always()
+        run: |
+          if [ -n "${CI_OWNED_TEMP:-}" ]; then
+            case "$CI_OWNED_TEMP" in
+              "/data/temp/pulse-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${{ matrix.shard }}-${{ strategy.job-index }}") rm -rf -- "$CI_OWNED_TEMP" ;;
               *) echo "Unexpected CI temporary path" >&2; exit 1 ;;
             esac
             test ! -e "$CI_OWNED_TEMP"

@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/dalamudx/PulseMedia/internal/adapter/metadata/tmdb"
+	"github.com/dalamudx/PulseMedia/internal/config"
 	"github.com/dalamudx/PulseMedia/internal/httpapi"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
 	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
@@ -48,7 +49,7 @@ func TestSubscriptionCreationVerifiedMetadataAndAtomicRollback(t *testing.T) {
 	}))
 	defer native.Close()
 	f := organizationSetup(t)
-	a := &App{dbPool: f.pool, idgen: f.gen, clock: clock.New(), logger: logging.NewLogger(io.Discard, "error")}
+	a := &App{cfg: &config.Config{}, dbPool: f.pool, idgen: f.gen, clock: clock.New(), logger: logging.NewLogger(io.Discard, "error")}
 	liveApp = a
 	u, e := f.q.CreateUser(ctx, db.CreateUserParams{ID: uuid.New(), Username: "creation-owner", PasswordHash: "not-used-for-login", Role: ports.RoleMember, IsActive: true})
 	if e != nil {

@@ -1,16 +1,19 @@
 -- name: LockMovieRecognitionRoots :many
 SELECT r.id FROM library_root r
 WHERE r.media_type='movie' AND r.health='online' AND r.baseline_completed
- AND EXISTS(SELECT 1 FROM library_file f WHERE f.root_id=r.id AND f.retired_at IS NULL
+ AND EXISTS(SELECT 1 FROM library_file f WHERE f.root_id=r.id AND f.retired_at IS NULL AND f.size_bytes>=sqlc.arg(minimum_media_bytes)::bigint
  AND f.file_fingerprint IS NOT NULL AND f.file_fingerprint<>''
  AND NOT EXISTS(SELECT 1 FROM library_file_unit m WHERE m.file_id=f.id AND m.retired_at IS NULL)
  AND NOT EXISTS(SELECT 1 FROM movie_recognition_work w WHERE w.file_id=f.id AND w.root_generation=r.generation))
-ORDER BY r.id LIMIT $1 FOR UPDATE OF r SKIP LOCKED;
+ AND (sqlc.narg(after_root_id)::uuid IS NULL OR r.id>sqlc.narg(after_root_id)::uuid)
+ORDER BY r.id LIMIT sqlc.arg(max_roots)::int FOR UPDATE OF r SKIP LOCKED;
 
 -- name: ListMovieRecognitionFiles :many
 -- Fresh statement after acquiring the root lock; never rely on its old snapshot.
-SELECT f.id,r.generation FROM library_file f JOIN library_root r ON r.id=f.root_id
+SELECT f.id,r.generation,f.rel_path,f.size_bytes FROM library_file f JOIN library_root r ON r.id=f.root_id
 WHERE r.id=sqlc.arg(root_id)::uuid AND r.media_type='movie' AND r.health='online' AND r.baseline_completed
+ AND (sqlc.narg(after_id)::uuid IS NULL OR f.id>sqlc.narg(after_id)::uuid)
+ AND f.size_bytes>=sqlc.arg(minimum_media_bytes)::bigint
  AND f.retired_at IS NULL AND f.file_fingerprint IS NOT NULL AND f.file_fingerprint<>''
  AND NOT EXISTS(SELECT 1 FROM library_file_unit m WHERE m.file_id=f.id AND m.retired_at IS NULL)
  AND NOT EXISTS(SELECT 1 FROM movie_recognition_work w WHERE w.file_id=f.id AND w.root_generation=r.generation)

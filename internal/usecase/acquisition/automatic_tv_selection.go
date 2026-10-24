@@ -29,8 +29,6 @@ func SelectAutomaticTVEpisode(input ports.AutomaticTVSelectionMaterial) ports.Au
 		return out
 	}
 	s := input.Snapshot
-	policy := quality.Policy{ID: s.PolicyID, Revision: s.PolicyRevision,
-		ResolutionOrder: rules.ResolutionOrder, SourceOrder: rules.SourceOrder, PreferHDR: rules.PreferHDR}
 	unit := media.NumberingUnit{ID: s.UnitID, EpisodeID: s.EpisodeID, Season: int(s.Season),
 		Episode: int(s.Episode), Key: s.UnitKey, Version: s.UnitVersion}
 
@@ -53,6 +51,7 @@ func SelectAutomaticTVEpisode(input ports.AutomaticTVSelectionMaterial) ports.Au
 		seen[c.ID] = f
 	}
 	var bestSeeders int32
+	bestSelectionScore := 0
 	for _, row := range input.Candidates {
 		c := row.Candidate
 		if conflicts[c.ID] || c.ID == uuid.Nil || c.IndexerID == uuid.Nil || row.QueryID == uuid.Nil ||
@@ -83,15 +82,17 @@ func SelectAutomaticTVEpisode(input ports.AutomaticTVSelectionMaterial) ports.Au
 			rows[0].UnitVersion < 1 || rows[0].EpisodeID < 1 {
 			continue
 		}
-		if !quality.EvaluateCandidate(rules, c.Title, profile).Passed {
+		evaluation := quality.EvaluateCandidate(rules, c.Title, profile)
+		if !evaluation.Passed {
 			continue
 		}
-		score := policy.Score(profile)
-		if out.CandidateID == nil || score > out.Score || score == out.Score &&
+		selectionScore := evaluation.SelectionScore()
+		if out.CandidateID == nil || selectionScore > bestSelectionScore || selectionScore == bestSelectionScore &&
 			(c.Seeders > bestSeeders || c.Seeders == bestSeeders && bytes.Compare(c.ID[:], out.CandidateID[:]) < 0) {
 			id := c.ID
-			out.CandidateID, out.Score, out.Reason = &id, score, "selected"
+			out.CandidateID, out.Score, out.Reason = &id, evaluation.Score, "selected"
 			bestSeeders = c.Seeders
+			bestSelectionScore = selectionScore
 		}
 	}
 	return out

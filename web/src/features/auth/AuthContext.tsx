@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { api } from "@/api/client";
+import { clearBrowserPush } from "@/features/configuration/browserPush";
 import type { paths } from "@/api/client";
 import type { Middleware } from "openapi-fetch";
 
@@ -30,6 +31,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const epoch = useRef(0);
   const statusReader = useRef<AbortController | null>(null);
   const writing = useRef(false);
+  const pushCleanup = useRef<Promise<void>>(Promise.resolve());
+  const clearPush = useCallback(() => {
+    pushCleanup.current = pushCleanup.current.then(clearBrowserPush).catch(() => {});
+    return pushCleanup.current;
+  }, []);
 
   const checkStatus = useCallback(async () => {
     const version = ++epoch.current;
@@ -82,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setLoading(false);
           setStatusError(null);
           setError("会话已失效，请重新登录。");
+          void clearPush();
         }
         return response;
       },
@@ -106,6 +113,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     setError(null);
     try {
+      await clearPush();
+      if (!mounted.current || version !== epoch.current) return false;
       const result = kind === "login"
         ? await api.POST("/api/v1/auth/login", { body: { username, password } })
         : await api.POST("/api/v1/auth/setup", { body: { username, password } });
@@ -144,6 +153,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     setError(null);
     try {
+      await clearPush();
+      if (!mounted.current || version !== epoch.current) return false;
       const { error: failure, response } = await api.POST("/api/v1/auth/logout");
       if (!mounted.current || version !== epoch.current) return false;
       if (failure && response.status !== 401) throw new Error("logout unconfirmed");

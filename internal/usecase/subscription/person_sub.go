@@ -2,7 +2,6 @@ package subscription
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 
@@ -13,40 +12,20 @@ type PersonSubscription struct {
 	ID         uuid.UUID `json:"id"`
 	PersonID   int64     `json:"person_id"`
 	PersonName string    `json:"person_name"`
-	Role       string    `json:"role"` // "director" or "actor"
+	Role       string    `json:"role"`
 }
 
-type PersonSubscriptionManager struct {
-	subSvc       *Service
-	metaProvider ports.MetadataProvider
+// PersonSubscriptionManager preserves the legacy entry until persistent approval exists.
+type PersonSubscriptionManager struct{}
+
+func NewPersonSubscriptionManager(_ *Service, _ ports.MetadataProvider) *PersonSubscriptionManager {
+	return &PersonSubscriptionManager{}
 }
 
-func NewPersonSubscriptionManager(subSvc *Service, metaProvider ports.MetadataProvider) *PersonSubscriptionManager {
-	return &PersonSubscriptionManager{
-		subSvc:       subSvc,
-		metaProvider: metaProvider,
+// AutoSubscribeNewRelease cannot claim success without a committed subscription.
+func (*PersonSubscriptionManager) AutoSubscribeNewRelease(ctx context.Context, _ *ports.Actor, _ PersonSubscription, _ *ports.MovieMetadata, _ uuid.UUID) (bool, error) {
+	if err := ctx.Err(); err != nil {
+		return false, err
 	}
-}
-
-// AutoSubscribeNewRelease automatically creates a subscription when a new movie from a tracked person is found.
-func (m *PersonSubscriptionManager) AutoSubscribeNewRelease(ctx context.Context, actor *ports.Actor, person PersonSubscription, movie *ports.MovieMetadata, rootID uuid.UUID) (bool, error) {
-	if movie == nil || movie.TMDBID <= 0 {
-		return false, fmt.Errorf("invalid movie metadata")
-	}
-
-	cmd := CreateSubscriptionCommand{
-		MediaID:               uuid.New(), // will be resolved or bound
-		RootID:                rootID,
-		ScopeType:             "all",
-		QualityPolicyID:       "default",
-		QualityPolicyRevision: 1,
-	}
-
-	// Verify person matches
-	if person.PersonName == "" {
-		return false, fmt.Errorf("empty person name")
-	}
-
-	_ = cmd
-	return true, nil
+	return false, ports.ErrUnavailable
 }

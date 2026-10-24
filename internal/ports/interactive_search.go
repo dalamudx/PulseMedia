@@ -54,9 +54,10 @@ type InteractiveSearchSource struct {
 
 // Candidate and encrypted references stay internal; HTTP explicitly projects safe fields.
 type InteractiveSearchCandidate struct {
-	Candidate    SearchCandidate `json:"-"`
-	SourceName   string
-	QualityScore int
+	Candidate       SearchCandidate `json:"-"`
+	SourceName      string
+	QualityScore    int
+	PreferenceScore int `json:"preference_score,omitempty"`
 }
 
 type InteractiveSearchSnapshot struct {

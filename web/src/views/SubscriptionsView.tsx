@@ -17,6 +17,7 @@ import { useAuth } from "@/features/auth/AuthContext";
 import {useDiscoveryReviewHandoff} from "@/features/configuration/DiscoveryReviewHandoff";
 import {isReviewUUID} from "@/features/configuration/discoveryReviewHandoff";
 
+import {PersonFollowsPanel} from "@/features/configuration/PersonFollowsPanel";
 import "@/features/configuration/subscription-view.css";
 import {SubscriptionCalendar} from "@/features/configuration/SubscriptionCalendar";
 import {subscriptionProgress} from "@/features/configuration/subscriptionCalendar";
@@ -53,7 +54,7 @@ const setPendingControl=(command:PendingStateControl|null)=>{updatePendingContro
 useEffect(()=>{updatePendingControl(readStateControl(controlStorageKey));setControlBlocked(false);setControlError("")},[controlStorageKey]);
 const controlOwner=useRef<AbortController|null>(null);
 useEffect(()=>()=>controlOwner.current?.abort(),[]);
-  const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv" | "calendar">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv" | "calendar" | "people">("all");
   const [searchFilter, setSearchFilter] = useState("");
 
   // Selected subscription for detail modal
@@ -234,9 +235,10 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
             <span>电视剧追更 ({tvCount})</span>
           </button>
           <button type="button" className={`tab-btn ${activeTab === "calendar" ? "active" : ""}`} aria-pressed={activeTab === "calendar"} onClick={() => setActiveTab("calendar")}>追剧日历</button>
+          <button type="button" className={`tab-btn ${activeTab === "people" ? "active" : ""}`} aria-pressed={activeTab === "people"} onClick={() => setActiveTab("people")}>演职员关注</button>
         </div>
 
-        {(
+        {activeTab !== "people" && (
           <div className="media-search-wrap">
             <Search size={14} className="search-icon-inside" />
             <input
@@ -251,7 +253,7 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
       </div>
 
       {/* Main View Container */}
-      {loading || listSnapshotAccount !== listAccount ? (
+      {activeTab === "people" ? <PersonFollowsPanel /> : loading || listSnapshotAccount !== listAccount ? (
         <div className="loading-state">
           <div className="spinner"></div>
           <p>正在加载订阅列表...</p>

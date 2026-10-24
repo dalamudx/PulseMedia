@@ -1,26 +1,17 @@
 package cookiecloud
 
 import (
-	"bytes"
 	"context"
-	"crypto/aes"
-	"crypto/cipher"
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/dalamudx/PulseMedia/internal/ports"
 )
 
-type CookieItem struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-}
+type CookieItem = ports.CookieCloudCookie
 
 type Client struct {
 	httpClient *http.Client
@@ -33,7 +24,7 @@ func NewClient(httpClient *http.Client) *Client {
 	return &Client{httpClient: httpClient}
 }
 
-// DeriveKey generates MD5 key/iv for CookieCloud payload decryption.
+// DeriveKey returns the upstream passphrase, not a CBC key/IV pair.
 func DeriveKey(userUUID, password string) []byte {
 	raw := fmt.Sprintf("%s-%s", userUUID, password)
 	hash := md5.Sum([]byte(raw))
@@ -41,86 +32,33 @@ func DeriveKey(userUUID, password string) []byte {
 	return []byte(hexStr[:16])
 }
 
-// DecryptPayload decrypts CookieCloud AES-128-CBC ciphertext.
+// DecryptPayload decrypts a raw OpenSSL Salted__ envelope using the derived
+// CookieCloud passphrase. It never accepts the prototype's key-as-IV format.
 func DecryptPayload(ciphertext, key []byte) ([]byte, error) {
-	if len(ciphertext) < aes.BlockSize {
-		return nil, errors.New("ciphertext too short")
-	}
-
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-
-	iv := key // CookieCloud uses the 16-byte key as IV
-	mode := cipher.NewCBCDecrypter(block, iv)
-
-	plain := make([]byte, len(ciphertext))
-	mode.CryptBlocks(plain, ciphertext)
-
-	// PKCS7 Unpad
-	length := len(plain)
-	if length == 0 {
-		return nil, errors.New("empty plain text")
-	}
-	unpadding := int(plain[length-1])
-	if unpadding > length || unpadding > aes.BlockSize {
-		return plain, nil // return as is if no padding
-	}
-
-	return plain[:(length - unpadding)], nil
+	return decryptLegacy(ciphertext, key)
 }
 
-// SyncCookies fetches and parses site cookies from CookieCloud server.
+// SyncCookies is a compatibility view; production binding uses scoped ReadBackup records.
 func (c *Client) SyncCookies(ctx context.Context, serverURL, userUUID, password string) (map[string]string, error) {
-	if serverURL == "" || userUUID == "" {
-		return nil, fmt.Errorf("serverURL and userUUID cannot be empty")
-	}
-
-	serverURL = strings.TrimRight(serverURL, "/")
-	reqURL := fmt.Sprintf("%s/get/%s", serverURL, userUUID)
-
-	passKey := DeriveKey(userUUID, password)
-	reqBody, _ := json.Marshal(map[string]string{
-		"password": string(passKey),
-	})
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, reqURL, bytes.NewReader(reqBody))
+	backup, err := c.ReadBackup(ctx, serverURL, userUUID, password)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-			return nil, ports.ErrTimeout
-		}
-		return nil, fmt.Errorf("%w: %v", ports.ErrUnavailable, err)
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("%w: status %d", ports.ErrBadResponse, resp.StatusCode)
-	}
-
-	var res struct {
-		CookieData map[string][]CookieItem `json:"cookie_data"`
-	}
-
-	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return nil, fmt.Errorf("%w: failed to parse cookiecloud response: %v", ports.ErrBadResponse, err)
-	}
-
-	// Format each domain into Cookie string: "name1=val1; name2=val2"
-	domainCookies := make(map[string]string)
-	for domain, items := range res.CookieData {
-		var pairs []string
+	result := make(map[string]string, len(backup.Cookies))
+	for domain, items := range backup.Cookies {
+		header := ""
+		names := map[string]bool{}
 		for _, item := range items {
-			pairs = append(pairs, fmt.Sprintf("%s=%s", item.Name, item.Value))
+			if names[item.Name] {
+				return nil, ports.ErrBadResponse
+			}
+			names[item.Name] = true
+			if header != "" {
+				header += "; "
+			}
+			header += item.Name + "=" + item.Value
 		}
-		domainCookies[domain] = strings.Join(pairs, "; ")
+		result[domain] = header
 	}
-
-	return domainCookies, nil
+	return result, nil
 }

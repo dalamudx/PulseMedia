@@ -691,9 +691,20 @@ func (s *DownloadSubmissionStore) PrepareSubmission(ctx context.Context, c ports
 	if eligible == 0 {
 		return nil, ports.ErrDownloadDemandChanged
 	}
+	if c.ClientConfigStamp != "" {
+		bound, e := q.GetBoundSubmissionClient(ctx, c.ClientID)
+		if e != nil || bound.ConfigStamp != c.ClientConfigStamp {
+			return nil, ports.ErrDownloadDemandChanged
+		}
+	}
 	task, e := q.CreateDownloadTask(ctx, db.CreateDownloadTaskParams{ID: c.TaskID, OperationID: c.OperationID, ClientID: c.ClientID, CandidateID: c.CandidateID, InfoHash: c.InfoHash, State: "submitting", SavePath: c.SavePath})
 	if e != nil {
 		return nil, e
+	}
+	if c.ClientConfigStamp != "" {
+		if e = q.CreateDownloadTaskClientBinding(ctx, db.CreateDownloadTaskClientBindingParams{TaskID: task.ID, ClientID: c.ClientID, ClientStamp: c.ClientConfigStamp, JobID: c.Lease.ID, LeaseOwner: c.Lease.Owner, LeaseToken: c.Lease.Token}); e != nil {
+			return nil, e
+		}
 	}
 	if e = q.BindPhysicalAcquisitionTask(ctx, db.BindPhysicalAcquisitionTaskParams{OperationID: c.OperationID, TaskID: pgtype.UUID{Bytes: task.ID, Valid: true}}); e != nil {
 		return nil, e

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"sort"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/endpoint"
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
@@ -282,12 +283,26 @@ func (s *AcquisitionStore) FinalizeMovieRound(ctx context.Context, actor *ports.
 			return finish("aborted", "endpoint_changed")
 		}
 	}
+	selectedDownloaderID := snap.SelectedDownloaderID
+	selectedDownloaderDigest := snap.DownloaderConfigDigest
+	if snap.Scheduled && len(snap.RoutedDownloaders) > 0 {
+		if best == nil {
+			return finish("expired", "no_qualified_candidate")
+		}
+		route, ok := snap.RoutedDownloaders[best.IndexerID.String()]
+		if !ok || route.DownloaderID == uuid.Nil || route.PolicyVersion != endpoint.DownloadRoutePolicyVersion || route.ConfigDigest == "" {
+			return finish("aborted", "downloader_changed")
+		}
+		id := route.DownloaderID
+		selectedDownloaderID = &id
+		selectedDownloaderDigest = route.ConfigDigest
+	}
 	if snap.Scheduled {
-		if snap.SelectedDownloaderID == nil {
+		if selectedDownloaderID == nil {
 			return finish("aborted", "downloader_missing")
 		}
-		config, e := q.GetSearchDownloaderSnapshot(ctx, *snap.SelectedDownloaderID)
-		if e != nil || config.ConfigDigest != snap.DownloaderConfigDigest {
+		config, e := q.GetSearchDownloaderSnapshot(ctx, *selectedDownloaderID)
+		if e != nil || config.ConfigDigest != selectedDownloaderDigest {
 			return finish("aborted", "downloader_changed")
 		}
 	}
@@ -299,7 +314,7 @@ func (s *AcquisitionStore) FinalizeMovieRound(ctx context.Context, actor *ports.
 	demandActor := *actor
 	demandActor.Type = ports.ActorTypeUser
 	demandActor.ID = sub.UserID.String()
-	result, err := s.reserveMovie(ctx, q, &demandActor, AcquireMovieCommand{UnitIDs: []uuid.UUID{snap.UnitID}, RootID: snap.RootID, CandidateID: best.ID, DownloaderID: snap.SelectedDownloaderID, SubscriptionID: &sub.ID, IntentVersion: sub.IntentVersion, PolicyID: snap.PolicyID, PolicyRevision: round.SnapshotPolicyRevision, UnitMetadataVersion: snap.UnitMetadataVersion, MediaMetadataVersion: snap.MediaMetadataVersion}, root, rules)
+	result, err := s.reserveMovie(ctx, q, &demandActor, AcquireMovieCommand{UnitIDs: []uuid.UUID{snap.UnitID}, RootID: snap.RootID, CandidateID: best.ID, DownloaderID: selectedDownloaderID, SubscriptionID: &sub.ID, IntentVersion: sub.IntentVersion, PolicyID: snap.PolicyID, PolicyRevision: round.SnapshotPolicyRevision, UnitMetadataVersion: snap.UnitMetadataVersion, MediaMetadataVersion: snap.MediaMetadataVersion}, root, rules)
 	if errors.Is(err, ErrAlreadyOwned) {
 		return finish("completed", "already_owned")
 	}

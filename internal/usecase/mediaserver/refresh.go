@@ -2,10 +2,12 @@ package mediaserver
 
 import (
 	"context"
+	"errors"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/google/uuid"
 	"path/filepath"
 	"sync/atomic"
+	"time"
 )
 
 type RefreshPermit struct {
@@ -53,7 +55,12 @@ func (s *SyncService) ProcessReservedRefreshDelivery(ctx context.Context, permit
 		return e
 	}
 	if e = client.RefreshPaths(ctx, []string{input.Confirmation.RemotePath}); e != nil {
-		if fail := s.outbox.Fail(ctx, id, owner, token, "media server refresh failed", 0); fail != nil {
+		var retry time.Duration
+		var limit *ports.RateLimitError
+		if errors.As(e, &limit) {
+			retry = limit.RetryAfter
+		}
+		if fail := s.outbox.Fail(ctx, id, owner, token, "media server refresh failed", retry); fail != nil {
 			return fail
 		}
 		return ErrServerUnreachable

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/dalamudx/PulseMedia/internal/domain/notification"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
@@ -70,7 +71,7 @@ func (s *ChannelStateStore) SetChannelState(ctx context.Context, a *ports.Actor,
 	if !errors.Is(e, pgx.ErrNoRows) {
 		return nil, e
 	}
-	if !channel.UpdatedAt.Time.Equal(c.ExpectedUpdatedAt) || (c.IsEnabled && (len(channel.ConfigEncrypted) < 40 || (channel.ChannelType != "webhook" && channel.ChannelType != "telegram"))) {
+	if !channel.UpdatedAt.Time.Equal(c.ExpectedUpdatedAt) || (c.IsEnabled && (len(channel.ConfigEncrypted) < 40 || !notification.ValidKind(channel.ChannelType))) {
 		return nil, ports.ErrChannelStateConflict
 	}
 	next, e := q.SetNotificationChannelState(ctx, db.SetNotificationChannelStateParams{ID: id, IsEnabled: c.IsEnabled, UpdatedAt: pgtype.Timestamptz{Time: c.ExpectedUpdatedAt, Valid: true}})

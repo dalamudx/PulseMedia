@@ -26,7 +26,7 @@ func validateEndpointConfiguration(f ports.EndpointFamily, in ports.EndpointConf
 		return ports.ErrInvalidEndpointConfiguration
 	}
 	if f == ports.DownloadClientEndpoint {
-		if in.Protocol != "qbittorrent" && in.Protocol != "transmission" {
+		if in.Protocol != "qbittorrent" && in.Protocol != "transmission" && in.Protocol != "rtorrent" {
 			return ports.ErrInvalidEndpointConfiguration
 		}
 	} else if (in.Protocol != "jellyfin" && in.Protocol != "plex" && in.Protocol != "emby") || in.Username != "" {

@@ -22,7 +22,7 @@ func (a *App) runLibraryWorkers(ctx context.Context, queue *jobs.Queue, provider
 		group.Add(1)
 		go func() { defer group.Done(); a.runLibraryConsumer(ctx, queue, runtime) }()
 	}
-	recognition := postgres.NewMovieRecognitionStore(a.dbPool, a.idgen)
+	recognition := postgres.NewMovieRecognitionStoreWithMinimumMediaBytes(a.dbPool, a.idgen, a.cfg.Organization.MinMediaBytes)
 	for i := 0; i < 2; i++ {
 		group.Add(1)
 		go func() { defer group.Done(); a.runMovieRecognitionConsumer(ctx, queue, recognition, provider) }()

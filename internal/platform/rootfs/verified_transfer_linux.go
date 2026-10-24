@@ -128,6 +128,13 @@ func (f *Filesystem) InspectContent(ctx context.Context, root ports.TransferRoot
 	return out, nil
 }
 
+// transferRenameError preserves no-overwrite semantics on filesystems without rename flags.
+func transferRenameError(err error) error {
+	if errors.Is(err, unix.EINVAL) || errors.Is(err, unix.ENOSYS) || errors.Is(err, unix.EOPNOTSUPP) {
+		return errors.Join(ports.ErrFileUnsupported, err)
+	}
+	return err
+}
 func cloneUnavailable(err error) bool {
 	return errors.Is(err, unix.EOPNOTSUPP) || errors.Is(err, unix.ENOTTY) || errors.Is(err, unix.EXDEV) || errors.Is(err, unix.EINVAL) || errors.Is(err, unix.ENOSYS)
 }
@@ -269,7 +276,7 @@ func finishVerifiedMove(ctx context.Context, src *Root, rel string, expected por
 			return err
 		}
 		if err = unix.Renameat2(parent, name, dir, "move-source", unix.RENAME_NOREPLACE); err != nil {
-			return err
+			return transferRenameError(err)
 		}
 		if err = unix.Fstatat(dir, "move-source", &staged, unix.AT_SYMLINK_NOFOLLOW); err != nil {
 			return err
@@ -429,7 +436,7 @@ func (f *Filesystem) TransferVerified(ctx context.Context, source ports.Transfer
 		}
 		e = unix.Renameat2(dir, "content", parent, name, unix.RENAME_NOREPLACE)
 		if e != nil && !errors.Is(e, unix.EEXIST) {
-			return out, e
+			return out, transferRenameError(e)
 		}
 		if e = unix.Fsync(dir); e != nil {
 			return out, e

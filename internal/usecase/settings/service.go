@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/dalamudx/PulseMedia/internal/command"
+	"github.com/dalamudx/PulseMedia/internal/domain/artwork"
+	tvdbconfig "github.com/dalamudx/PulseMedia/internal/domain/tvdb"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"strings"
 )
@@ -42,7 +44,7 @@ func publicSetting(row ports.SettingRecord) (*SettingItem, error) {
 	if e := json.Unmarshal(row.Value, &value); e != nil {
 		return nil, ports.ErrUnavailable
 	}
-	if row.Key == "tmdb.api_key" {
+	if row.Key == "tmdb.api_key" || row.Key == artwork.APIKeySetting || row.Key == tvdbconfig.CredentialsSetting {
 		value = map[string]any{"configured": encryptedValue(value)}
 	}
 	return &SettingItem{Key: row.Key, Value: value, Version: row.Version, UpdatedAt: row.UpdatedAt}, nil
@@ -75,12 +77,15 @@ func (s *Service) ListSettings(ctx context.Context, a *ports.Actor) ([]SettingIt
 
 // GetSecret is reserved for the metadata adapter; legacy plaintext is not served.
 func (s *Service) GetSecret(ctx context.Context, key string) (string, error) {
-	if key != "tmdb.api_key" {
+	if key != "tmdb.api_key" && key != artwork.APIKeySetting && key != tvdbconfig.CredentialsSetting {
 		return "", errors.New("unknown secret setting")
 	}
 	row, e := s.repo.ReadSetting(ctx, key)
 	if e != nil || row == nil {
 		return "", e
+	}
+	if key == tvdbconfig.CredentialsSetting && !artwork.ValidCiphertext(row.Value) {
+		return "", ports.ErrUnavailable
 	}
 	var stored map[string]string
 	if e = json.Unmarshal(row.Value, &stored); e != nil {
@@ -131,13 +136,49 @@ func (s *Service) UpdateSetting(ctx context.Context, a *ports.Actor, key string,
 	}
 	value := req.Value
 	audit := any(req)
-	if key == "tmdb.api_key" {
+	switch key {
+	case tvdbconfig.CredentialsSetting:
+		// Recover the original receipt before needing a decryptor or accepting new credentials.
+		if idempotencyKey != "" {
+			_, readErr := s.repo.ReadSettingReceipt(ctx, a, key, idempotencyKey)
+			if readErr == nil {
+				return s.repo.UpdateSetting(ctx, a, ports.SettingWrite{Key: key, ExpectedVersion: req.ExpectedVersion, IdempotencyKey: idempotencyKey, Fingerprint: fp, LegacyFingerprint: legacy, Value: json.RawMessage("null"), Audit: json.RawMessage(`{"redacted":true}`)})
+			}
+			if !errors.Is(readErr, ports.ErrNotFound) {
+				return nil, readErr
+			}
+		}
+		plain, marshalErr := json.Marshal(req.Value)
+		if marshalErr != nil {
+			return nil, ports.ErrInvalidSettingCommand
+		}
+		credentials, decodeErr := tvdbconfig.DecodeCredentials(plain)
+		if decodeErr != nil {
+			return nil, ports.ErrInvalidSettingCommand
+		}
+		plain, marshalErr = json.Marshal(credentials)
+		if marshalErr != nil {
+			return nil, ports.ErrInvalidSettingCommand
+		}
+		if s.cipher == nil {
+			return nil, ports.ErrUnavailable
+		}
+		sealed, sealErr := s.cipher.Encrypt(plain)
+		if sealErr != nil {
+			return nil, ports.ErrUnavailable
+		}
+		value = map[string]any{"ciphertext": base64.StdEncoding.EncodeToString(sealed)}
+		audit = map[string]any{"redacted": true}
+	case "tmdb.api_key", artwork.APIKeySetting:
 		m, ok := req.Value.(map[string]any)
 		if !ok {
 			return nil, ports.ErrInvalidSettingCommand
 		}
 		secret, ok := m["api_key"].(string)
 		if !ok || strings.TrimSpace(secret) == "" {
+			return nil, ports.ErrInvalidSettingCommand
+		}
+		if key == artwork.APIKeySetting && (len(m) != 1 || !artwork.ValidAPIKey(secret)) {
 			return nil, ports.ErrInvalidSettingCommand
 		}
 		if s.cipher == nil {

@@ -11,6 +11,7 @@ type CompleteTVOrganizationCommand struct {
 	OperationID           uuid.UUID `json:"operation_id"`
 	TrackingJobID         uuid.UUID `json:"tracking_job_id"`
 	ExpectedEvidenceStamp string    `json:"expected_evidence_stamp"`
+	NamingVersion         int64     `json:"naming_version,omitempty"`
 	Confirmed             bool      `json:"confirmed"`
 }
 type CompleteTVOrganizationReceipt struct {

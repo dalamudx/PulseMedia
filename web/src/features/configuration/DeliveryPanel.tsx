@@ -8,7 +8,8 @@ type Reason=paths["/api/v1/integrations/deliveries/{id}/skip"]["post"]["requestB
 type Choice={delivery:Delivery;action:"replay"|"skip"};
 type Command=Choice&{key:string;reason:Reason};
 const states:Record<Delivery["state"],string>={pending:"已排队，未确认送达",delivering:"正在投递",delivered:"已记录送达回执",dead:"重试耗尽，需复核",skipped:"已审计跳过，不代表送达"};
-function risk(value:string){return value==="telegram_may_duplicate"?"Telegram 无接收端去重保证，重放可能重复消息。":value==="media_server_refresh_may_repeat"?"媒体服务器刷新可能重复；已入库事实不会因此重建。":value==="recipient_disabled"?"原通知通道已禁用，暂不能重放；不得换其它收件人发送历史事件。":value==="recipient_unavailable"?"原收件人配置不可用，不能重定向到其它通道。":"Webhook 接收端必须按事件 ID 去重；应用只保证至少一次投递。"}
+function risk(value:string){return value==="telegram_may_duplicate"?"Telegram 无接收端去重保证，重放可能重复消息。":value==="robot_may_duplicate"?"机器人平台没有事件 ID 去重保证，重放可能重复消息；请先核对原事件。":value==="media_server_refresh_may_repeat"?"媒体服务器刷新可能重复；已入库事实不会因此重建。":value==="recipient_disabled"?"原通知通道已禁用，暂不能重放；不得换其它收件人发送历史事件。":value==="recipient_unavailable"?"原收件人配置不可用，不能重定向到其它通道。":"Webhook 接收端必须按事件 ID 去重；应用只保证至少一次投递。"}
+
 export function DeliveryPanel(){
  const[report,setReport]=useState<Report|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState(""),[filter,setFilter]=useState("all"),[selected,setSelected]=useState<Choice|null>(null),[accept,setAccept]=useState(false),[reason,setReason]=useState<Reason>("event_obsolete"),[pending,setPending]=useState<Command|null>(null),[blocked,setBlocked]=useState(false);
  const owner=useRef<AbortController|null>(null),alert=useRef<HTMLParagraphElement>(null);

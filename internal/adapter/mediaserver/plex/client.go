@@ -50,43 +50,49 @@ func (c *Client) RefreshPaths(ctx context.Context, paths []string) error {
 		return nil
 	}
 
+	for _, p := range paths {
+		if !filepath.IsAbs(p) || filepath.Clean(p) != p || strings.ContainsAny(p, "\r\n\x00") {
+			return ports.ErrBadResponse
+		}
+	}
 	sections, err := c.getSections(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to get plex library sections: %w", err)
+		return err
 	}
-
+	targets := map[string]string{}
+	order := []string{}
 	for _, p := range paths {
-		targetFolder := filepath.Dir(p)
-		matchedSection := ""
-
+		folder := filepath.Dir(p)
+		match := ""
+		depth := -1
 		for _, sec := range sections {
 			for _, loc := range sec.Locations {
-				if strings.HasPrefix(p, loc) || strings.HasPrefix(targetFolder, loc) {
-					matchedSection = sec.Key
-					break
+				root := filepath.Clean(loc)
+				if !filepath.IsAbs(loc) || (p != root && !strings.HasPrefix(p, strings.TrimRight(root, string(filepath.Separator))+string(filepath.Separator))) {
+					continue
+				}
+				if len(root) > depth {
+					depth = len(root)
+					match = sec.Key
+				} else if len(root) == depth && match != sec.Key {
+					return ports.ErrBadResponse
 				}
 			}
-			if matchedSection != "" {
-				break
-			}
 		}
-
-		if matchedSection != "" {
-			// Partial folder scan: GET /library/sections/{key}/refresh?path={folder}
-			refreshURL := fmt.Sprintf("%s/library/sections/%s/refresh?path=%s",
-				c.baseURL, matchedSection, url.QueryEscape(targetFolder))
-			if err := c.doGet(ctx, refreshURL, nil); err != nil {
-				return fmt.Errorf("failed to refresh section %s for path %s: %w", matchedSection, p, err)
-			}
-		} else {
-			// General refresh on all sections
-			for _, sec := range sections {
-				refreshURL := fmt.Sprintf("%s/library/sections/%s/refresh", c.baseURL, sec.Key)
-				_ = c.doGet(ctx, refreshURL, nil)
-			}
+		if match == "" || strings.ContainsAny(match, "/\\?#\r\n\x00") {
+			return ports.ErrBadResponse
+		}
+		key := match + "\x00" + folder
+		if _, ok := targets[key]; !ok {
+			targets[key] = c.baseURL + "/library/sections/" + url.PathEscape(match) + "/refresh?path=" + url.QueryEscape(folder)
+			order = append(order, key)
 		}
 	}
-
+	for _, key := range order {
+		if err := c.doGet(ctx, targets[key], nil); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -191,7 +197,7 @@ func (c *Client) doGet(ctx context.Context, rawURL string, target any) error {
 		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 			return ports.ErrTimeout
 		}
-		return fmt.Errorf("%w: %v", ports.ErrUnavailable, err)
+		return ports.ErrUnavailable
 	}
 	defer func() {
 		_ = resp.Body.Close()

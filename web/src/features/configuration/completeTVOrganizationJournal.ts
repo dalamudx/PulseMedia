@@ -1,7 +1,7 @@
 import type {paths} from '@/api/client';
 export type OrganizationPreview = paths['/api/v1/operations/{id}/complete-tv-organizations']['get']['responses']['200']['content']['application/json']['items'][number];
 export type OrganizationReceipt = paths['/api/v1/download-tasks/{id}/complete-tv-organizations']['post']['responses']['202']['content']['application/json'];
-export type OrganizationCommand = {task_id:string;operation_id:string;tracking_job_id:string;key:string};
+export type OrganizationCommand = {task_id:string;operation_id:string;tracking_job_id:string;key:string;naming_version?:number};
 export type OrganizationJournal = {version:1;account:string;operation:string;command:OrganizationCommand;receipt?:OrganizationReceipt};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const validID=(value:unknown):value is string=>typeof value==='string'&&uuid.test(value)&&value!=='00000000-0000-0000-0000-000000000000';
@@ -11,10 +11,11 @@ function relativePath(value:unknown):value is string{
  return typeof value==='string'&&value.length>0&&value.length<=4096&&!/^[a-z]:/i.test(value)&&!/[\\\u0000-\u001f\u007f]/.test(value)&&value.split('/').every(part=>part!==''&&part!=='.'&&part!=='..');
 }
 export function validCommand(value:unknown,operation:string):value is OrganizationCommand{
- return validID(operation)&&record(value)&&validID(value.task_id)&&value.operation_id===operation&&validID(value.tracking_job_id)&&validID(value.key);
+ return validID(operation)&&record(value)&&validID(value.task_id)&&value.operation_id===operation&&validID(value.tracking_job_id)&&validID(value.key)&&(value.naming_version===undefined||natural(value.naming_version));
 }
 function validPreview(value:unknown,operation:string):value is OrganizationPreview{
  if(!record(value)||!validID(value.task_id)||!validID(value.tracking_job_id)||value.operation_id!==operation||typeof value.can_confirm!=='boolean'||!natural(value.season)||value.season<1||!natural(value.attachment_count)||value.attachment_count>1000||typeof value.organization_state!=='string'||!value.organization_state||value.organization_state.length>64||!Array.isArray(value.videos)||value.videos.length<2||value.videos.length>1000||value.videos.length+value.attachment_count>1000)return false;
+ if(value.naming_version!==undefined&&!natural(value.naming_version))return false;
  const ids=new Set<string>(),keys=new Set<string>(),sources=new Set<string>(),targets=new Set<string>();
  for(const video of value.videos){
   if(!record(video)||!validID(video.unit_id)||typeof video.unit_key!=='string'||!relativePath(video.source_relative)||!relativePath(video.target_relative)||!natural(video.size_bytes)||video.size_bytes<1)return false;

@@ -215,5 +215,6 @@ func cloneInteractiveSearchHeader(header ports.InteractiveSearchHeader) ports.In
 	header.CancelledAt = cloneInteractiveValue(header.CancelledAt)
 	header.RankingPolicy.ResolutionOrder = maps.Clone(header.RankingPolicy.ResolutionOrder)
 	header.RankingPolicy.SourceOrder = maps.Clone(header.RankingPolicy.SourceOrder)
+	header.RankingPolicy.CustomWords = slices.Clone(header.RankingPolicy.CustomWords)
 	return header
 }

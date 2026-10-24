@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -120,8 +121,12 @@ func (c *Client) doRPC(ctx context.Context, method string, args any, targetArgs 
 		if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
 			return ports.ErrAuthRequired
 		}
-		if resp.StatusCode == 429 {
-			return ports.NewRateLimitError(0, "download RPC rate limited")
+		if resp.StatusCode == http.StatusTooManyRequests {
+			var retry time.Duration
+			if seconds, err := strconv.ParseInt(resp.Header.Get("Retry-After"), 10, 64); err == nil && seconds > 0 && seconds <= 86400 {
+				retry = time.Duration(seconds) * time.Second
+			}
+			return ports.NewRateLimitError(retry, "download RPC rate limited")
 		}
 		if resp.StatusCode >= 500 {
 			return ports.ErrUnavailable
@@ -195,7 +200,7 @@ func (c *Client) AddTorrent(ctx context.Context, p ports.AddTorrentParam) error 
 
 func (c *Client) GetTorrent(ctx context.Context, infoHash string) (*ports.TorrentInfo, error) {
 	infoHash = strings.ToLower(infoHash)
-	args := map[string]any{"fields": []string{"hashString", "name", "downloadDir", "percentDone", "totalSize", "status", "haveValid", "labels", "rateDownload"}, "ids": []string{infoHash}}
+	args := map[string]any{"fields": []string{"hashString", "name", "downloadDir", "percentDone", "totalSize", "status", "haveValid", "labels", "rateDownload", "files", "fileStats"}, "ids": []string{infoHash}}
 	var res struct {
 		Torrents []torrentObservation `json:"torrents"`
 	}

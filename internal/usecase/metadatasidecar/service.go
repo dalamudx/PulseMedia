@@ -15,14 +15,33 @@ import (
 
 // Service runs one synchronous, lease-fenced sidecar continuation.
 type Service struct {
-	repo     ports.MediaSidecarRepository
-	files    ports.MediaSidecarFilesystem
-	metadata ports.MediaSidecarMetadata
-	artwork  ports.MetadataArtworkFetcher
+	repo          ports.MediaSidecarRepository
+	files         ports.MediaSidecarFilesystem
+	metadata      ports.MediaSidecarMetadata
+	artwork       ports.MetadataArtworkFetcher
+	artworks      ports.MediaArtworkProvider
+	tvIdentity    ports.TVArtworkIdentityResolver
+	artworkSource ports.MediaArtworkSource
 }
 
-func NewService(repo ports.MediaSidecarRepository, files ports.MediaSidecarFilesystem, metadata ports.MediaSidecarMetadata, artwork ports.MetadataArtworkFetcher) *Service {
-	return &Service{repo: repo, files: files, metadata: metadata, artwork: artwork}
+type Option func(*Service)
+
+// WithArtworks enables optional artwork enrichment without changing legacy jobs.
+func WithArtworks(provider ports.MediaArtworkProvider, tv ports.TVArtworkIdentityResolver) Option {
+	return func(s *Service) { s.artworks, s.tvIdentity = provider, tv }
+}
+
+// WithArtworkSource gives each execution a distinct configuration snapshot.
+func WithArtworkSource(source ports.MediaArtworkSource, tv ports.TVArtworkIdentityResolver) Option {
+	return func(s *Service) { s.artworkSource, s.tvIdentity = source, tv }
+}
+
+func NewService(repo ports.MediaSidecarRepository, files ports.MediaSidecarFilesystem, metadata ports.MediaSidecarMetadata, artwork ports.MetadataArtworkFetcher, options ...Option) *Service {
+	s := &Service{repo: repo, files: files, metadata: metadata, artwork: artwork}
+	for _, option := range options {
+		option(s)
+	}
+	return s
 }
 
 func (s *Service) Execute(ctx context.Context, lease ports.JobLease) error {
@@ -37,6 +56,27 @@ func (s *Service) Execute(ctx context.Context, lease ports.JobLease) error {
 	directory, name, err := workDirectory(snapshot)
 	if err != nil {
 		return err
+	}
+	var extra []ports.SidecarRequest
+	provider := s.artworks
+	var artworkSession ports.MediaArtworkSession
+	if s.artworkSource != nil {
+		provider = nil
+		if session, openErr := s.artworkSource.Open(ctx); openErr == nil && session != nil {
+			artworkSession, provider = session, session
+		}
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if provider != nil {
+		if err := s.validate(ctx, lease, snapshot); err != nil {
+			return err
+		}
+		extra, err = s.artworkContents(ctx, snapshot, provider)
+		if err != nil {
+			return err
+		}
 	}
 	nfo, poster, err := s.contents(ctx, snapshot)
 	if err != nil {
@@ -71,8 +111,17 @@ func (s *Service) Execute(ctx context.Context, lease ports.JobLease) error {
 	if len(poster) > 0 {
 		artifacts = append(artifacts, ports.SidecarRequest{Name: "poster.jpg", Content: poster})
 	}
+	artifacts = append(artifacts, extra...)
 	completion := ports.MediaSidecarCompletion{}
 	for _, artifact := range artifacts {
+		if artworkSession != nil && artifact.Name != name && artifact.Name != "poster.jpg" {
+			if err := artworkSession.Validate(ctx); err != nil {
+				if ctx.Err() != nil {
+					return ctx.Err()
+				}
+				break
+			}
+		}
 		if _, err := s.observe(ctx, snapshot, root, directory, &dirID); err != nil {
 			return err
 		}

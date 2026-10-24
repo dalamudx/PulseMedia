@@ -23,7 +23,7 @@ func (a *App) runMovieRecognitionConsumer(ctx context.Context, queue *jobs.Queue
 			workCtx, cancel := context.WithTimeout(ctx, 110*time.Second)
 			work, workErr := runtime.Work(workCtx, ports.JobLease{ID: job.ID, Owner: owner, Token: job.LeaseToken})
 			if workErr == nil {
-				repo := postgres.NewCheckedMovieRecognitionStore(a.dbPool, a.idgen, work)
+				repo := postgres.NewCheckedMovieRecognitionStoreWithMinimumMediaBytes(a.dbPool, a.idgen, work, a.cfg.Organization.MinMediaBytes)
 				workErr = mediaUsecase.NewMovieRecognizer(rootfs.NewFilesystem(), repo, provider).Recognize(workCtx, work.RootID, work.RelPath)
 			}
 			cancel()

@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import ts from 'typescript';
+const raw=readFileSync(new URL('../src/features/configuration/notificationTestCommand.ts',import.meta.url),'utf8');
+const js=ts.transpileModule(raw,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
+const {readTestCommand,persistTestCommand,testCommandKey}=await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}`);
+const id='00000000-0000-4000-8000-000000000001',command={id,key:'original-key',body:{expected_updated_at:'2026-10-22T12:00:00.123456Z'}};
+test('test original key preserves exact database microseconds',()=>assert.deepEqual(readTestCommand(JSON.stringify(command),id),command));
+test('test original keys isolate accounts and channels',()=>{assert.notEqual(testCommandKey('A',id),testCommandKey('B',id));assert.notEqual(testCommandKey('A',id),testCommandKey('A','other'));});
+test('absent command stays absent',()=>assert.equal(readTestCommand(null,id),null));
+test('invalid stored commands stop recovery',()=>{for(const bad of ['{','null','[]','{}',JSON.stringify({...command,id:'other'}),JSON.stringify({...command,key:''}),JSON.stringify({...command,key:'space key'}),JSON.stringify({...command,secret:'private'}),JSON.stringify({...command,body:{expected_updated_at:'invalid'}}),JSON.stringify({...command,body:{...command.body,url:'https://private'}})])assert.throws(()=>readTestCommand(bad,id));});
+test('test command storage is verified before writing',()=>{let saved;const storage={setItem:(key,value)=>saved=value,getItem:()=>saved};persistTestCommand(storage,'key',command);assert.equal(saved,JSON.stringify(command));});
+test('storage errors and ignored writes cannot authorize network',()=>{assert.throws(()=>persistTestCommand({setItem:()=>{throw Error('quota')},getItem:()=>null},'key',command));assert.throws(()=>persistTestCommand({setItem:()=>{},getItem:()=>null},'key',command));});

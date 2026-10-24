@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
@@ -79,7 +80,7 @@ func loadReuseFrozen(ctx context.Context, q *db.Queries, who uuid.UUID, c ports.
 	if e != nil {
 		return out, e
 	}
-	preview, e := loadLibraryReusePreview(ctx, q, who, c.Target, now, ignore...)
+	preview, e := loadLibraryReusePreview(ctx, q, who, c.Target, now, 0, ignore...)
 	if e != nil {
 		return out, e
 	}
@@ -119,7 +120,7 @@ func loadReuseFrozen(ctx context.Context, q *db.Queries, who uuid.UUID, c ports.
 	for _, id := range selected.UnitIDs {
 		target := c.Target
 		target.UnitID = id
-		p, e := loadLibraryReusePreview(ctx, q, who, target, now, ignore...)
+		p, e := loadLibraryReusePreview(ctx, q, who, target, now, 0, ignore...)
 		if e != nil {
 			return out, e
 		}
@@ -195,6 +196,12 @@ func reuseCached(ctx context.Context, q *db.Queries, a *ports.Actor, c ports.Lib
 	}
 	return &out, nil
 }
+func (s *Service) reuseMediaEligible(f reuseFrozen) bool {
+	source, _ := naming.IsEligibleMediaFile(f.Source.RelPath, f.Source.SizeBytes, s.minimumMediaBytes)
+	target, _ := naming.IsEligibleMediaFile(f.Command.TargetRel, f.Source.SizeBytes, s.minimumMediaBytes)
+	return source && target
+}
+
 func (r *Repository) ConfirmLibraryReuse(ctx context.Context, a *ports.Actor, c ports.LibraryReuseCommand, key string) (receipt *ports.LibraryReuseReceipt, err error) {
 	defer func() { err = reuseError(err) }()
 	if !c.Confirmed || key == "" || len(key) > 140 || len(c.InputStamp) != 64 || len(c.ConfirmedUnitIDs) == 0 || len(c.ConfirmedUnitIDs) > 20 || !fs.ValidPath(c.TargetRel) || strings.ContainsAny(c.TargetRel, "\\\r\n") || c.SourceFileID == uuid.Nil || (c.Action != "hardlink" && c.Action != "copy" && c.Action != "reflink") {
@@ -221,6 +228,9 @@ func (r *Repository) ConfirmLibraryReuse(ctx context.Context, a *ports.Actor, c 
 	f, e := loadReuseFrozen(ctx, q, who, c, true)
 	if e != nil {
 		return nil, e
+	}
+	if !s.reuseMediaEligible(f) {
+		return nil, ports.ErrLibraryReuseChanged
 	}
 	if !strings.EqualFold(path.Ext(c.TargetRel), path.Ext(f.Source.RelPath)) {
 		return nil, ports.ErrInvalidLibraryReuse
@@ -312,6 +322,9 @@ func (r *Repository) ConfirmLibraryReuse(ctx context.Context, a *ports.Actor, c 
 	current, e := loadReuseFrozen(ctx, q, who, c, true)
 	if e != nil {
 		return nil, e
+	}
+	if !s.reuseMediaEligible(current) {
+		return nil, ports.ErrLibraryReuseChanged
 	}
 	if reuseSourceStamp(current.Source) != reuseSourceStamp(f.Source) || !reuseRootMatches(current.TargetRoot, f.TargetRoot) {
 		return nil, ports.ErrLibraryReuseChanged

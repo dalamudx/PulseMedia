@@ -35,11 +35,15 @@ type runtimeCheckinFixture struct {
 	dsn     string
 }
 
-func runtimeCheckin(t *testing.T) *runtimeCheckinFixture {
+func runtimeCheckin(t *testing.T, through ...int64) *runtimeCheckinFixture {
 	t.Helper()
 	dsn := pgtest.GetCluster(t).NewTestDB(t)
-	v, e := postgres.Migrate(t.Context(), dsn, "../../../migrations")
-	if e != nil || v != 100 {
+	expectedVersion := int64(postgres.CurrentMigrationVersion)
+	if len(through) > 0 {
+		expectedVersion = through[0]
+	}
+	v, e := postgres.Migrate(t.Context(), dsn, repositoryMigrationsThrough(t, through...))
+	if e != nil || v != expectedVersion {
 		t.Fatal(v, e)
 	}
 	p, e := postgres.NewPool(t.Context(), dsn, postgres.DefaultPoolConfig())

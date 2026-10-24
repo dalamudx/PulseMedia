@@ -21,6 +21,8 @@ import type { MediaItem } from "@/components/cards/MediaCard";
 import type { paths } from "@/api/client";
 import { useDashboardFacts } from "@/features/dashboard/useDashboardFacts";
 import { DashboardFactsPanel } from "@/features/dashboard/DashboardFactsPanel";
+import { DownloadGlobalRatesPanel } from "@/features/dashboard/DownloadGlobalRatesPanel";
+import { PendingRequestsPanel } from "@/features/dashboard/PendingRequestsPanel";
 
 type SystemStatus = paths["/api/v1/system/status"]["get"]["responses"]["200"]["content"]["application/json"];
 
@@ -246,6 +248,8 @@ export const DashboardView: React.FC = () => {
         </div>
       </div>
 
+      {canReadSites ? <PendingRequestsPanel userId={user?.id} role={user?.role} /> : null}
+      {canReadSites ? <DownloadGlobalRatesPanel userId={user?.id} role={user?.role} /> : null}
       <DashboardFactsPanel facts={facts} />
       {refreshFailures.length > 0 && (
         <p className="empty-hint" role="alert">未能刷新：{refreshFailures.join("、")}。已显示的数据保持上次读取结果。</p>

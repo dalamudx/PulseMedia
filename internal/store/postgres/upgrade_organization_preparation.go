@@ -118,7 +118,7 @@ func (r *movieUpgradeOrganizationPreparationRepository) PrepareMovieUpgradeOrgan
 	if e != nil {
 		return nil, e
 	}
-	expectedPaths := upgradeOrganizationPhysical{RootPath: in.physical.RootPath, SourceRoot: in.physical.SourceRoot, SourceRel: in.physical.SourceRel, TargetRel: in.physical.TargetRel, OldRel: in.physical.OldRel}
+	expectedPaths := upgradeOrganizationPhysical{RootPath: in.physical.RootPath, SourceRoot: in.physical.SourceRoot, SourceRel: in.physical.SourceRel, TargetRel: in.physical.TargetRel, OldRel: in.physical.OldRel, NamingVersion: in.physical.NamingVersion}
 	if !preparationSameJSON(current.authorization, in.authorization) || !preparationSameJSON(current.basis.raw, in.basis.raw) || coverageDigest(current.physical) != coverageDigest(expectedPaths) {
 		return nil, preparationConflict()
 	}

@@ -1,0 +1,27 @@
+.download-global-rates { margin: 24px 0; }
+.download-global-rates .facts-heading { flex-wrap: wrap; }
+.download-global-rates .global-rate-refresh { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-hover); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+.download-global-rates .global-rate-refresh:hover:not(:disabled) { background: var(--surface-hover); }
+.download-global-rates .global-rate-refresh:disabled { cursor: default; opacity: .65; }
+.global-rate-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 20px 0; }
+.global-rate-chart { margin: 0; min-width: 0; }
+.global-rate-chart figcaption { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; }
+.global-rate-chart h3 { margin: 0; font-size: 1rem; font-weight: 600; }
+.global-rate-value { font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.global-rate-chart svg { display: block; width: 100%; height: 128px; overflow: visible; }
+.global-rate-download svg { color: var(--accent-blue); }
+.global-rate-upload svg { color: var(--success); }
+.global-rate-chart path { stroke: currentColor; }
+.global-rate-chart circle { fill: currentColor; }
+.global-rate-chart .global-rate-baseline { stroke: var(--border-hover); }
+.global-rate-axis { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: var(--text-secondary); font-size: .8125rem; font-variant-numeric: tabular-nums; }
+.global-rate-details { border-top: 1px solid var(--border); margin-top: 16px; padding-top: 8px; }
+.global-rate-details summary { min-height: 44px; padding: 12px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.global-rate-clients { list-style: none; padding: 0; margin: 0; }
+.global-rate-clients li { padding: 12px 0; overflow-wrap: anywhere; }
+.global-rate-clients li + li { border-top: 1px solid var(--border); }
+.global-rate-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .875rem; font-variant-numeric: tabular-nums; }
+.global-rate-table caption { padding: 8px 0; text-align: left; color: var(--text-secondary); }
+.global-rate-table th, .global-rate-table td { border-bottom: 1px solid var(--border); padding: 8px 4px; text-align: left; font-weight: 400; overflow-wrap: anywhere; }
+.global-rate-table thead th { font-weight: 600; }
+@media (max-width: 600px) { .download-global-rates { margin: 16px 0; } .global-rate-charts { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
