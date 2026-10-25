@@ -50,6 +50,9 @@ jobs:
       - name: Run frontend behavior tests
         run: mise exec -- node --test web/tests/*.test.mjs
 
+      - name: Verify development startup lifecycle
+        run: mise exec -- task test-dev
+
       - name: Build frontend assets required by Go embedding
         run: mise exec -- task build-web
       - name: Lint Go and check dependency boundaries

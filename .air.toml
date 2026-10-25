@@ -4,14 +4,14 @@ tmp_dir = "tmp"
 
 [build]
   bin = "./tmp/main"
-  args_bin = ["-config", "config.yaml", "-http-addr", "0.0.0.0:8088"]
+  args_bin = []
   cmd = "go build -o ./tmp/main ./cmd/pulsemedia"
   delay = 500
   exclude_dir = ["web", "bin", "docs", "tmp", "testdata", ".git", ".data", "node_modules"]
   exclude_regex = ["_test.go"]
   exclude_unchanged = true
   follow_symlink = false
-  full_bin = "./tmp/main -config config.yaml -http-addr 0.0.0.0:8088"
+  full_bin = ""
   include_ext = ["go", "yaml", "sql"]
   kill_delay = "1s"
   log = "build-errors.log"

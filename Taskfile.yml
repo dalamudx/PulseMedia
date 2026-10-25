@@ -92,6 +92,16 @@ tasks:
     desc: 一键启动本地开发环境（自动起库/执行迁移/集成qb与tr测试容器/前后端双热重载/退出时优雅销毁容器）
     cmds:
       - ./scripts/dev.sh
+  test-dev:
+    desc: Verify development startup ownership, failure cleanup and secret handling
+    cmds:
+      - node --test scripts/dev.test.mjs
+
+  test-dev-services:
+    desc: Verify real development downloader APIs, loopback ports and owned cleanup
+    cmds:
+      - bash scripts/verify_dev_downloaders.sh
+
 
   m4-services-up:
     desc: Start isolated real M4 services with Podman (optional state directory after --)

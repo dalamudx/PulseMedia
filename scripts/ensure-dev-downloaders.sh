@@ -1,87 +1,65 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+umask 077
+ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 cd "$ROOT_DIR"
-
-CONTAINER_CLI="$(which podman 2>/dev/null || which docker 2>/dev/null || true)"
-
-if [ -z "$CONTAINER_CLI" ]; then
-    echo "⚠️ 未检测到 podman 或 docker，跳过下载器测试容器启动。"
+if [[ -z "${PULSE_DEV_CONTAINER_CLI:-}" ]]; then
+    printf '未检测到容器引擎，跳过开发下载器；可在设置中添加已有下载器。\n'
     exit 0
 fi
-
+: "${PULSE_DEV_RUNTIME_DIR:?Start through task dev so container cleanup has an owner}"
+case "$PULSE_DEV_RUNTIME_DIR" in
+    /data/temp/pulse-dev.*) [[ -d "$PULSE_DEV_RUNTIME_DIR" && ! -L "$PULSE_DEV_RUNTIME_DIR" ]] ;;
+    *) exit 2 ;;
+esac
+: "${PULSE_M4_QB_IMAGE:?Run through mise exec}"
+: "${PULSE_M4_TR_IMAGE:?Run through mise exec}"
 QB_PORT="${PULSE_DEV_QB_PORT:-8085}"
 TR_PORT="${PULSE_DEV_TR_PORT:-9091}"
-
-# 准备测试配置目录与下载目录
-mkdir -p "$ROOT_DIR/.data/dev-qb-config/qBittorrent"
-mkdir -p "$ROOT_DIR/.data/dev-tr-config"
-mkdir -p "$ROOT_DIR/.data/downloads"
-
-# 初始化 qBittorrent 配置（开放本地网段免认证以供开发测试零门槛直连）
-if [ ! -f "$ROOT_DIR/.data/dev-qb-config/qBittorrent/qBittorrent.conf" ]; then
-    cat << EOF > "$ROOT_DIR/.data/dev-qb-config/qBittorrent/qBittorrent.conf"
+for port in "$QB_PORT" "$TR_PORT"; do
+    if [[ ! "$port" =~ ^[0-9]{1,5}$ ]] || (( 10#$port < 1 || 10#$port > 65535 )); then
+        printf '开发下载器端口无效。\n' >&2
+        exit 2
+    fi
+done
+mkdir -p "$PULSE_DEV_RUNTIME_DIR/qb/qBittorrent" "$PULSE_DEV_RUNTIME_DIR/tr" "$PULSE_DATA_DIR/downloads"
+# These configurations are disposable and are never written over existing user files.
+cat > "$PULSE_DEV_RUNTIME_DIR/qb/qBittorrent/qBittorrent.conf" <<CONFIG
 [LegalNotice]
 Accepted=true
 
+[BitTorrent]
+Session\DefaultSavePath=/downloads/
+
 [Preferences]
-ConnectionPortRangeMin=6881
-DownloadsSavePath=/downloads/
-WebUI\\Address=*
-WebUI\\AuthSubnetWhitelist=0.0.0.0/0, 127.0.0.1/32, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
-WebUI\\AuthSubnetWhitelistEnabled=true
-WebUI\\CSRFProtection=false
-WebUI\\ClickjackingProtection=false
-WebUI\\HostHeaderValidation=false
-WebUI\\LocalHostAuth=false
-WebUI\\Port=${QB_PORT}
-WebUI\\Username=admin
-EOF
-fi
-
-# 1. 检查并启动 qBittorrent 容器
-if ! $CONTAINER_CLI ps --format '{{.Names}}' | grep -q "^pulsemedia-dev-qb$"; then
-    echo "启动 qBittorrent 开发测试容器 (端口 ${QB_PORT})..."
-    $CONTAINER_CLI rm -f pulsemedia-dev-qb 2>/dev/null || true
-    $CONTAINER_CLI run -d --name pulsemedia-dev-qb \
-        -e PUID=0 -e PGID=0 -e TZ=Asia/Shanghai -e WEBUI_PORT="${QB_PORT}" \
-        -p "${QB_PORT}:${QB_PORT}" \
-        -v "$ROOT_DIR/.data/dev-qb-config:/config:Z" \
-        -v "$ROOT_DIR/.data/downloads:/downloads:Z" \
-        docker.io/linuxserver/qbittorrent:latest >/dev/null
-fi
-
-# 2. 检查并启动 Transmission 容器
-if ! $CONTAINER_CLI ps --format '{{.Names}}' | grep -q "^pulsemedia-dev-tr$"; then
-    echo "启动 Transmission 开发测试容器 (端口 ${TR_PORT})..."
-    $CONTAINER_CLI rm -f pulsemedia-dev-tr 2>/dev/null || true
-    $CONTAINER_CLI run -d --name pulsemedia-dev-tr \
-        -e PUID=0 -e PGID=0 -e TZ=Asia/Shanghai -e USER=admin -e PASS=adminadmin \
-        -p "${TR_PORT}:${TR_PORT}" \
-        -v "$ROOT_DIR/.data/dev-tr-config:/config:Z" \
-        -v "$ROOT_DIR/.data/downloads:/downloads:Z" \
-        docker.io/linuxserver/transmission:latest >/dev/null
-fi
-
-# 3. 等待端口就绪
-for i in {1..15}; do
-    if curl -s "http://127.0.0.1:${QB_PORT}/api/v2/app/version" >/dev/null 2>&1 || curl -s "http://127.0.0.1:${QB_PORT}" >/dev/null 2>&1; then
-        break
-    fi
-    sleep 0.5
+WebUI\Address=*
+WebUI\Port=$QB_PORT
+WebUI\LocalHostAuth=false
+WebUI\AuthSubnetWhitelist=127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,::1/128,fc00::/7
+WebUI\AuthSubnetWhitelistEnabled=true
+CONFIG
+cat > "$PULSE_DEV_RUNTIME_DIR/tr/settings.json" <<'CONFIG'
+{"download-dir":"/downloads","rpc-enabled":true,"rpc-bind-address":"0.0.0.0","rpc-port":9091,"rpc-authentication-required":false,"rpc-whitelist-enabled":false,"rpc-host-whitelist-enabled":true,"rpc-host-whitelist":"localhost,127.0.0.1","port-forwarding-enabled":false}
+CONFIG
+for component in qb tr; do
+    image="$PULSE_M4_QB_IMAGE"
+    # qBittorrent validates the request origin, including the WebUI port.
+    publish="127.0.0.1:$QB_PORT:$QB_PORT"
+    extra=(-e "WEBUI_PORT=$QB_PORT")
+    if [[ "$component" == tr ]]; then image="$PULSE_M4_TR_IMAGE"; publish="127.0.0.1:$TR_PORT:9091"; extra=(); fi
+    "$PULSE_DEV_CONTAINER_CLI" run -d --name "pulsemedia-dev-$component-${PULSE_DEV_RUNTIME_DIR##*.}" \
+        --cidfile "$PULSE_DEV_RUNTIME_DIR/$component.cid" --label "io.pulsemedia.dev=$PULSE_DEV_RUNTIME_DIR" \
+        -e "PUID=$(id -u)" -e "PGID=$(id -g)" -e TZ=UTC "${extra[@]}" \
+        -p "$publish" -v "$PULSE_DEV_RUNTIME_DIR/$component:/config:Z" \
+        -v "$PULSE_DATA_DIR/downloads:/downloads:z" "$image" >/dev/null
 done
-
-# 4. 如果本地 PG 数据库已运行，自动在 download_client 表中注册或更新测试下载器
-PG_PORT="${PULSE_POSTGRES_PORT:-5433}"
-if command -v psql >/dev/null 2>&1 && pg_isready -h 127.0.0.1 -p "$PG_PORT" >/dev/null 2>&1; then
-    psql -h 127.0.0.1 -p "$PG_PORT" -U postgres -d pulsemedia >/dev/null 2>&1 << 'SQL' || true
-INSERT INTO download_client (id, name, client_type, url, username, password_encrypted, created_at, updated_at)
-VALUES 
-  ('018e0000-0000-7000-8000-000000000011', '开发测试 qBittorrent', 'qbittorrent', 'http://127.0.0.1:8085', 'admin', '\x01234567890123456789012345678901', NOW(), NOW()),
-  ('018e0000-0000-7000-8000-000000000012', '开发测试 Transmission', 'transmission', 'http://127.0.0.1:9091', 'admin', '\x01234567890123456789012345678901', NOW(), NOW())
-ON CONFLICT (id) DO UPDATE SET url = EXCLUDED.url, name = EXCLUDED.name;
-SQL
-fi
-
-echo "开发下载器测试容器已就绪 (qb: http://127.0.0.1:${QB_PORT}, tr: http://127.0.0.1:${TR_PORT})。"
+for attempt in {1..30}; do
+    if curl --fail --silent --max-time 1 "http://127.0.0.1:$QB_PORT/api/v2/app/version" >/dev/null &&
+        [[ "$(curl --silent --max-time 1 --output /dev/null --write-out '%{http_code}' "http://127.0.0.1:$TR_PORT/transmission/rpc")" == 409 ]]; then
+        printf '本次开发下载器就绪：qBittorrent http://127.0.0.1:%s；Transmission http://127.0.0.1:%s。\n' "$QB_PORT" "$TR_PORT"
+        exit 0
+    fi
+    sleep 1
+done
+printf '开发下载器未就绪，停止本次启动。\n' >&2
+exit 1

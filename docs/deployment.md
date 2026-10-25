@@ -2,6 +2,27 @@
 
 PulseMedia 采用单二进制轻量微单体架构，内嵌现代化 React 19 前端，专为 PostgreSQL 18 设计。容器镜像默认以非 root 用户安全运行。
 
+<a id="integration-verification"></a>
+## 集成能力与专项复验
+
+业务允许范围以[架构中的能力矩阵](architecture.md#integration-capabilities)为准；下表用于选择安装后的诊断和回归入口。所有 `task` 命令通过 `mise exec -- task <名称>` 执行，命令参数放在 `--` 后。能力存在、协议测试通过、真实账号联调和实际送达是不同的证据，当前进度与历史结果只记在[开发计划](development-plan.md#progress)。
+
+| 范围 | 安装后核对与限制 | 正式复验入口 |
+|---|---|---|
+| 普通下载与真实服务 | 核对路径映射、原始字节、原操作标签及同inode入库；rTorrent另需HTTP XML-RPC桥接 | `m4-services-check -- <自有state-dir>`、`m4-r3-faults -- <同目录>`；rTorrent使用`test-m11-rtorrent` |
+| 自动TV、整季包、升级 | 自动标准单集允许qB/Transmission；手工单集、整包及升级不据普通接口推定通用支持；未知日期不补造 | `test-automatic-tv`、`test-m8-complete-tv-watch`、`test-m8-upgrade-watch`；M3首次发送/整理专项见开发计划 |
+| 全局速率、分流与做种移除 | 速率需显式部署开关；仅qB/Transmission，移除固定保留文件且不覆盖专用任务 | `test-m9-download-routing`、`test-m9-global-rates -- all`、`test-m10-seeding-management` |
+| 站点、CookieCloud与签到 | 模板不证明站点普适兼容；CookieCloud限明确Nexus站点；签到POST结果不明不自动重发，不用可能写入的GET恢复探针 | `test-sites-ui`、`test-m10-cookiecloud-sync`、`test-m8-site-checkin-runtime` |
+| TMDB、豆瓣、Bangumi、人物关注 | 浏览身份不授获取；豆瓣使用部署者提供的凭据，失败不假空；Bangumi需显式TMDB候选选择 | `test-subscription-creation -- all`、`test-m7-douban`、`test-m10-bangumi-calendar -- live`、`test-m11-person-follow` |
+| TVDB、Fanart与字幕 | TVDB/Fanart默认关闭并需自有账号；字幕仅Shooter，mpv证据限定`sub-auto=fuzzy`，SubHD未启用 | `test-m11-tvdb`、`test-m11-artwork`、`test-m8-shooter-live`、`test-m8-subtitle-player` |
+| 媒体服务器与通知 | Jellyfin/Emby精确路径，Plex歧义不全库后备；通知至少一次，不将202或平台接收当实际送达 | `test-m10-emby`、`test-m10-notifications -- all`、`test-m11-web-push`、`test-m11-web-push-browser` |
+| 文件系统与NAS | 本地事件仅提示；NFS远端回退周期，缺原子NoReplace能力的copy/move停止保源；reflink不可用不退化 | `m4-nfs-faults`、`test-m8-nfs-watch`、`test-m8-untracked-commit-recovery` |
+| 正式镜像与恢复 | 选择确切镜像ID；空库安装、登录退出、82→当前升级、加密恢复隔离和PG18卷均独立验证 | `PULSE_CONTAINER_TEST_IMAGE=<镜像ID> mise exec -- task test-container` |
+
+常规CI的PG/race分片、前端行为和认证浏览器是基础门禁。变更下载发送/整理/恢复时，必须补跑对应真实服务或NAS专项；变更权限、命令恢复或界面时，补跑对应真实Cookie/Chrome入口；变更外部协议时，补跑其原生和生产App专项；变更迁移/密钥/容器时，补跑安装升级与备份恢复。门控跳过不能代替专项执行。需要人工审图的入口须完成图审和清理回执才记通过；无授权私有账号时登记未验证，不能通过新增通用重试或绕过上游验证来补齐。
+
+使用正式Beta试用时，先下载并校验第5节公开归档，在独立数据库和媒体根安装；明确版本、镜像ID、schema、设备架构和根能力后，再做登录/重启、一次授权内容获取入库及故障恢复。长期试用按实际运行窗口记录，不以短时容器冒烟或QEMU结果代替真实家庭负载和原生ARM性能。
+
 ## 1. 构建并启动容器
 
 使用项目 `.mise.toml` 锁定的工具构建本地镜像；Podman 仅接收临时目录里的三个二进制和迁移，不把本机配置、密钥或媒体送入构建上下文：
@@ -352,6 +373,7 @@ PULSE_BUILD_VERSION=0.1.0-beta.1 mise exec -- task build-container -- localhost/
 真实联调使用明确授权的服务和 CC BY 样本。公开索引源可能限流或超时，失败应保留原操作并等待/复核，不能盲目重复 Add。升级、跨根复用、copy/reflink/move 的确认和恢复边界沿用架构与操作页面提示。NAS 更换物理根时必须显式推进 generation 建立新基线，原文件事实不会随换挂载自动失效。
 
 
+<a id="beta-release"></a>
 ### 0.1.0-beta.2公开预发布
 
 覆盖M0–M11的[预发布v0.1.0-beta.2](https://github.com/dalamudx/PulseMedia/releases/tag/v0.1.0-beta.2)已于2026-10-24公开。标签和两个正式镜像固定源码`06ed3164f76c345e5c28cd4d4db186a6fadc88a5`；与CI通过的`28cc0fe`仅差验收文档，Go1.26.10、迁移目标schema126。amd64原生及arm64 QEMU分别完成安装、schema82→126升级、加密备份/恢复隔离、初始化登录、只读根和PG18卷重建；arm64原生硬件性能仍未量测。
@@ -370,7 +392,7 @@ GHCR的`ghcr.io/dalamudx/pulsemedia:0.1.0-beta.2`也已推送，多架构索引�
 
 ## 6. M5 开发切片与站点管理验证
 
-M5 源码从 schema84/85 开始引入完整执行 URL 加密、明确协议和版本化站点命令；本节不改变上述 V1 Beta 镜像的 revision 或验收范围。源码 App 在开放 HTTP 与 worker 前完成旧站点配置转换，须使用原主密钥，错误密钥会阻止启动。离线升级与备份恢复继续遵守前述恢复点、凭据和隔离规则。
+M5 从 schema84/85 开始引入完整执行 URL 加密、明确协议和版本化站点命令，这些能力包含在 beta.2 中；历史 beta.1 的 revision 和范围保持原记录。App 在开放 HTTP 与 worker 前完成旧站点配置转换，须使用原主密钥，错误密钥会阻止启动。离线升级与备份恢复继续遵守前述恢复点、凭据和隔离规则。
 
 站点修改必须携带读取到的配置版本；省略 URL 或凭据表示保留，显式空凭据表示清空。列表只显示安全地址。删除会停用来源并保留下载、候选与升级历史。丢失响应时通过原键安全回执恢复；浏览器恢复记录仅含命令元数据，不含完整地址或凭据。
 

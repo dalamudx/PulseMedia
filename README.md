@@ -32,7 +32,7 @@ Go 驱动的自托管影视自动化中枢：发现、订阅、下载编排、�
 mise exec -- task build-container -- localhost/pulsemedia:dev
 ```
 
-镜像包含内嵌前端、离线迁移和加密备份工具、PG18 客户端，固定以 UID/GID 10001 运行。按[部署指南](docs/deployment.md#1-构建并启动容器)配置独立数据库密码、明确连接和卷权限，用镜像内 `pulsemigrate` 完成离线安装后再以 `podman compose` 启动；首次访问进入管理员初始化向导。已有库升级须先准备可验证的加密恢复点。M4 本地部署验收已通过，最终 Beta 与托管 CI 状态见开发计划。
+镜像包含内嵌前端、离线迁移和加密备份工具、PG18 客户端，固定以 UID/GID 10001 运行。按[部署指南](docs/deployment.md#1-构建并启动容器)配置独立数据库密码、明确连接和卷权限，用镜像内 `pulsemigrate` 完成离线安装后再以 `podman compose` 启动；首次访问进入管理员初始化向导。已有库升级须先准备可验证的加密恢复点。正式Beta归档的下载、校验和加载方法见[部署指南](docs/deployment.md#beta-release)，当前交付与验收状态见开发计划。
 
 ### 2. 本地开发环境（一键启动与双热重载）
 
@@ -46,14 +46,23 @@ mise install
 #### 一键启动（自动起库 / 自动迁移 / 前后端热重载 / 监听 0.0.0.0）
 
 ```bash
-task dev
+mise exec -- task dev
 ```
 
-一条命令全自动完成：
-1. **自动起库与迁移**：自动检查并启动本地 PostgreSQL 18 并应用最新迁移
-2. **前端热重载 (Vite)**：监听在 **`http://0.0.0.0:3000`**（支持局域网/外部网络直连）
-3. **后端热重载 (Air)**：监听在 **`http://0.0.0.0:8080`**（修改 Go 代码毫秒级自动重编译重载）
-4. 按 `Ctrl+C` 自动清理所有后台进程并优雅退出。
+一条命令完成以下准备：
+
+1. **自动起库与迁移**：检查本机开发 PostgreSQL 18 并应用迁移；该本机辅助入口需要可用的本地 PostgreSQL 系统账号。已有独立数据库或容器部署按架构/部署指南操作。
+2. **开发下载器**：有 Podman/Docker 时按 `.mise.toml` 固定镜像创建本次 qBittorrent/Transmission，管理端口仅绑定 `127.0.0.1`，默认分别为 `8085`/`9091`。在应用设置中添加连接，密码由正式配置接口加密保存；脚本不直接改写配置表。
+3. **前端与后端热重载**：默认前端 `http://0.0.0.0:3000`，后端 **`http://0.0.0.0:8088`**；前端端口占用直接失败。可通过 `VITE_HOST`、`VITE_PORT`、`PULSE_HTTP_ADDR` 和 `PULSE_BACKEND_URL` 明确配置；修改后端地址时同时指定代理目标。
+4. **退出与失败清理**：Ctrl+C、终止信号或任一热重载进程退出，只停止本次进程组，并按容器ID/归属标签移除本次下载器；不按端口杀进程或删除既有同名容器。数据库和下载文件保留，临时配置与构建输出在 `/data/temp/pulse-dev.*` 清理；归属不符或清理失败会报错并保留该目录供核对。终端不输出数据库连接串或密码。
+
+自定义环境变量放在 `mise exec` 之后，避免被 `.mise.toml` 的开发默认值覆盖，例如：
+
+```bash
+mise exec -- env PULSE_HTTP_ADDR=127.0.0.1:18088 PULSE_BACKEND_URL=http://127.0.0.1:18088 task dev
+```
+
+开发进程生命周期回归：`mise exec -- task test-dev`；真实固定镜像、随机回环端口与临时下载目录验收：`mise exec -- task test-dev-services`。两入口都校验本次资源清理。集成支持范围见[能力矩阵](docs/architecture.md#integration-capabilities)，各集成复验和真实环境限制见[部署指南](docs/deployment.md#integration-verification)。
 
 #### Podman 真实服务联调环境
 

@@ -29,19 +29,19 @@
 
 PulseMedia 是 Go 驱动的自托管影视自动化中枢，把用户想看的作品可靠地变成媒体库中的文件。发现、订阅、资源搜索、下载编排、文件整理和媒体库同步由它负责；播放、转码、流媒体分发与观看记录交给媒体服务器。
 
-| 能力 | V1 选择 |
+| 能力 | 内置支持范围（具体授权边界见第10节） |
 |---|---|
 | 媒体 | 电影、剧集；动漫按剧集处理 |
-| 元数据 | TMDB；IMDb/TVDB ID 用于交叉身份 |
-| 索引器 | Torznab，可接 Prowlarr / Jackett |
-| 下载器 | qBittorrent |
-| 存储 | 本地文件系统，含已挂载 NAS |
-| 媒体服务器 | Jellyfin 刷新，可选文件识别确认 |
-| 通知 | Webhook、Telegram |
+| 元数据与发现 | TMDB 主身份；TVDB 补充；Fanart 艺术画；豆瓣榜单/公开想看、Bangumi 周历 |
+| 索引器 | Torznab（Prowlarr / Jackett）、明确支持的 NexusPHP 与 DMHY 协议；模板不等于站点通用适配 |
+| 下载器 | qBittorrent、Transmission、rTorrent HTTP XML-RPC；各业务能力分别校验 |
+| 存储 | 本地文件系统，含已挂载 NAS；动作按实际文件系统能力开放 |
+| 媒体服务器 | Jellyfin、Emby 精确路径刷新/可选确认；Plex 局部库刷新 |
+| 通知 | Webhook、Telegram、企业微信、钉钉、飞书、Bark；显式启用的个人 Web Push |
 | 用户 | 共享家庭库，管理员、普通成员与受限 API Token |
 | 部署 | 一个 Go 应用实例 + 独立 PostgreSQL 18 |
 
-**非目标**：插件加载/市场、AI Agent/MCP、音乐、站点爬虫/规则包、云盘/对象存储、多应用实例，以及 Redis、外部消息队列和业务微服务。只借鉴 MoviePilot 系列的业务思路，不复制代码、资源文件或站点二进制。
+**非目标**：插件加载/市场、AI Agent/MCP、音乐、通用站点爬虫/动态规则包、云盘/对象存储、多应用实例，以及 Redis、外部消息队列和业务微服务。只借鉴 MoviePilot 系列的业务思路，不复制代码、资源文件或站点二进制。
 
 原则：可信优先于自动；不确定状态明确展示；每个决策有原因；破坏性操作需确认；配置修改可预览；待处理事项优先于装饰性统计。
 
@@ -1035,12 +1035,28 @@ delivery 用 FOR UPDATE SKIP LOCKED + UPDATE RETURNING 原子认领，提交后�
 App.Run 显式组装电影识别的持久调度和两个独立消费者，复用应用持有的 TMDB 请求预算；关闭时取消并等待消费者及尚未结束的物理操作，再释放数据库和数据目录锁。MovieRecognizer 持有同一受限根物理槽贯穿源读取、元数据网络与关联写回。网络请求前与提交前均读取最近成功封存扫描的目录 device/inode，并核对打开目录、当前路径目录、marker 及文件 inode/大小/mtime/stat.v1 指纹；标记和源必须为可安全检查的常规文件。检查起点使用数据库时间，严格存储在取得锁后再次核验扫描 ID、根 generation、目录身份及不早于当前五秒的检查时刻，未来或缺失凭据也拒写。文件/目录替换、消失、符号链接或权限不足转 source_unavailable 复核，不制造关联事实；服务失败保持可重试，低置信不发元数据网络。物理文件检查失败不退役原文件或撤销其历史事实，缺失失效仍由独立的二次扫描合同处理。取消不能提前释放仍在使用的根物理槽；已排空的未完成任务在租约到期后由新 token 恢复。
 | 适配器 | 能力与合同 |
 |---|---|
-| MetadataProvider / TMDB | Search、Details、Season、FindByExternal；详情 TTL 24h、季 12h/播出中 6h；语言回退与 ETag |
-| Indexer / Torznab | Capabilities、Search 分页、Recent/RSS、Fetch、Test；外部 ID 优先；不维护站点爬虫 |
-| DownloadClient / qBittorrent | Add、Get/Inventory、Remove、Test；稳定标识对账，认证失效清缓存、下次调用重登录，Add结果不明仅对账 |
-| MediaServer / Jellyfin | RefreshPaths、FindByPath、Libraries、Test；路径映射与短窗口合并刷新 |
-| Notifier | Send、Test；稳定事件 ID，文案/i18n由用例渲染；按媒体合并，避免刷屏 |
-| Local storage | 根探测、受限路径访问、遍历与能力探测、hardlink/reflink/copy/rename、完整校验与观察 |
+| MetadataProvider / TMDB | 主身份、Search/Details/Season/Find、人物作品；详情TTL24h、季12h/播出中6h、语言回退与ETag；季集保留真实稀疏编号和未知日期，缓存不授执行权 |
+| TVDB / Fanart / Shooter | TVDB 只补充已交叉证明的规范身份/译名，不授季退役权；Fanart 独立侧写且不覆盖用户图片；字幕使用 Shooter，SubHD 不启用 |
+| Douban / Bangumi | 豆瓣榜单和公开想看、Bangumi 七日周历；无可靠 TMDB 身份时仅浏览或显式选候选，不借来源编号创建获取 |
+| Indexer / Torznab | Capabilities、Search 分页、Recent/RSS、Fetch、Test；外部 ID 优先，跨页证据不能冒充上游快照 |
+| NexusPHP / DMHY / CookieCloud | 明确协议的搜索与取源；传统 NexusPHP profile 的统计/单次签到；CookieCloud 只更新已配置且匹配的 Nexus 站点 Cookie，不创建站点或覆盖 Torznab/RSS 凭据 |
+| MediaServer / Jellyfin、Emby、Plex | Jellyfin/Emby 按入库文件精确路径刷新，唯一完整路径证据才可确认；Plex 按最长唯一库目录局部刷新，歧义不回退全库，刷新不等于 confirmed |
+| Notifier / Web Push | Webhook/Telegram/四机器人按渠道独立至少一次投递；Web Push 需部署 VAPID、用户授权及账号/设备/密钥版本绑定，不承诺严格一次送达 |
+| Local storage | 根身份、受限 FD、完整扫描、动作能力探测、全量内容校验与观察恢复；本地事件只加速观察，NAS 无通知时回退周期 |
+
+<a id="integration-capabilities"></a>
+下载器能力必须由对应业务的生产白名单和冻结授权共同决定；实现 `DownloaderClient` 或连接测试成功不能扩大专用权限：
+
+| 业务入口 | qBittorrent | Transmission | rTorrent / ruTorrent |
+|---|---|---|---|
+| 普通电影 Add、原任务观察及硬链接入库 | 支持 | 支持 | 支持 HTTP(S) XML-RPC；SCGI 需外部桥接 |
+| 手工标准/审核映射单集 | 沿现有专用授权 | 不据普通电影能力开放 | 不开放 |
+| 自动 TV 普通季标准单集 | 支持；真实完整清单及单元身份围栏 | 支持同一专用围栏 | 不开放 |
+| 整季包获取/显式整理、电影升级/退休 | 仅 qBittorrent 的独立授权链 | 不开放 | 不开放 |
+| 全局上下行采集 | 显式部署开关启用后采集 | 同左 | 不开放 |
+| 做种达标自动移除 | 仅具完整发送/入库证据的普通任务，固定保留文件 | 同左；原生未知值不当零 | 不开放 |
+
+专用自动 TV、整包和升级任务不能借普通任务的做种移除许可；历史缺少端点或入库证据的任务也不能补造授权。所有下载器 Add 结果不明时只观察原任务，不重发或换资源。硬链接要求同文件系统；copy/move 要求完整内容校验和原子无覆盖发布，reflink 不支持时不静默回退。实际 NFS 能力不足时保源、无入库；未知日期、部分扫描和失联不制造文件缺失。部署诊断及复验入口见[部署指南的能力与复验矩阵](deployment.md#integration-verification)，实际环境与验收记录仅以开发计划为准。
 
 Jellyfin刷新、查询与连接测试统一输出ports安全错误，错误文本不携带原始URL、凭据或运输异常；当前取消、超时、401/403、429和服务失败分别保留合同类型。可选文件确认要求FindByPath返回唯一有效ID及与请求完全一致的Path，查询显式请求Path字段；缺失/null结果集、多条身份、矛盾总数或不匹配路径不能确认文件。响应完整JSON最多8MiB，拼接/超限/读取错误均拒绝。空Items只表示未索引，不等于服务失败；只有明确路径证明并通过本地有效文件/映射提交检查才产生confirmed，失败不撤销imported。
 

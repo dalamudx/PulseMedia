@@ -38,4 +38,4 @@ MIGRATE_URL="postgres://postgres@127.0.0.1:$DB_PORT/$DB_NAME?sslmode=disable"
 echo "自动检查并应用数据库迁移..."
 mise exec -- goose -dir migrations postgres "$MIGRATE_URL" up >/dev/null
 
-echo "开发数据库就绪：$MIGRATE_URL"
+echo "开发数据库就绪（连接信息不输出）。"
