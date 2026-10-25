@@ -77,6 +77,26 @@ func publicUpgradeAppStarter(t *testing.T, f *publicUpgradeFixture) func() func(
 		base := "http://" + cfg.Server.HTTPAddr
 		f.runtimeURL = base
 		client := &http.Client{Timeout: 5 * time.Second}
+		// The startup log is emitted before ListenAndServe binds the socket.
+		// Wait on a read-only probe before sending any business command.
+		readyDeadline := time.Now().Add(20 * time.Second)
+		for {
+			response, err := client.Get(base + "/readyz")
+			if err == nil {
+				_ = response.Body.Close()
+				if response.StatusCode == http.StatusOK {
+					break
+				}
+			}
+			if time.Now().After(readyDeadline) {
+				t.Fatal("App HTTP readiness timeout")
+			}
+			select {
+			case err := <-done:
+				t.Fatal("App exited before HTTP readiness", err)
+			case <-time.After(10 * time.Millisecond):
+			}
+		}
 		f.router = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			upstream := r.Clone(r.Context())
 			upstream.RequestURI = ""
