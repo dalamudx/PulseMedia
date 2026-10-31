@@ -51,6 +51,8 @@
 ### 当前执行队列
 
 
+arm64交付补验（DELIVERY-02，本地完成1/1）：以干净a0eb449b提交交叉构建linux/arm64镜像；在x86_64主机通过已启用的QEMU aarch64/binfmt实际执行，未改变宿主注册。镜像ID为210cbc5ef2c9584fb4e11361af4b383f9b1535b31fdea9e98923ac5f100b55ad，OCI revision与实际二进制--version均绑定a0eb449b521a5774937336780dcdf7b63634fb25。两项容器Go/race父测试通过、零跳过：UID/GID10001、只读根、无capabilities、schema145启动、嵌入前端、首次设置及登录、优雅关停；镜像内CLI完成空库安装、schema82→145升级、配对备份和恢复拒绝保护，凭据与隔离历史保持。未重复amd64已验证的架构无关PG卷测试。本轮私有PG、容器、构建上下文、验证镜像和临时日志/缓存已清理；仅为模拟执行功能验收，不代表原生ARM硬件性能或长期稳定性，未运行远程CI、推送或发布。
+
 提交后交付验证（DELIVERY-01，本地完成1/1）：基线e07a5b5b；修复提交ff410433。CI依赖扫描确认GO-2026-6860可由豆瓣想看HTML解析触达，已将golang.org/x/net v0.61.0升级至修复版v0.62.0，仅更新该模块及校验项，其他依赖和工具链不变。go mod verify通过，豆瓣/NexusPHP/Cookie规则53项Go/race父测试通过，真实豆瓣榜单联调1项未启用而跳过；全仓lint零问题。govulncheck符号与导入包级均为零漏洞，另报告1项未被当前程序导入/调用的模块级漏洞，不代表整个依赖生态零漏洞。
 
 以干净ff410433提交构建linux/amd64验证镜像，OCI revision和镜像内版本均绑定该源码；本地image ID为c388e3fefbb5a3d1e630a73c67a65d5733aadf12b23cabcf37de6624912e3786。实际镜像的3项Go/race父测试通过、零跳过：UID/GID10001、只读根文件系统、无capabilities、schema145启动、嵌入前端、首次设置只能执行一次、登录与优雅关停；空库安装和schema82→145受保护升级使用镜像内CLI，核验配对备份、凭据及恢复隔离历史；PG18卷在容器替换后数据保持。容器回执使用CurrentMigrationVersion，消除旧schema83硬编码。私有PG、容器、卷、构建上下文及本轮验证镜像/日志/缓存已清理。本轮未验证arm64、远程CI或真实外部服务，未推送、发布或修改现有部署。
