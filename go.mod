@@ -15,7 +15,7 @@ require (
 
 require (
 	github.com/SherClockHolmes/webpush-go v1.4.1-0.20260422052225-76cc00f5ac2d
-	golang.org/x/net v0.61.0
+	golang.org/x/net v0.62.0
 )
 
 require github.com/golang-jwt/jwt/v5 v5.2.2 // indirect

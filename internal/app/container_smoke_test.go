@@ -15,10 +15,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/jackc/pgx/v5"
 )
 
-// This opt-in test runs the actual image and a private schema83 database.
+// This opt-in test runs the actual image and a private current-schema database.
 func TestContainerRuntimeSmoke(t *testing.T) {
 	image := os.Getenv("PULSE_CONTAINER_TEST_IMAGE")
 	if image == "" {
@@ -213,5 +214,5 @@ func TestContainerRuntimeSmoke(t *testing.T) {
 	if command("inspect", "--format", "{{.State.ExitCode}}", name) != "0" {
 		t.Fatal("app did not shut down cleanly")
 	}
-	t.Logf("CONTAINER_SMOKE_PASSED arch=%s uid=10001 pg=18.6 schema=83 embedded_frontend=true setup_and_login=true setup_once=true read_only_root=true capabilities=none graceful_shutdown=true", architecture)
+	t.Logf("CONTAINER_SMOKE_PASSED arch=%s uid=10001 pg=18.6 schema=%d embedded_frontend=true setup_and_login=true setup_once=true read_only_root=true capabilities=none graceful_shutdown=true", architecture, postgres.CurrentMigrationVersion)
 }
