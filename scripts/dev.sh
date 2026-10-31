@@ -28,6 +28,16 @@ cleanup() {
     result=$?
     trap - EXIT INT TERM
     for child in "${children[@]}"; do kill -TERM -- "-$child" 2>/dev/null || true; done
+    # Air may stall while stopping its build watcher. Bound the grace period,
+    # then stop only the process groups created by this startup.
+    stop_deadline=$((SECONDS + 5))
+    while (( SECONDS < stop_deadline )); do
+        running=0
+        for child in "${children[@]}"; do kill -0 -- "-$child" 2>/dev/null && running=1; done
+        (( running )) || break
+        sleep 0.1
+    done
+    for child in "${children[@]}"; do kill -KILL -- "-$child" 2>/dev/null || true; done
     for child in "${children[@]}"; do wait "$child" 2>/dev/null || true; done
     cleanup_failed=0
     for component in qb tr; do

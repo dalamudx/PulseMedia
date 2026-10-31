@@ -18,7 +18,7 @@ if (name === 'mktemp') {
  process.stdout.write(r.stdout||''); process.exit(r.status??1);
 }
 if (name === 'fuser' || name === 'psql') process.exit(97);
-if (name === 'sleep') process.exit(0);
+if (name === 'sleep') { if(args[0]==='0.1') cp.spawnSync('/usr/bin/sleep',args); process.exit(0); }
 if (name === 'curl') { if(args.some(a=>a.endsWith('/transmission/rpc'))) process.stdout.write('409'); process.exit(0); }
 if (name === 'podman') {
  const option=k=>args[args.indexOf(k)+1];
@@ -47,7 +47,7 @@ if(name==='air'||name==='pnpm') {
   const child=cp.spawn(process.execPath,['-e',"setInterval(()=>{},1000)"],{stdio:'ignore'});
   fs.writeFileSync(path.join(state,name+'.child'),String(child.pid));
   const interval=setInterval(()=>{},1000);
-  process.on('SIGTERM',()=>{clearInterval(interval);child.kill('SIGTERM');child.once('exit',()=>process.exit(0));if(child.exitCode!==null)process.exit(0);});
+  process.on('SIGTERM',()=>{if(mode===name+'-stuck')return;clearInterval(interval);child.kill('SIGTERM');child.once('exit',()=>process.exit(0));if(child.exitCode!==null)process.exit(0);});
  }
 } else process.exit(95);
 `;
@@ -154,6 +154,16 @@ test('container owner mismatch refuses deletion and retains the original cleanup
   });
 });
 
+test('unresponsive owned watcher is stopped within the cleanup grace period',async()=>{
+  await fixture('air-stuck',async f=>{
+    await f.ready();
+    const started=Date.now();f.child.kill('SIGTERM');
+    const result=await Promise.race([f.done,delay(10000).then(()=>{throw Error('cleanup exceeded grace period');})]);
+    assert.equal(result.code,143);
+    assert.ok(Date.now()-started<10000);
+    assert.equal(await exists(await f.runtime()),false);
+  });
+});
 test('actual mise-managed Air starts the generated application with the configured endpoint',async()=>{
   await fixture('real-air',async f=>{
     await f.ready();
