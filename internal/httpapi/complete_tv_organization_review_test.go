@@ -89,7 +89,7 @@ func TestCompleteTVOrganizationPGSlowObservationNotRenewed(t *testing.T) {
 	pool := f.n.f.a.DBPool()
 	gen := idgen.New()
 	fs := delayedCompleteInspectFS{rootfs.NewFilesystem()}
-	f.service = transfer.NewCompleteTVOrganizationService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), fs))
+	f.service = transfer.NewCompleteTVOrganizationService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), fs, transfer.ExecutePreparedPlan))
 	if _, e := f.confirm("slow-observation"); !errors.Is(e, ports.ErrTransferReviewRequired) {
 		t.Fatal("slow file observation received fresh timestamp", e)
 	}

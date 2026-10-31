@@ -192,7 +192,7 @@ func TestFullM3ScenariosIntegration(t *testing.T) {
 
 	// Perform quality upgrade via UpgradeMediaFile
 	ob := outbox.New(pool, gen, mockClock)
-	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem()))
+	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 	q4K := quality.Profile{Resolution: quality.Res2160p, Source: quality.SourceRemux}
 
 	upgradeOpID, _ := uuid.NewV7()

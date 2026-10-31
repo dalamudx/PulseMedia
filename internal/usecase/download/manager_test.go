@@ -17,12 +17,26 @@ type executionProbe struct {
 	lease                                     ports.JobLease
 }
 
-func (p *executionProbe) SubmitDownload(ctx context.Context, op, client, candidate uuid.UUID, path string, a ...ports.JobLease) (*ports.DownloadExecutionTask, error) {
+func (p *executionProbe) PrepareDownload(ctx context.Context, op, client, candidate uuid.UUID, path string, a ...ports.JobLease) (*ports.PreparedDownload, error) {
 	p.submitCount++
 	if ctx != p.ctx || op != p.op || client != p.client || candidate != p.candidate || path != "/configured-root" || len(a) != 1 || a[0] != p.lease {
 		panic("submission command changed")
 	}
-	return p.task, ports.ErrDownloadReconcilePending
+	return &ports.PreparedDownload{Task: p.task}, ports.ErrDownloadReconcilePending
+}
+func (p *executionProbe) PrepareDownloadObservation(ctx context.Context, op uuid.UUID, reconcile bool, watch *ports.DownloadWatchTarget) (*ports.PreparedDownloadObservation, error) {
+	if watch != nil {
+		panic("unexpected watch")
+	}
+	if reconcile {
+		p.reconcileCount++
+	} else {
+		p.observeCount++
+	}
+	if ctx != p.ctx || op != p.op {
+		panic("observation authority changed")
+	}
+	return &ports.PreparedDownloadObservation{Task: p.task}, nil
 }
 func (p *executionProbe) ReconcileTask(ctx context.Context, op uuid.UUID) (*ports.DownloadExecutionTask, error) {
 	p.reconcileCount++

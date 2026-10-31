@@ -39,6 +39,24 @@ func (s *ServerHandler) RequestUntrackedReview(ctx context.Context, r RequestUnt
 		return untrackedReviewProblem(ctx, ports.ErrRejected), nil
 	}
 	input := ports.UntrackedReviewInput{ScopeVersion: r.Body.ScopeVersion, FileRevision: r.Body.FileRevision, MediaType: string(r.Body.MediaType), TMDBID: r.Body.TmdbId}
+	if v := r.Body.CanonicalUnitId; v != nil {
+		input.CanonicalUnitID = *v
+	}
+	if v := r.Body.MediaMetadataVersion; v != nil {
+		input.MediaMetadataVersion = *v
+	}
+	if v := r.Body.UnitMetadataVersion; v != nil {
+		input.UnitMetadataVersion = *v
+	}
+	if v := r.Body.Season; v != nil {
+		input.Season = *v
+	}
+	if v := r.Body.Episode; v != nil {
+		input.Episode = *v
+	}
+	if v := r.Body.TmdbEpisodeId; v != nil {
+		input.TMDBEpisodeID = *v
+	}
 	if !validUntrackedReviewInput(input) {
 		return untrackedReviewProblem(ctx, ports.ErrRejected), nil
 	}
@@ -194,7 +212,7 @@ func validUntrackedReviewResult(r *ports.UntrackedReview, actor string, scopeID,
 	}
 	return c != nil && e.Reason == "ready" && c.Namespace == "tmdb."+r.Request.Input.MediaType && c.TMDBID > 0 &&
 		c.Key == c.Namespace+":"+strconv.FormatInt(c.TMDBID, 10) && c.Title != "" && len(c.Units) > 0 &&
-		(r.Request.Input.TMDBID == 0 || c.TMDBID == r.Request.Input.TMDBID)
+		(r.Request.Input.TMDBID == 0 || c.TMDBID == r.Request.Input.TMDBID) && r.Request.Input.CanonicalCandidateMatches(c)
 }
 
 func validUntrackedConfirmationReceipt(r *ports.UntrackedConfirmationReceipt, actor string, scopeID, fileID uuid.UUID, key string) bool {
@@ -218,7 +236,16 @@ func validUntrackedConfirmationReceipt(r *ports.UntrackedConfirmationReceipt, ac
 }
 
 func untrackedReviewInputResponse(in ports.UntrackedReviewInput) UntrackedReviewInput {
-	return UntrackedReviewInput{ScopeVersion: in.ScopeVersion, FileRevision: in.FileRevision, MediaType: in.MediaType, TmdbId: in.TMDBID}
+	out := UntrackedReviewInput{ScopeVersion: in.ScopeVersion, FileRevision: in.FileRevision, MediaType: in.MediaType, TmdbId: in.TMDBID}
+	if in.CanonicalUnitID != "" {
+		out.CanonicalUnitId = &in.CanonicalUnitID
+		out.MediaMetadataVersion = &in.MediaMetadataVersion
+		out.UnitMetadataVersion = &in.UnitMetadataVersion
+		out.Season = &in.Season
+		out.Episode = &in.Episode
+		out.TmdbEpisodeId = &in.TMDBEpisodeID
+	}
+	return out
 }
 
 func untrackedReviewRequestResponse(r ports.UntrackedReviewRequest) UntrackedReviewRequest {

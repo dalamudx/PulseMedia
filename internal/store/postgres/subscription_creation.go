@@ -45,6 +45,9 @@ func creationError(ctx context.Context, err error) error {
 	if errors.Is(err, ports.ErrMediaRequestConflict) {
 		return ports.ErrMediaRequestConflict
 	}
+	if errors.Is(err, ports.ErrClassificationConflict) || errors.Is(err, ports.ErrClassificationEvidence) {
+		return err
+	}
 	if errors.Is(err, ports.ErrNoSubscriptionRoot) || errors.Is(err, ports.ErrAmbiguousSubscriptionRoot) {
 		return err
 	}
@@ -95,6 +98,9 @@ func creationOwner(a *ports.Actor, in ports.SubscriptionCreationInput) (uuid.UUI
 }
 func creationInput(in ports.SubscriptionCreationInput) (ports.SubscriptionCreationInput, error) {
 	in = creationClone(in)
+	if in.ClassificationVersion != nil && (*in.ClassificationVersion < 1 || in.RootID != nil || in.ExpectedIntentVersion != nil || in.ClassificationPreviewRootID == nil || *in.ClassificationPreviewRootID == uuid.Nil || !creationHash(in.ClassificationPreviewStamp)) || in.ClassificationVersion == nil && (in.ClassificationPreviewRootID != nil || in.ClassificationPreviewStamp != "") {
+		return in, ports.ErrInvalidSubscriptionBindings
+	}
 	if (in.MediaID == nil) == (in.TMDBID == nil) || (in.MediaID != nil && *in.MediaID == uuid.Nil) || (in.TMDBID != nil && *in.TMDBID <= 0) || (in.RootID != nil && *in.RootID == uuid.Nil) || (in.ExpectedIntentVersion != nil && *in.ExpectedIntentVersion < 1) {
 		return in, ports.ErrInvalidSubscriptionBindings
 	}
@@ -359,7 +365,7 @@ func (s *SubscriptionCreationStore) ReadSubscriptionCreationContext(ctx context.
 	if err != nil {
 		return out, nil, err
 	}
-	out, err = creationObserve(ctx, q, owner, in)
+	out, err = creationObserve(ctx, tx, q, owner, in)
 	return out, nil, err
 }
 func creationMedia(ctx context.Context, q *db.Queries, in ports.SubscriptionCreationInput) (db.Medium, int64, error) {
@@ -402,9 +408,22 @@ func creationMedia(ctx context.Context, q *db.Queries, in ports.SubscriptionCrea
 	}
 	return m, tmdb, nil
 }
-func creationRoot(ctx context.Context, q *db.Queries, in ports.SubscriptionCreationInput, kind string) (db.LibraryRoot, error) {
+func creationRoot(ctx context.Context, q *db.Queries, in ports.SubscriptionCreationInput, kind string, transactions ...pgx.Tx) (db.LibraryRoot, error) {
+	var tx pgx.Tx
+	if len(transactions) == 1 {
+		tx = transactions[0]
+	}
+	if in.ClassificationVersion != nil && tx == nil {
+		return db.LibraryRoot{}, ports.ErrInvalidSubscriptionBindings
+	}
 	var id uuid.UUID
-	if in.RootID != nil {
+	if in.ClassificationVersion != nil {
+		var err error
+		id, err = classificationRequestedRoot(ctx, tx, in, kind)
+		if err != nil {
+			return db.LibraryRoot{}, err
+		}
+	} else if in.RootID != nil {
 		id = *in.RootID
 	} else {
 		roots, err := q.ListConfiguredLibraryRootSelections(ctx)
@@ -438,12 +457,12 @@ func creationRoot(ctx context.Context, q *db.Queries, in ports.SubscriptionCreat
 	}
 	return r, nil
 }
-func creationObserve(ctx context.Context, q *db.Queries, owner uuid.UUID, in ports.SubscriptionCreationInput) (out ports.SubscriptionCreationContext, err error) {
+func creationObserve(ctx context.Context, tx pgx.Tx, q *db.Queries, owner uuid.UUID, in ports.SubscriptionCreationInput) (out ports.SubscriptionCreationContext, err error) {
 	m, tmdb, err := creationMedia(ctx, q, in)
 	if err != nil {
 		return out, err
 	}
-	root, err := creationRoot(ctx, q, in, m.MediaType)
+	root, err := creationRoot(ctx, q, in, m.MediaType, tx)
 	if err != nil {
 		return out, err
 	}
@@ -568,7 +587,7 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	if decide == nil {
 		return nil, ports.ErrInvalidSubscriptionBindings
 	}
-	observed, err := creationObserve(ctx, q, owner, in)
+	observed, err := creationObserve(ctx, tx, q, owner, in)
 	if err != nil {
 		return nil, err
 	}
@@ -669,7 +688,7 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 			return nil, err
 		}
 	}
-	root, err := creationRoot(ctx, q, in, observed.MediaType)
+	root, err := creationRoot(ctx, q, in, observed.MediaType, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -705,6 +724,9 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 				return nil, ports.ErrSubscriptionBindingsConflict
 			}
 		}
+	}
+	if in.ClassificationVersion != nil && existing != nil {
+		return nil, ports.ErrClassificationConflict
 	}
 	if existing == nil && hint.Existing != nil {
 		return nil, ports.ErrSubscriptionBindingsConflict
@@ -790,9 +812,26 @@ func (s *SubscriptionCreationStore) CommitSubscriptionCreation(ctx context.Conte
 	if err = persistCreationArtwork(ctx, q, mediaID, prepared); err != nil {
 		return nil, err
 	}
+	if err = persistCreationClassificationFacts(ctx, tx, mediaID, prepared); err != nil {
+		return nil, err
+	}
+	if in.ClassificationVersion != nil {
+		classifiedRoot, _, _, e := classificationCreationRoot(ctx, tx, in, observed.MediaType)
+		if e != nil {
+			return nil, e
+		}
+		if classifiedRoot != root.ID {
+			return nil, ports.ErrClassificationConflict
+		}
+	}
 	sub, err := t.publishCreationIntent(ctx, in, expected, existing)
 	if err != nil {
 		return nil, err
+	}
+	if in.ClassificationVersion != nil {
+		if err = freezeCreationClassification(ctx, tx, sub.ID, root.ID, root.Generation, in, observed.MediaType); err != nil {
+			return nil, err
+		}
 	}
 	record, err := subscriptionIntentRecord(sub)
 	if err != nil {

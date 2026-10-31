@@ -134,18 +134,32 @@ func (q *Queries) ListFileMappingMediaOptions(ctx context.Context) ([]ListFileMa
 }
 
 const listFileMappingOptions = `-- name: ListFileMappingOptions :many
-SELECT f.id,f.root_id,f.rel_path,r.name AS root_name FROM library_file f JOIN library_root r ON r.id=f.root_id WHERE f.retired_at IS NULL ORDER BY f.created_at DESC,f.id LIMIT 100
+SELECT f.id,f.root_id,f.rel_path,r.name AS root_name,f.created_at
+FROM library_file f JOIN library_root r ON r.id=f.root_id
+WHERE f.retired_at IS NULL
+  AND ($1::uuid IS NULL OR f.root_id=$1::uuid)
+  AND ($2::timestamptz IS NULL
+    OR f.created_at<$2::timestamptz
+    OR (f.created_at=$2::timestamptz AND f.id>$3::uuid))
+ORDER BY f.created_at DESC,f.id LIMIT 101
 `
 
-type ListFileMappingOptionsRow struct {
-	ID       uuid.UUID
-	RootID   uuid.UUID
-	RelPath  string
-	RootName string
+type ListFileMappingOptionsParams struct {
+	RootID          pgtype.UUID
+	BeforeCreatedAt pgtype.Timestamptz
+	BeforeID        uuid.UUID
 }
 
-func (q *Queries) ListFileMappingOptions(ctx context.Context) ([]ListFileMappingOptionsRow, error) {
-	rows, err := q.db.Query(ctx, listFileMappingOptions)
+type ListFileMappingOptionsRow struct {
+	ID        uuid.UUID
+	RootID    uuid.UUID
+	RelPath   string
+	RootName  string
+	CreatedAt pgtype.Timestamptz
+}
+
+func (q *Queries) ListFileMappingOptions(ctx context.Context, arg ListFileMappingOptionsParams) ([]ListFileMappingOptionsRow, error) {
+	rows, err := q.db.Query(ctx, listFileMappingOptions, arg.RootID, arg.BeforeCreatedAt, arg.BeforeID)
 	if err != nil {
 		return nil, err
 	}
@@ -158,6 +172,7 @@ func (q *Queries) ListFileMappingOptions(ctx context.Context) ([]ListFileMapping
 			&i.RootID,
 			&i.RelPath,
 			&i.RootName,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

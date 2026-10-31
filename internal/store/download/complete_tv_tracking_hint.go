@@ -96,6 +96,32 @@ func probeCompleteTVHintRoots(ctx context.Context, files ports.RootFilesystem, e
 	return ctx.Err()
 }
 
+type completeTVHintManifestReadClient struct {
+	ports.CompleteTVManifestTrackingClient
+	probe func(context.Context) error
+}
+
+func (c completeTVHintManifestReadClient) ListTorrents(ctx context.Context, tag string) ([]*ports.TorrentInfo, error) {
+	if err := c.probe(ctx); err != nil {
+		return nil, err
+	}
+	rows, err := c.CompleteTVManifestTrackingClient.ListTorrents(ctx, tag)
+	if fence := c.probe(ctx); fence != nil {
+		return nil, fence
+	}
+	return rows, err
+}
+func (c completeTVHintManifestReadClient) GetTorrentFiles(ctx context.Context, hash string) ([]ports.TorrentFile, error) {
+	if err := c.probe(ctx); err != nil {
+		return nil, err
+	}
+	files, err := c.CompleteTVManifestTrackingClient.GetTorrentFiles(ctx, hash)
+	if fence := c.probe(ctx); fence != nil {
+		return nil, fence
+	}
+	return files, err
+}
+
 type completeTVHintReadClient struct {
 	ports.CompleteTVTrackingClient
 	probe func(context.Context) error

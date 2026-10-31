@@ -23,86 +23,32 @@ interface MediaCardProps {
   onSearch: (m: MediaItem) => void;
 }
 
-export const MediaCard: React.FC<MediaCardProps> = ({
-  media,
-  subscribing,
-  onClick,
-  onSubscribe,
-  onSearch,
-}) => {
+export const MediaCard: React.FC<MediaCardProps> = ({ media, subscribing, onClick, onSubscribe, onSearch }) => {
   const isTV = media.media_type === "tv";
-  const ratingVal = media.rating && media.rating > 0 ? media.rating.toFixed(1) : null;
-
-  return (
-    <div className="media-card-wrap" onClick={() => onClick(media)}>
+  const rating = media.rating && media.rating > 0 ? media.rating.toFixed(1) : null;
+  return <article className="media-card-wrap">
+    <button type="button" className="media-card-open" onClick={() => onClick(media)} aria-label={`查看《${media.title}》详情`}>
       <div className="poster-container">
-        {media.poster_url ? (
-          <img src={media.poster_url} alt={media.title} className="poster-image" loading="lazy" />
-        ) : (
-          <div className="poster-empty-box">
-            {isTV ? <Tv size={36} /> : <Film size={36} />}
-            <span className="empty-title">{media.title}</span>
-          </div>
-        )}
-
-        {/* Top Badges */}
-        <span className={`badge-type ${isTV ? "tv" : "movie"}`}>
-          {isTV ? "电视剧" : "电影"}
-        </span>
-
-        {ratingVal && (
-          <span className={`badge-rating ${media.rating_source === "douban" ? "douban" : ""}`} title={media.rating_source === "douban" ? "豆瓣评分" : "TMDB评分"}>
-            <Star size={11} className="star-icon" fill="currentColor" />
-            <span>{ratingVal}{media.rating_source === "douban" ? " 豆瓣" : ""}</span>
-          </span>
-        )}
-
-        {/* Hover Overlay (MoviePilot Style) */}
-        <div className="hover-overlay">
-          <div className="hover-content">
-            <span className="hover-year">{media.year}</span>
-            <h4 className="hover-title">{media.title}</h4>
-            {media.genres && media.genres.length > 0 && (
-              <div className="hover-genres-list">
-                {media.genres.slice(0, 3).map((g) => (
-                  <span key={g} className="hover-genre-tag">{g}</span>
-                ))}
-              </div>
-            )}
-            <p className="hover-overview">{media.overview || "暂无详细剧情简介。"}</p>
-
-            <div className="hover-actions" onClick={(e) => e.stopPropagation()}>
-              <button
-                type="button"
-                className="btn-action btn-sub"
-                disabled={subscribing || !media.tmdb_id}
-                onClick={() => onSubscribe(media)}
-                title={media.tmdb_id ? "一键追更订阅" : "未匹配到 TMDB 身份，请先搜种"}
-              >
-                <Rss size={13} />
-                <span>{subscribing ? "..." : media.tmdb_id ? "追更" : "未匹配"}</span>
-              </button>
-              <button
-                type="button"
-                className="btn-action btn-search"
-                onClick={() => onSearch(media)}
-                title="检索站点种子"
-              >
-                <Search size={13} />
-                <span>搜种</span>
-              </button>
-            </div>
-          </div>
+        <div className="poster-empty-box" aria-hidden="true">
+          {isTV ? <Tv size={32} /> : <Film size={32} />}<span className="empty-title">{media.title}</span>
         </div>
+        {media.poster_url ? <img key={media.poster_url} src={media.poster_url} alt="" className="poster-image" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={event => { event.currentTarget.hidden = true; }} /> : null}
+        <span className={`badge-type ${isTV ? "tv" : "movie"}`}>{isTV ? "电视剧" : "电影"}</span>
+        {rating ? <span className={`badge-rating ${media.rating_source === "douban" ? "douban" : ""}`} title={media.rating_source === "douban" ? "豆瓣评分" : "TMDB评分"}>
+          <Star size={12} aria-hidden="true" fill="currentColor" /><span>{rating}{media.rating_source === "douban" ? " 豆瓣" : ""}</span>
+        </span> : null}
+        <span className="media-poster-hint">查看详情</span>
       </div>
-
-      {/* Caption Below Card */}
-      <div className="card-caption">
-        <strong className="caption-title" title={media.title}>
-          {media.title}
-        </strong>
-        <span className="caption-year">{media.year || "未知年份"}</span>
-      </div>
+      <div className="card-caption"><strong className="caption-title" title={media.title}>{media.title}</strong><span className="caption-year">{media.year || "未知年份"} · {isTV ? "电视剧" : "电影"}</span></div>
+    </button>
+    <div className="media-card-actions">
+      <button type="button" className="btn-action btn-sub" disabled={subscribing || !media.tmdb_id} onClick={() => onSubscribe(media)}
+        aria-label={`订阅《${media.title}》`} title={media.tmdb_id ? "追更订阅" : "未匹配到 TMDB 身份，请先搜种"}>
+        <Rss size={14} aria-hidden="true" /><span>{subscribing ? "提交中…" : media.tmdb_id ? "订阅" : "未匹配"}</span>
+      </button>
+      <button type="button" className="btn-action btn-search" onClick={() => onSearch(media)} aria-label="搜种" title="检索站点种子">
+        <Search size={14} aria-hidden="true" /><span>搜种</span>
+      </button>
     </div>
-  );
+  </article>;
 };

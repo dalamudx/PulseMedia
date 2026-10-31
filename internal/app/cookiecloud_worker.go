@@ -15,16 +15,17 @@ func (a *App) runCookieCloudWorker(ctx context.Context, queue *jobs.Queue, repo 
 	owner := a.idgen.NewUUID().String()
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
+	var nextScheduleReport time.Time
 	for ctx.Err() == nil {
 		if err := repo.RecoverExpired(ctx); err != nil {
 			if ctx.Err() == nil {
 				a.logger.Error("CookieCloud recovery unavailable")
 			}
-		} else if err := repo.EnqueueDue(ctx); err != nil {
-			if ctx.Err() == nil {
-				a.logger.Error("CookieCloud scheduling unavailable")
-			}
 		} else {
+			a.enqueueScheduled(ctx, ports.StageCookieCloudSchedule, &nextScheduleReport, repo.EnqueueDue)
+			if ctx.Err() != nil {
+				return
+			}
 			job, err := queue.Claim(ctx, []string{ports.CookieCloudSyncJobKind}, owner, siteAccountStatsLease)
 			if err != nil && ctx.Err() == nil {
 				a.logger.Error("CookieCloud claim unavailable")

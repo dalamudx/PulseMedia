@@ -20,6 +20,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -47,7 +48,7 @@ func safetySetup(t *testing.T) *safetyFixture {
 	gen := idgen.New()
 	q := db.New(pool)
 	f := &safetyFixture{pool: pool, q: q, root: uuid.New(), unit: uuid.New(), source: t.TempDir(), target: t.TempDir()}
-	f.svc = NewService(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem())
+	f.svc = NewService(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	// Failure injection needs actual configured recipients, never fixed generic delivery labels.
 	serverKey, err := crypto.Encrypt(make([]byte, 32), []byte("fixture-server-key"))
 	if err != nil {
@@ -233,7 +234,7 @@ func TestConcurrentPlanExecutionAcrossServicesIsIdempotent(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			gen := idgen.New()
-			svc := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem())
+			svc := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 			errs <- svc.ExecutePlan(context.Background(), plan.ID)
 		}()
 	}
@@ -334,7 +335,7 @@ func TestDatabaseFailureRollsBackEveryImportWriteAndRecovers(t *testing.T) {
 				t.Fatal(err)
 			}
 			gen := idgen.New()
-			restarted := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem())
+			restarted := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 			if err := restarted.ExecutePlan(ctx, plan.ID); err != nil {
 				t.Fatalf("restart did not observe exact link: %v", err)
 			}

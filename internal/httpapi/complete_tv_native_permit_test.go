@@ -6,12 +6,12 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/google/uuid"
+	"strings"
 	"testing"
 )
 
 func TestCompleteTVNativeObserverNativePGRetainedPermit(t *testing.T) {
 	n := newNativeObserverFixture(t)
-	atCompleteTVPermitMigration(t, n)
 	token := uuid.New()
 	n.exec(t, `INSERT INTO complete_tv_physical_permit(operation_id,token,backend_pid,advisory_key,created_at) VALUES($1,$2,1,1,clock_timestamp()-interval '1 year')`, n.request.OperationID, token)
 	before := n.snapshot(t)
@@ -24,10 +24,10 @@ func TestCompleteTVNativeObserverNativePGRetainedPermit(t *testing.T) {
 	if e = n.f.a.DBPool().QueryRow(context.Background(), `SELECT token FROM complete_tv_physical_permit WHERE operation_id=$1`, n.request.OperationID).Scan(&saved); e != nil || saved != token {
 		t.Fatal("foreign owner removed", e, saved)
 	}
-	if _, e = postgres.Rollback(context.Background(), n.f.a.DBPool().Config().ConnString(), "../../migrations"); e == nil {
-		t.Fatal("downgrade discarded retained physical permit")
+	if e = attemptProtectedMigrationDown(context.Background(), n.f.a.DBPool(), "00062_complete_tv_physical_permit.sql"); e == nil || !strings.Contains(e.Error(), "cannot discard retained complete TV physical execution permits") {
+		t.Fatalf("retained permit did not block its migration: %v", e)
 	}
-	if e = postgres.CheckSchemaVersion(context.Background(), n.f.a.DBPool(), 62); e != nil {
+	if e = postgres.CheckSchemaVersion(context.Background(), n.f.a.DBPool(), postgres.CurrentMigrationVersion); e != nil {
 		t.Fatal(e)
 	}
 }

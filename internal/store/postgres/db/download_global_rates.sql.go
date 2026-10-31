@@ -256,7 +256,7 @@ func (q *Queries) GetDownloadGlobalRatesSchedule(ctx context.Context, clientID u
 
 const listDueDownloadGlobalRates = `-- name: ListDueDownloadGlobalRates :many
 SELECT c.id FROM download_client c LEFT JOIN download_global_rate_schedule s ON s.client_id=c.id
-WHERE c.client_type IN ('qbittorrent','transmission') AND (s.client_id IS NULL OR (s.active_job_id IS NULL AND s.next_due_at<=clock_timestamp()))
+WHERE c.client_type IN ('qbittorrent','transmission','rtorrent') AND (s.client_id IS NULL OR (s.active_job_id IS NULL AND s.next_due_at<=clock_timestamp()))
 ORDER BY COALESCE(s.next_due_at,'-infinity'::timestamptz),c.id LIMIT 64
 `
 

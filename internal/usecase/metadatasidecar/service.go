@@ -134,7 +134,7 @@ func (s *Service) Execute(ctx context.Context, lease ports.JobLease) error {
 		artifact.DestinationIdentity = dirID
 		artifact.Content = append([]byte(nil), artifact.Content...)
 		result, publishErr := s.files.PublishSidecar(ctx, root, artifact)
-		completion.Artifacts = append(completion.Artifacts, ports.MediaSidecarArtifactResult{Name: artifact.Name, Result: result})
+		completion.Artifacts = append(completion.Artifacts, ports.MediaSidecarArtifactResult{Name: artifact.Name, Result: result, Content: append([]byte(nil), artifact.Content...), Directory: directory})
 		// No cancellation wrapper: the physical slot is held until the call returns.
 		if err := ctx.Err(); err != nil {
 			return errors.Join(publishErr, err)

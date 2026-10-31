@@ -85,6 +85,87 @@ func (e ChannelReplacementRequestChannelType) Valid() bool {
 	}
 }
 
+// Defines values for ClassificationPreviewInputMediaType.
+const (
+	ClassificationPreviewInputMediaTypeMovie ClassificationPreviewInputMediaType = "movie"
+	ClassificationPreviewInputMediaTypeTv    ClassificationPreviewInputMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the ClassificationPreviewInputMediaType enum.
+func (e ClassificationPreviewInputMediaType) Valid() bool {
+	switch e {
+	case ClassificationPreviewInputMediaTypeMovie:
+		return true
+	case ClassificationPreviewInputMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ClassificationResultStatus.
+const (
+	Conflict             ClassificationResultStatus = "conflict"
+	InsufficientEvidence ClassificationResultStatus = "insufficient_evidence"
+	Matched              ClassificationResultStatus = "matched"
+	NoMatch              ClassificationResultStatus = "no_match"
+	TargetUnavailable    ClassificationResultStatus = "target_unavailable"
+)
+
+// Valid indicates whether the value is a known member of the ClassificationResultStatus enum.
+func (e ClassificationResultStatus) Valid() bool {
+	switch e {
+	case Conflict:
+		return true
+	case InsufficientEvidence:
+		return true
+	case Matched:
+		return true
+	case NoMatch:
+		return true
+	case TargetUnavailable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ClassificationRuleMediaType.
+const (
+	ClassificationRuleMediaTypeMovie ClassificationRuleMediaType = "movie"
+	ClassificationRuleMediaTypeTv    ClassificationRuleMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the ClassificationRuleMediaType enum.
+func (e ClassificationRuleMediaType) Valid() bool {
+	switch e {
+	case ClassificationRuleMediaTypeMovie:
+		return true
+	case ClassificationRuleMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CreateAccountRequestRole.
+const (
+	CreateAccountRequestRoleAdmin  CreateAccountRequestRole = "admin"
+	CreateAccountRequestRoleMember CreateAccountRequestRole = "member"
+)
+
+// Valid indicates whether the value is a known member of the CreateAccountRequestRole enum.
+func (e CreateAccountRequestRole) Valid() bool {
+	switch e {
+	case CreateAccountRequestRoleAdmin:
+		return true
+	case CreateAccountRequestRoleMember:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CreateDownloadClientRequestClientType.
 const (
 	CreateDownloadClientRequestClientTypeQbittorrent  CreateDownloadClientRequestClientType = "qbittorrent"
@@ -274,9 +355,79 @@ func (e DoubanRankingItemMediaType) Valid() bool {
 	}
 }
 
+// Defines values for DownloadControlCommandAction.
+const (
+	DownloadControlCommandActionPause  DownloadControlCommandAction = "pause"
+	DownloadControlCommandActionResume DownloadControlCommandAction = "resume"
+)
+
+// Valid indicates whether the value is a known member of the DownloadControlCommandAction enum.
+func (e DownloadControlCommandAction) Valid() bool {
+	switch e {
+	case DownloadControlCommandActionPause:
+		return true
+	case DownloadControlCommandActionResume:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DownloadControlCommandConfirmed.
+const (
+	DownloadControlCommandConfirmedTrue DownloadControlCommandConfirmed = true
+)
+
+// Valid indicates whether the value is a known member of the DownloadControlCommandConfirmed enum.
+func (e DownloadControlCommandConfirmed) Valid() bool {
+	switch e {
+	case DownloadControlCommandConfirmedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DownloadControlReceiptAction.
+const (
+	DownloadControlReceiptActionPause  DownloadControlReceiptAction = "pause"
+	DownloadControlReceiptActionResume DownloadControlReceiptAction = "resume"
+)
+
+// Valid indicates whether the value is a known member of the DownloadControlReceiptAction enum.
+func (e DownloadControlReceiptAction) Valid() bool {
+	switch e {
+	case DownloadControlReceiptActionPause:
+		return true
+	case DownloadControlReceiptActionResume:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DownloadControlReceiptState.
+const (
+	DownloadControlReceiptStateConfirmed DownloadControlReceiptState = "confirmed"
+	DownloadControlReceiptStateUnknown   DownloadControlReceiptState = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the DownloadControlReceiptState enum.
+func (e DownloadControlReceiptState) Valid() bool {
+	switch e {
+	case DownloadControlReceiptStateConfirmed:
+		return true
+	case DownloadControlReceiptStateUnknown:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DownloadGlobalRateClientClientType.
 const (
 	DownloadGlobalRateClientClientTypeQbittorrent  DownloadGlobalRateClientClientType = "qbittorrent"
+	DownloadGlobalRateClientClientTypeRtorrent     DownloadGlobalRateClientClientType = "rtorrent"
 	DownloadGlobalRateClientClientTypeTransmission DownloadGlobalRateClientClientType = "transmission"
 )
 
@@ -284,6 +435,8 @@ const (
 func (e DownloadGlobalRateClientClientType) Valid() bool {
 	switch e {
 	case DownloadGlobalRateClientClientTypeQbittorrent:
+		return true
+	case DownloadGlobalRateClientClientTypeRtorrent:
 		return true
 	case DownloadGlobalRateClientClientTypeTransmission:
 		return true
@@ -406,6 +559,36 @@ func (e EpisodeMappingDraftMode) Valid() bool {
 	case Manual:
 		return true
 	case Standard:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExplicitLibraryConfirmationConfirmed.
+const (
+	ExplicitLibraryConfirmationConfirmedTrue ExplicitLibraryConfirmationConfirmed = true
+)
+
+// Valid indicates whether the value is a known member of the ExplicitLibraryConfirmationConfirmed enum.
+func (e ExplicitLibraryConfirmationConfirmed) Valid() bool {
+	switch e {
+	case ExplicitLibraryConfirmationConfirmedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExternalBatchManifestExecutionAllowed.
+const (
+	ExternalBatchManifestExecutionAllowedFalse ExternalBatchManifestExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the ExternalBatchManifestExecutionAllowed enum.
+func (e ExternalBatchManifestExecutionAllowed) Valid() bool {
+	switch e {
+	case ExternalBatchManifestExecutionAllowedFalse:
 		return true
 	default:
 		return false
@@ -565,6 +748,96 @@ func (e LibraryCatalogEntryMediaType) Valid() bool {
 	}
 }
 
+// Defines values for LibraryMaintenanceCommandAction.
+const (
+	LibraryMaintenanceCommandActionCleanup    LibraryMaintenanceCommandAction = "cleanup"
+	LibraryMaintenanceCommandActionReorganize LibraryMaintenanceCommandAction = "reorganize"
+	LibraryMaintenanceCommandActionRestore    LibraryMaintenanceCommandAction = "restore"
+)
+
+// Valid indicates whether the value is a known member of the LibraryMaintenanceCommandAction enum.
+func (e LibraryMaintenanceCommandAction) Valid() bool {
+	switch e {
+	case LibraryMaintenanceCommandActionCleanup:
+		return true
+	case LibraryMaintenanceCommandActionReorganize:
+		return true
+	case LibraryMaintenanceCommandActionRestore:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryMaintenanceCommandConfirmed.
+const (
+	LibraryMaintenanceCommandConfirmedTrue LibraryMaintenanceCommandConfirmed = true
+)
+
+// Valid indicates whether the value is a known member of the LibraryMaintenanceCommandConfirmed enum.
+func (e LibraryMaintenanceCommandConfirmed) Valid() bool {
+	switch e {
+	case LibraryMaintenanceCommandConfirmedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryMaintenanceResultAction.
+const (
+	LibraryMaintenanceResultActionCleanup    LibraryMaintenanceResultAction = "cleanup"
+	LibraryMaintenanceResultActionReorganize LibraryMaintenanceResultAction = "reorganize"
+	LibraryMaintenanceResultActionRestore    LibraryMaintenanceResultAction = "restore"
+)
+
+// Valid indicates whether the value is a known member of the LibraryMaintenanceResultAction enum.
+func (e LibraryMaintenanceResultAction) Valid() bool {
+	switch e {
+	case LibraryMaintenanceResultActionCleanup:
+		return true
+	case LibraryMaintenanceResultActionReorganize:
+		return true
+	case LibraryMaintenanceResultActionRestore:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryMaintenanceResultExecutionAllowed.
+const (
+	LibraryMaintenanceResultExecutionAllowedFalse LibraryMaintenanceResultExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the LibraryMaintenanceResultExecutionAllowed enum.
+func (e LibraryMaintenanceResultExecutionAllowed) Valid() bool {
+	switch e {
+	case LibraryMaintenanceResultExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryMaintenanceResultStatus.
+const (
+	LibraryMaintenanceResultStatusCompleted             LibraryMaintenanceResultStatus = "completed"
+	LibraryMaintenanceResultStatusUnknownRequiresReview LibraryMaintenanceResultStatus = "unknown_requires_review"
+)
+
+// Valid indicates whether the value is a known member of the LibraryMaintenanceResultStatus enum.
+func (e LibraryMaintenanceResultStatus) Valid() bool {
+	switch e {
+	case LibraryMaintenanceResultStatusCompleted:
+		return true
+	case LibraryMaintenanceResultStatusUnknownRequiresReview:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LibraryRecentImportMediaType.
 const (
 	LibraryRecentImportMediaTypeMovie LibraryRecentImportMediaType = "movie"
@@ -577,6 +850,72 @@ func (e LibraryRecentImportMediaType) Valid() bool {
 	case LibraryRecentImportMediaTypeMovie:
 		return true
 	case LibraryRecentImportMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryRecycleItemExecutionAllowed.
+const (
+	LibraryRecycleItemExecutionAllowedFalse LibraryRecycleItemExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the LibraryRecycleItemExecutionAllowed enum.
+func (e LibraryRecycleItemExecutionAllowed) Valid() bool {
+	switch e {
+	case LibraryRecycleItemExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryRecycleItemKind.
+const (
+	LibraryRecycleItemKindMovie LibraryRecycleItemKind = "movie"
+	LibraryRecycleItemKindTv    LibraryRecycleItemKind = "tv"
+)
+
+// Valid indicates whether the value is a known member of the LibraryRecycleItemKind enum.
+func (e LibraryRecycleItemKind) Valid() bool {
+	switch e {
+	case LibraryRecycleItemKindMovie:
+		return true
+	case LibraryRecycleItemKindTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryRecyclePreviewRequestAction.
+const (
+	LibraryRecyclePreviewRequestActionCleanup LibraryRecyclePreviewRequestAction = "cleanup"
+	LibraryRecyclePreviewRequestActionRestore LibraryRecyclePreviewRequestAction = "restore"
+)
+
+// Valid indicates whether the value is a known member of the LibraryRecyclePreviewRequestAction enum.
+func (e LibraryRecyclePreviewRequestAction) Valid() bool {
+	switch e {
+	case LibraryRecyclePreviewRequestActionCleanup:
+		return true
+	case LibraryRecyclePreviewRequestActionRestore:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LibraryReorganizationPreviewExecutionAllowed.
+const (
+	LibraryReorganizationPreviewExecutionAllowedFalse LibraryReorganizationPreviewExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the LibraryReorganizationPreviewExecutionAllowed enum.
+func (e LibraryReorganizationPreviewExecutionAllowed) Valid() bool {
+	switch e {
+	case LibraryReorganizationPreviewExecutionAllowedFalse:
 		return true
 	default:
 		return false
@@ -760,6 +1099,111 @@ func (e LibraryRootSelectionMediaType) Valid() bool {
 	}
 }
 
+// Defines values for ManagedAccountRole.
+const (
+	ManagedAccountRoleAdmin  ManagedAccountRole = "admin"
+	ManagedAccountRoleMember ManagedAccountRole = "member"
+)
+
+// Valid indicates whether the value is a known member of the ManagedAccountRole enum.
+func (e ManagedAccountRole) Valid() bool {
+	switch e {
+	case ManagedAccountRoleAdmin:
+		return true
+	case ManagedAccountRoleMember:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ManagedSidecarArtifactName.
+const (
+	MovieNfo  ManagedSidecarArtifactName = "movie.nfo"
+	PosterJpg ManagedSidecarArtifactName = "poster.jpg"
+	TvshowNfo ManagedSidecarArtifactName = "tvshow.nfo"
+)
+
+// Valid indicates whether the value is a known member of the ManagedSidecarArtifactName enum.
+func (e ManagedSidecarArtifactName) Valid() bool {
+	switch e {
+	case MovieNfo:
+		return true
+	case PosterJpg:
+		return true
+	case TvshowNfo:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ManagedSidecarArtifactState.
+const (
+	ManagedSidecarArtifactStateHeld           ManagedSidecarArtifactState = "held"
+	ManagedSidecarArtifactStateReady          ManagedSidecarArtifactState = "ready"
+	ManagedSidecarArtifactStateReviewRequired ManagedSidecarArtifactState = "review_required"
+	ManagedSidecarArtifactStateUnchanged      ManagedSidecarArtifactState = "unchanged"
+	ManagedSidecarArtifactStateUpdated        ManagedSidecarArtifactState = "updated"
+)
+
+// Valid indicates whether the value is a known member of the ManagedSidecarArtifactState enum.
+func (e ManagedSidecarArtifactState) Valid() bool {
+	switch e {
+	case ManagedSidecarArtifactStateHeld:
+		return true
+	case ManagedSidecarArtifactStateReady:
+		return true
+	case ManagedSidecarArtifactStateReviewRequired:
+		return true
+	case ManagedSidecarArtifactStateUnchanged:
+		return true
+	case ManagedSidecarArtifactStateUpdated:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ManagedSidecarCommandInputConfirmed.
+const (
+	ManagedSidecarCommandInputConfirmedTrue ManagedSidecarCommandInputConfirmed = true
+)
+
+// Valid indicates whether the value is a known member of the ManagedSidecarCommandInputConfirmed enum.
+func (e ManagedSidecarCommandInputConfirmed) Valid() bool {
+	switch e {
+	case ManagedSidecarCommandInputConfirmedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ManagedSidecarUpdateResultState.
+const (
+	ManagedSidecarUpdateResultStateCompleted      ManagedSidecarUpdateResultState = "completed"
+	ManagedSidecarUpdateResultStateHeld           ManagedSidecarUpdateResultState = "held"
+	ManagedSidecarUpdateResultStatePreview        ManagedSidecarUpdateResultState = "preview"
+	ManagedSidecarUpdateResultStateReviewRequired ManagedSidecarUpdateResultState = "review_required"
+)
+
+// Valid indicates whether the value is a known member of the ManagedSidecarUpdateResultState enum.
+func (e ManagedSidecarUpdateResultState) Valid() bool {
+	switch e {
+	case ManagedSidecarUpdateResultStateCompleted:
+		return true
+	case ManagedSidecarUpdateResultStateHeld:
+		return true
+	case ManagedSidecarUpdateResultStatePreview:
+		return true
+	case ManagedSidecarUpdateResultStateReviewRequired:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for MappedReleaseExplanationExecutionAllowed.
 const (
 	MappedReleaseExplanationExecutionAllowedFalse MappedReleaseExplanationExecutionAllowed = false
@@ -853,6 +1297,60 @@ func (e MediaRequestIntentMediaType) Valid() bool {
 	case MediaRequestIntentMediaTypeMovie:
 		return true
 	case MediaRequestIntentMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MovieDiscoveryStatusExecutionAllowed.
+const (
+	MovieDiscoveryStatusExecutionAllowedFalse MovieDiscoveryStatusExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the MovieDiscoveryStatusExecutionAllowed enum.
+func (e MovieDiscoveryStatusExecutionAllowed) Valid() bool {
+	switch e {
+	case MovieDiscoveryStatusExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for MovieDiscoveryStatusState.
+const (
+	MovieDiscoveryStatusStateCancelled    MovieDiscoveryStatusState = "cancelled"
+	MovieDiscoveryStatusStateExpired      MovieDiscoveryStatusState = "expired"
+	MovieDiscoveryStatusStateFailed       MovieDiscoveryStatusState = "failed"
+	MovieDiscoveryStatusStateNotScheduled MovieDiscoveryStatusState = "not_scheduled"
+	MovieDiscoveryStatusStatePartial      MovieDiscoveryStatusState = "partial"
+	MovieDiscoveryStatusStateRunning      MovieDiscoveryStatusState = "running"
+	MovieDiscoveryStatusStateStale        MovieDiscoveryStatusState = "stale"
+	MovieDiscoveryStatusStateSucceeded    MovieDiscoveryStatusState = "succeeded"
+	MovieDiscoveryStatusStateWaiting      MovieDiscoveryStatusState = "waiting"
+)
+
+// Valid indicates whether the value is a known member of the MovieDiscoveryStatusState enum.
+func (e MovieDiscoveryStatusState) Valid() bool {
+	switch e {
+	case MovieDiscoveryStatusStateCancelled:
+		return true
+	case MovieDiscoveryStatusStateExpired:
+		return true
+	case MovieDiscoveryStatusStateFailed:
+		return true
+	case MovieDiscoveryStatusStateNotScheduled:
+		return true
+	case MovieDiscoveryStatusStatePartial:
+		return true
+	case MovieDiscoveryStatusStateRunning:
+		return true
+	case MovieDiscoveryStatusStateStale:
+		return true
+	case MovieDiscoveryStatusStateSucceeded:
+		return true
+	case MovieDiscoveryStatusStateWaiting:
 		return true
 	default:
 		return false
@@ -1066,6 +1564,21 @@ func (e SeedingRuleMode) Valid() bool {
 	case SeedingRuleModeAll:
 		return true
 	case SeedingRuleModeAny:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SeerrReceiptState.
+const (
+	SeerrReceiptStatePending SeerrReceiptState = "pending"
+)
+
+// Valid indicates whether the value is a known member of the SeerrReceiptState enum.
+func (e SeerrReceiptState) Valid() bool {
+	switch e {
+	case SeerrReceiptStatePending:
 		return true
 	default:
 		return false
@@ -1453,6 +1966,93 @@ func (e SubscriptionControlReceiptState) Valid() bool {
 	}
 }
 
+// Defines values for SubtitleCandidateStateCandidatesFormat.
+const (
+	Srt SubtitleCandidateStateCandidatesFormat = "srt"
+)
+
+// Valid indicates whether the value is a known member of the SubtitleCandidateStateCandidatesFormat enum.
+func (e SubtitleCandidateStateCandidatesFormat) Valid() bool {
+	switch e {
+	case Srt:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SubtitleCandidateStateCandidatesLanguageHint.
+const (
+	Han SubtitleCandidateStateCandidatesLanguageHint = "Han"
+)
+
+// Valid indicates whether the value is a known member of the SubtitleCandidateStateCandidatesLanguageHint enum.
+func (e SubtitleCandidateStateCandidatesLanguageHint) Valid() bool {
+	switch e {
+	case Han:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SubtitleCandidateStateCandidatesProvider.
+const (
+	Shooter SubtitleCandidateStateCandidatesProvider = "shooter"
+)
+
+// Valid indicates whether the value is a known member of the SubtitleCandidateStateCandidatesProvider enum.
+func (e SubtitleCandidateStateCandidatesProvider) Valid() bool {
+	switch e {
+	case Shooter:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SubtitleCandidateStateOutcome.
+const (
+	SubtitleCandidateStateOutcomeAlreadyPresent SubtitleCandidateStateOutcome = "already_present"
+	SubtitleCandidateStateOutcomeCandidates     SubtitleCandidateStateOutcome = "candidates"
+	SubtitleCandidateStateOutcomeConfirmed      SubtitleCandidateStateOutcome = "confirmed"
+	SubtitleCandidateStateOutcomeConfirming     SubtitleCandidateStateOutcome = "confirming"
+	SubtitleCandidateStateOutcomeNotFound       SubtitleCandidateStateOutcome = "not_found"
+	SubtitleCandidateStateOutcomeNotQueried     SubtitleCandidateStateOutcome = "not_queried"
+	SubtitleCandidateStateOutcomeProviderError  SubtitleCandidateStateOutcome = "provider_error"
+	SubtitleCandidateStateOutcomeQuerying       SubtitleCandidateStateOutcome = "querying"
+	SubtitleCandidateStateOutcomeReviewRequired SubtitleCandidateStateOutcome = "review_required"
+	SubtitleCandidateStateOutcomeTooSmall       SubtitleCandidateStateOutcome = "too_small"
+)
+
+// Valid indicates whether the value is a known member of the SubtitleCandidateStateOutcome enum.
+func (e SubtitleCandidateStateOutcome) Valid() bool {
+	switch e {
+	case SubtitleCandidateStateOutcomeAlreadyPresent:
+		return true
+	case SubtitleCandidateStateOutcomeCandidates:
+		return true
+	case SubtitleCandidateStateOutcomeConfirmed:
+		return true
+	case SubtitleCandidateStateOutcomeConfirming:
+		return true
+	case SubtitleCandidateStateOutcomeNotFound:
+		return true
+	case SubtitleCandidateStateOutcomeNotQueried:
+		return true
+	case SubtitleCandidateStateOutcomeProviderError:
+		return true
+	case SubtitleCandidateStateOutcomeQuerying:
+		return true
+	case SubtitleCandidateStateOutcomeReviewRequired:
+		return true
+	case SubtitleCandidateStateOutcomeTooSmall:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for TMDBCreditsResponseMediaType.
 const (
 	TMDBCreditsResponseMediaTypeMovie TMDBCreditsResponseMediaType = "movie"
@@ -1495,6 +2095,93 @@ const (
 func (e TVCoverageCandidateReviewReceiptStatus) Valid() bool {
 	switch e {
 	case TVCoverageCandidateReviewReceiptStatusReviewedNotExecutable:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TVEpisodeDiscoveryStatusExecutionAllowed.
+const (
+	TVEpisodeDiscoveryStatusExecutionAllowedFalse TVEpisodeDiscoveryStatusExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the TVEpisodeDiscoveryStatusExecutionAllowed enum.
+func (e TVEpisodeDiscoveryStatusExecutionAllowed) Valid() bool {
+	switch e {
+	case TVEpisodeDiscoveryStatusExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TVEpisodeUpgradeCommandAction.
+const (
+	Observe             TVEpisodeUpgradeCommandAction = "observe"
+	OrganizationConfirm TVEpisodeUpgradeCommandAction = "organization-confirm"
+	OrganizationPreview TVEpisodeUpgradeCommandAction = "organization-preview"
+	Organize            TVEpisodeUpgradeCommandAction = "organize"
+	Prepare             TVEpisodeUpgradeCommandAction = "prepare"
+	Reserve             TVEpisodeUpgradeCommandAction = "reserve"
+	Retire              TVEpisodeUpgradeCommandAction = "retire"
+	RetirementConfirm   TVEpisodeUpgradeCommandAction = "retirement-confirm"
+	RetirementPreview   TVEpisodeUpgradeCommandAction = "retirement-preview"
+	Send                TVEpisodeUpgradeCommandAction = "send"
+)
+
+// Valid indicates whether the value is a known member of the TVEpisodeUpgradeCommandAction enum.
+func (e TVEpisodeUpgradeCommandAction) Valid() bool {
+	switch e {
+	case Observe:
+		return true
+	case OrganizationConfirm:
+		return true
+	case OrganizationPreview:
+		return true
+	case Organize:
+		return true
+	case Prepare:
+		return true
+	case Reserve:
+		return true
+	case Retire:
+		return true
+	case RetirementConfirm:
+		return true
+	case RetirementPreview:
+		return true
+	case Send:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TVEpisodeUpgradeCommandConfirmed.
+const (
+	TVEpisodeUpgradeCommandConfirmedTrue TVEpisodeUpgradeCommandConfirmed = true
+)
+
+// Valid indicates whether the value is a known member of the TVEpisodeUpgradeCommandConfirmed enum.
+func (e TVEpisodeUpgradeCommandConfirmed) Valid() bool {
+	switch e {
+	case TVEpisodeUpgradeCommandConfirmedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TVEpisodeUpgradeResultExecutionAllowed.
+const (
+	TVEpisodeUpgradeResultExecutionAllowedFalse TVEpisodeUpgradeResultExecutionAllowed = false
+)
+
+// Valid indicates whether the value is a known member of the TVEpisodeUpgradeResultExecutionAllowed enum.
+func (e TVEpisodeUpgradeResultExecutionAllowed) Valid() bool {
+	switch e {
+	case TVEpisodeUpgradeResultExecutionAllowedFalse:
 		return true
 	default:
 		return false
@@ -1681,6 +2368,99 @@ func (e TransferRevisionReceiptState) Valid() bool {
 	}
 }
 
+// Defines values for UntrackedCompanionAttachmentAction.
+const (
+	UntrackedCompanionAttachmentActionCopy     UntrackedCompanionAttachmentAction = "copy"
+	UntrackedCompanionAttachmentActionHardlink UntrackedCompanionAttachmentAction = "hardlink"
+)
+
+// Valid indicates whether the value is a known member of the UntrackedCompanionAttachmentAction enum.
+func (e UntrackedCompanionAttachmentAction) Valid() bool {
+	switch e {
+	case UntrackedCompanionAttachmentActionCopy:
+		return true
+	case UntrackedCompanionAttachmentActionHardlink:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedCompanionAttachmentSourceRetained.
+const (
+	UntrackedCompanionAttachmentSourceRetainedTrue UntrackedCompanionAttachmentSourceRetained = true
+)
+
+// Valid indicates whether the value is a known member of the UntrackedCompanionAttachmentSourceRetained enum.
+func (e UntrackedCompanionAttachmentSourceRetained) Valid() bool {
+	switch e {
+	case UntrackedCompanionAttachmentSourceRetainedTrue:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedCompanionAttachmentState.
+const (
+	UntrackedCompanionAttachmentStateCompleted      UntrackedCompanionAttachmentState = "completed"
+	UntrackedCompanionAttachmentStatePending        UntrackedCompanionAttachmentState = "pending"
+	UntrackedCompanionAttachmentStateReviewRequired UntrackedCompanionAttachmentState = "review_required"
+	UntrackedCompanionAttachmentStateRunning        UntrackedCompanionAttachmentState = "running"
+	UntrackedCompanionAttachmentStateUnknown        UntrackedCompanionAttachmentState = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the UntrackedCompanionAttachmentState enum.
+func (e UntrackedCompanionAttachmentState) Valid() bool {
+	switch e {
+	case UntrackedCompanionAttachmentStateCompleted:
+		return true
+	case UntrackedCompanionAttachmentStatePending:
+		return true
+	case UntrackedCompanionAttachmentStateReviewRequired:
+		return true
+	case UntrackedCompanionAttachmentStateRunning:
+		return true
+	case UntrackedCompanionAttachmentStateUnknown:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedCompanionSelectionAction.
+const (
+	UntrackedCompanionSelectionActionCopy     UntrackedCompanionSelectionAction = "copy"
+	UntrackedCompanionSelectionActionHardlink UntrackedCompanionSelectionAction = "hardlink"
+)
+
+// Valid indicates whether the value is a known member of the UntrackedCompanionSelectionAction enum.
+func (e UntrackedCompanionSelectionAction) Valid() bool {
+	switch e {
+	case UntrackedCompanionSelectionActionCopy:
+		return true
+	case UntrackedCompanionSelectionActionHardlink:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UntrackedCompanionViewVideoState.
+const (
+	UntrackedCompanionViewVideoStateCompleted UntrackedCompanionViewVideoState = "completed"
+)
+
+// Valid indicates whether the value is a known member of the UntrackedCompanionViewVideoState enum.
+func (e UntrackedCompanionViewVideoState) Valid() bool {
+	switch e {
+	case UntrackedCompanionViewVideoStateCompleted:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for UntrackedConfirmationReceiptExecutionAllowed.
 const (
 	UntrackedConfirmationReceiptExecutionAllowedFalse UntrackedConfirmationReceiptExecutionAllowed = false
@@ -1795,6 +2575,24 @@ const (
 func (e UntrackedScopeReceiptExecutionAllowed) Valid() bool {
 	switch e {
 	case UntrackedScopeReceiptExecutionAllowedFalse:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateAccountRequestRole.
+const (
+	UpdateAccountRequestRoleAdmin  UpdateAccountRequestRole = "admin"
+	UpdateAccountRequestRoleMember UpdateAccountRequestRole = "member"
+)
+
+// Valid indicates whether the value is a known member of the UpdateAccountRequestRole enum.
+func (e UpdateAccountRequestRole) Valid() bool {
+	switch e {
+	case UpdateAccountRequestRoleAdmin:
+		return true
+	case UpdateAccountRequestRoleMember:
 		return true
 	default:
 		return false
@@ -2364,16 +3162,16 @@ func (e UpgradeSendReceiptStatus) Valid() bool {
 
 // Defines values for UserInfoRole.
 const (
-	Admin  UserInfoRole = "admin"
-	Member UserInfoRole = "member"
+	UserInfoRoleAdmin  UserInfoRole = "admin"
+	UserInfoRoleMember UserInfoRole = "member"
 )
 
 // Valid indicates whether the value is a known member of the UserInfoRole enum.
 func (e UserInfoRole) Valid() bool {
 	switch e {
-	case Admin:
+	case UserInfoRoleAdmin:
 		return true
-	case Member:
+	case UserInfoRoleMember:
 		return true
 	default:
 		return false
@@ -2506,6 +3304,36 @@ func (e GetIndexerCommandReceiptParamsAction) Valid() bool {
 	}
 }
 
+// Defines values for ListIntegrationDeliveriesParamsState.
+const (
+	ListIntegrationDeliveriesParamsStateDead       ListIntegrationDeliveriesParamsState = "dead"
+	ListIntegrationDeliveriesParamsStateDelivered  ListIntegrationDeliveriesParamsState = "delivered"
+	ListIntegrationDeliveriesParamsStateDelivering ListIntegrationDeliveriesParamsState = "delivering"
+	ListIntegrationDeliveriesParamsStateEmpty      ListIntegrationDeliveriesParamsState = ""
+	ListIntegrationDeliveriesParamsStatePending    ListIntegrationDeliveriesParamsState = "pending"
+	ListIntegrationDeliveriesParamsStateSkipped    ListIntegrationDeliveriesParamsState = "skipped"
+)
+
+// Valid indicates whether the value is a known member of the ListIntegrationDeliveriesParamsState enum.
+func (e ListIntegrationDeliveriesParamsState) Valid() bool {
+	switch e {
+	case ListIntegrationDeliveriesParamsStateDead:
+		return true
+	case ListIntegrationDeliveriesParamsStateDelivered:
+		return true
+	case ListIntegrationDeliveriesParamsStateDelivering:
+		return true
+	case ListIntegrationDeliveriesParamsStateEmpty:
+		return true
+	case ListIntegrationDeliveriesParamsStatePending:
+		return true
+	case ListIntegrationDeliveriesParamsStateSkipped:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SkipIntegrationDeliveryJSONBodyReason.
 const (
 	EventObsolete    SkipIntegrationDeliveryJSONBodyReason = "event_obsolete"
@@ -2536,6 +3364,24 @@ const (
 func (e SkipIntegrationDelivery200JSONResponseBodyState) Valid() bool {
 	switch e {
 	case SkipIntegrationDelivery200JSONResponseBodyStateSkipped:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for GetFileMappingOptionsParamsMediaType.
+const (
+	GetFileMappingOptionsParamsMediaTypeMovie GetFileMappingOptionsParamsMediaType = "movie"
+	GetFileMappingOptionsParamsMediaTypeTv    GetFileMappingOptionsParamsMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the GetFileMappingOptionsParamsMediaType enum.
+func (e GetFileMappingOptionsParamsMediaType) Valid() bool {
+	switch e {
+	case GetFileMappingOptionsParamsMediaTypeMovie:
+		return true
+	case GetFileMappingOptionsParamsMediaTypeTv:
 		return true
 	default:
 		return false
@@ -2698,6 +3544,42 @@ func (e SearchMovieReleasesParamsType) Valid() bool {
 	case SearchMovieReleasesParamsTypeMulti:
 		return true
 	case SearchMovieReleasesParamsTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListSubscriptionsParamsMediaType.
+const (
+	ListSubscriptionsParamsMediaTypeMovie ListSubscriptionsParamsMediaType = "movie"
+	ListSubscriptionsParamsMediaTypeTv    ListSubscriptionsParamsMediaType = "tv"
+)
+
+// Valid indicates whether the value is a known member of the ListSubscriptionsParamsMediaType enum.
+func (e ListSubscriptionsParamsMediaType) Valid() bool {
+	switch e {
+	case ListSubscriptionsParamsMediaTypeMovie:
+		return true
+	case ListSubscriptionsParamsMediaTypeTv:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListSubscriptionsParamsView.
+const (
+	Calendar ListSubscriptionsParamsView = "calendar"
+	Summary  ListSubscriptionsParamsView = "summary"
+)
+
+// Valid indicates whether the value is a known member of the ListSubscriptionsParamsView enum.
+func (e ListSubscriptionsParamsView) Valid() bool {
+	switch e {
+	case Calendar:
+		return true
+	case Summary:
 		return true
 	default:
 		return false
@@ -2935,6 +3817,18 @@ func (e PreviewTransferRevisionJSONBodyAction) Valid() bool {
 	}
 }
 
+// AccountCommandResult defines model for AccountCommandResult.
+type AccountCommandResult struct {
+	Replayed  bool                `json:"replayed"`
+	SessionId *openapi_types.UUID `json:"session_id,omitempty"`
+	User      *ManagedAccount     `json:"user,omitempty"`
+}
+
+// AccountList defines model for AccountList.
+type AccountList struct {
+	Items []ManagedAccount `json:"items"`
+}
+
 // AcquireMovieRequest defines model for AcquireMovieRequest.
 type AcquireMovieRequest struct {
 	CandidateId openapi_types.UUID `json:"candidate_id"`
@@ -3009,6 +3903,11 @@ type BangumiCalendarResponse struct {
 // BangumiCalendarResponseExecutionAllowed defines model for BangumiCalendarResponse.ExecutionAllowed.
 type BangumiCalendarResponseExecutionAllowed bool
 
+// BeginOwnMFARequest defines model for BeginOwnMFARequest.
+type BeginOwnMFARequest struct {
+	CurrentPassword string `json:"current_password"`
+}
+
 // CandidateExplanationItem defines model for CandidateExplanationItem.
 type CandidateExplanationItem struct {
 	// Available Observed preconditions only; final command always rechecks
@@ -3045,6 +3944,14 @@ type CandidateExplanationReport struct {
 	RoundState     string                     `json:"round_state"`
 	SubscriptionId openapi_types.UUID         `json:"subscription_id"`
 	WantedId       openapi_types.UUID         `json:"wanted_id"`
+}
+
+// ChangeOwnPasswordRequest defines model for ChangeOwnPasswordRequest.
+type ChangeOwnPasswordRequest struct {
+	CurrentPassword string  `json:"current_password"`
+	NewPassword     string  `json:"new_password"`
+	Otp             *string `json:"otp,omitempty"`
+	RecoveryCode    *string `json:"recovery_code,omitempty"`
 }
 
 // ChannelReplacementReceipt defines model for ChannelReplacementReceipt.
@@ -3094,6 +4001,77 @@ type CheckinIndexerResponse struct {
 	Success *bool   `json:"success,omitempty"`
 }
 
+// ClassificationDocument defines model for ClassificationDocument.
+type ClassificationDocument struct {
+	PublishedAt *time.Time           `json:"published_at,omitempty"`
+	Rules       []ClassificationRule `json:"rules"`
+	Version     int64                `json:"version"`
+}
+
+// ClassificationMatch defines model for ClassificationMatch.
+type ClassificationMatch struct {
+	Reasons []string           `json:"reasons"`
+	RootId  openapi_types.UUID `json:"root_id"`
+	RuleId  string             `json:"rule_id"`
+}
+
+// ClassificationPreview defines model for ClassificationPreview.
+type ClassificationPreview struct {
+	ObservedAt time.Time `json:"observed_at"`
+
+	// PreviewStamp Present only for a matched, usable target; binds trusted facts and target generation.
+	PreviewStamp *string              `json:"preview_stamp,omitempty"`
+	Result       ClassificationResult `json:"result"`
+	Version      int64                `json:"version"`
+}
+
+// ClassificationPreviewInput defines model for ClassificationPreviewInput.
+type ClassificationPreviewInput struct {
+	MediaId   *openapi_types.UUID                  `json:"media_id,omitempty"`
+	MediaType *ClassificationPreviewInputMediaType `json:"media_type,omitempty"`
+	TmdbId    *int64                               `json:"tmdb_id,omitempty"`
+	Version   int64                                `json:"version"`
+}
+
+// ClassificationPreviewInputMediaType defines model for ClassificationPreviewInput.MediaType.
+type ClassificationPreviewInputMediaType string
+
+// ClassificationPublish defines model for ClassificationPublish.
+type ClassificationPublish struct {
+	ExpectedVersion int64                `json:"expected_version"`
+	Rules           []ClassificationRule `json:"rules"`
+}
+
+// ClassificationResult defines model for ClassificationResult.
+type ClassificationResult struct {
+	Matches []ClassificationMatch      `json:"matches"`
+	Reasons []string                   `json:"reasons"`
+	RootId  *openapi_types.UUID        `json:"root_id,omitempty"`
+	Status  ClassificationResultStatus `json:"status"`
+}
+
+// ClassificationResultStatus defines model for ClassificationResult.Status.
+type ClassificationResultStatus string
+
+// ClassificationRule defines model for ClassificationRule.
+type ClassificationRule struct {
+	Countries []string                    `json:"countries"`
+	Genres    []string                    `json:"genres"`
+	Id        string                      `json:"id"`
+	Languages []string                    `json:"languages"`
+	MediaType ClassificationRuleMediaType `json:"media_type"`
+	RootId    openapi_types.UUID          `json:"root_id"`
+}
+
+// ClassificationRuleMediaType defines model for ClassificationRule.MediaType.
+type ClassificationRuleMediaType string
+
+// ConfirmOwnMFARequest defines model for ConfirmOwnMFARequest.
+type ConfirmOwnMFARequest struct {
+	ChallengeId openapi_types.UUID `json:"challenge_id"`
+	Otp         string             `json:"otp"`
+}
+
 // CookieCloudConfig defines model for CookieCloudConfig.
 type CookieCloudConfig struct {
 	Enabled         bool               `json:"enabled"`
@@ -3127,6 +4105,16 @@ type CookieCloudConnectionInput struct {
 	ServerUrl *string `json:"server_url,omitempty"`
 	UserKey   *string `json:"user_key,omitempty"`
 }
+
+// CreateAccountRequest defines model for CreateAccountRequest.
+type CreateAccountRequest struct {
+	Password string                   `json:"password"`
+	Role     CreateAccountRequestRole `json:"role"`
+	Username string                   `json:"username"`
+}
+
+// CreateAccountRequestRole defines model for CreateAccountRequest.Role.
+type CreateAccountRequestRole string
 
 // CreateDownloadClientRequest defines model for CreateDownloadClientRequest.
 type CreateDownloadClientRequest struct {
@@ -3214,7 +4202,15 @@ type CreatePolicyRequest struct {
 
 // CreateSubscriptionRequest defines model for CreateSubscriptionRequest.
 type CreateSubscriptionRequest struct {
-	DownloaderId *openapi_types.UUID `json:"downloader_id,omitempty"`
+	// ClassificationPreviewRootId Required with classification_version; advisory preview target, revalidated during creation. root_id remains omitted.
+	ClassificationPreviewRootId *openapi_types.UUID `json:"classification_preview_root_id,omitempty"`
+
+	// ClassificationPreviewStamp Required with classification_version; original trusted preview facts and root generation must still match.
+	ClassificationPreviewStamp *string `json:"classification_preview_stamp,omitempty"`
+
+	// ClassificationVersion Explicit published classification revision; root_id must be omitted.
+	ClassificationVersion *int64              `json:"classification_version,omitempty"`
+	DownloaderId          *openapi_types.UUID `json:"downloader_id,omitempty"`
 
 	// Episodes Example: ["S01E01","S01E02","S01E03"]
 	Episodes *[]string `json:"episodes,omitempty"`
@@ -3284,6 +4280,13 @@ type DeliverySummary struct {
 
 // DeliverySummaryState defines model for DeliverySummary.State.
 type DeliverySummaryState string
+
+// DisableOwnMFARequest defines model for DisableOwnMFARequest.
+type DisableOwnMFARequest struct {
+	CurrentPassword string  `json:"current_password"`
+	Otp             *string `json:"otp,omitempty"`
+	RecoveryCode    *string `json:"recovery_code,omitempty"`
+}
 
 // DiscoverFeedResponse defines model for DiscoverFeedResponse.
 type DiscoverFeedResponse struct {
@@ -3395,6 +4398,33 @@ type DownloadClientDetails struct {
 type DownloadClientListResponse struct {
 	Items []DownloadClientDetails `json:"items"`
 }
+
+// DownloadControlCommand defines model for DownloadControlCommand.
+type DownloadControlCommand struct {
+	Action       DownloadControlCommandAction    `json:"action"`
+	AffectShared *bool                           `json:"affect_shared,omitempty"`
+	Confirmed    DownloadControlCommandConfirmed `json:"confirmed"`
+}
+
+// DownloadControlCommandAction defines model for DownloadControlCommand.Action.
+type DownloadControlCommandAction string
+
+// DownloadControlCommandConfirmed defines model for DownloadControlCommand.Confirmed.
+type DownloadControlCommandConfirmed bool
+
+// DownloadControlReceipt defines model for DownloadControlReceipt.
+type DownloadControlReceipt struct {
+	Action      DownloadControlReceiptAction `json:"action"`
+	CommandId   openapi_types.UUID           `json:"command_id"`
+	OperationId openapi_types.UUID           `json:"operation_id"`
+	State       DownloadControlReceiptState  `json:"state"`
+}
+
+// DownloadControlReceiptAction defines model for DownloadControlReceipt.Action.
+type DownloadControlReceiptAction string
+
+// DownloadControlReceiptState defines model for DownloadControlReceipt.State.
+type DownloadControlReceiptState string
 
 // DownloadGlobalRateClient defines model for DownloadGlobalRateClient.
 type DownloadGlobalRateClient struct {
@@ -3562,6 +4592,62 @@ type ErrorResponse struct {
 	Type string `json:"type"`
 }
 
+// ExplicitLibraryConfirmation defines model for ExplicitLibraryConfirmation.
+type ExplicitLibraryConfirmation struct {
+	Confirmed ExplicitLibraryConfirmationConfirmed `json:"confirmed"`
+}
+
+// ExplicitLibraryConfirmationConfirmed defines model for ExplicitLibraryConfirmation.Confirmed.
+type ExplicitLibraryConfirmationConfirmed bool
+
+// ExternalBatchInput defines model for ExternalBatchInput.
+type ExternalBatchInput struct {
+	Rows []ExternalBatchSelection `json:"rows"`
+}
+
+// ExternalBatchManifest defines model for ExternalBatchManifest.
+type ExternalBatchManifest struct {
+	ActorId          openapi_types.UUID                    `json:"actor_id"`
+	CommandKey       string                                `json:"command_key"`
+	CreatedAt        time.Time                             `json:"created_at"`
+	ExecutionAllowed ExternalBatchManifestExecutionAllowed `json:"execution_allowed"`
+	Id               openapi_types.UUID                    `json:"id"`
+	Rows             []ExternalBatchRow                    `json:"rows"`
+	ScopeId          openapi_types.UUID                    `json:"scope_id"`
+}
+
+// ExternalBatchManifestExecutionAllowed defines model for ExternalBatchManifest.ExecutionAllowed.
+type ExternalBatchManifestExecutionAllowed bool
+
+// ExternalBatchRow defines model for ExternalBatchRow.
+type ExternalBatchRow struct {
+	File   UntrackedDiscoveryObservation `json:"file"`
+	Review UntrackedReviewView           `json:"review"`
+
+	// Scope Safe owner-only saved intent. Source and target physical baselines are independent. Disabling monitoring does not remove the historical review boundary.
+	Scope     UntrackedScope         `json:"scope"`
+	Selection ExternalBatchSelection `json:"selection"`
+}
+
+// ExternalBatchRowStatus defines model for ExternalBatchRowStatus.
+type ExternalBatchRowStatus struct {
+	Confirmation *UntrackedConfirmationReceipt `json:"confirmation"`
+	Organization *UntrackedOrganizationReceipt `json:"organization"`
+	Progress     *UntrackedOrganizationView    `json:"progress"`
+}
+
+// ExternalBatchSelection defines model for ExternalBatchSelection.
+type ExternalBatchSelection struct {
+	Confirmation UntrackedConfirmationInput `json:"confirmation"`
+	FileId       openapi_types.UUID         `json:"file_id"`
+}
+
+// ExternalBatchView defines model for ExternalBatchView.
+type ExternalBatchView struct {
+	Batch  ExternalBatchManifest    `json:"batch"`
+	Status []ExternalBatchRowStatus `json:"status"`
+}
+
 // FileMappingAssociation defines model for FileMappingAssociation.
 type FileMappingAssociation struct {
 	Active bool            `json:"active"`
@@ -3576,12 +4662,27 @@ type FileMappingOptions struct {
 		RootId   openapi_types.UUID `json:"root_id"`
 		RootName string             `json:"root_name"`
 	} `json:"files"`
-	Limit int `json:"limit"`
-	Media []struct {
+
+	// FilesHasMore Further file choices are available; media choices retain their own limit
+	FilesHasMore bool `json:"files_has_more"`
+
+	// FilesNextCursor Opaque cursor for the next file page within the same root filter
+	FilesNextCursor string `json:"files_next_cursor"`
+	Limit           int    `json:"limit"`
+	Media           []struct {
 		Id        openapi_types.UUID `json:"id"`
 		MediaType string             `json:"media_type"`
 		Title     string             `json:"title"`
 	} `json:"media"`
+	MediaHasMore bool `json:"media_has_more"`
+
+	// MediaNextCursor Cursor for the next existing-media page with the same media filters
+	MediaNextCursor string `json:"media_next_cursor"`
+	SelectedMedia   *struct {
+		Id        openapi_types.UUID `json:"id"`
+		MediaType string             `json:"media_type"`
+		Title     string             `json:"title"`
+	} `json:"selected_media,omitempty"`
 }
 
 // FileMappingPreview defines model for FileMappingPreview.
@@ -3802,6 +4903,41 @@ type LibraryCatalogPage struct {
 	NextCursor *string               `json:"next_cursor,omitempty"`
 }
 
+// LibraryMaintenanceCommand defines model for LibraryMaintenanceCommand.
+type LibraryMaintenanceCommand struct {
+	Action             LibraryMaintenanceCommandAction    `json:"action"`
+	Confirmed          LibraryMaintenanceCommandConfirmed `json:"confirmed"`
+	ExpectedVersion    string                             `json:"expected_version"`
+	FileId             *openapi_types.UUID                `json:"file_id,omitempty"`
+	RecycleId          *string                            `json:"recycle_id,omitempty"`
+	TargetRelativePath *string                            `json:"target_relative_path,omitempty"`
+}
+
+// LibraryMaintenanceCommandAction defines model for LibraryMaintenanceCommand.Action.
+type LibraryMaintenanceCommandAction string
+
+// LibraryMaintenanceCommandConfirmed defines model for LibraryMaintenanceCommand.Confirmed.
+type LibraryMaintenanceCommandConfirmed bool
+
+// LibraryMaintenanceResult defines model for LibraryMaintenanceResult.
+type LibraryMaintenanceResult struct {
+	Action           LibraryMaintenanceResultAction           `json:"action"`
+	CommandId        openapi_types.UUID                       `json:"command_id"`
+	ExecutionAllowed LibraryMaintenanceResultExecutionAllowed `json:"execution_allowed"`
+	FileId           openapi_types.UUID                       `json:"file_id"`
+	Status           LibraryMaintenanceResultStatus           `json:"status"`
+	Version          string                                   `json:"version"`
+}
+
+// LibraryMaintenanceResultAction defines model for LibraryMaintenanceResult.Action.
+type LibraryMaintenanceResultAction string
+
+// LibraryMaintenanceResultExecutionAllowed defines model for LibraryMaintenanceResult.ExecutionAllowed.
+type LibraryMaintenanceResultExecutionAllowed bool
+
+// LibraryMaintenanceResultStatus defines model for LibraryMaintenanceResult.Status.
+type LibraryMaintenanceResultStatus string
+
 // LibraryOverview defines model for LibraryOverview.
 type LibraryOverview struct {
 	// Counts Distinct current imported facts, not subscription satisfaction. Episodes include specials. Decimal strings preserve integer precision.
@@ -3833,6 +4969,66 @@ type LibraryRecentImport struct {
 
 // LibraryRecentImportMediaType defines model for LibraryRecentImport.MediaType.
 type LibraryRecentImportMediaType string
+
+// LibraryRecycleItem defines model for LibraryRecycleItem.
+type LibraryRecycleItem struct {
+	AllocatedBytes       *int64                             `json:"allocated_bytes"`
+	CanConfirm           bool                               `json:"can_confirm"`
+	ExecutionAllowed     LibraryRecycleItemExecutionAllowed `json:"execution_allowed"`
+	Kind                 LibraryRecycleItemKind             `json:"kind"`
+	LinkCount            *int64                             `json:"link_count"`
+	OldFileId            openapi_types.UUID                 `json:"old_file_id"`
+	OriginalRelativePath string                             `json:"original_relative_path"`
+	RecycleId            string                             `json:"recycle_id"`
+	ReplacementFileId    openapi_types.UUID                 `json:"replacement_file_id"`
+	RetainedUntil        time.Time                          `json:"retained_until"`
+	RootId               openapi_types.UUID                 `json:"root_id"`
+	SizeBytes            int64                              `json:"size_bytes"`
+	Status               string                             `json:"status"`
+	UsageObservedAt      *time.Time                         `json:"usage_observed_at"`
+	Version              string                             `json:"version"`
+}
+
+// LibraryRecycleItemExecutionAllowed defines model for LibraryRecycleItem.ExecutionAllowed.
+type LibraryRecycleItemExecutionAllowed bool
+
+// LibraryRecycleItemKind defines model for LibraryRecycleItem.Kind.
+type LibraryRecycleItemKind string
+
+// LibraryRecycleList defines model for LibraryRecycleList.
+type LibraryRecycleList struct {
+	Items      []LibraryRecycleItem `json:"items"`
+	NextCursor string               `json:"next_cursor"`
+}
+
+// LibraryRecyclePreviewRequest defines model for LibraryRecyclePreviewRequest.
+type LibraryRecyclePreviewRequest struct {
+	Action    LibraryRecyclePreviewRequestAction `json:"action"`
+	RecycleId string                             `json:"recycle_id"`
+}
+
+// LibraryRecyclePreviewRequestAction defines model for LibraryRecyclePreviewRequest.Action.
+type LibraryRecyclePreviewRequestAction string
+
+// LibraryReorganizationPreview defines model for LibraryReorganizationPreview.
+type LibraryReorganizationPreview struct {
+	CanConfirm         bool                                         `json:"can_confirm"`
+	ExecutionAllowed   LibraryReorganizationPreviewExecutionAllowed `json:"execution_allowed"`
+	FileId             openapi_types.UUID                           `json:"file_id"`
+	RootId             openapi_types.UUID                           `json:"root_id"`
+	SourceRelativePath string                                       `json:"source_relative_path"`
+	TargetRelativePath string                                       `json:"target_relative_path"`
+	Version            string                                       `json:"version"`
+}
+
+// LibraryReorganizationPreviewExecutionAllowed defines model for LibraryReorganizationPreview.ExecutionAllowed.
+type LibraryReorganizationPreviewExecutionAllowed bool
+
+// LibraryReorganizationRequest defines model for LibraryReorganizationRequest.
+type LibraryReorganizationRequest struct {
+	FileId             openapi_types.UUID `json:"file_id"`
+	TargetRelativePath string             `json:"target_relative_path"`
+}
 
 // LibraryReuseCandidate defines model for LibraryReuseCandidate.
 type LibraryReuseCandidate struct {
@@ -3957,9 +5153,74 @@ type LibraryRootSelectionMediaType string
 
 // LoginRequest defines model for LoginRequest.
 type LoginRequest struct {
-	Password string `json:"password"`
-	Username string `json:"username"`
+	Otp          *string `json:"otp,omitempty"`
+	Password     string  `json:"password"`
+	RecoveryCode *string `json:"recovery_code,omitempty"`
+	Username     string  `json:"username"`
 }
+
+// ManagedAccount defines model for ManagedAccount.
+type ManagedAccount struct {
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	IsActive  bool               `json:"is_active"`
+	Role      ManagedAccountRole `json:"role"`
+	UpdatedAt time.Time          `json:"updated_at"`
+	Username  string             `json:"username"`
+}
+
+// ManagedAccountRole defines model for ManagedAccount.Role.
+type ManagedAccountRole string
+
+// ManagedSession defines model for ManagedSession.
+type ManagedSession struct {
+	CreatedAt  time.Time          `json:"created_at"`
+	Current    bool               `json:"current"`
+	ExpiresAt  time.Time          `json:"expires_at"`
+	Id         openapi_types.UUID `json:"id"`
+	LastSeenAt time.Time          `json:"last_seen_at"`
+}
+
+// ManagedSidecarArtifact defines model for ManagedSidecarArtifact.
+type ManagedSidecarArtifact struct {
+	Name    ManagedSidecarArtifactName  `json:"name"`
+	NewHash *string                     `json:"new_hash,omitempty"`
+	OldHash *string                     `json:"old_hash,omitempty"`
+	State   ManagedSidecarArtifactState `json:"state"`
+}
+
+// ManagedSidecarArtifactName defines model for ManagedSidecarArtifact.Name.
+type ManagedSidecarArtifactName string
+
+// ManagedSidecarArtifactState defines model for ManagedSidecarArtifact.State.
+type ManagedSidecarArtifactState string
+
+// ManagedSidecarCommandInput defines model for ManagedSidecarCommandInput.
+type ManagedSidecarCommandInput struct {
+	Confirmed ManagedSidecarCommandInputConfirmed `json:"confirmed"`
+	PreviewId openapi_types.UUID                  `json:"preview_id"`
+}
+
+// ManagedSidecarCommandInputConfirmed defines model for ManagedSidecarCommandInput.Confirmed.
+type ManagedSidecarCommandInputConfirmed bool
+
+// ManagedSidecarPreviewInput defines model for ManagedSidecarPreviewInput.
+type ManagedSidecarPreviewInput struct {
+	UnitId openapi_types.UUID `json:"unit_id"`
+}
+
+// ManagedSidecarUpdateResult defines model for ManagedSidecarUpdateResult.
+type ManagedSidecarUpdateResult struct {
+	Artifacts  []ManagedSidecarArtifact        `json:"artifacts"`
+	CommandKey *string                         `json:"command_key,omitempty"`
+	ExpiresAt  time.Time                       `json:"expires_at"`
+	FileId     openapi_types.UUID              `json:"file_id"`
+	Id         openapi_types.UUID              `json:"id"`
+	State      ManagedSidecarUpdateResultState `json:"state"`
+}
+
+// ManagedSidecarUpdateResultState defines model for ManagedSidecarUpdateResult.State.
+type ManagedSidecarUpdateResultState string
 
 // ManagedToken defines model for ManagedToken.
 type ManagedToken struct {
@@ -4097,6 +5358,36 @@ type MediaServerDetails struct {
 type MediaServerListResponse struct {
 	Items []MediaServerDetails `json:"items"`
 }
+
+// MetadataDiagnosticInput defines model for MetadataDiagnosticInput.
+type MetadataDiagnosticInput struct {
+	Target string `json:"target"`
+}
+
+// MetadataDiagnosticResult defines model for MetadataDiagnosticResult.
+type MetadataDiagnosticResult struct {
+	Category       string `json:"category"`
+	ElapsedMs      int64  `json:"elapsed_ms"`
+	HostResponded  bool   `json:"host_responded"`
+	ImageRetrieved bool   `json:"image_retrieved"`
+	Target         string `json:"target"`
+}
+
+// MovieDiscoveryStatus defines model for MovieDiscoveryStatus.
+type MovieDiscoveryStatus struct {
+	CurrentFileId    *openapi_types.UUID                  `json:"current_file_id,omitempty"`
+	ExecutionAllowed MovieDiscoveryStatusExecutionAllowed `json:"execution_allowed"`
+	NextDiscoveryAt  *time.Time                           `json:"next_discovery_at,omitempty"`
+	SearchId         *openapi_types.UUID                  `json:"search_id,omitempty"`
+	State            MovieDiscoveryStatusState            `json:"state"`
+	SubscriptionId   openapi_types.UUID                   `json:"subscription_id"`
+}
+
+// MovieDiscoveryStatusExecutionAllowed defines model for MovieDiscoveryStatus.ExecutionAllowed.
+type MovieDiscoveryStatusExecutionAllowed bool
+
+// MovieDiscoveryStatusState defines model for MovieDiscoveryStatus.State.
+type MovieDiscoveryStatusState string
 
 // MovieSearchResponse defines model for MovieSearchResponse.
 type MovieSearchResponse struct {
@@ -4330,6 +5621,33 @@ type OperationTimelinePage struct {
 	PlanStatus  *string                  `json:"plan_status,omitempty"`
 }
 
+// OwnMFAConfirmResult defines model for OwnMFAConfirmResult.
+type OwnMFAConfirmResult struct {
+	Enabled       bool      `json:"enabled"`
+	RecoveryCodes *[]string `json:"recovery_codes,omitempty"`
+	Replayed      bool      `json:"replayed"`
+}
+
+// OwnMFASetupResult defines model for OwnMFASetupResult.
+type OwnMFASetupResult struct {
+	ChallengeId openapi_types.UUID `json:"challenge_id"`
+	ExpiresAt   time.Time          `json:"expires_at"`
+	OtpauthUrl  *string            `json:"otpauth_url,omitempty"`
+	Replayed    bool               `json:"replayed"`
+	Secret      *string            `json:"secret,omitempty"`
+}
+
+// OwnMFAStatus defines model for OwnMFAStatus.
+type OwnMFAStatus struct {
+	Enabled                bool `json:"enabled"`
+	RecoveryCodesRemaining int  `json:"recovery_codes_remaining"`
+}
+
+// OwnSessionList defines model for OwnSessionList.
+type OwnSessionList struct {
+	Items []ManagedSession `json:"items"`
+}
+
 // PersonFollowBindings defines model for PersonFollowBindings.
 type PersonFollowBindings struct {
 	DownloaderId *openapi_types.UUID  `json:"downloader_id,omitempty"`
@@ -4502,6 +5820,17 @@ type ScanReorganizeResponse struct {
 	Items *[]ScanReorganizeItem `json:"items,omitempty"`
 }
 
+// SecurityCommandReceipt defines model for SecurityCommandReceipt.
+type SecurityCommandReceipt struct {
+	Action string                        `json:"action"`
+	Result SecurityCommandReceipt_Result `json:"result"`
+}
+
+// SecurityCommandReceipt_Result defines model for SecurityCommandReceipt.Result.
+type SecurityCommandReceipt_Result struct {
+	union json.RawMessage
+}
+
 // SeedingConfig defines model for SeedingConfig.
 type SeedingConfig struct {
 	ClientId        openapi_types.UUID `json:"client_id"`
@@ -4536,6 +5865,15 @@ type SeedingConfigReceipt struct {
 	Config     SeedingConfig `json:"config"`
 }
 
+// SeedingInspection defines model for SeedingInspection.
+type SeedingInspection struct {
+	Complete           bool      `json:"complete"`
+	InfiniteShareRatio bool      `json:"infinite_share_ratio"`
+	ObservedAt         time.Time `json:"observed_at"`
+	SeedingSeconds     *string   `json:"seeding_seconds"`
+	ShareRatio         *float32  `json:"share_ratio"`
+}
+
 // SeedingRule defines model for SeedingRule.
 type SeedingRule struct {
 	// DeleteFiles Removal preserves all downloaded and organized files
@@ -4553,6 +5891,34 @@ type SeedingRuleDeleteFiles bool
 
 // SeedingRuleMode defines model for SeedingRule.Mode.
 type SeedingRuleMode string
+
+// SeerrConfiguration defines model for SeerrConfiguration.
+type SeerrConfiguration struct {
+	CredentialPresent bool                `json:"credential_present"`
+	Enabled           bool                `json:"enabled"`
+	OwnerId           *openapi_types.UUID `json:"owner_id,omitempty"`
+	Version           int64               `json:"version"`
+}
+
+// SeerrConfigurationInput defines model for SeerrConfigurationInput.
+type SeerrConfigurationInput struct {
+	Credential      *string            `json:"credential,omitempty"`
+	Enabled         bool               `json:"enabled"`
+	ExpectedVersion int64              `json:"expected_version"`
+	OwnerId         openapi_types.UUID `json:"owner_id"`
+}
+
+// SeerrReceipt defines model for SeerrReceipt.
+type SeerrReceipt struct {
+	ConfigVersion     int64              `json:"config_version"`
+	CreatedAt         time.Time          `json:"created_at"`
+	ExternalRequestId string             `json:"external_request_id"`
+	RequestId         openapi_types.UUID `json:"request_id"`
+	State             SeerrReceiptState  `json:"state"`
+}
+
+// SeerrReceiptState defines model for SeerrReceipt.State.
+type SeerrReceiptState string
 
 // SettingItem defines model for SettingItem.
 type SettingItem struct {
@@ -4906,9 +6272,67 @@ type SubscriptionDetails struct {
 	Year *int `json:"year,omitempty"`
 }
 
+// SubscriptionExecution defines model for SubscriptionExecution.
+type SubscriptionExecution struct {
+	Limited        bool                         `json:"limited"`
+	NextStep       string                       `json:"next_step"`
+	ObservedAt     time.Time                    `json:"observed_at"`
+	Rounds         []SubscriptionExecutionRound `json:"rounds"`
+	SubscriptionId openapi_types.UUID           `json:"subscription_id"`
+	Waiting        string                       `json:"waiting"`
+}
+
+// SubscriptionExecutionCandidate defines model for SubscriptionExecutionCandidate.
+type SubscriptionExecutionCandidate struct {
+	Id      openapi_types.UUID `json:"id"`
+	Outcome string             `json:"outcome"`
+	Reason  string             `json:"reason"`
+}
+
+// SubscriptionExecutionPage defines model for SubscriptionExecutionPage.
+type SubscriptionExecutionPage struct {
+	FinishedAt     *time.Time         `json:"finished_at,omitempty"`
+	OffsetVerified bool               `json:"offset_verified"`
+	Page           int                `json:"page"`
+	QueryId        openapi_types.UUID `json:"query_id"`
+	ReceiptPresent bool               `json:"receipt_present"`
+	Results        int                `json:"results"`
+	State          string             `json:"state"`
+}
+
+// SubscriptionExecutionRound defines model for SubscriptionExecutionRound.
+type SubscriptionExecutionRound struct {
+	Candidates    []SubscriptionExecutionCandidate `json:"candidates"`
+	CreatedAt     time.Time                        `json:"created_at"`
+	Deadline      time.Time                        `json:"deadline"`
+	Id            openapi_types.UUID               `json:"id"`
+	IntentVersion int64                            `json:"intent_version"`
+	Kind          string                           `json:"kind"`
+	Limited       bool                             `json:"limited"`
+	Reason        string                           `json:"reason"`
+	Sources       []SubscriptionExecutionSource    `json:"sources"`
+	State         string                           `json:"state"`
+}
+
+// SubscriptionExecutionSource defines model for SubscriptionExecutionSource.
+type SubscriptionExecutionSource struct {
+	IndexerId openapi_types.UUID          `json:"indexer_id"`
+	Pages     []SubscriptionExecutionPage `json:"pages"`
+	State     string                      `json:"state"`
+}
+
 // SubscriptionListResponse defines model for SubscriptionListResponse.
 type SubscriptionListResponse struct {
 	Items []SubscriptionDetails `json:"items"`
+
+	// MovieCount Movie count under search and identity filters before media_type; zero for calendar.
+	MovieCount int64 `json:"movie_count"`
+
+	// Total Matching subscriptions, or matching episodes for calendar pages.
+	Total int64 `json:"total"`
+
+	// TvCount TV count under search and identity filters before media_type; zero for calendar.
+	TvCount int64 `json:"tv_count"`
 }
 
 // SubscriptionStatusReport defines model for SubscriptionStatusReport.
@@ -4922,6 +6346,44 @@ type SubscriptionStatusReport struct {
 	PolicyRevision  int64                 `json:"policy_revision"`
 	RootGeneration  int64                 `json:"root_generation"`
 }
+
+// SubtitleCandidateCommand defines model for SubtitleCandidateCommand.
+type SubtitleCandidateCommand struct {
+	ExpectedMappingRevision int64 `json:"expected_mapping_revision"`
+}
+
+// SubtitleCandidateState defines model for SubtitleCandidateState.
+type SubtitleCandidateState struct {
+	Candidates []struct {
+		Format       SubtitleCandidateStateCandidatesFormat       `json:"format"`
+		Id           openapi_types.UUID                           `json:"id"`
+		LanguageHint SubtitleCandidateStateCandidatesLanguageHint `json:"language_hint"`
+		Provider     SubtitleCandidateStateCandidatesProvider     `json:"provider"`
+
+		// Summary Validated cue count and earliest start/latest end in milliseconds; not video duration or translation quality. Omitted when unavailable.
+		Summary *struct {
+			CueCount int   `json:"cue_count"`
+			EndMs    int64 `json:"end_ms"`
+			StartMs  int64 `json:"start_ms"`
+		} `json:"summary,omitempty"`
+	} `json:"candidates"`
+	FileId          openapi_types.UUID            `json:"file_id"`
+	MappingRevision int64                         `json:"mapping_revision"`
+	Outcome         SubtitleCandidateStateOutcome `json:"outcome"`
+	QueryId         *openapi_types.UUID           `json:"query_id,omitempty"`
+}
+
+// SubtitleCandidateStateCandidatesFormat defines model for SubtitleCandidateState.Candidates.Format.
+type SubtitleCandidateStateCandidatesFormat string
+
+// SubtitleCandidateStateCandidatesLanguageHint defines model for SubtitleCandidateState.Candidates.LanguageHint.
+type SubtitleCandidateStateCandidatesLanguageHint string
+
+// SubtitleCandidateStateCandidatesProvider defines model for SubtitleCandidateState.Candidates.Provider.
+type SubtitleCandidateStateCandidatesProvider string
+
+// SubtitleCandidateStateOutcome defines model for SubtitleCandidateState.Outcome.
+type SubtitleCandidateStateOutcome string
 
 // SystemStatus defines model for SystemStatus.
 type SystemStatus struct {
@@ -5044,6 +6506,20 @@ type TVCoverageCandidateReviewReceipt struct {
 // TVCoverageCandidateReviewReceiptStatus defines model for TVCoverageCandidateReviewReceipt.Status.
 type TVCoverageCandidateReviewReceiptStatus string
 
+// TVEpisodeDiscoveryStatus defines model for TVEpisodeDiscoveryStatus.
+type TVEpisodeDiscoveryStatus struct {
+	CurrentFileId    *openapi_types.UUID                      `json:"current_file_id,omitempty"`
+	ExecutionAllowed TVEpisodeDiscoveryStatusExecutionAllowed `json:"execution_allowed"`
+	NextDiscoveryAt  *time.Time                               `json:"next_discovery_at,omitempty"`
+	SearchId         *openapi_types.UUID                      `json:"search_id,omitempty"`
+	State            string                                   `json:"state"`
+	SubscriptionId   openapi_types.UUID                       `json:"subscription_id"`
+	UnitId           openapi_types.UUID                       `json:"unit_id"`
+}
+
+// TVEpisodeDiscoveryStatusExecutionAllowed defines model for TVEpisodeDiscoveryStatus.ExecutionAllowed.
+type TVEpisodeDiscoveryStatusExecutionAllowed bool
+
 // TVEpisodeGroupEpisode defines model for TVEpisodeGroupEpisode.
 type TVEpisodeGroupEpisode struct {
 	Episode int   `json:"episode"`
@@ -5105,6 +6581,50 @@ type TVEpisodeGroupSummary struct {
 	Name         string `json:"name"`
 	Type         int    `json:"type"`
 }
+
+// TVEpisodeUpgradeCommand defines model for TVEpisodeUpgradeCommand.
+type TVEpisodeUpgradeCommand struct {
+	Action          TVEpisodeUpgradeCommandAction    `json:"action"`
+	CandidateId     openapi_types.UUID               `json:"candidate_id"`
+	Confirmed       TVEpisodeUpgradeCommandConfirmed `json:"confirmed"`
+	CurrentFileId   openapi_types.UUID               `json:"current_file_id"`
+	ExpectedVersion string                           `json:"expected_version"`
+	OperationId     *openapi_types.UUID              `json:"operation_id,omitempty"`
+	UnitId          openapi_types.UUID               `json:"unit_id"`
+}
+
+// TVEpisodeUpgradeCommandAction defines model for TVEpisodeUpgradeCommand.Action.
+type TVEpisodeUpgradeCommandAction string
+
+// TVEpisodeUpgradeCommandConfirmed defines model for TVEpisodeUpgradeCommand.Confirmed.
+type TVEpisodeUpgradeCommandConfirmed bool
+
+// TVEpisodeUpgradeInput defines model for TVEpisodeUpgradeInput.
+type TVEpisodeUpgradeInput struct {
+	CandidateId   openapi_types.UUID `json:"candidate_id"`
+	CurrentFileId openapi_types.UUID `json:"current_file_id"`
+	UnitId        openapi_types.UUID `json:"unit_id"`
+}
+
+// TVEpisodeUpgradeResult defines model for TVEpisodeUpgradeResult.
+type TVEpisodeUpgradeResult struct {
+	CandidateId      openapi_types.UUID                     `json:"candidate_id"`
+	CandidateScore   *int                                   `json:"candidate_score,omitempty"`
+	Comparable       bool                                   `json:"comparable"`
+	CurrentFileId    openapi_types.UUID                     `json:"current_file_id"`
+	CurrentScore     *int                                   `json:"current_score,omitempty"`
+	ExecutionAllowed TVEpisodeUpgradeResultExecutionAllowed `json:"execution_allowed"`
+	Improvement      bool                                   `json:"improvement"`
+	NewFileId        *openapi_types.UUID                    `json:"new_file_id,omitempty"`
+	OperationId      *openapi_types.UUID                    `json:"operation_id,omitempty"`
+	Reason           *string                                `json:"reason,omitempty"`
+	Status           string                                 `json:"status"`
+	UnitId           openapi_types.UUID                     `json:"unit_id"`
+	Version          string                                 `json:"version"`
+}
+
+// TVEpisodeUpgradeResultExecutionAllowed defines model for TVEpisodeUpgradeResult.ExecutionAllowed.
+type TVEpisodeUpgradeResultExecutionAllowed bool
 
 // TVRefreshReceipt defines model for TVRefreshReceipt.
 type TVRefreshReceipt struct {
@@ -5206,6 +6726,18 @@ type TestIndexerResponse struct {
 	Message   string `json:"message"`
 }
 
+// TransferPlanDetails defines model for TransferPlanDetails.
+type TransferPlanDetails struct {
+	Id          openapi_types.UUID `json:"id"`
+	OperationId openapi_types.UUID `json:"operation_id"`
+
+	// State Example: approved
+	State string `json:"state"`
+
+	// Strategy Example: hardlink
+	Strategy string `json:"strategy"`
+}
+
 // TransferRevisionPreview defines model for TransferRevisionPreview.
 type TransferRevisionPreview struct {
 	Action            *TransferRevisionPreviewAction    `json:"action,omitempty"`
@@ -5239,6 +6771,55 @@ type TransferRevisionReceipt struct {
 
 // TransferRevisionReceiptState defines model for TransferRevisionReceipt.State.
 type TransferRevisionReceiptState string
+
+// UntrackedCompanionAttachment defines model for UntrackedCompanionAttachment.
+type UntrackedCompanionAttachment struct {
+	Action         UntrackedCompanionAttachmentAction         `json:"action"`
+	Candidate      UntrackedCompanionCandidate                `json:"candidate"`
+	Id             openapi_types.UUID                         `json:"id"`
+	OperationId    openapi_types.UUID                         `json:"operation_id"`
+	SourceRetained UntrackedCompanionAttachmentSourceRetained `json:"source_retained"`
+	State          UntrackedCompanionAttachmentState          `json:"state"`
+}
+
+// UntrackedCompanionAttachmentAction defines model for UntrackedCompanionAttachment.Action.
+type UntrackedCompanionAttachmentAction string
+
+// UntrackedCompanionAttachmentSourceRetained defines model for UntrackedCompanionAttachment.SourceRetained.
+type UntrackedCompanionAttachmentSourceRetained bool
+
+// UntrackedCompanionAttachmentState defines model for UntrackedCompanionAttachment.State.
+type UntrackedCompanionAttachmentState string
+
+// UntrackedCompanionCandidate defines model for UntrackedCompanionCandidate.
+type UntrackedCompanionCandidate struct {
+	Key                string `json:"key"`
+	SourceRelativePath string `json:"source_relative_path"`
+	TargetRelativePath string `json:"target_relative_path"`
+}
+
+// UntrackedCompanionCandidates defines model for UntrackedCompanionCandidates.
+type UntrackedCompanionCandidates struct {
+	Items []UntrackedCompanionCandidate `json:"items"`
+}
+
+// UntrackedCompanionSelection defines model for UntrackedCompanionSelection.
+type UntrackedCompanionSelection struct {
+	Action        UntrackedCompanionSelectionAction `json:"action"`
+	CandidateKeys []string                          `json:"candidate_keys"`
+}
+
+// UntrackedCompanionSelectionAction defines model for UntrackedCompanionSelection.Action.
+type UntrackedCompanionSelectionAction string
+
+// UntrackedCompanionView defines model for UntrackedCompanionView.
+type UntrackedCompanionView struct {
+	Items      []UntrackedCompanionAttachment   `json:"items"`
+	VideoState UntrackedCompanionViewVideoState `json:"video_state"`
+}
+
+// UntrackedCompanionViewVideoState defines model for UntrackedCompanionView.VideoState.
+type UntrackedCompanionViewVideoState string
 
 // UntrackedConfirmationInput defines model for UntrackedConfirmationInput.
 type UntrackedConfirmationInput struct {
@@ -5383,6 +6964,23 @@ type UntrackedReviewCandidate struct {
 	Year          int                   `json:"year"`
 }
 
+// UntrackedReviewEpisodeOption defines model for UntrackedReviewEpisodeOption.
+type UntrackedReviewEpisodeOption struct {
+	CanonicalUnitId      string `json:"canonical_unit_id"`
+	Episode              int    `json:"episode"`
+	MediaMetadataVersion int64  `json:"media_metadata_version"`
+	Season               int    `json:"season"`
+	Title                string `json:"title"`
+	TmdbEpisodeId        int64  `json:"tmdb_episode_id"`
+	UnitKey              string `json:"unit_key"`
+	UnitMetadataVersion  int64  `json:"unit_metadata_version"`
+}
+
+// UntrackedReviewEpisodeOptions defines model for UntrackedReviewEpisodeOptions.
+type UntrackedReviewEpisodeOptions struct {
+	Items []UntrackedReviewEpisodeOption `json:"items"`
+}
+
 // UntrackedReviewEvidence defines model for UntrackedReviewEvidence.
 type UntrackedReviewEvidence struct {
 	Candidate     *UntrackedReviewCandidate `json:"candidate"`
@@ -5396,14 +6994,21 @@ type UntrackedReviewEvidence struct {
 
 // UntrackedReviewInput defines model for UntrackedReviewInput.
 type UntrackedReviewInput struct {
-	FileRevision int64 `json:"file_revision"`
+	// CanonicalUnitId Explicit current canonical episode UUID; all six proof fields required together
+	CanonicalUnitId      *string `json:"canonical_unit_id,omitempty"`
+	Episode              *int    `json:"episode,omitempty"`
+	FileRevision         int64   `json:"file_revision"`
+	MediaMetadataVersion *int64  `json:"media_metadata_version,omitempty"`
 
 	// MediaType Must agree with the selected target root type
-	MediaType    string `json:"media_type"`
-	ScopeVersion int64  `json:"scope_version"`
+	MediaType     string `json:"media_type"`
+	ScopeVersion  int64  `json:"scope_version"`
+	Season        *int   `json:"season,omitempty"`
+	TmdbEpisodeId *int64 `json:"tmdb_episode_id,omitempty"`
 
 	// TmdbId Zero requests an automatic suggestion; a positive ID is explicit typed identity
-	TmdbId int64 `json:"tmdb_id"`
+	TmdbId              int64  `json:"tmdb_id"`
+	UnitMetadataVersion *int64 `json:"unit_metadata_version,omitempty"`
 }
 
 // UntrackedReviewRequest defines model for UntrackedReviewRequest.
@@ -5426,6 +7031,23 @@ type UntrackedReviewRequestReceipt struct {
 
 // UntrackedReviewRequestReceiptExecutionAllowed defines model for UntrackedReviewRequestReceipt.ExecutionAllowed.
 type UntrackedReviewRequestReceiptExecutionAllowed bool
+
+// UntrackedReviewScopeOption defines model for UntrackedReviewScopeOption.
+type UntrackedReviewScopeOption struct {
+	Enabled         bool   `json:"enabled"`
+	Id              string `json:"id"`
+	LocalRoot       string `json:"local_root"`
+	TargetMediaType string `json:"target_media_type"`
+	TargetRootPath  string `json:"target_root_path"`
+	Version         int64  `json:"version"`
+}
+
+// UntrackedReviewScopePage defines model for UntrackedReviewScopePage.
+type UntrackedReviewScopePage struct {
+	HasMore    bool                         `json:"has_more"`
+	Items      []UntrackedReviewScopeOption `json:"items"`
+	NextCursor string                       `json:"next_cursor"`
+}
 
 // UntrackedReviewUnit defines model for UntrackedReviewUnit.
 type UntrackedReviewUnit struct {
@@ -5515,6 +7137,15 @@ type UntrackedScopeReceipt struct {
 
 // UntrackedScopeReceiptExecutionAllowed Saving a scope never authorizes organization or import
 type UntrackedScopeReceiptExecutionAllowed bool
+
+// UpdateAccountRequest defines model for UpdateAccountRequest.
+type UpdateAccountRequest struct {
+	IsActive bool                     `json:"is_active"`
+	Role     UpdateAccountRequestRole `json:"role"`
+}
+
+// UpdateAccountRequestRole defines model for UpdateAccountRequest.Role.
+type UpdateAccountRequestRole string
 
 // UpdateDownloadClientRequest defines model for UpdateDownloadClientRequest.
 type UpdateDownloadClientRequest struct {
@@ -5968,6 +7599,9 @@ type IdempotencyKey = string
 // MediaRequestKey defines model for MediaRequestKey.
 type MediaRequestKey = string
 
+// MPError defines model for MPError.
+type MPError = ErrorResponse
+
 // MediaRequestFailure defines model for MediaRequestFailure.
 type MediaRequestFailure = ErrorResponse
 
@@ -5989,9 +7623,65 @@ type PolicyUnauthorized = ErrorResponse
 // PolicyUnavailable defines model for PolicyUnavailable.
 type PolicyUnavailable = ErrorResponse
 
+// CreateAccountParams defines parameters for CreateAccount.
+type CreateAccountParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// UpdateAccountParams defines parameters for UpdateAccount.
+type UpdateAccountParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// ResetAccountPasswordParams defines parameters for ResetAccountPassword.
+type ResetAccountPasswordParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
 // CommitSelectedMovieParams defines parameters for CommitSelectedMovie.
 type CommitSelectedMovieParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// ConfirmOwnMFAParams defines parameters for ConfirmOwnMFA.
+type ConfirmOwnMFAParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DisableOwnMFAParams defines parameters for DisableOwnMFA.
+type DisableOwnMFAParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// RegenerateOwnMFARecoveryCodesParams defines parameters for RegenerateOwnMFARecoveryCodes.
+type RegenerateOwnMFARecoveryCodesParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// BeginOwnMFAParams defines parameters for BeginOwnMFA.
+type BeginOwnMFAParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// ChangeOwnPasswordParams defines parameters for ChangeOwnPassword.
+type ChangeOwnPasswordParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// RevokeOtherSessionsParams defines parameters for RevokeOtherSessions.
+type RevokeOtherSessionsParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// RevokeOwnSessionParams defines parameters for RevokeOwnSession.
+type RevokeOwnSessionParams struct {
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// SetupAdminParams defines parameters for SetupAdmin.
+type SetupAdminParams struct {
+	// XSetupToken Deployment token required when PULSE_SETUP_TOKEN is configured; without it only direct loopback setup is allowed.
+	XSetupToken *string `json:"X-Setup-Token,omitempty"`
 }
 
 // CreateOwnTokenParams defines parameters for CreateOwnToken.
@@ -6002,6 +7692,11 @@ type CreateOwnTokenParams struct {
 // RevokeOwnTokenParams defines parameters for RevokeOwnToken.
 type RevokeOwnTokenParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// PublishClassificationParams defines parameters for PublishClassification.
+type PublishClassificationParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
 // GetDashboardActivityParams defines parameters for GetDashboardActivity.
@@ -6097,6 +7792,20 @@ type SaveCookieCloudConfigParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
+// ListIntegrationDeliveriesParams defines parameters for ListIntegrationDeliveries.
+type ListIntegrationDeliveriesParams struct {
+	// EventId Only original deliveries for this persisted event; does not replay or redirect.
+	EventId *openapi_types.UUID                   `form:"event_id,omitempty" json:"event_id,omitempty"`
+	State   *ListIntegrationDeliveriesParamsState `form:"state,omitempty" json:"state,omitempty"`
+
+	// Cursor Opaque continuation bound to state and event_id; changing filters starts a new page.
+	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// ListIntegrationDeliveriesParamsState defines parameters for ListIntegrationDeliveries.
+type ListIntegrationDeliveriesParamsState string
+
 // ReplayIntegrationDeliveryJSONBody defines parameters for ReplayIntegrationDelivery.
 type ReplayIntegrationDeliveryJSONBody struct {
 	AcceptDuplicateRisk bool      `json:"accept_duplicate_risk"`
@@ -6130,10 +7839,18 @@ type SkipIntegrationDeliveryJSONBodyReason string
 // SkipIntegrationDelivery200JSONResponseBodyState defines parameters for SkipIntegrationDelivery.
 type SkipIntegrationDelivery200JSONResponseBodyState string
 
+// ReceiveSeerrWebhookJSONBody defines parameters for ReceiveSeerrWebhook.
+type ReceiveSeerrWebhookJSONBody map[string]interface{}
+
 // ListLibraryCatalogParams defines parameters for ListLibraryCatalog.
 type ListLibraryCatalogParams struct {
 	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
 	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// QuerySubtitleCandidatesParams defines parameters for QuerySubtitleCandidates.
+type QuerySubtitleCandidatesParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
 }
 
 // PreviewFileMappingParams defines parameters for PreviewFileMapping.
@@ -6154,6 +7871,26 @@ type CorrectFileMappingParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
 
+// GetFileMappingOptionsParams defines parameters for GetFileMappingOptions.
+type GetFileMappingOptionsParams struct {
+	RootId *openapi_types.UUID `form:"root_id,omitempty" json:"root_id,omitempty"`
+	Cursor *string             `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// MediaQuery Literal title or original-title substring among existing local media
+	MediaQuery *string                               `form:"media_query,omitempty" json:"media_query,omitempty"`
+	MediaType  *GetFileMappingOptionsParamsMediaType `form:"media_type,omitempty" json:"media_type,omitempty"`
+	TmdbId     *int64                                `form:"tmdb_id,omitempty" json:"tmdb_id,omitempty"`
+
+	// MediaCursor Independent media cursor bound to media query/type/TMDB ID; no cross-page snapshot guarantee
+	MediaCursor *string `form:"media_cursor,omitempty" json:"media_cursor,omitempty"`
+
+	// MediaId Read an existing saved selection by identity independently of the current media page or filters
+	MediaId *openapi_types.UUID `form:"media_id,omitempty" json:"media_id,omitempty"`
+}
+
+// GetFileMappingOptionsParamsMediaType defines parameters for GetFileMappingOptions.
+type GetFileMappingOptionsParamsMediaType string
+
 // GetLibraryOverviewParams defines parameters for GetLibraryOverview.
 type GetLibraryOverviewParams struct {
 	RecentLimit *int `form:"recent_limit,omitempty" json:"recent_limit,omitempty"`
@@ -6167,6 +7904,16 @@ type PreviewLibraryReuseJSONBody struct {
 // ConfirmLibraryReuseParams defines parameters for ConfirmLibraryReuse.
 type ConfirmLibraryReuseParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// SelectUntrackedCompanionsParams defines parameters for SelectUntrackedCompanions.
+type SelectUntrackedCompanionsParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// ListUntrackedReviewScopesParams defines parameters for ListUntrackedReviewScopes.
+type ListUntrackedReviewScopesParams struct {
+	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
 }
 
 // SaveUntrackedScopeParams defines parameters for SaveUntrackedScope.
@@ -6183,6 +7930,12 @@ type ListUntrackedDiscoveriesParams struct {
 // ConfirmUntrackedFileParams defines parameters for ConfirmUntrackedFile.
 type ConfirmUntrackedFileParams struct {
 	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// ReadUntrackedReviewEpisodeOptionsParams defines parameters for ReadUntrackedReviewEpisodeOptions.
+type ReadUntrackedReviewEpisodeOptionsParams struct {
+	TmdbId int64 `form:"tmdb_id" json:"tmdb_id"`
+	Season int   `form:"season" json:"season"`
 }
 
 // RequestUntrackedOrganizationParams defines parameters for RequestUntrackedOrganization.
@@ -6311,6 +8064,21 @@ type ListOperationsParams struct {
 // ListOperationsParamsView defines parameters for ListOperations.
 type ListOperationsParamsView string
 
+// GetOperationDownloadControlParams defines parameters for GetOperationDownloadControl.
+type GetOperationDownloadControlParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// ControlOperationDownloadParams defines parameters for ControlOperationDownload.
+type ControlOperationDownloadParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
+// ObserveOperationDownloadControlParams defines parameters for ObserveOperationDownloadControl.
+type ObserveOperationDownloadControlParams struct {
+	IdempotencyKey string `json:"Idempotency-Key"`
+}
+
 // WithdrawOwnRequirementJSONBody defines parameters for WithdrawOwnRequirement.
 type WithdrawOwnRequirementJSONBody struct {
 	ExpectedFence string `json:"expected_fence"`
@@ -6320,6 +8088,9 @@ type WithdrawOwnRequirementJSONBody struct {
 type WithdrawOwnRequirementParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
+
+// ObserveOperationSeedingJSONBody defines parameters for ObserveOperationSeeding.
+type ObserveOperationSeedingJSONBody = map[string]interface{}
 
 // CommitSubmissionRetryJSONBody defines parameters for CommitSubmissionRetry.
 type CommitSubmissionRetryJSONBody struct {
@@ -6406,6 +8177,26 @@ type SearchMovieReleasesParamsType string
 type GetActivityStreamParams struct {
 	LastEventID *string `json:"Last-Event-ID,omitempty"`
 }
+
+// ListSubscriptionsParams defines parameters for ListSubscriptions.
+type ListSubscriptionsParams struct {
+	Limit        *int                              `form:"limit,omitempty" json:"limit,omitempty"`
+	Offset       *int                              `form:"offset,omitempty" json:"offset,omitempty"`
+	Search       *string                           `form:"search,omitempty" json:"search,omitempty"`
+	MediaType    *ListSubscriptionsParamsMediaType `form:"media_type,omitempty" json:"media_type,omitempty"`
+	TmdbId       *int64                            `form:"tmdb_id,omitempty" json:"tmdb_id,omitempty"`
+	OwnOnly      *bool                             `form:"own_only,omitempty" json:"own_only,omitempty"`
+	View         *ListSubscriptionsParamsView      `form:"view,omitempty" json:"view,omitempty"`
+	Start        *openapi_types.Date               `form:"start,omitempty" json:"start,omitempty"`
+	End          *openapi_types.Date               `form:"end,omitempty" json:"end,omitempty"`
+	UnknownDates *bool                             `form:"unknown_dates,omitempty" json:"unknown_dates,omitempty"`
+}
+
+// ListSubscriptionsParamsMediaType defines parameters for ListSubscriptions.
+type ListSubscriptionsParamsMediaType string
+
+// ListSubscriptionsParamsView defines parameters for ListSubscriptions.
+type ListSubscriptionsParamsView string
 
 // CreateSubscriptionParams defines parameters for CreateSubscription.
 type CreateSubscriptionParams struct {
@@ -6697,6 +8488,15 @@ type RevokeWebPushDeviceParams struct {
 	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
 }
 
+// CreateAccountJSONRequestBody defines body for CreateAccount for application/json ContentType.
+type CreateAccountJSONRequestBody = CreateAccountRequest
+
+// UpdateAccountJSONRequestBody defines body for UpdateAccount for application/json ContentType.
+type UpdateAccountJSONRequestBody = UpdateAccountRequest
+
+// ResetAccountPasswordJSONRequestBody defines body for ResetAccountPassword for application/json ContentType.
+type ResetAccountPasswordJSONRequestBody = ChangeOwnPasswordRequest
+
 // CommitSelectedMovieJSONRequestBody defines body for CommitSelectedMovie for application/json ContentType.
 type CommitSelectedMovieJSONRequestBody = MovieSelectionCommand
 
@@ -6706,11 +8506,35 @@ type PreviewSelectedMovieJSONRequestBody = MovieSelection
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = LoginRequest
 
+// ConfirmOwnMFAJSONRequestBody defines body for ConfirmOwnMFA for application/json ContentType.
+type ConfirmOwnMFAJSONRequestBody = ConfirmOwnMFARequest
+
+// DisableOwnMFAJSONRequestBody defines body for DisableOwnMFA for application/json ContentType.
+type DisableOwnMFAJSONRequestBody = DisableOwnMFARequest
+
+// RegenerateOwnMFARecoveryCodesJSONRequestBody defines body for RegenerateOwnMFARecoveryCodes for application/json ContentType.
+type RegenerateOwnMFARecoveryCodesJSONRequestBody = DisableOwnMFARequest
+
+// BeginOwnMFAJSONRequestBody defines body for BeginOwnMFA for application/json ContentType.
+type BeginOwnMFAJSONRequestBody = BeginOwnMFARequest
+
+// ChangeOwnPasswordJSONRequestBody defines body for ChangeOwnPassword for application/json ContentType.
+type ChangeOwnPasswordJSONRequestBody = ChangeOwnPasswordRequest
+
+// RevokeOtherSessionsJSONRequestBody defines body for RevokeOtherSessions for application/json ContentType.
+type RevokeOtherSessionsJSONRequestBody = DisableOwnMFARequest
+
 // SetupAdminJSONRequestBody defines body for SetupAdmin for application/json ContentType.
 type SetupAdminJSONRequestBody = SetupRequest
 
 // CreateOwnTokenJSONRequestBody defines body for CreateOwnToken for application/json ContentType.
 type CreateOwnTokenJSONRequestBody = CreateOwnTokenRequest
+
+// PublishClassificationJSONRequestBody defines body for PublishClassification for application/json ContentType.
+type PublishClassificationJSONRequestBody = ClassificationPublish
+
+// PreviewClassificationJSONRequestBody defines body for PreviewClassification for application/json ContentType.
+type PreviewClassificationJSONRequestBody = ClassificationPreviewInput
 
 // CreateDownloadClientJSONRequestBody defines body for CreateDownloadClient for application/json ContentType.
 type CreateDownloadClientJSONRequestBody = CreateDownloadClientRequest
@@ -6748,6 +8572,15 @@ type ReplayIntegrationDeliveryJSONRequestBody ReplayIntegrationDeliveryJSONBody
 // SkipIntegrationDeliveryJSONRequestBody defines body for SkipIntegrationDelivery for application/json ContentType.
 type SkipIntegrationDeliveryJSONRequestBody SkipIntegrationDeliveryJSONBody
 
+// ReceiveSeerrWebhookJSONRequestBody defines body for ReceiveSeerrWebhook for application/json ContentType.
+type ReceiveSeerrWebhookJSONRequestBody ReceiveSeerrWebhookJSONBody
+
+// QuerySubtitleCandidatesJSONRequestBody defines body for QuerySubtitleCandidates for application/json ContentType.
+type QuerySubtitleCandidatesJSONRequestBody = SubtitleCandidateCommand
+
+// ConfirmSubtitleCandidateJSONRequestBody defines body for ConfirmSubtitleCandidate for application/json ContentType.
+type ConfirmSubtitleCandidateJSONRequestBody = SubtitleCandidateCommand
+
 // CorrectFileMappingJSONRequestBody defines body for CorrectFileMapping for application/json ContentType.
 type CorrectFileMappingJSONRequestBody CorrectFileMappingJSONBody
 
@@ -6756,6 +8589,9 @@ type PreviewLibraryReuseJSONRequestBody PreviewLibraryReuseJSONBody
 
 // ConfirmLibraryReuseJSONRequestBody defines body for ConfirmLibraryReuse for application/json ContentType.
 type ConfirmLibraryReuseJSONRequestBody = LibraryReuseCommand
+
+// SelectUntrackedCompanionsJSONRequestBody defines body for SelectUntrackedCompanions for application/json ContentType.
+type SelectUntrackedCompanionsJSONRequestBody = UntrackedCompanionSelection
 
 // SaveUntrackedScopeJSONRequestBody defines body for SaveUntrackedScope for application/json ContentType.
 type SaveUntrackedScopeJSONRequestBody = UntrackedScopeInput
@@ -6802,8 +8638,14 @@ type SetNotificationChannelStateJSONRequestBody SetNotificationChannelStateJSONB
 // QueueNotificationTestJSONRequestBody defines body for QueueNotificationTest for application/json ContentType.
 type QueueNotificationTestJSONRequestBody QueueNotificationTestJSONBody
 
+// ControlOperationDownloadJSONRequestBody defines body for ControlOperationDownload for application/json ContentType.
+type ControlOperationDownloadJSONRequestBody = DownloadControlCommand
+
 // WithdrawOwnRequirementJSONRequestBody defines body for WithdrawOwnRequirement for application/json ContentType.
 type WithdrawOwnRequirementJSONRequestBody WithdrawOwnRequirementJSONBody
+
+// ObserveOperationSeedingJSONRequestBody defines body for ObserveOperationSeeding for application/json ContentType.
+type ObserveOperationSeedingJSONRequestBody = ObserveOperationSeedingJSONBody
 
 // CommitSubmissionRetryJSONRequestBody defines body for CommitSubmissionRetry for application/json ContentType.
 type CommitSubmissionRetryJSONRequestBody CommitSubmissionRetryJSONBody
@@ -6828,6 +8670,12 @@ type CreateReleaseSearchJSONRequestBody = InteractiveReleaseSearchRequest
 
 // DownloadReleaseJSONRequestBody defines body for DownloadRelease for application/json ContentType.
 type DownloadReleaseJSONRequestBody = DownloadReleaseRequest
+
+// RunMetadataDiagnosticJSONRequestBody defines body for RunMetadataDiagnostic for application/json ContentType.
+type RunMetadataDiagnosticJSONRequestBody = MetadataDiagnosticInput
+
+// SaveSeerrConfigurationJSONRequestBody defines body for SaveSeerrConfiguration for application/json ContentType.
+type SaveSeerrConfigurationJSONRequestBody = SeerrConfigurationInput
 
 // UpdateSettingJSONRequestBody defines body for UpdateSetting for application/json ContentType.
 type UpdateSettingJSONRequestBody = UpdateSettingRequest
@@ -6920,6 +8768,8 @@ type CommitTransferRevisionJSONRequestBody CommitTransferRevisionJSONBody
 type PreviewTransferRevisionJSONRequestBody PreviewTransferRevisionJSONBody
 
 // ScanDirectoryReorganizeJSONRequestBody defines body for ScanDirectoryReorganize for application/json ContentType.
+//
+// Deprecated: this type has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 type ScanDirectoryReorganizeJSONRequestBody ScanDirectoryReorganizeJSONBody
 
 // RegisterWebPushDeviceJSONRequestBody defines body for RegisterWebPushDevice for application/json ContentType.
@@ -6927,6 +8777,94 @@ type RegisterWebPushDeviceJSONRequestBody RegisterWebPushDeviceJSONBody
 
 // RevokeWebPushDeviceJSONRequestBody defines body for RevokeWebPushDevice for application/json ContentType.
 type RevokeWebPushDeviceJSONRequestBody RevokeWebPushDeviceJSONBody
+
+// AsAccountCommandResult returns the union data inside the SecurityCommandReceipt_Result as a AccountCommandResult
+func (t SecurityCommandReceipt_Result) AsAccountCommandResult() (AccountCommandResult, error) {
+	var body AccountCommandResult
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromAccountCommandResult overwrites any union data inside the SecurityCommandReceipt_Result as the provided AccountCommandResult
+func (t *SecurityCommandReceipt_Result) FromAccountCommandResult(v AccountCommandResult) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeAccountCommandResult performs a merge with any union data inside the SecurityCommandReceipt_Result, using the provided AccountCommandResult
+func (t *SecurityCommandReceipt_Result) MergeAccountCommandResult(v AccountCommandResult) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsOwnMFASetupResult returns the union data inside the SecurityCommandReceipt_Result as a OwnMFASetupResult
+func (t SecurityCommandReceipt_Result) AsOwnMFASetupResult() (OwnMFASetupResult, error) {
+	var body OwnMFASetupResult
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromOwnMFASetupResult overwrites any union data inside the SecurityCommandReceipt_Result as the provided OwnMFASetupResult
+func (t *SecurityCommandReceipt_Result) FromOwnMFASetupResult(v OwnMFASetupResult) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeOwnMFASetupResult performs a merge with any union data inside the SecurityCommandReceipt_Result, using the provided OwnMFASetupResult
+func (t *SecurityCommandReceipt_Result) MergeOwnMFASetupResult(v OwnMFASetupResult) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsOwnMFAConfirmResult returns the union data inside the SecurityCommandReceipt_Result as a OwnMFAConfirmResult
+func (t SecurityCommandReceipt_Result) AsOwnMFAConfirmResult() (OwnMFAConfirmResult, error) {
+	var body OwnMFAConfirmResult
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromOwnMFAConfirmResult overwrites any union data inside the SecurityCommandReceipt_Result as the provided OwnMFAConfirmResult
+func (t *SecurityCommandReceipt_Result) FromOwnMFAConfirmResult(v OwnMFAConfirmResult) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeOwnMFAConfirmResult performs a merge with any union data inside the SecurityCommandReceipt_Result, using the provided OwnMFAConfirmResult
+func (t *SecurityCommandReceipt_Result) MergeOwnMFAConfirmResult(v OwnMFAConfirmResult) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t SecurityCommandReceipt_Result) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *SecurityCommandReceipt_Result) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
 
 // AsExplainMappedReleaseJSONBody0 returns the union data inside the ExplainMappedReleaseJSONBody as a ExplainMappedReleaseJSONBody0
 func (t ExplainMappedReleaseJSONBody) AsExplainMappedReleaseJSONBody0() (ExplainMappedReleaseJSONBody0, error) {
@@ -7040,6 +8978,18 @@ func (t *ExplainMappedReleaseJSONBody) UnmarshalJSON(b []byte) error {
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// ListAccounts Account security operation requiring the current cookie session
+	// (GET /api/v1/accounts)
+	ListAccounts(w http.ResponseWriter, r *http.Request)
+	// CreateAccount Account security operation requiring the current cookie session
+	// (POST /api/v1/accounts)
+	CreateAccount(w http.ResponseWriter, r *http.Request, params CreateAccountParams)
+	// UpdateAccount Account security operation requiring the current cookie session
+	// (PUT /api/v1/accounts/{id})
+	UpdateAccount(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params UpdateAccountParams)
+	// ResetAccountPassword Reset a family member password after administrator reauthentication
+	// (POST /api/v1/accounts/{id}/password)
+	ResetAccountPassword(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ResetAccountPasswordParams)
 	// CommitSelectedMovie Confirm movie target and persist acquisition atomically
 	// (POST /api/v1/acquisitions/selected-movie)
 	CommitSelectedMovie(w http.ResponseWriter, r *http.Request, params CommitSelectedMovieParams)
@@ -7055,9 +9005,39 @@ type ServerInterface interface {
 	// GetCurrentUser Get current authenticated user
 	// (GET /api/v1/auth/me)
 	GetCurrentUser(w http.ResponseWriter, r *http.Request)
+	// GetOwnMFA Account security operation requiring the current cookie session
+	// (GET /api/v1/auth/mfa)
+	GetOwnMFA(w http.ResponseWriter, r *http.Request)
+	// ConfirmOwnMFA Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/mfa/confirm)
+	ConfirmOwnMFA(w http.ResponseWriter, r *http.Request, params ConfirmOwnMFAParams)
+	// DisableOwnMFA Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/mfa/disable)
+	DisableOwnMFA(w http.ResponseWriter, r *http.Request, params DisableOwnMFAParams)
+	// RegenerateOwnMFARecoveryCodes Replace recovery codes after password and second-factor reauthentication
+	// (POST /api/v1/auth/mfa/recovery-codes)
+	RegenerateOwnMFARecoveryCodes(w http.ResponseWriter, r *http.Request, params RegenerateOwnMFARecoveryCodesParams)
+	// BeginOwnMFA Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/mfa/setup)
+	BeginOwnMFA(w http.ResponseWriter, r *http.Request, params BeginOwnMFAParams)
+	// ChangeOwnPassword Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/password)
+	ChangeOwnPassword(w http.ResponseWriter, r *http.Request, params ChangeOwnPasswordParams)
+	// GetOwnSecurityCommand Read the original safe account command receipt without replaying a write
+	// (GET /api/v1/auth/security/commands/{command_key})
+	GetOwnSecurityCommand(w http.ResponseWriter, r *http.Request, commandKey string)
+	// ListOwnSessions Account security operation requiring the current cookie session
+	// (GET /api/v1/auth/sessions)
+	ListOwnSessions(w http.ResponseWriter, r *http.Request)
+	// RevokeOtherSessions Reauthenticate and revoke other sessions while retaining the current session and API tokens
+	// (POST /api/v1/auth/sessions/revoke-others)
+	RevokeOtherSessions(w http.ResponseWriter, r *http.Request, params RevokeOtherSessionsParams)
+	// RevokeOwnSession Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/sessions/{id}/revoke)
+	RevokeOwnSession(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RevokeOwnSessionParams)
 	// SetupAdmin Initial administrator setup
 	// (POST /api/v1/auth/setup)
-	SetupAdmin(w http.ResponseWriter, r *http.Request)
+	SetupAdmin(w http.ResponseWriter, r *http.Request, params SetupAdminParams)
 	// GetAuthStatus Authentication and setup status
 	// (GET /api/v1/auth/status)
 	GetAuthStatus(w http.ResponseWriter, r *http.Request)
@@ -7070,6 +9050,15 @@ type ServerInterface interface {
 	// RevokeOwnToken Irreversibly revoke an own token; session required
 	// (POST /api/v1/auth/tokens/{id}/revoke)
 	RevokeOwnToken(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RevokeOwnTokenParams)
+
+	// (GET /api/v1/classification)
+	GetClassification(w http.ResponseWriter, r *http.Request)
+
+	// (PUT /api/v1/classification)
+	PublishClassification(w http.ResponseWriter, r *http.Request, params PublishClassificationParams)
+
+	// (POST /api/v1/classification/previews)
+	PreviewClassification(w http.ResponseWriter, r *http.Request)
 	// GetDashboardActivity Read visible persisted operation activity without probing clients
 	// (GET /api/v1/dashboard/activity)
 	GetDashboardActivity(w http.ResponseWriter, r *http.Request, params GetDashboardActivityParams)
@@ -7127,8 +9116,10 @@ type ServerInterface interface {
 	// UpdateIndexer Update an indexer with an observed configuration version
 	// (PUT /api/v1/indexers/{id})
 	UpdateIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params UpdateIndexerParams)
-	// CheckinIndexer Perform automated check-in on PT site
+	// CheckinIndexer Retired legacy check-in; configure persistent sign-in instead
 	// (POST /api/v1/indexers/{id}/checkin)
+	//
+	// Deprecated: this operation has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	CheckinIndexer(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// GetIndexerRSS Read sanitized RSS configuration and last successful poll receipt (admin only)
 	// (GET /api/v1/indexers/{id}/rss)
@@ -7172,9 +9163,9 @@ type ServerInterface interface {
 	// ReadCookieCloudConfigReceipt Read an account-scoped original CookieCloud configuration receipt
 	// (GET /api/v1/integrations/cookiecloud/config/commands/{command_key})
 	ReadCookieCloudConfigReceipt(w http.ResponseWriter, r *http.Request, commandKey string)
-	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
+	// ListIntegrationDeliveries Administrator delivery observations with state filtering and bounded cursor pagination; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
-	ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request)
+	ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request, params ListIntegrationDeliveriesParams)
 	// ReplayIntegrationDelivery Explicit duplicate-risk acknowledged replay of a dead integration delivery
 	// (POST /api/v1/integrations/deliveries/{id}/replay)
 	ReplayIntegrationDelivery(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ReplayIntegrationDeliveryParams)
@@ -7184,21 +9175,33 @@ type ServerInterface interface {
 	// ListNotificationBatches Administrator recent 100 immutable media notification batch observations; never a send receipt
 	// (GET /api/v1/integrations/notification-batches)
 	ListNotificationBatches(w http.ResponseWriter, r *http.Request)
+
+	// (POST /api/v1/integrations/seerr)
+	ReceiveSeerrWebhook(w http.ResponseWriter, r *http.Request)
 	// ListLibraryRootSelections Read configured target-root selections; no filesystem paths or credentials
 	// (GET /api/v1/library-roots)
 	ListLibraryRootSelections(w http.ResponseWriter, r *http.Request)
 	// ListLibraryCatalog Read current mapped library files in shared roots
 	// (GET /api/v1/library/catalog)
 	ListLibraryCatalog(w http.ResponseWriter, r *http.Request, params ListLibraryCatalogParams)
+
+	// (GET /api/v1/library/files/{file_id}/subtitle-candidates)
+	GetSubtitleCandidates(w http.ResponseWriter, r *http.Request, fileId openapi_types.UUID)
+
+	// (POST /api/v1/library/files/{file_id}/subtitle-candidates/queries)
+	QuerySubtitleCandidates(w http.ResponseWriter, r *http.Request, fileId openapi_types.UUID, params QuerySubtitleCandidatesParams)
+
+	// (POST /api/v1/library/files/{file_id}/subtitle-candidates/{candidate_id}/confirm)
+	ConfirmSubtitleCandidate(w http.ResponseWriter, r *http.Request, fileId openapi_types.UUID, candidateId openapi_types.UUID)
 	// PreviewFileMapping Read-only current imported evidence and metadata snapshot for an explicit semantic correction
 	// (GET /api/v1/library/files/{id}/mapping)
 	PreviewFileMapping(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params PreviewFileMappingParams)
 	// CorrectFileMapping Explicit coverage correction only; never move files or start downloads
 	// (POST /api/v1/library/files/{id}/mapping)
 	CorrectFileMapping(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params CorrectFileMappingParams)
-	// GetFileMappingOptions Administrator index and persisted media choices, latest 100 only; not evidence of physical presence
+	// GetFileMappingOptions Administrator file and existing-media choices with independent filters and cursors; not physical presence evidence
 	// (GET /api/v1/library/mapping-options)
-	GetFileMappingOptions(w http.ResponseWriter, r *http.Request)
+	GetFileMappingOptions(w http.ResponseWriter, r *http.Request, params GetFileMappingOptionsParams)
 	// GetLibraryOverview Read registered shared-library facts and capacity observations
 	// (GET /api/v1/library/overview)
 	GetLibraryOverview(w http.ResponseWriter, r *http.Request, params GetLibraryOverviewParams)
@@ -7211,6 +9214,21 @@ type ServerInterface interface {
 	// ConfirmLibraryReuse Confirm complete source coverage and queue a local demand atomically
 	// (POST /api/v1/library/reuses)
 	ConfirmLibraryReuse(w http.ResponseWriter, r *http.Request, params ConfirmLibraryReuseParams)
+
+	// (GET /api/v1/library/untracked-organizations/{operation_id}/companions)
+	ReadUntrackedCompanions(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID)
+
+	// (POST /api/v1/library/untracked-organizations/{operation_id}/companions)
+	SelectUntrackedCompanions(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID, params SelectUntrackedCompanionsParams)
+
+	// (POST /api/v1/library/untracked-organizations/{operation_id}/companions/discover)
+	DiscoverUntrackedCompanions(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID)
+
+	// (POST /api/v1/library/untracked-organizations/{operation_id}/companions/{attachment_id}/execute)
+	ExecuteUntrackedCompanion(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID, attachmentId openapi_types.UUID)
+	// ListUntrackedReviewScopes List the current administrator's configured external directory scopes
+	// (GET /api/v1/library/untracked-scopes)
+	ListUntrackedReviewScopes(w http.ResponseWriter, r *http.Request, params ListUntrackedReviewScopesParams)
 	// ReadUntrackedScope Read an explicitly selected untracked directory scope
 	// (GET /api/v1/library/untracked-scopes/{scope_id})
 	ReadUntrackedScope(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID)
@@ -7229,6 +9247,9 @@ type ServerInterface interface {
 
 	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmations)
 	ConfirmUntrackedFile(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params ConfirmUntrackedFileParams)
+	// ReadUntrackedReviewEpisodeOptions Read current trusted canonical episodes for one observed external file
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/episode-options)
+	ReadUntrackedReviewEpisodeOptions(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params ReadUntrackedReviewEpisodeOptionsParams)
 
 	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organization-commands/{command_key})
 	ReadUntrackedOrganizationReceipt(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, commandKey string)
@@ -7342,12 +9363,24 @@ type ServerInterface interface {
 	// ListCompleteTVOrganizations Read current persistent complete normal-season organization evidence
 	// (GET /api/v1/operations/{id}/complete-tv-organizations)
 	ListCompleteTVOrganizations(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+
+	// (GET /api/v1/operations/{id}/download-control)
+	GetOperationDownloadControl(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params GetOperationDownloadControlParams)
+
+	// (POST /api/v1/operations/{id}/download-control)
+	ControlOperationDownload(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ControlOperationDownloadParams)
+
+	// (POST /api/v1/operations/{id}/download-control/observations)
+	ObserveOperationDownloadControl(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ObserveOperationDownloadControlParams)
 	// ListOwnOperationRequirements Read only the actor's own requirements; not other subscribers
 	// (GET /api/v1/operations/{id}/requirements)
 	ListOwnOperationRequirements(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// WithdrawOwnRequirement Withdraw only this actor's requirement; do not promise recall of an external action
 	// (POST /api/v1/operations/{id}/requirements/{requirement_id}/withdraw)
 	WithdrawOwnRequirement(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, requirementId openapi_types.UUID, params WithdrawOwnRequirementParams)
+
+	// (POST /api/v1/operations/{id}/seeding-observations)
+	ObserveOperationSeeding(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// PreviewSubmissionRetry Preview retry of an original dead unsent submission
 	// (GET /api/v1/operations/{id}/submission-retry)
 	PreviewSubmissionRetry(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
@@ -7410,9 +9443,21 @@ type ServerInterface interface {
 	// SearchMovieReleases Search movie and TV metadata
 	// (GET /api/v1/search/movies)
 	SearchMovieReleases(w http.ResponseWriter, r *http.Request, params SearchMovieReleasesParams)
+
+	// (GET /api/v1/seerr/receipts)
+	ListSeerrReceipts(w http.ResponseWriter, r *http.Request)
 	// GetSettings List system settings
 	// (GET /api/v1/settings)
 	GetSettings(w http.ResponseWriter, r *http.Request)
+
+	// (POST /api/v1/settings/metadata-diagnostics)
+	RunMetadataDiagnostic(w http.ResponseWriter, r *http.Request)
+
+	// (GET /api/v1/settings/seerr)
+	GetSeerrConfiguration(w http.ResponseWriter, r *http.Request)
+
+	// (PUT /api/v1/settings/seerr)
+	SaveSeerrConfiguration(w http.ResponseWriter, r *http.Request)
 	// UpdateSetting Update a setting with optimistic locking
 	// (PUT /api/v1/settings/{key})
 	UpdateSetting(w http.ResponseWriter, r *http.Request, key string)
@@ -7427,7 +9472,7 @@ type ServerInterface interface {
 	GetSubscriptionCreationReceipt(w http.ResponseWriter, r *http.Request, idempotencyKey string)
 	// ListSubscriptions List subscriptions for current user or all if admin
 	// (GET /api/v1/subscriptions)
-	ListSubscriptions(w http.ResponseWriter, r *http.Request)
+	ListSubscriptions(w http.ResponseWriter, r *http.Request, params ListSubscriptionsParams)
 	// CreateSubscription Create a new subscription
 	// (POST /api/v1/subscriptions)
 	CreateSubscription(w http.ResponseWriter, r *http.Request, params CreateSubscriptionParams)
@@ -7472,9 +9517,15 @@ type ServerInterface interface {
 	// PreviewEpisodeMapping Complete read-only preview of explicit manual rows or selected numbering source; cannot authorize acquisition
 	// (POST /api/v1/subscriptions/{id}/episode-mapping/preview)
 	PreviewEpisodeMapping(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+
+	// (GET /api/v1/subscriptions/{id}/execution)
+	GetSubscriptionExecution(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// RefreshTVEpisodeMetadata Administrator refresh of 1-5 authoritative seasons; metadata does not enable automatic TV downloads
 	// (POST /api/v1/subscriptions/{id}/metadata/refresh)
 	RefreshTVEpisodeMetadata(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RefreshTVEpisodeMetadataParams)
+	// GetMovieDiscovery Read the current movie upgrade discovery search
+	// (GET /api/v1/subscriptions/{id}/movie-discovery)
+	GetMovieDiscovery(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
 	// PauseSubscription Disabled versionless pause; use versioned control
 	// (POST /api/v1/subscriptions/{id}/pause)
 	//
@@ -7497,6 +9548,9 @@ type ServerInterface interface {
 	// PreviewTVCoverageCandidateReview Observe explicit whole normal-season coverage for review
 	// (POST /api/v1/subscriptions/{id}/tv-coverage-candidate-reviews/preview)
 	PreviewTVCoverageCandidateReview(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
+	// GetTVEpisodeDiscovery Read an existing bounded upgrade-candidate discovery for one standard TV episode
+	// (GET /api/v1/subscriptions/{id}/tv-episode-discovery/{unit_id})
+	GetTVEpisodeDiscovery(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, unitId openapi_types.UUID)
 	// PreviewTVSelection Compare reviewed pack and episode alternatives without executing
 	// (POST /api/v1/subscriptions/{id}/tv-selection-preview)
 	PreviewTVSelection(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
@@ -7557,6 +9611,9 @@ type ServerInterface interface {
 	// StreamSystemLogs Real-time system log stream
 	// (GET /api/v1/system/logs)
 	StreamSystemLogs(w http.ResponseWriter, r *http.Request, params StreamSystemLogsParams)
+	// ReadSystemMetrics Read Prometheus process and queue metrics
+	// (GET /api/v1/system/metrics)
+	ReadSystemMetrics(w http.ResponseWriter, r *http.Request)
 	// GetSystemStatus System status
 	// (GET /api/v1/system/status)
 	GetSystemStatus(w http.ResponseWriter, r *http.Request)
@@ -7577,8 +9634,10 @@ type ServerInterface interface {
 	// PreviewTransferRevision Observe a missing-target single-movie successor, without file mutations
 	// (POST /api/v1/transfer-plans/{id}/revision-preview)
 	PreviewTransferRevision(w http.ResponseWriter, r *http.Request, id openapi_types.UUID)
-	// ScanDirectoryReorganize Scan directory and recognize media files for reorganization
+	// ScanDirectoryReorganize Retired legacy directory scan; use observed untracked files
 	// (POST /api/v1/transfer/scan)
+	//
+	// Deprecated: this operation has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	ScanDirectoryReorganize(w http.ResponseWriter, r *http.Request)
 	// GetWebPushConfiguration Read this deployment's browser application server key after current account authorization
 	// (GET /api/v1/web-push/config)
@@ -7611,6 +9670,173 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// ListAccounts operation middleware
+func (siw *ServerInterfaceWrapper) ListAccounts(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListAccounts(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateAccount operation middleware
+func (siw *ServerInterfaceWrapper) CreateAccount(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateAccountParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateAccount(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateAccount operation middleware
+func (siw *ServerInterfaceWrapper) UpdateAccount(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateAccountParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateAccount(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ResetAccountPassword operation middleware
+func (siw *ServerInterfaceWrapper) ResetAccountPassword(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ResetAccountPasswordParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ResetAccountPassword(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
 
 // CommitSelectedMovie operation middleware
 func (siw *ServerInterfaceWrapper) CommitSelectedMovie(w http.ResponseWriter, r *http.Request) {
@@ -7713,11 +9939,416 @@ func (siw *ServerInterfaceWrapper) GetCurrentUser(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r)
 }
 
+// GetOwnMFA operation middleware
+func (siw *ServerInterfaceWrapper) GetOwnMFA(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOwnMFA(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ConfirmOwnMFA operation middleware
+func (siw *ServerInterfaceWrapper) ConfirmOwnMFA(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ConfirmOwnMFAParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ConfirmOwnMFA(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DisableOwnMFA operation middleware
+func (siw *ServerInterfaceWrapper) DisableOwnMFA(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DisableOwnMFAParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DisableOwnMFA(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RegenerateOwnMFARecoveryCodes operation middleware
+func (siw *ServerInterfaceWrapper) RegenerateOwnMFARecoveryCodes(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RegenerateOwnMFARecoveryCodesParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RegenerateOwnMFARecoveryCodes(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// BeginOwnMFA operation middleware
+func (siw *ServerInterfaceWrapper) BeginOwnMFA(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params BeginOwnMFAParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.BeginOwnMFA(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ChangeOwnPassword operation middleware
+func (siw *ServerInterfaceWrapper) ChangeOwnPassword(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ChangeOwnPasswordParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ChangeOwnPassword(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetOwnSecurityCommand operation middleware
+func (siw *ServerInterfaceWrapper) GetOwnSecurityCommand(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "command_key" -------------
+	var commandKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "command_key", r.PathValue("command_key"), &commandKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "command_key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOwnSecurityCommand(w, r, commandKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListOwnSessions operation middleware
+func (siw *ServerInterfaceWrapper) ListOwnSessions(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListOwnSessions(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeOtherSessions operation middleware
+func (siw *ServerInterfaceWrapper) RevokeOtherSessions(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeOtherSessionsParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeOtherSessions(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeOwnSession operation middleware
+func (siw *ServerInterfaceWrapper) RevokeOwnSession(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeOwnSessionParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeOwnSession(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // SetupAdmin operation middleware
 func (siw *ServerInterfaceWrapper) SetupAdmin(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SetupAdminParams
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "X-Setup-Token" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-Setup-Token")]; found {
+		var XSetupToken string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-Setup-Token", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-Setup-Token", valueList[0], &XSetupToken, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-Setup-Token", Err: err})
+			return
+		}
+
+		params.XSetupToken = &XSetupToken
+
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.SetupAdmin(w, r)
+		siw.Handler.SetupAdmin(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -7845,6 +10476,79 @@ func (siw *ServerInterfaceWrapper) RevokeOwnToken(w http.ResponseWriter, r *http
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RevokeOwnToken(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetClassification operation middleware
+func (siw *ServerInterfaceWrapper) GetClassification(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetClassification(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PublishClassification operation middleware
+func (siw *ServerInterfaceWrapper) PublishClassification(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PublishClassificationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PublishClassification(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PreviewClassification operation middleware
+func (siw *ServerInterfaceWrapper) PreviewClassification(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PreviewClassification(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9035,8 +11739,66 @@ func (siw *ServerInterfaceWrapper) ReadCookieCloudConfigReceipt(w http.ResponseW
 // ListIntegrationDeliveries operation middleware
 func (siw *ServerInterfaceWrapper) ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListIntegrationDeliveriesParams
+
+	// ------------- Optional query parameter "event_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "event_id", r.URL.Query(), &params.EventId, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "event_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "event_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "state" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "state", r.URL.Query(), &params.State, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "state"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "state", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.ListIntegrationDeliveries(w, r)
+		siw.Handler.ListIntegrationDeliveries(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9168,6 +11930,20 @@ func (siw *ServerInterfaceWrapper) ListNotificationBatches(w http.ResponseWriter
 	handler.ServeHTTP(w, r)
 }
 
+// ReceiveSeerrWebhook operation middleware
+func (siw *ServerInterfaceWrapper) ReceiveSeerrWebhook(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReceiveSeerrWebhook(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListLibraryRootSelections operation middleware
 func (siw *ServerInterfaceWrapper) ListLibraryRootSelections(w http.ResponseWriter, r *http.Request) {
 
@@ -9219,6 +11995,121 @@ func (siw *ServerInterfaceWrapper) ListLibraryCatalog(w http.ResponseWriter, r *
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.ListLibraryCatalog(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetSubtitleCandidates operation middleware
+func (siw *ServerInterfaceWrapper) GetSubtitleCandidates(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSubtitleCandidates(w, r, fileId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// QuerySubtitleCandidates operation middleware
+func (siw *ServerInterfaceWrapper) QuerySubtitleCandidates(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params QuerySubtitleCandidatesParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.QuerySubtitleCandidates(w, r, fileId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ConfirmSubtitleCandidate operation middleware
+func (siw *ServerInterfaceWrapper) ConfirmSubtitleCandidate(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "candidate_id" -------------
+	var candidateId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "candidate_id", r.PathValue("candidate_id"), &candidateId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "candidate_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ConfirmSubtitleCandidate(w, r, fileId, candidateId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9327,8 +12218,105 @@ func (siw *ServerInterfaceWrapper) CorrectFileMapping(w http.ResponseWriter, r *
 // GetFileMappingOptions operation middleware
 func (siw *ServerInterfaceWrapper) GetFileMappingOptions(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetFileMappingOptionsParams
+
+	// ------------- Optional query parameter "root_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "root_id", r.URL.Query(), &params.RootId, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "root_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "root_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "media_query" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "media_query", r.URL.Query(), &params.MediaQuery, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "media_query"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "media_query", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "media_type" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "media_type", r.URL.Query(), &params.MediaType, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "media_type"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "media_type", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "tmdb_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "tmdb_id", r.URL.Query(), &params.TmdbId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "tmdb_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "tmdb_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "media_cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "media_cursor", r.URL.Query(), &params.MediaCursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "media_cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "media_cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "media_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "media_id", r.URL.Query(), &params.MediaId, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "media_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "media_id", Err: err})
+		}
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetFileMappingOptions(w, r)
+		siw.Handler.GetFileMappingOptions(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9435,6 +12423,180 @@ func (siw *ServerInterfaceWrapper) ConfirmLibraryReuse(w http.ResponseWriter, r 
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.ConfirmLibraryReuse(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedCompanions operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedCompanions(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "operation_id" -------------
+	var operationId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "operation_id", r.PathValue("operation_id"), &operationId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "operation_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedCompanions(w, r, operationId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SelectUntrackedCompanions operation middleware
+func (siw *ServerInterfaceWrapper) SelectUntrackedCompanions(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "operation_id" -------------
+	var operationId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "operation_id", r.PathValue("operation_id"), &operationId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "operation_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SelectUntrackedCompanionsParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SelectUntrackedCompanions(w, r, operationId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DiscoverUntrackedCompanions operation middleware
+func (siw *ServerInterfaceWrapper) DiscoverUntrackedCompanions(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "operation_id" -------------
+	var operationId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "operation_id", r.PathValue("operation_id"), &operationId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "operation_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DiscoverUntrackedCompanions(w, r, operationId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ExecuteUntrackedCompanion operation middleware
+func (siw *ServerInterfaceWrapper) ExecuteUntrackedCompanion(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "operation_id" -------------
+	var operationId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "operation_id", r.PathValue("operation_id"), &operationId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "operation_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "attachment_id" -------------
+	var attachmentId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "attachment_id", r.PathValue("attachment_id"), &attachmentId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "attachment_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ExecuteUntrackedCompanion(w, r, operationId, attachmentId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListUntrackedReviewScopes operation middleware
+func (siw *ServerInterfaceWrapper) ListUntrackedReviewScopes(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListUntrackedReviewScopesParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListUntrackedReviewScopes(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9712,6 +12874,70 @@ func (siw *ServerInterfaceWrapper) ConfirmUntrackedFile(w http.ResponseWriter, r
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.ConfirmUntrackedFile(w, r, scopeId, fileId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ReadUntrackedReviewEpisodeOptions operation middleware
+func (siw *ServerInterfaceWrapper) ReadUntrackedReviewEpisodeOptions(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "scope_id" -------------
+	var scopeId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_id", r.PathValue("scope_id"), &scopeId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "file_id" -------------
+	var fileId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "file_id", r.PathValue("file_id"), &fileId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "file_id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ReadUntrackedReviewEpisodeOptionsParams
+
+	// ------------- Required query parameter "tmdb_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "tmdb_id", r.URL.Query(), &params.TmdbId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "tmdb_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "tmdb_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "season" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "season", r.URL.Query(), &params.Season, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "season"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "season", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadUntrackedReviewEpisodeOptions(w, r, scopeId, fileId, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -11113,6 +14339,168 @@ func (siw *ServerInterfaceWrapper) ListCompleteTVOrganizations(w http.ResponseWr
 	handler.ServeHTTP(w, r)
 }
 
+// GetOperationDownloadControl operation middleware
+func (siw *ServerInterfaceWrapper) GetOperationDownloadControl(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetOperationDownloadControlParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOperationDownloadControl(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ControlOperationDownload operation middleware
+func (siw *ServerInterfaceWrapper) ControlOperationDownload(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ControlOperationDownloadParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ControlOperationDownload(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ObserveOperationDownloadControl operation middleware
+func (siw *ServerInterfaceWrapper) ObserveOperationDownloadControl(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ObserveOperationDownloadControlParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ObserveOperationDownloadControl(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListOwnOperationRequirements operation middleware
 func (siw *ServerInterfaceWrapper) ListOwnOperationRequirements(w http.ResponseWriter, r *http.Request) {
 
@@ -11193,6 +14581,32 @@ func (siw *ServerInterfaceWrapper) WithdrawOwnRequirement(w http.ResponseWriter,
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.WithdrawOwnRequirement(w, r, id, requirementId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ObserveOperationSeeding operation middleware
+func (siw *ServerInterfaceWrapper) ObserveOperationSeeding(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ObserveOperationSeeding(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -11945,11 +15359,67 @@ func (siw *ServerInterfaceWrapper) SearchMovieReleases(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
+// ListSeerrReceipts operation middleware
+func (siw *ServerInterfaceWrapper) ListSeerrReceipts(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSeerrReceipts(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // GetSettings operation middleware
 func (siw *ServerInterfaceWrapper) GetSettings(w http.ResponseWriter, r *http.Request) {
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetSettings(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RunMetadataDiagnostic operation middleware
+func (siw *ServerInterfaceWrapper) RunMetadataDiagnostic(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RunMetadataDiagnostic(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetSeerrConfiguration operation middleware
+func (siw *ServerInterfaceWrapper) GetSeerrConfiguration(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSeerrConfiguration(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// SaveSeerrConfiguration operation middleware
+func (siw *ServerInterfaceWrapper) SaveSeerrConfiguration(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.SaveSeerrConfiguration(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -12090,8 +15560,144 @@ func (siw *ServerInterfaceWrapper) GetSubscriptionCreationReceipt(w http.Respons
 // ListSubscriptions operation middleware
 func (siw *ServerInterfaceWrapper) ListSubscriptions(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSubscriptionsParams
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "offset", r.URL.Query(), &params.Offset, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "offset"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "offset", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "search", r.URL.Query(), &params.Search, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "search"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "search", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "media_type" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "media_type", r.URL.Query(), &params.MediaType, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "media_type"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "media_type", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "tmdb_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "tmdb_id", r.URL.Query(), &params.TmdbId, runtime.BindQueryParameterOptions{Type: "integer", Format: "int64"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "tmdb_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "tmdb_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "own_only" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "own_only", r.URL.Query(), &params.OwnOnly, runtime.BindQueryParameterOptions{Type: "boolean", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "own_only"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "own_only", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "view" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "view", r.URL.Query(), &params.View, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "view"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "view", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "start" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "start", r.URL.Query(), &params.Start, runtime.BindQueryParameterOptions{Type: "string", Format: "date"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "start"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "start", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "end" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "end", r.URL.Query(), &params.End, runtime.BindQueryParameterOptions{Type: "string", Format: "date"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "end"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "end", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "unknown_dates" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "unknown_dates", r.URL.Query(), &params.UnknownDates, runtime.BindQueryParameterOptions{Type: "boolean", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "unknown_dates"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "unknown_dates", Err: err})
+		}
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.ListSubscriptions(w, r)
+		siw.Handler.ListSubscriptions(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -12681,6 +16287,32 @@ func (siw *ServerInterfaceWrapper) PreviewEpisodeMapping(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r)
 }
 
+// GetSubscriptionExecution operation middleware
+func (siw *ServerInterfaceWrapper) GetSubscriptionExecution(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSubscriptionExecution(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // RefreshTVEpisodeMetadata operation middleware
 func (siw *ServerInterfaceWrapper) RefreshTVEpisodeMetadata(w http.ResponseWriter, r *http.Request) {
 
@@ -12726,6 +16358,32 @@ func (siw *ServerInterfaceWrapper) RefreshTVEpisodeMetadata(w http.ResponseWrite
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RefreshTVEpisodeMetadata(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetMovieDiscovery operation middleware
+func (siw *ServerInterfaceWrapper) GetMovieDiscovery(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetMovieDiscovery(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -12910,6 +16568,41 @@ func (siw *ServerInterfaceWrapper) PreviewTVCoverageCandidateReview(w http.Respo
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PreviewTVCoverageCandidateReview(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetTVEpisodeDiscovery operation middleware
+func (siw *ServerInterfaceWrapper) GetTVEpisodeDiscovery(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "unit_id" -------------
+	var unitId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "unit_id", r.PathValue("unit_id"), &unitId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "unit_id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTVEpisodeDiscovery(w, r, id, unitId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -13794,6 +17487,20 @@ func (siw *ServerInterfaceWrapper) StreamSystemLogs(w http.ResponseWriter, r *ht
 	handler.ServeHTTP(w, r)
 }
 
+// ReadSystemMetrics operation middleware
+func (siw *ServerInterfaceWrapper) ReadSystemMetrics(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ReadSystemMetrics(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // GetSystemStatus operation middleware
 func (siw *ServerInterfaceWrapper) GetSystemStatus(w http.ResponseWriter, r *http.Request) {
 
@@ -14309,6 +18016,36 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/settings/metadata-diagnostics", wrapper.RunMetadataDiagnostic)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/operations/{id}/seeding-observations", wrapper.ObserveOperationSeeding)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/security/commands/{command_key}", wrapper.GetOwnSecurityCommand)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/accounts", wrapper.ListAccounts)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/accounts", wrapper.CreateAccount)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/accounts/{id}", wrapper.UpdateAccount)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/accounts/{id}/password", wrapper.ResetAccountPassword)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/sessions", wrapper.ListOwnSessions)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/sessions/revoke-others", wrapper.RevokeOtherSessions)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/sessions/{id}/revoke", wrapper.RevokeOwnSession)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/password", wrapper.ChangeOwnPassword)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/mfa", wrapper.GetOwnMFA)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/mfa/setup", wrapper.BeginOwnMFA)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/mfa/confirm", wrapper.ConfirmOwnMFA)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/mfa/disable", wrapper.DisableOwnMFA)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/auth/mfa/recovery-codes", wrapper.RegenerateOwnMFARecoveryCodes)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/operations/{id}/download-control", wrapper.GetOperationDownloadControl)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/operations/{id}/download-control", wrapper.ControlOperationDownload)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/operations/{id}/download-control/observations", wrapper.ObserveOperationDownloadControl)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/settings/seerr", wrapper.GetSeerrConfiguration)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/settings/seerr", wrapper.SaveSeerrConfiguration)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/seerr/receipts", wrapper.ListSeerrReceipts)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/integrations/seerr", wrapper.ReceiveSeerrWebhook)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/files/{file_id}/subtitle-candidates", wrapper.GetSubtitleCandidates)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/files/{file_id}/subtitle-candidates/queries", wrapper.QuerySubtitleCandidates)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/files/{file_id}/subtitle-candidates/{candidate_id}/confirm", wrapper.ConfirmSubtitleCandidate)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscriptions/{id}/execution", wrapper.GetSubscriptionExecution)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/classification", wrapper.GetClassification)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/classification", wrapper.PublishClassification)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/classification/previews", wrapper.PreviewClassification)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/metadata/bangumi/calendar", wrapper.GetBangumiCalendar)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/integrations/cookiecloud/config", wrapper.ReadCookieCloudConfig)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/integrations/cookiecloud/config", wrapper.SaveCookieCloudConfig)
@@ -14324,6 +18061,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/healthz", wrapper.GetHealthz)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/readyz", wrapper.GetReadyz)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/status", wrapper.GetSystemStatus)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/metrics", wrapper.ReadSystemMetrics)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/logs", wrapper.StreamSystemLogs)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/system/audit", wrapper.ListAuditTimeline)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/auth/status", wrapper.GetAuthStatus)
@@ -14368,8 +18106,16 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscriptions", wrapper.ListSubscriptions)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/subscriptions", wrapper.CreateSubscription)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscription-commands/{idempotency_key}", wrapper.GetSubscriptionCreationReceipt)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscriptions/{id}/movie-discovery", wrapper.GetMovieDiscovery)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes", wrapper.ListUntrackedReviewScopes)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/episode-options", wrapper.ReadUntrackedReviewEpisodeOptions)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/untracked-organizations/{operation_id}/companions", wrapper.ReadUntrackedCompanions)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/untracked-organizations/{operation_id}/companions", wrapper.SelectUntrackedCompanions)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/untracked-organizations/{operation_id}/companions/discover", wrapper.DiscoverUntrackedCompanions)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/untracked-organizations/{operation_id}/companions/{attachment_id}/execute", wrapper.ExecuteUntrackedCompanion)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscriptions/{id}/status", wrapper.GetSubscriptionStatus)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/api/v1/subscriptions/{id}/bindings", wrapper.ConfigureSubscriptionBindings)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/subscriptions/{id}/tv-episode-discovery/{unit_id}", wrapper.GetTVEpisodeDiscovery)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/mapping-options", wrapper.GetFileMappingOptions)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/api/v1/library/files/{id}/mapping", wrapper.PreviewFileMapping)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/api/v1/library/files/{id}/mapping", wrapper.CorrectFileMapping)
@@ -14496,6 +18242,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	return m
 }
 
+type MPErrorApplicationProblemPlusJSONResponse ErrorResponse
+
 type MediaRequestFailureApplicationProblemPlusJSONResponse ErrorResponse
 
 type PolicyBadRequestJSONResponse ErrorResponse
@@ -14509,6 +18257,480 @@ type PolicyNotFoundJSONResponse ErrorResponse
 type PolicyUnauthorizedJSONResponse ErrorResponse
 
 type PolicyUnavailableJSONResponse ErrorResponse
+
+type ListAccountsRequestObject struct {
+}
+
+type ListAccountsResponseObject interface {
+	VisitListAccountsResponse(w http.ResponseWriter) error
+}
+
+type ListAccounts200JSONResponse AccountList
+
+func (response ListAccounts200JSONResponse) VisitListAccountsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAccounts400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response ListAccounts400JSONResponse) VisitListAccountsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAccounts401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response ListAccounts401JSONResponse) VisitListAccountsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAccounts403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response ListAccounts403JSONResponse) VisitListAccountsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAccounts404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response ListAccounts404JSONResponse) VisitListAccountsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAccounts409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response ListAccounts409JSONResponse) VisitListAccountsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListAccounts503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response ListAccounts503JSONResponse) VisitListAccountsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccountRequestObject struct {
+	Params CreateAccountParams
+	Body   *CreateAccountJSONRequestBody
+}
+
+type CreateAccountResponseObject interface {
+	VisitCreateAccountResponse(w http.ResponseWriter) error
+}
+
+type CreateAccount200JSONResponse AccountCommandResult
+
+func (response CreateAccount200JSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccount400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response CreateAccount400JSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccount401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response CreateAccount401JSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccount403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response CreateAccount403JSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccount404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response CreateAccount404JSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccount409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response CreateAccount409JSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccount429ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response CreateAccount429ApplicationProblemPlusJSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateAccount503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response CreateAccount503JSONResponse) VisitCreateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAccountRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params UpdateAccountParams
+	Body   *UpdateAccountJSONRequestBody
+}
+
+type UpdateAccountResponseObject interface {
+	VisitUpdateAccountResponse(w http.ResponseWriter) error
+}
+
+type UpdateAccount200JSONResponse AccountCommandResult
+
+func (response UpdateAccount200JSONResponse) VisitUpdateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAccount400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response UpdateAccount400JSONResponse) VisitUpdateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAccount401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response UpdateAccount401JSONResponse) VisitUpdateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAccount403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response UpdateAccount403JSONResponse) VisitUpdateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAccount404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response UpdateAccount404JSONResponse) VisitUpdateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAccount409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response UpdateAccount409JSONResponse) VisitUpdateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpdateAccount503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response UpdateAccount503JSONResponse) VisitUpdateAccountResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPasswordRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params ResetAccountPasswordParams
+	Body   *ResetAccountPasswordJSONRequestBody
+}
+
+type ResetAccountPasswordResponseObject interface {
+	VisitResetAccountPasswordResponse(w http.ResponseWriter) error
+}
+
+type ResetAccountPassword200JSONResponse AccountCommandResult
+
+func (response ResetAccountPassword200JSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response ResetAccountPassword400JSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response ResetAccountPassword401JSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response ResetAccountPassword403JSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response ResetAccountPassword404JSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword408ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response ResetAccountPassword408ApplicationProblemPlusJSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(408)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response ResetAccountPassword409JSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword429ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ResetAccountPassword429ApplicationProblemPlusJSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ResetAccountPassword503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response ResetAccountPassword503JSONResponse) VisitResetAccountPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
 
 type CommitSelectedMovieRequestObject struct {
 	Params CommitSelectedMovieParams
@@ -14945,8 +19167,1156 @@ func (response GetCurrentUser401ApplicationProblemPlusJSONResponse) VisitGetCurr
 	return err
 }
 
+type GetOwnMFARequestObject struct {
+}
+
+type GetOwnMFAResponseObject interface {
+	VisitGetOwnMFAResponse(w http.ResponseWriter) error
+}
+
+type GetOwnMFA200JSONResponse OwnMFAStatus
+
+func (response GetOwnMFA200JSONResponse) VisitGetOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnMFA400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response GetOwnMFA400JSONResponse) VisitGetOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnMFA401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response GetOwnMFA401JSONResponse) VisitGetOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnMFA403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response GetOwnMFA403JSONResponse) VisitGetOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnMFA404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response GetOwnMFA404JSONResponse) VisitGetOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnMFA409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response GetOwnMFA409JSONResponse) VisitGetOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnMFA503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetOwnMFA503JSONResponse) VisitGetOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFARequestObject struct {
+	Params ConfirmOwnMFAParams
+	Body   *ConfirmOwnMFAJSONRequestBody
+}
+
+type ConfirmOwnMFAResponseObject interface {
+	VisitConfirmOwnMFAResponse(w http.ResponseWriter) error
+}
+
+type ConfirmOwnMFA200JSONResponse OwnMFAConfirmResult
+
+func (response ConfirmOwnMFA200JSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFA400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response ConfirmOwnMFA400JSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFA401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response ConfirmOwnMFA401JSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFA403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response ConfirmOwnMFA403JSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFA404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response ConfirmOwnMFA404JSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFA409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response ConfirmOwnMFA409JSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFA429ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response ConfirmOwnMFA429ApplicationProblemPlusJSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmOwnMFA503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response ConfirmOwnMFA503JSONResponse) VisitConfirmOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFARequestObject struct {
+	Params DisableOwnMFAParams
+	Body   *DisableOwnMFAJSONRequestBody
+}
+
+type DisableOwnMFAResponseObject interface {
+	VisitDisableOwnMFAResponse(w http.ResponseWriter) error
+}
+
+type DisableOwnMFA200JSONResponse AccountCommandResult
+
+func (response DisableOwnMFA200JSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFA400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response DisableOwnMFA400JSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFA401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response DisableOwnMFA401JSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFA403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response DisableOwnMFA403JSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFA404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response DisableOwnMFA404JSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFA409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response DisableOwnMFA409JSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFA429ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response DisableOwnMFA429ApplicationProblemPlusJSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DisableOwnMFA503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response DisableOwnMFA503JSONResponse) VisitDisableOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodesRequestObject struct {
+	Params RegenerateOwnMFARecoveryCodesParams
+	Body   *RegenerateOwnMFARecoveryCodesJSONRequestBody
+}
+
+type RegenerateOwnMFARecoveryCodesResponseObject interface {
+	VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error
+}
+
+type RegenerateOwnMFARecoveryCodes200JSONResponse OwnMFAConfirmResult
+
+func (response RegenerateOwnMFARecoveryCodes200JSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodes400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response RegenerateOwnMFARecoveryCodes400JSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodes401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response RegenerateOwnMFARecoveryCodes401JSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodes403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response RegenerateOwnMFARecoveryCodes403JSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodes404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response RegenerateOwnMFARecoveryCodes404JSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodes409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response RegenerateOwnMFARecoveryCodes409JSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodes429ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response RegenerateOwnMFARecoveryCodes429ApplicationProblemPlusJSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RegenerateOwnMFARecoveryCodes503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response RegenerateOwnMFARecoveryCodes503JSONResponse) VisitRegenerateOwnMFARecoveryCodesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFARequestObject struct {
+	Params BeginOwnMFAParams
+	Body   *BeginOwnMFAJSONRequestBody
+}
+
+type BeginOwnMFAResponseObject interface {
+	VisitBeginOwnMFAResponse(w http.ResponseWriter) error
+}
+
+type BeginOwnMFA200JSONResponse OwnMFASetupResult
+
+func (response BeginOwnMFA200JSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFA400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response BeginOwnMFA400JSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFA401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response BeginOwnMFA401JSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFA403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response BeginOwnMFA403JSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFA404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response BeginOwnMFA404JSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFA409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response BeginOwnMFA409JSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFA429ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response BeginOwnMFA429ApplicationProblemPlusJSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type BeginOwnMFA503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response BeginOwnMFA503JSONResponse) VisitBeginOwnMFAResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPasswordRequestObject struct {
+	Params ChangeOwnPasswordParams
+	Body   *ChangeOwnPasswordJSONRequestBody
+}
+
+type ChangeOwnPasswordResponseObject interface {
+	VisitChangeOwnPasswordResponse(w http.ResponseWriter) error
+}
+
+type ChangeOwnPassword200JSONResponse AccountCommandResult
+
+func (response ChangeOwnPassword200JSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPassword400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response ChangeOwnPassword400JSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPassword401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response ChangeOwnPassword401JSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPassword403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response ChangeOwnPassword403JSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPassword404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response ChangeOwnPassword404JSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPassword409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response ChangeOwnPassword409JSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPassword429ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response ChangeOwnPassword429ApplicationProblemPlusJSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ChangeOwnPassword503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response ChangeOwnPassword503JSONResponse) VisitChangeOwnPasswordResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnSecurityCommandRequestObject struct {
+	CommandKey string `json:"command_key"`
+}
+
+type GetOwnSecurityCommandResponseObject interface {
+	VisitGetOwnSecurityCommandResponse(w http.ResponseWriter) error
+}
+
+type GetOwnSecurityCommand200JSONResponse SecurityCommandReceipt
+
+func (response GetOwnSecurityCommand200JSONResponse) VisitGetOwnSecurityCommandResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnSecurityCommand400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response GetOwnSecurityCommand400JSONResponse) VisitGetOwnSecurityCommandResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnSecurityCommand401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response GetOwnSecurityCommand401JSONResponse) VisitGetOwnSecurityCommandResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnSecurityCommand403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response GetOwnSecurityCommand403JSONResponse) VisitGetOwnSecurityCommandResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnSecurityCommand404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response GetOwnSecurityCommand404JSONResponse) VisitGetOwnSecurityCommandResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOwnSecurityCommand503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetOwnSecurityCommand503JSONResponse) VisitGetOwnSecurityCommandResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOwnSessionsRequestObject struct {
+}
+
+type ListOwnSessionsResponseObject interface {
+	VisitListOwnSessionsResponse(w http.ResponseWriter) error
+}
+
+type ListOwnSessions200JSONResponse OwnSessionList
+
+func (response ListOwnSessions200JSONResponse) VisitListOwnSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOwnSessions400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response ListOwnSessions400JSONResponse) VisitListOwnSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOwnSessions401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response ListOwnSessions401JSONResponse) VisitListOwnSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOwnSessions403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response ListOwnSessions403JSONResponse) VisitListOwnSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOwnSessions404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response ListOwnSessions404JSONResponse) VisitListOwnSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOwnSessions409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response ListOwnSessions409JSONResponse) VisitListOwnSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListOwnSessions503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response ListOwnSessions503JSONResponse) VisitListOwnSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessionsRequestObject struct {
+	Params RevokeOtherSessionsParams
+	Body   *RevokeOtherSessionsJSONRequestBody
+}
+
+type RevokeOtherSessionsResponseObject interface {
+	VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error
+}
+
+type RevokeOtherSessions200JSONResponse AccountCommandResult
+
+func (response RevokeOtherSessions200JSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessions400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response RevokeOtherSessions400JSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessions401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response RevokeOtherSessions401JSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessions403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response RevokeOtherSessions403JSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessions404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response RevokeOtherSessions404JSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessions409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response RevokeOtherSessions409JSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessions429ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response RevokeOtherSessions429ApplicationProblemPlusJSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(429)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOtherSessions503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response RevokeOtherSessions503JSONResponse) VisitRevokeOtherSessionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOwnSessionRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params RevokeOwnSessionParams
+}
+
+type RevokeOwnSessionResponseObject interface {
+	VisitRevokeOwnSessionResponse(w http.ResponseWriter) error
+}
+
+type RevokeOwnSession200JSONResponse AccountCommandResult
+
+func (response RevokeOwnSession200JSONResponse) VisitRevokeOwnSessionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOwnSession400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response RevokeOwnSession400JSONResponse) VisitRevokeOwnSessionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOwnSession401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response RevokeOwnSession401JSONResponse) VisitRevokeOwnSessionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOwnSession403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response RevokeOwnSession403JSONResponse) VisitRevokeOwnSessionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOwnSession404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response RevokeOwnSession404JSONResponse) VisitRevokeOwnSessionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOwnSession409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response RevokeOwnSession409JSONResponse) VisitRevokeOwnSessionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RevokeOwnSession503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response RevokeOwnSession503JSONResponse) VisitRevokeOwnSessionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type SetupAdminRequestObject struct {
-	Body *SetupAdminJSONRequestBody
+	Params SetupAdminParams
+	Body   *SetupAdminJSONRequestBody
 }
 
 type SetupAdminResponseObject interface {
@@ -15322,6 +20692,324 @@ func (response RevokeOwnToken409JSONResponse) VisitRevokeOwnTokenResponse(w http
 type RevokeOwnToken503JSONResponse struct{ PolicyUnavailableJSONResponse }
 
 func (response RevokeOwnToken503JSONResponse) VisitRevokeOwnTokenResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetClassificationRequestObject struct {
+}
+
+type GetClassificationResponseObject interface {
+	VisitGetClassificationResponse(w http.ResponseWriter) error
+}
+
+type GetClassification200JSONResponse ClassificationDocument
+
+func (response GetClassification200JSONResponse) VisitGetClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetClassification400JSONResponse ErrorResponse
+
+func (response GetClassification400JSONResponse) VisitGetClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetClassification401JSONResponse ErrorResponse
+
+func (response GetClassification401JSONResponse) VisitGetClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetClassification403JSONResponse ErrorResponse
+
+func (response GetClassification403JSONResponse) VisitGetClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetClassification404JSONResponse ErrorResponse
+
+func (response GetClassification404JSONResponse) VisitGetClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetClassification409JSONResponse ErrorResponse
+
+func (response GetClassification409JSONResponse) VisitGetClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetClassification503JSONResponse ErrorResponse
+
+func (response GetClassification503JSONResponse) VisitGetClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishClassificationRequestObject struct {
+	Params PublishClassificationParams
+	Body   *PublishClassificationJSONRequestBody
+}
+
+type PublishClassificationResponseObject interface {
+	VisitPublishClassificationResponse(w http.ResponseWriter) error
+}
+
+type PublishClassification200JSONResponse ClassificationDocument
+
+func (response PublishClassification200JSONResponse) VisitPublishClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishClassification400JSONResponse ErrorResponse
+
+func (response PublishClassification400JSONResponse) VisitPublishClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishClassification401JSONResponse ErrorResponse
+
+func (response PublishClassification401JSONResponse) VisitPublishClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishClassification403JSONResponse ErrorResponse
+
+func (response PublishClassification403JSONResponse) VisitPublishClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishClassification404JSONResponse ErrorResponse
+
+func (response PublishClassification404JSONResponse) VisitPublishClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishClassification409JSONResponse ErrorResponse
+
+func (response PublishClassification409JSONResponse) VisitPublishClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishClassification503JSONResponse ErrorResponse
+
+func (response PublishClassification503JSONResponse) VisitPublishClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewClassificationRequestObject struct {
+	Body *PreviewClassificationJSONRequestBody
+}
+
+type PreviewClassificationResponseObject interface {
+	VisitPreviewClassificationResponse(w http.ResponseWriter) error
+}
+
+type PreviewClassification200JSONResponse ClassificationPreview
+
+func (response PreviewClassification200JSONResponse) VisitPreviewClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewClassification400JSONResponse ErrorResponse
+
+func (response PreviewClassification400JSONResponse) VisitPreviewClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewClassification401JSONResponse ErrorResponse
+
+func (response PreviewClassification401JSONResponse) VisitPreviewClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewClassification403JSONResponse ErrorResponse
+
+func (response PreviewClassification403JSONResponse) VisitPreviewClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewClassification404JSONResponse ErrorResponse
+
+func (response PreviewClassification404JSONResponse) VisitPreviewClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewClassification409JSONResponse ErrorResponse
+
+func (response PreviewClassification409JSONResponse) VisitPreviewClassificationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PreviewClassification503JSONResponse ErrorResponse
+
+func (response PreviewClassification503JSONResponse) VisitPreviewClassificationResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -17102,20 +22790,6 @@ type CheckinIndexerResponseObject interface {
 	VisitCheckinIndexerResponse(w http.ResponseWriter) error
 }
 
-type CheckinIndexer200JSONResponse CheckinIndexerResponse
-
-func (response CheckinIndexer200JSONResponse) VisitCheckinIndexerResponse(w http.ResponseWriter) error {
-
-	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(response); err != nil {
-		return err
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	_, err := buf.WriteTo(w)
-	return err
-}
-
 type CheckinIndexer401JSONResponse ErrorResponse
 
 func (response CheckinIndexer401JSONResponse) VisitCheckinIndexerResponse(w http.ResponseWriter) error {
@@ -17168,6 +22842,20 @@ func (response CheckinIndexer404ApplicationProblemPlusJSONResponse) VisitCheckin
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CheckinIndexer410JSONResponse ErrorResponse
+
+func (response CheckinIndexer410JSONResponse) VisitCheckinIndexerResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(410)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -18327,6 +24015,7 @@ func (response ReadCookieCloudConfigReceiptdefaultApplicationProblemPlusJSONResp
 }
 
 type ListIntegrationDeliveriesRequestObject struct {
+	Params ListIntegrationDeliveriesParams
 }
 
 type ListIntegrationDeliveriesResponseObject interface {
@@ -18336,6 +24025,9 @@ type ListIntegrationDeliveriesResponseObject interface {
 type ListIntegrationDeliveries200JSONResponse struct {
 	Items []DeliverySummary `json:"items"`
 	Limit int               `json:"limit"`
+
+	// NextCursor Empty on the last page. Bound to state; not a cross-page snapshot.
+	NextCursor string `json:"next_cursor"`
 }
 
 func (response ListIntegrationDeliveries200JSONResponse) VisitListIntegrationDeliveriesResponse(w http.ResponseWriter) error {
@@ -18346,6 +24038,20 @@ func (response ListIntegrationDeliveries200JSONResponse) VisitListIntegrationDel
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListIntegrationDeliveries400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response ListIntegrationDeliveries400JSONResponse) VisitListIntegrationDeliveriesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -18686,6 +24392,45 @@ func (response ListNotificationBatches503JSONResponse) VisitListNotificationBatc
 	return err
 }
 
+type ReceiveSeerrWebhookRequestObject struct {
+	Body *ReceiveSeerrWebhookJSONRequestBody
+}
+
+type ReceiveSeerrWebhookResponseObject interface {
+	VisitReceiveSeerrWebhookResponse(w http.ResponseWriter) error
+}
+
+type ReceiveSeerrWebhook202JSONResponse SeerrReceipt
+
+func (response ReceiveSeerrWebhook202JSONResponse) VisitReceiveSeerrWebhookResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(202)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReceiveSeerrWebhookdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ReceiveSeerrWebhookdefaultApplicationProblemPlusJSONResponse) VisitReceiveSeerrWebhookResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListLibraryRootSelectionsRequestObject struct {
 }
 
@@ -18811,6 +24556,127 @@ func (response ListLibraryCatalog503ApplicationProblemPlusJSONResponse) VisitLis
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubtitleCandidatesRequestObject struct {
+	FileId openapi_types.UUID `json:"file_id"`
+}
+
+type GetSubtitleCandidatesResponseObject interface {
+	VisitGetSubtitleCandidatesResponse(w http.ResponseWriter) error
+}
+
+type GetSubtitleCandidates200JSONResponse SubtitleCandidateState
+
+func (response GetSubtitleCandidates200JSONResponse) VisitGetSubtitleCandidatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubtitleCandidatesdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetSubtitleCandidatesdefaultApplicationProblemPlusJSONResponse) VisitGetSubtitleCandidatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QuerySubtitleCandidatesRequestObject struct {
+	FileId openapi_types.UUID `json:"file_id"`
+	Params QuerySubtitleCandidatesParams
+	Body   *QuerySubtitleCandidatesJSONRequestBody
+}
+
+type QuerySubtitleCandidatesResponseObject interface {
+	VisitQuerySubtitleCandidatesResponse(w http.ResponseWriter) error
+}
+
+type QuerySubtitleCandidates200JSONResponse SubtitleCandidateState
+
+func (response QuerySubtitleCandidates200JSONResponse) VisitQuerySubtitleCandidatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type QuerySubtitleCandidatesdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response QuerySubtitleCandidatesdefaultApplicationProblemPlusJSONResponse) VisitQuerySubtitleCandidatesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmSubtitleCandidateRequestObject struct {
+	FileId      openapi_types.UUID `json:"file_id"`
+	CandidateId openapi_types.UUID `json:"candidate_id"`
+	Body        *ConfirmSubtitleCandidateJSONRequestBody
+}
+
+type ConfirmSubtitleCandidateResponseObject interface {
+	VisitConfirmSubtitleCandidateResponse(w http.ResponseWriter) error
+}
+
+type ConfirmSubtitleCandidate200JSONResponse SubtitleCandidateState
+
+func (response ConfirmSubtitleCandidate200JSONResponse) VisitConfirmSubtitleCandidateResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ConfirmSubtitleCandidatedefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ConfirmSubtitleCandidatedefaultApplicationProblemPlusJSONResponse) VisitConfirmSubtitleCandidateResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -19017,6 +24883,7 @@ func (response CorrectFileMapping503JSONResponse) VisitCorrectFileMappingRespons
 }
 
 type GetFileMappingOptionsRequestObject struct {
+	Params GetFileMappingOptionsParams
 }
 
 type GetFileMappingOptionsResponseObject interface {
@@ -19033,6 +24900,20 @@ func (response GetFileMappingOptions200JSONResponse) VisitGetFileMappingOptionsR
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetFileMappingOptions400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response GetFileMappingOptions400JSONResponse) VisitGetFileMappingOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -19400,6 +25281,565 @@ func (response ConfirmLibraryReuse503JSONResponse) VisitConfirmLibraryReuseRespo
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedCompanionsRequestObject struct {
+	OperationId openapi_types.UUID `json:"operation_id"`
+}
+
+type ReadUntrackedCompanionsResponseObject interface {
+	VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedCompanions200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadUntrackedCompanions200JSONResponse struct {
+	Body    UntrackedCompanionView
+	Headers ReadUntrackedCompanions200ResponseHeaders
+}
+
+func (response ReadUntrackedCompanions200JSONResponse) VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedCompanions400JSONResponse ErrorResponse
+
+func (response ReadUntrackedCompanions400JSONResponse) VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedCompanions401JSONResponse ErrorResponse
+
+func (response ReadUntrackedCompanions401JSONResponse) VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedCompanions403JSONResponse ErrorResponse
+
+func (response ReadUntrackedCompanions403JSONResponse) VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedCompanions404JSONResponse ErrorResponse
+
+func (response ReadUntrackedCompanions404JSONResponse) VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedCompanions409JSONResponse ErrorResponse
+
+func (response ReadUntrackedCompanions409JSONResponse) VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedCompanions503JSONResponse ErrorResponse
+
+func (response ReadUntrackedCompanions503JSONResponse) VisitReadUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SelectUntrackedCompanionsRequestObject struct {
+	OperationId openapi_types.UUID `json:"operation_id"`
+	Params      SelectUntrackedCompanionsParams
+	Body        *SelectUntrackedCompanionsJSONRequestBody
+}
+
+type SelectUntrackedCompanionsResponseObject interface {
+	VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error
+}
+
+type SelectUntrackedCompanions200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type SelectUntrackedCompanions200JSONResponse struct {
+	Body    UntrackedCompanionView
+	Headers SelectUntrackedCompanions200ResponseHeaders
+}
+
+func (response SelectUntrackedCompanions200JSONResponse) VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SelectUntrackedCompanions400JSONResponse ErrorResponse
+
+func (response SelectUntrackedCompanions400JSONResponse) VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SelectUntrackedCompanions401JSONResponse ErrorResponse
+
+func (response SelectUntrackedCompanions401JSONResponse) VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SelectUntrackedCompanions403JSONResponse ErrorResponse
+
+func (response SelectUntrackedCompanions403JSONResponse) VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SelectUntrackedCompanions404JSONResponse ErrorResponse
+
+func (response SelectUntrackedCompanions404JSONResponse) VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SelectUntrackedCompanions409JSONResponse ErrorResponse
+
+func (response SelectUntrackedCompanions409JSONResponse) VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SelectUntrackedCompanions503JSONResponse ErrorResponse
+
+func (response SelectUntrackedCompanions503JSONResponse) VisitSelectUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DiscoverUntrackedCompanionsRequestObject struct {
+	OperationId openapi_types.UUID `json:"operation_id"`
+}
+
+type DiscoverUntrackedCompanionsResponseObject interface {
+	VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error
+}
+
+type DiscoverUntrackedCompanions200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type DiscoverUntrackedCompanions200JSONResponse struct {
+	Body    UntrackedCompanionCandidates
+	Headers DiscoverUntrackedCompanions200ResponseHeaders
+}
+
+func (response DiscoverUntrackedCompanions200JSONResponse) VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DiscoverUntrackedCompanions400JSONResponse ErrorResponse
+
+func (response DiscoverUntrackedCompanions400JSONResponse) VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DiscoverUntrackedCompanions401JSONResponse ErrorResponse
+
+func (response DiscoverUntrackedCompanions401JSONResponse) VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DiscoverUntrackedCompanions403JSONResponse ErrorResponse
+
+func (response DiscoverUntrackedCompanions403JSONResponse) VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DiscoverUntrackedCompanions404JSONResponse ErrorResponse
+
+func (response DiscoverUntrackedCompanions404JSONResponse) VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DiscoverUntrackedCompanions409JSONResponse ErrorResponse
+
+func (response DiscoverUntrackedCompanions409JSONResponse) VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DiscoverUntrackedCompanions503JSONResponse ErrorResponse
+
+func (response DiscoverUntrackedCompanions503JSONResponse) VisitDiscoverUntrackedCompanionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExecuteUntrackedCompanionRequestObject struct {
+	OperationId  openapi_types.UUID `json:"operation_id"`
+	AttachmentId openapi_types.UUID `json:"attachment_id"`
+}
+
+type ExecuteUntrackedCompanionResponseObject interface {
+	VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error
+}
+
+type ExecuteUntrackedCompanion200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ExecuteUntrackedCompanion200JSONResponse struct {
+	Body    UntrackedCompanionAttachment
+	Headers ExecuteUntrackedCompanion200ResponseHeaders
+}
+
+func (response ExecuteUntrackedCompanion200JSONResponse) VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExecuteUntrackedCompanion400JSONResponse ErrorResponse
+
+func (response ExecuteUntrackedCompanion400JSONResponse) VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExecuteUntrackedCompanion401JSONResponse ErrorResponse
+
+func (response ExecuteUntrackedCompanion401JSONResponse) VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExecuteUntrackedCompanion403JSONResponse ErrorResponse
+
+func (response ExecuteUntrackedCompanion403JSONResponse) VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExecuteUntrackedCompanion404JSONResponse ErrorResponse
+
+func (response ExecuteUntrackedCompanion404JSONResponse) VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExecuteUntrackedCompanion409JSONResponse ErrorResponse
+
+func (response ExecuteUntrackedCompanion409JSONResponse) VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExecuteUntrackedCompanion503JSONResponse ErrorResponse
+
+func (response ExecuteUntrackedCompanion503JSONResponse) VisitExecuteUntrackedCompanionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedReviewScopesRequestObject struct {
+	Params ListUntrackedReviewScopesParams
+}
+
+type ListUntrackedReviewScopesResponseObject interface {
+	VisitListUntrackedReviewScopesResponse(w http.ResponseWriter) error
+}
+
+type ListUntrackedReviewScopes200JSONResponse UntrackedReviewScopePage
+
+func (response ListUntrackedReviewScopes200JSONResponse) VisitListUntrackedReviewScopesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedReviewScopes400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedReviewScopes400ApplicationProblemPlusJSONResponse) VisitListUntrackedReviewScopesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedReviewScopes401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedReviewScopes401ApplicationProblemPlusJSONResponse) VisitListUntrackedReviewScopesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedReviewScopes403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedReviewScopes403ApplicationProblemPlusJSONResponse) VisitListUntrackedReviewScopesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedReviewScopes409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedReviewScopes409ApplicationProblemPlusJSONResponse) VisitListUntrackedReviewScopesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListUntrackedReviewScopes503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ListUntrackedReviewScopes503ApplicationProblemPlusJSONResponse) VisitListUntrackedReviewScopesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -20171,6 +26611,114 @@ func (response ConfirmUntrackedFile503ApplicationProblemPlusJSONResponse) VisitC
 	if response.Headers.CacheControl != nil {
 		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
 	}
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewEpisodeOptionsRequestObject struct {
+	ScopeId openapi_types.UUID `json:"scope_id"`
+	FileId  openapi_types.UUID `json:"file_id"`
+	Params  ReadUntrackedReviewEpisodeOptionsParams
+}
+
+type ReadUntrackedReviewEpisodeOptionsResponseObject interface {
+	VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error
+}
+
+type ReadUntrackedReviewEpisodeOptions200JSONResponse UntrackedReviewEpisodeOptions
+
+func (response ReadUntrackedReviewEpisodeOptions200JSONResponse) VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewEpisodeOptions400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedReviewEpisodeOptions400ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewEpisodeOptions401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedReviewEpisodeOptions401ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewEpisodeOptions403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedReviewEpisodeOptions403ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewEpisodeOptions404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedReviewEpisodeOptions404ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewEpisodeOptions409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedReviewEpisodeOptions409ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadUntrackedReviewEpisodeOptions503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadUntrackedReviewEpisodeOptions503ApplicationProblemPlusJSONResponse) VisitReadUntrackedReviewEpisodeOptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -24288,6 +30836,332 @@ func (response ListCompleteTVOrganizations503JSONResponse) VisitListCompleteTVOr
 	return err
 }
 
+type GetOperationDownloadControlRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params GetOperationDownloadControlParams
+}
+
+type GetOperationDownloadControlResponseObject interface {
+	VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error
+}
+
+type GetOperationDownloadControl200JSONResponse DownloadControlReceipt
+
+func (response GetOperationDownloadControl200JSONResponse) VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationDownloadControl400ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response GetOperationDownloadControl400ApplicationProblemPlusJSONResponse) VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationDownloadControl401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationDownloadControl401ApplicationProblemPlusJSONResponse) VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationDownloadControl403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationDownloadControl403ApplicationProblemPlusJSONResponse) VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationDownloadControl404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationDownloadControl404ApplicationProblemPlusJSONResponse) VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationDownloadControl409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationDownloadControl409ApplicationProblemPlusJSONResponse) VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetOperationDownloadControl503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response GetOperationDownloadControl503ApplicationProblemPlusJSONResponse) VisitGetOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ControlOperationDownloadRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params ControlOperationDownloadParams
+	Body   *ControlOperationDownloadJSONRequestBody
+}
+
+type ControlOperationDownloadResponseObject interface {
+	VisitControlOperationDownloadResponse(w http.ResponseWriter) error
+}
+
+type ControlOperationDownload200JSONResponse DownloadControlReceipt
+
+func (response ControlOperationDownload200JSONResponse) VisitControlOperationDownloadResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ControlOperationDownload400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ControlOperationDownload400ApplicationProblemPlusJSONResponse) VisitControlOperationDownloadResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ControlOperationDownload401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ControlOperationDownload401ApplicationProblemPlusJSONResponse) VisitControlOperationDownloadResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ControlOperationDownload403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ControlOperationDownload403ApplicationProblemPlusJSONResponse) VisitControlOperationDownloadResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ControlOperationDownload404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ControlOperationDownload404ApplicationProblemPlusJSONResponse) VisitControlOperationDownloadResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ControlOperationDownload409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ControlOperationDownload409ApplicationProblemPlusJSONResponse) VisitControlOperationDownloadResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ControlOperationDownload503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ControlOperationDownload503ApplicationProblemPlusJSONResponse) VisitControlOperationDownloadResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationDownloadControlRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	Params ObserveOperationDownloadControlParams
+}
+
+type ObserveOperationDownloadControlResponseObject interface {
+	VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error
+}
+
+type ObserveOperationDownloadControl200JSONResponse DownloadControlReceipt
+
+func (response ObserveOperationDownloadControl200JSONResponse) VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationDownloadControl400ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response ObserveOperationDownloadControl400ApplicationProblemPlusJSONResponse) VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationDownloadControl401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationDownloadControl401ApplicationProblemPlusJSONResponse) VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationDownloadControl403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationDownloadControl403ApplicationProblemPlusJSONResponse) VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationDownloadControl404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationDownloadControl404ApplicationProblemPlusJSONResponse) VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationDownloadControl409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationDownloadControl409ApplicationProblemPlusJSONResponse) VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationDownloadControl503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationDownloadControl503ApplicationProblemPlusJSONResponse) VisitObserveOperationDownloadControlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListOwnOperationRequirementsRequestObject struct {
 	Id openapi_types.UUID `json:"id"`
 }
@@ -24444,6 +31318,125 @@ func (response WithdrawOwnRequirement503JSONResponse) VisitWithdrawOwnRequiremen
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationSeedingRequestObject struct {
+	Id   openapi_types.UUID `json:"id"`
+	Body *ObserveOperationSeedingJSONRequestBody
+}
+
+type ObserveOperationSeedingResponseObject interface {
+	VisitObserveOperationSeedingResponse(w http.ResponseWriter) error
+}
+
+type ObserveOperationSeeding200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ObserveOperationSeeding200JSONResponse struct {
+	Body    SeedingInspection
+	Headers ObserveOperationSeeding200ResponseHeaders
+}
+
+func (response ObserveOperationSeeding200JSONResponse) VisitObserveOperationSeedingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationSeeding400ApplicationProblemPlusJSONResponse struct {
+	MPErrorApplicationProblemPlusJSONResponse
+}
+
+func (response ObserveOperationSeeding400ApplicationProblemPlusJSONResponse) VisitObserveOperationSeedingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationSeeding401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationSeeding401ApplicationProblemPlusJSONResponse) VisitObserveOperationSeedingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationSeeding403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationSeeding403ApplicationProblemPlusJSONResponse) VisitObserveOperationSeedingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationSeeding404ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationSeeding404ApplicationProblemPlusJSONResponse) VisitObserveOperationSeedingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationSeeding409ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationSeeding409ApplicationProblemPlusJSONResponse) VisitObserveOperationSeedingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ObserveOperationSeeding503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ObserveOperationSeeding503ApplicationProblemPlusJSONResponse) VisitObserveOperationSeedingResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
@@ -26427,6 +33420,46 @@ func (response SearchMovieReleases503ApplicationProblemPlusJSONResponse) VisitSe
 	return err
 }
 
+type ListSeerrReceiptsRequestObject struct {
+}
+
+type ListSeerrReceiptsResponseObject interface {
+	VisitListSeerrReceiptsResponse(w http.ResponseWriter) error
+}
+
+type ListSeerrReceipts200JSONResponse struct {
+	Items []SeerrReceipt `json:"items"`
+}
+
+func (response ListSeerrReceipts200JSONResponse) VisitListSeerrReceiptsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListSeerrReceiptsdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ListSeerrReceiptsdefaultApplicationProblemPlusJSONResponse) VisitListSeerrReceiptsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type GetSettingsRequestObject struct {
 }
 
@@ -26500,6 +33533,161 @@ func (response GetSettings403ApplicationProblemPlusJSONResponse) VisitGetSetting
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RunMetadataDiagnosticRequestObject struct {
+	Body *RunMetadataDiagnosticJSONRequestBody
+}
+
+type RunMetadataDiagnosticResponseObject interface {
+	VisitRunMetadataDiagnosticResponse(w http.ResponseWriter) error
+}
+
+type RunMetadataDiagnostic200JSONResponse MetadataDiagnosticResult
+
+func (response RunMetadataDiagnostic200JSONResponse) VisitRunMetadataDiagnosticResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RunMetadataDiagnostic400ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response RunMetadataDiagnostic400ApplicationProblemPlusJSONResponse) VisitRunMetadataDiagnosticResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RunMetadataDiagnostic401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response RunMetadataDiagnostic401ApplicationProblemPlusJSONResponse) VisitRunMetadataDiagnosticResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RunMetadataDiagnostic403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response RunMetadataDiagnostic403ApplicationProblemPlusJSONResponse) VisitRunMetadataDiagnosticResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RunMetadataDiagnostic503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response RunMetadataDiagnostic503ApplicationProblemPlusJSONResponse) VisitRunMetadataDiagnosticResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSeerrConfigurationRequestObject struct {
+}
+
+type GetSeerrConfigurationResponseObject interface {
+	VisitGetSeerrConfigurationResponse(w http.ResponseWriter) error
+}
+
+type GetSeerrConfiguration200JSONResponse SeerrConfiguration
+
+func (response GetSeerrConfiguration200JSONResponse) VisitGetSeerrConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSeerrConfigurationdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response GetSeerrConfigurationdefaultApplicationProblemPlusJSONResponse) VisitGetSeerrConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSeerrConfigurationRequestObject struct {
+	Body *SaveSeerrConfigurationJSONRequestBody
+}
+
+type SaveSeerrConfigurationResponseObject interface {
+	VisitSaveSeerrConfigurationResponse(w http.ResponseWriter) error
+}
+
+type SaveSeerrConfiguration200JSONResponse SeerrConfiguration
+
+func (response SaveSeerrConfiguration200JSONResponse) VisitSaveSeerrConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type SaveSeerrConfigurationdefaultApplicationProblemPlusJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response SaveSeerrConfigurationdefaultApplicationProblemPlusJSONResponse) VisitSaveSeerrConfigurationResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(response.StatusCode)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -27044,6 +34232,7 @@ func (response GetSubscriptionCreationReceipt503JSONResponse) VisitGetSubscripti
 }
 
 type ListSubscriptionsRequestObject struct {
+	Params ListSubscriptionsParams
 }
 
 type ListSubscriptionsResponseObject interface {
@@ -27060,6 +34249,20 @@ func (response ListSubscriptions200JSONResponse) VisitListSubscriptionsResponse(
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListSubscriptions400JSONResponse ErrorResponse
+
+func (response ListSubscriptions400JSONResponse) VisitListSubscriptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -27088,6 +34291,34 @@ func (response ListSubscriptions401ApplicationProblemPlusJSONResponse) VisitList
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListSubscriptions403JSONResponse ErrorResponse
+
+func (response ListSubscriptions403JSONResponse) VisitListSubscriptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListSubscriptions503JSONResponse ErrorResponse
+
+func (response ListSubscriptions503JSONResponse) VisitListSubscriptionsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -27485,6 +34716,20 @@ func (response GetSubscription404ApplicationProblemPlusJSONResponse) VisitGetSub
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscription503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetSubscription503JSONResponse) VisitGetSubscriptionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -28612,6 +35857,112 @@ func (response PreviewEpisodeMapping503JSONResponse) VisitPreviewEpisodeMappingR
 	return err
 }
 
+type GetSubscriptionExecutionRequestObject struct {
+	Id openapi_types.UUID `json:"id"`
+}
+
+type GetSubscriptionExecutionResponseObject interface {
+	VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error
+}
+
+type GetSubscriptionExecution200JSONResponse SubscriptionExecution
+
+func (response GetSubscriptionExecution200JSONResponse) VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionExecution400JSONResponse ErrorResponse
+
+func (response GetSubscriptionExecution400JSONResponse) VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionExecution401JSONResponse ErrorResponse
+
+func (response GetSubscriptionExecution401JSONResponse) VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionExecution403JSONResponse ErrorResponse
+
+func (response GetSubscriptionExecution403JSONResponse) VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionExecution404JSONResponse ErrorResponse
+
+func (response GetSubscriptionExecution404JSONResponse) VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionExecution409JSONResponse ErrorResponse
+
+func (response GetSubscriptionExecution409JSONResponse) VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetSubscriptionExecution503JSONResponse ErrorResponse
+
+func (response GetSubscriptionExecution503JSONResponse) VisitGetSubscriptionExecutionResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type RefreshTVEpisodeMetadataRequestObject struct {
 	Id     openapi_types.UUID `json:"id"`
 	Params RefreshTVEpisodeMetadataParams
@@ -28709,6 +36060,122 @@ func (response RefreshTVEpisodeMetadata409JSONResponse) VisitRefreshTVEpisodeMet
 type RefreshTVEpisodeMetadata503JSONResponse struct{ PolicyUnavailableJSONResponse }
 
 func (response RefreshTVEpisodeMetadata503JSONResponse) VisitRefreshTVEpisodeMetadataResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMovieDiscoveryRequestObject struct {
+	Id openapi_types.UUID `json:"id"`
+}
+
+type GetMovieDiscoveryResponseObject interface {
+	VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error
+}
+
+type GetMovieDiscovery200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type GetMovieDiscovery200JSONResponse struct {
+	Body    MovieDiscoveryStatus
+	Headers GetMovieDiscovery200ResponseHeaders
+}
+
+func (response GetMovieDiscovery200JSONResponse) VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMovieDiscovery400JSONResponse ErrorResponse
+
+func (response GetMovieDiscovery400JSONResponse) VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMovieDiscovery401JSONResponse ErrorResponse
+
+func (response GetMovieDiscovery401JSONResponse) VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMovieDiscovery403JSONResponse ErrorResponse
+
+func (response GetMovieDiscovery403JSONResponse) VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMovieDiscovery404JSONResponse ErrorResponse
+
+func (response GetMovieDiscovery404JSONResponse) VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMovieDiscovery409JSONResponse ErrorResponse
+
+func (response GetMovieDiscovery409JSONResponse) VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetMovieDiscovery503JSONResponse ErrorResponse
+
+func (response GetMovieDiscovery503JSONResponse) VisitGetMovieDiscoveryResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -29437,6 +36904,113 @@ func (response PreviewTVCoverageCandidateReview409JSONResponse) VisitPreviewTVCo
 type PreviewTVCoverageCandidateReview503JSONResponse struct{ PolicyUnavailableJSONResponse }
 
 func (response PreviewTVCoverageCandidateReview503JSONResponse) VisitPreviewTVCoverageCandidateReviewResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTVEpisodeDiscoveryRequestObject struct {
+	Id     openapi_types.UUID `json:"id"`
+	UnitId openapi_types.UUID `json:"unit_id"`
+}
+
+type GetTVEpisodeDiscoveryResponseObject interface {
+	VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error
+}
+
+type GetTVEpisodeDiscovery200JSONResponse TVEpisodeDiscoveryStatus
+
+func (response GetTVEpisodeDiscovery200JSONResponse) VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTVEpisodeDiscovery400JSONResponse struct{ PolicyBadRequestJSONResponse }
+
+func (response GetTVEpisodeDiscovery400JSONResponse) VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTVEpisodeDiscovery401JSONResponse struct{ PolicyUnauthorizedJSONResponse }
+
+func (response GetTVEpisodeDiscovery401JSONResponse) VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTVEpisodeDiscovery403JSONResponse struct{ PolicyForbiddenJSONResponse }
+
+func (response GetTVEpisodeDiscovery403JSONResponse) VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTVEpisodeDiscovery404JSONResponse struct{ PolicyNotFoundJSONResponse }
+
+func (response GetTVEpisodeDiscovery404JSONResponse) VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTVEpisodeDiscovery409JSONResponse struct{ PolicyConflictJSONResponse }
+
+func (response GetTVEpisodeDiscovery409JSONResponse) VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetTVEpisodeDiscovery503JSONResponse struct{ PolicyUnavailableJSONResponse }
+
+func (response GetTVEpisodeDiscovery503JSONResponse) VisitGetTVEpisodeDiscoveryResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -31489,6 +39063,76 @@ func (response StreamSystemLogs503ApplicationProblemPlusJSONResponse) VisitStrea
 	return err
 }
 
+type ReadSystemMetricsRequestObject struct {
+}
+
+type ReadSystemMetricsResponseObject interface {
+	VisitReadSystemMetricsResponse(w http.ResponseWriter) error
+}
+
+type ReadSystemMetrics200ResponseHeaders struct {
+	CacheControl *string
+}
+
+type ReadSystemMetrics200TextResponse struct {
+	Body    string
+	Headers ReadSystemMetrics200ResponseHeaders
+}
+
+func (response ReadSystemMetrics200TextResponse) VisitReadSystemMetricsResponse(w http.ResponseWriter) error {
+
+	w.Header().Set("Content-Type", "text/plain")
+	if response.Headers.CacheControl != nil {
+		w.Header().Set("Cache-Control", fmt.Sprint(*response.Headers.CacheControl))
+	}
+	w.WriteHeader(200)
+
+	_, err := w.Write([]byte(fmt.Sprint(response.Body)))
+	return err
+}
+
+type ReadSystemMetrics401ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSystemMetrics401ApplicationProblemPlusJSONResponse) VisitReadSystemMetricsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSystemMetrics403ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSystemMetrics403ApplicationProblemPlusJSONResponse) VisitReadSystemMetricsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ReadSystemMetrics503ApplicationProblemPlusJSONResponse ErrorResponse
+
+func (response ReadSystemMetrics503ApplicationProblemPlusJSONResponse) VisitReadSystemMetricsResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/problem+json")
+	w.WriteHeader(503)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type GetSystemStatusRequestObject struct {
 }
 
@@ -32023,20 +39667,6 @@ type ScanDirectoryReorganizeResponseObject interface {
 	VisitScanDirectoryReorganizeResponse(w http.ResponseWriter) error
 }
 
-type ScanDirectoryReorganize200JSONResponse ScanReorganizeResponse
-
-func (response ScanDirectoryReorganize200JSONResponse) VisitScanDirectoryReorganizeResponse(w http.ResponseWriter) error {
-
-	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(response); err != nil {
-		return err
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	_, err := buf.WriteTo(w)
-	return err
-}
-
 type ScanDirectoryReorganize401JSONResponse ErrorResponse
 
 func (response ScanDirectoryReorganize401JSONResponse) VisitScanDirectoryReorganizeResponse(w http.ResponseWriter) error {
@@ -32061,6 +39691,20 @@ func (response ScanDirectoryReorganize401ApplicationProblemPlusJSONResponse) Vis
 	}
 	w.Header().Set("Content-Type", "application/problem+json")
 	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ScanDirectoryReorganize410JSONResponse ErrorResponse
+
+func (response ScanDirectoryReorganize410JSONResponse) VisitScanDirectoryReorganizeResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(410)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -32542,6 +40186,18 @@ func (response GetReadyz503JSONResponse) VisitGetReadyzResponse(w http.ResponseW
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// ListAccounts Account security operation requiring the current cookie session
+	// (GET /api/v1/accounts)
+	ListAccounts(ctx context.Context, request ListAccountsRequestObject) (ListAccountsResponseObject, error)
+	// CreateAccount Account security operation requiring the current cookie session
+	// (POST /api/v1/accounts)
+	CreateAccount(ctx context.Context, request CreateAccountRequestObject) (CreateAccountResponseObject, error)
+	// UpdateAccount Account security operation requiring the current cookie session
+	// (PUT /api/v1/accounts/{id})
+	UpdateAccount(ctx context.Context, request UpdateAccountRequestObject) (UpdateAccountResponseObject, error)
+	// ResetAccountPassword Reset a family member password after administrator reauthentication
+	// (POST /api/v1/accounts/{id}/password)
+	ResetAccountPassword(ctx context.Context, request ResetAccountPasswordRequestObject) (ResetAccountPasswordResponseObject, error)
 	// CommitSelectedMovie Confirm movie target and persist acquisition atomically
 	// (POST /api/v1/acquisitions/selected-movie)
 	CommitSelectedMovie(ctx context.Context, request CommitSelectedMovieRequestObject) (CommitSelectedMovieResponseObject, error)
@@ -32557,6 +40213,36 @@ type StrictServerInterface interface {
 	// GetCurrentUser Get current authenticated user
 	// (GET /api/v1/auth/me)
 	GetCurrentUser(ctx context.Context, request GetCurrentUserRequestObject) (GetCurrentUserResponseObject, error)
+	// GetOwnMFA Account security operation requiring the current cookie session
+	// (GET /api/v1/auth/mfa)
+	GetOwnMFA(ctx context.Context, request GetOwnMFARequestObject) (GetOwnMFAResponseObject, error)
+	// ConfirmOwnMFA Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/mfa/confirm)
+	ConfirmOwnMFA(ctx context.Context, request ConfirmOwnMFARequestObject) (ConfirmOwnMFAResponseObject, error)
+	// DisableOwnMFA Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/mfa/disable)
+	DisableOwnMFA(ctx context.Context, request DisableOwnMFARequestObject) (DisableOwnMFAResponseObject, error)
+	// RegenerateOwnMFARecoveryCodes Replace recovery codes after password and second-factor reauthentication
+	// (POST /api/v1/auth/mfa/recovery-codes)
+	RegenerateOwnMFARecoveryCodes(ctx context.Context, request RegenerateOwnMFARecoveryCodesRequestObject) (RegenerateOwnMFARecoveryCodesResponseObject, error)
+	// BeginOwnMFA Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/mfa/setup)
+	BeginOwnMFA(ctx context.Context, request BeginOwnMFARequestObject) (BeginOwnMFAResponseObject, error)
+	// ChangeOwnPassword Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/password)
+	ChangeOwnPassword(ctx context.Context, request ChangeOwnPasswordRequestObject) (ChangeOwnPasswordResponseObject, error)
+	// GetOwnSecurityCommand Read the original safe account command receipt without replaying a write
+	// (GET /api/v1/auth/security/commands/{command_key})
+	GetOwnSecurityCommand(ctx context.Context, request GetOwnSecurityCommandRequestObject) (GetOwnSecurityCommandResponseObject, error)
+	// ListOwnSessions Account security operation requiring the current cookie session
+	// (GET /api/v1/auth/sessions)
+	ListOwnSessions(ctx context.Context, request ListOwnSessionsRequestObject) (ListOwnSessionsResponseObject, error)
+	// RevokeOtherSessions Reauthenticate and revoke other sessions while retaining the current session and API tokens
+	// (POST /api/v1/auth/sessions/revoke-others)
+	RevokeOtherSessions(ctx context.Context, request RevokeOtherSessionsRequestObject) (RevokeOtherSessionsResponseObject, error)
+	// RevokeOwnSession Account security operation requiring the current cookie session
+	// (POST /api/v1/auth/sessions/{id}/revoke)
+	RevokeOwnSession(ctx context.Context, request RevokeOwnSessionRequestObject) (RevokeOwnSessionResponseObject, error)
 	// SetupAdmin Initial administrator setup
 	// (POST /api/v1/auth/setup)
 	SetupAdmin(ctx context.Context, request SetupAdminRequestObject) (SetupAdminResponseObject, error)
@@ -32572,6 +40258,15 @@ type StrictServerInterface interface {
 	// RevokeOwnToken Irreversibly revoke an own token; session required
 	// (POST /api/v1/auth/tokens/{id}/revoke)
 	RevokeOwnToken(ctx context.Context, request RevokeOwnTokenRequestObject) (RevokeOwnTokenResponseObject, error)
+
+	// (GET /api/v1/classification)
+	GetClassification(ctx context.Context, request GetClassificationRequestObject) (GetClassificationResponseObject, error)
+
+	// (PUT /api/v1/classification)
+	PublishClassification(ctx context.Context, request PublishClassificationRequestObject) (PublishClassificationResponseObject, error)
+
+	// (POST /api/v1/classification/previews)
+	PreviewClassification(ctx context.Context, request PreviewClassificationRequestObject) (PreviewClassificationResponseObject, error)
 	// GetDashboardActivity Read visible persisted operation activity without probing clients
 	// (GET /api/v1/dashboard/activity)
 	GetDashboardActivity(ctx context.Context, request GetDashboardActivityRequestObject) (GetDashboardActivityResponseObject, error)
@@ -32629,8 +40324,10 @@ type StrictServerInterface interface {
 	// UpdateIndexer Update an indexer with an observed configuration version
 	// (PUT /api/v1/indexers/{id})
 	UpdateIndexer(ctx context.Context, request UpdateIndexerRequestObject) (UpdateIndexerResponseObject, error)
-	// CheckinIndexer Perform automated check-in on PT site
+	// CheckinIndexer Retired legacy check-in; configure persistent sign-in instead
 	// (POST /api/v1/indexers/{id}/checkin)
+	//
+	// Deprecated: this operation has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	CheckinIndexer(ctx context.Context, request CheckinIndexerRequestObject) (CheckinIndexerResponseObject, error)
 	// GetIndexerRSS Read sanitized RSS configuration and last successful poll receipt (admin only)
 	// (GET /api/v1/indexers/{id}/rss)
@@ -32674,7 +40371,7 @@ type StrictServerInterface interface {
 	// ReadCookieCloudConfigReceipt Read an account-scoped original CookieCloud configuration receipt
 	// (GET /api/v1/integrations/cookiecloud/config/commands/{command_key})
 	ReadCookieCloudConfigReceipt(ctx context.Context, request ReadCookieCloudConfigReceiptRequestObject) (ReadCookieCloudConfigReceiptResponseObject, error)
-	// ListIntegrationDeliveries Administrator delivery observations, latest 100 only; no payload or credentials
+	// ListIntegrationDeliveries Administrator delivery observations with state filtering and bounded cursor pagination; no payload or credentials
 	// (GET /api/v1/integrations/deliveries)
 	ListIntegrationDeliveries(ctx context.Context, request ListIntegrationDeliveriesRequestObject) (ListIntegrationDeliveriesResponseObject, error)
 	// ReplayIntegrationDelivery Explicit duplicate-risk acknowledged replay of a dead integration delivery
@@ -32686,19 +40383,31 @@ type StrictServerInterface interface {
 	// ListNotificationBatches Administrator recent 100 immutable media notification batch observations; never a send receipt
 	// (GET /api/v1/integrations/notification-batches)
 	ListNotificationBatches(ctx context.Context, request ListNotificationBatchesRequestObject) (ListNotificationBatchesResponseObject, error)
+
+	// (POST /api/v1/integrations/seerr)
+	ReceiveSeerrWebhook(ctx context.Context, request ReceiveSeerrWebhookRequestObject) (ReceiveSeerrWebhookResponseObject, error)
 	// ListLibraryRootSelections Read configured target-root selections; no filesystem paths or credentials
 	// (GET /api/v1/library-roots)
 	ListLibraryRootSelections(ctx context.Context, request ListLibraryRootSelectionsRequestObject) (ListLibraryRootSelectionsResponseObject, error)
 	// ListLibraryCatalog Read current mapped library files in shared roots
 	// (GET /api/v1/library/catalog)
 	ListLibraryCatalog(ctx context.Context, request ListLibraryCatalogRequestObject) (ListLibraryCatalogResponseObject, error)
+
+	// (GET /api/v1/library/files/{file_id}/subtitle-candidates)
+	GetSubtitleCandidates(ctx context.Context, request GetSubtitleCandidatesRequestObject) (GetSubtitleCandidatesResponseObject, error)
+
+	// (POST /api/v1/library/files/{file_id}/subtitle-candidates/queries)
+	QuerySubtitleCandidates(ctx context.Context, request QuerySubtitleCandidatesRequestObject) (QuerySubtitleCandidatesResponseObject, error)
+
+	// (POST /api/v1/library/files/{file_id}/subtitle-candidates/{candidate_id}/confirm)
+	ConfirmSubtitleCandidate(ctx context.Context, request ConfirmSubtitleCandidateRequestObject) (ConfirmSubtitleCandidateResponseObject, error)
 	// PreviewFileMapping Read-only current imported evidence and metadata snapshot for an explicit semantic correction
 	// (GET /api/v1/library/files/{id}/mapping)
 	PreviewFileMapping(ctx context.Context, request PreviewFileMappingRequestObject) (PreviewFileMappingResponseObject, error)
 	// CorrectFileMapping Explicit coverage correction only; never move files or start downloads
 	// (POST /api/v1/library/files/{id}/mapping)
 	CorrectFileMapping(ctx context.Context, request CorrectFileMappingRequestObject) (CorrectFileMappingResponseObject, error)
-	// GetFileMappingOptions Administrator index and persisted media choices, latest 100 only; not evidence of physical presence
+	// GetFileMappingOptions Administrator file and existing-media choices with independent filters and cursors; not physical presence evidence
 	// (GET /api/v1/library/mapping-options)
 	GetFileMappingOptions(ctx context.Context, request GetFileMappingOptionsRequestObject) (GetFileMappingOptionsResponseObject, error)
 	// GetLibraryOverview Read registered shared-library facts and capacity observations
@@ -32713,6 +40422,21 @@ type StrictServerInterface interface {
 	// ConfirmLibraryReuse Confirm complete source coverage and queue a local demand atomically
 	// (POST /api/v1/library/reuses)
 	ConfirmLibraryReuse(ctx context.Context, request ConfirmLibraryReuseRequestObject) (ConfirmLibraryReuseResponseObject, error)
+
+	// (GET /api/v1/library/untracked-organizations/{operation_id}/companions)
+	ReadUntrackedCompanions(ctx context.Context, request ReadUntrackedCompanionsRequestObject) (ReadUntrackedCompanionsResponseObject, error)
+
+	// (POST /api/v1/library/untracked-organizations/{operation_id}/companions)
+	SelectUntrackedCompanions(ctx context.Context, request SelectUntrackedCompanionsRequestObject) (SelectUntrackedCompanionsResponseObject, error)
+
+	// (POST /api/v1/library/untracked-organizations/{operation_id}/companions/discover)
+	DiscoverUntrackedCompanions(ctx context.Context, request DiscoverUntrackedCompanionsRequestObject) (DiscoverUntrackedCompanionsResponseObject, error)
+
+	// (POST /api/v1/library/untracked-organizations/{operation_id}/companions/{attachment_id}/execute)
+	ExecuteUntrackedCompanion(ctx context.Context, request ExecuteUntrackedCompanionRequestObject) (ExecuteUntrackedCompanionResponseObject, error)
+	// ListUntrackedReviewScopes List the current administrator's configured external directory scopes
+	// (GET /api/v1/library/untracked-scopes)
+	ListUntrackedReviewScopes(ctx context.Context, request ListUntrackedReviewScopesRequestObject) (ListUntrackedReviewScopesResponseObject, error)
 	// ReadUntrackedScope Read an explicitly selected untracked directory scope
 	// (GET /api/v1/library/untracked-scopes/{scope_id})
 	ReadUntrackedScope(ctx context.Context, request ReadUntrackedScopeRequestObject) (ReadUntrackedScopeResponseObject, error)
@@ -32731,6 +40455,9 @@ type StrictServerInterface interface {
 
 	// (POST /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/confirmations)
 	ConfirmUntrackedFile(ctx context.Context, request ConfirmUntrackedFileRequestObject) (ConfirmUntrackedFileResponseObject, error)
+	// ReadUntrackedReviewEpisodeOptions Read current trusted canonical episodes for one observed external file
+	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/episode-options)
+	ReadUntrackedReviewEpisodeOptions(ctx context.Context, request ReadUntrackedReviewEpisodeOptionsRequestObject) (ReadUntrackedReviewEpisodeOptionsResponseObject, error)
 
 	// (GET /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/organization-commands/{command_key})
 	ReadUntrackedOrganizationReceipt(ctx context.Context, request ReadUntrackedOrganizationReceiptRequestObject) (ReadUntrackedOrganizationReceiptResponseObject, error)
@@ -32844,12 +40571,24 @@ type StrictServerInterface interface {
 	// ListCompleteTVOrganizations Read current persistent complete normal-season organization evidence
 	// (GET /api/v1/operations/{id}/complete-tv-organizations)
 	ListCompleteTVOrganizations(ctx context.Context, request ListCompleteTVOrganizationsRequestObject) (ListCompleteTVOrganizationsResponseObject, error)
+
+	// (GET /api/v1/operations/{id}/download-control)
+	GetOperationDownloadControl(ctx context.Context, request GetOperationDownloadControlRequestObject) (GetOperationDownloadControlResponseObject, error)
+
+	// (POST /api/v1/operations/{id}/download-control)
+	ControlOperationDownload(ctx context.Context, request ControlOperationDownloadRequestObject) (ControlOperationDownloadResponseObject, error)
+
+	// (POST /api/v1/operations/{id}/download-control/observations)
+	ObserveOperationDownloadControl(ctx context.Context, request ObserveOperationDownloadControlRequestObject) (ObserveOperationDownloadControlResponseObject, error)
 	// ListOwnOperationRequirements Read only the actor's own requirements; not other subscribers
 	// (GET /api/v1/operations/{id}/requirements)
 	ListOwnOperationRequirements(ctx context.Context, request ListOwnOperationRequirementsRequestObject) (ListOwnOperationRequirementsResponseObject, error)
 	// WithdrawOwnRequirement Withdraw only this actor's requirement; do not promise recall of an external action
 	// (POST /api/v1/operations/{id}/requirements/{requirement_id}/withdraw)
 	WithdrawOwnRequirement(ctx context.Context, request WithdrawOwnRequirementRequestObject) (WithdrawOwnRequirementResponseObject, error)
+
+	// (POST /api/v1/operations/{id}/seeding-observations)
+	ObserveOperationSeeding(ctx context.Context, request ObserveOperationSeedingRequestObject) (ObserveOperationSeedingResponseObject, error)
 	// PreviewSubmissionRetry Preview retry of an original dead unsent submission
 	// (GET /api/v1/operations/{id}/submission-retry)
 	PreviewSubmissionRetry(ctx context.Context, request PreviewSubmissionRetryRequestObject) (PreviewSubmissionRetryResponseObject, error)
@@ -32912,9 +40651,21 @@ type StrictServerInterface interface {
 	// SearchMovieReleases Search movie and TV metadata
 	// (GET /api/v1/search/movies)
 	SearchMovieReleases(ctx context.Context, request SearchMovieReleasesRequestObject) (SearchMovieReleasesResponseObject, error)
+
+	// (GET /api/v1/seerr/receipts)
+	ListSeerrReceipts(ctx context.Context, request ListSeerrReceiptsRequestObject) (ListSeerrReceiptsResponseObject, error)
 	// GetSettings List system settings
 	// (GET /api/v1/settings)
 	GetSettings(ctx context.Context, request GetSettingsRequestObject) (GetSettingsResponseObject, error)
+
+	// (POST /api/v1/settings/metadata-diagnostics)
+	RunMetadataDiagnostic(ctx context.Context, request RunMetadataDiagnosticRequestObject) (RunMetadataDiagnosticResponseObject, error)
+
+	// (GET /api/v1/settings/seerr)
+	GetSeerrConfiguration(ctx context.Context, request GetSeerrConfigurationRequestObject) (GetSeerrConfigurationResponseObject, error)
+
+	// (PUT /api/v1/settings/seerr)
+	SaveSeerrConfiguration(ctx context.Context, request SaveSeerrConfigurationRequestObject) (SaveSeerrConfigurationResponseObject, error)
 	// UpdateSetting Update a setting with optimistic locking
 	// (PUT /api/v1/settings/{key})
 	UpdateSetting(ctx context.Context, request UpdateSettingRequestObject) (UpdateSettingResponseObject, error)
@@ -32974,9 +40725,15 @@ type StrictServerInterface interface {
 	// PreviewEpisodeMapping Complete read-only preview of explicit manual rows or selected numbering source; cannot authorize acquisition
 	// (POST /api/v1/subscriptions/{id}/episode-mapping/preview)
 	PreviewEpisodeMapping(ctx context.Context, request PreviewEpisodeMappingRequestObject) (PreviewEpisodeMappingResponseObject, error)
+
+	// (GET /api/v1/subscriptions/{id}/execution)
+	GetSubscriptionExecution(ctx context.Context, request GetSubscriptionExecutionRequestObject) (GetSubscriptionExecutionResponseObject, error)
 	// RefreshTVEpisodeMetadata Administrator refresh of 1-5 authoritative seasons; metadata does not enable automatic TV downloads
 	// (POST /api/v1/subscriptions/{id}/metadata/refresh)
 	RefreshTVEpisodeMetadata(ctx context.Context, request RefreshTVEpisodeMetadataRequestObject) (RefreshTVEpisodeMetadataResponseObject, error)
+	// GetMovieDiscovery Read the current movie upgrade discovery search
+	// (GET /api/v1/subscriptions/{id}/movie-discovery)
+	GetMovieDiscovery(ctx context.Context, request GetMovieDiscoveryRequestObject) (GetMovieDiscoveryResponseObject, error)
 	// PauseSubscription Disabled versionless pause; use versioned control
 	// (POST /api/v1/subscriptions/{id}/pause)
 	//
@@ -32999,6 +40756,9 @@ type StrictServerInterface interface {
 	// PreviewTVCoverageCandidateReview Observe explicit whole normal-season coverage for review
 	// (POST /api/v1/subscriptions/{id}/tv-coverage-candidate-reviews/preview)
 	PreviewTVCoverageCandidateReview(ctx context.Context, request PreviewTVCoverageCandidateReviewRequestObject) (PreviewTVCoverageCandidateReviewResponseObject, error)
+	// GetTVEpisodeDiscovery Read an existing bounded upgrade-candidate discovery for one standard TV episode
+	// (GET /api/v1/subscriptions/{id}/tv-episode-discovery/{unit_id})
+	GetTVEpisodeDiscovery(ctx context.Context, request GetTVEpisodeDiscoveryRequestObject) (GetTVEpisodeDiscoveryResponseObject, error)
 	// PreviewTVSelection Compare reviewed pack and episode alternatives without executing
 	// (POST /api/v1/subscriptions/{id}/tv-selection-preview)
 	PreviewTVSelection(ctx context.Context, request PreviewTVSelectionRequestObject) (PreviewTVSelectionResponseObject, error)
@@ -33059,6 +40819,9 @@ type StrictServerInterface interface {
 	// StreamSystemLogs Real-time system log stream
 	// (GET /api/v1/system/logs)
 	StreamSystemLogs(ctx context.Context, request StreamSystemLogsRequestObject) (StreamSystemLogsResponseObject, error)
+	// ReadSystemMetrics Read Prometheus process and queue metrics
+	// (GET /api/v1/system/metrics)
+	ReadSystemMetrics(ctx context.Context, request ReadSystemMetricsRequestObject) (ReadSystemMetricsResponseObject, error)
 	// GetSystemStatus System status
 	// (GET /api/v1/system/status)
 	GetSystemStatus(ctx context.Context, request GetSystemStatusRequestObject) (GetSystemStatusResponseObject, error)
@@ -33079,8 +40842,10 @@ type StrictServerInterface interface {
 	// PreviewTransferRevision Observe a missing-target single-movie successor, without file mutations
 	// (POST /api/v1/transfer-plans/{id}/revision-preview)
 	PreviewTransferRevision(ctx context.Context, request PreviewTransferRevisionRequestObject) (PreviewTransferRevisionResponseObject, error)
-	// ScanDirectoryReorganize Scan directory and recognize media files for reorganization
+	// ScanDirectoryReorganize Retired legacy directory scan; use observed untracked files
 	// (POST /api/v1/transfer/scan)
+	//
+	// Deprecated: this operation has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	ScanDirectoryReorganize(ctx context.Context, request ScanDirectoryReorganizeRequestObject) (ScanDirectoryReorganizeResponseObject, error)
 	// GetWebPushConfiguration Read this deployment's browser application server key after current account authorization
 	// (GET /api/v1/web-push/config)
@@ -33142,6 +40907,131 @@ type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
 	options     StrictHTTPServerOptions
+}
+
+// ListAccounts operation middleware
+func (sh *strictHandler) ListAccounts(w http.ResponseWriter, r *http.Request) {
+	var request ListAccountsRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListAccounts(ctx, request.(ListAccountsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListAccounts")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListAccountsResponseObject); ok {
+		if err := validResponse.VisitListAccountsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// CreateAccount operation middleware
+func (sh *strictHandler) CreateAccount(w http.ResponseWriter, r *http.Request, params CreateAccountParams) {
+	var request CreateAccountRequestObject
+
+	request.Params = params
+
+	var body CreateAccountJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateAccount(ctx, request.(CreateAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateAccount")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(CreateAccountResponseObject); ok {
+		if err := validResponse.VisitCreateAccountResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateAccount operation middleware
+func (sh *strictHandler) UpdateAccount(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params UpdateAccountParams) {
+	var request UpdateAccountRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	var body UpdateAccountJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateAccount(ctx, request.(UpdateAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateAccount")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(UpdateAccountResponseObject); ok {
+		if err := validResponse.VisitUpdateAccountResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ResetAccountPassword operation middleware
+func (sh *strictHandler) ResetAccountPassword(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ResetAccountPasswordParams) {
+	var request ResetAccountPasswordRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	var body ResetAccountPasswordJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ResetAccountPassword(ctx, request.(ResetAccountPasswordRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ResetAccountPassword")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ResetAccountPasswordResponseObject); ok {
+		if err := validResponse.VisitResetAccountPasswordResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
 }
 
 // CommitSelectedMovie operation middleware
@@ -33287,9 +41177,310 @@ func (sh *strictHandler) GetCurrentUser(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+// GetOwnMFA operation middleware
+func (sh *strictHandler) GetOwnMFA(w http.ResponseWriter, r *http.Request) {
+	var request GetOwnMFARequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetOwnMFA(ctx, request.(GetOwnMFARequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetOwnMFA")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetOwnMFAResponseObject); ok {
+		if err := validResponse.VisitGetOwnMFAResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ConfirmOwnMFA operation middleware
+func (sh *strictHandler) ConfirmOwnMFA(w http.ResponseWriter, r *http.Request, params ConfirmOwnMFAParams) {
+	var request ConfirmOwnMFARequestObject
+
+	request.Params = params
+
+	var body ConfirmOwnMFAJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ConfirmOwnMFA(ctx, request.(ConfirmOwnMFARequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ConfirmOwnMFA")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ConfirmOwnMFAResponseObject); ok {
+		if err := validResponse.VisitConfirmOwnMFAResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DisableOwnMFA operation middleware
+func (sh *strictHandler) DisableOwnMFA(w http.ResponseWriter, r *http.Request, params DisableOwnMFAParams) {
+	var request DisableOwnMFARequestObject
+
+	request.Params = params
+
+	var body DisableOwnMFAJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.DisableOwnMFA(ctx, request.(DisableOwnMFARequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DisableOwnMFA")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(DisableOwnMFAResponseObject); ok {
+		if err := validResponse.VisitDisableOwnMFAResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RegenerateOwnMFARecoveryCodes operation middleware
+func (sh *strictHandler) RegenerateOwnMFARecoveryCodes(w http.ResponseWriter, r *http.Request, params RegenerateOwnMFARecoveryCodesParams) {
+	var request RegenerateOwnMFARecoveryCodesRequestObject
+
+	request.Params = params
+
+	var body RegenerateOwnMFARecoveryCodesJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RegenerateOwnMFARecoveryCodes(ctx, request.(RegenerateOwnMFARecoveryCodesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RegenerateOwnMFARecoveryCodes")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RegenerateOwnMFARecoveryCodesResponseObject); ok {
+		if err := validResponse.VisitRegenerateOwnMFARecoveryCodesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// BeginOwnMFA operation middleware
+func (sh *strictHandler) BeginOwnMFA(w http.ResponseWriter, r *http.Request, params BeginOwnMFAParams) {
+	var request BeginOwnMFARequestObject
+
+	request.Params = params
+
+	var body BeginOwnMFAJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.BeginOwnMFA(ctx, request.(BeginOwnMFARequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "BeginOwnMFA")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(BeginOwnMFAResponseObject); ok {
+		if err := validResponse.VisitBeginOwnMFAResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ChangeOwnPassword operation middleware
+func (sh *strictHandler) ChangeOwnPassword(w http.ResponseWriter, r *http.Request, params ChangeOwnPasswordParams) {
+	var request ChangeOwnPasswordRequestObject
+
+	request.Params = params
+
+	var body ChangeOwnPasswordJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ChangeOwnPassword(ctx, request.(ChangeOwnPasswordRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ChangeOwnPassword")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ChangeOwnPasswordResponseObject); ok {
+		if err := validResponse.VisitChangeOwnPasswordResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetOwnSecurityCommand operation middleware
+func (sh *strictHandler) GetOwnSecurityCommand(w http.ResponseWriter, r *http.Request, commandKey string) {
+	var request GetOwnSecurityCommandRequestObject
+
+	request.CommandKey = commandKey
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetOwnSecurityCommand(ctx, request.(GetOwnSecurityCommandRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetOwnSecurityCommand")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetOwnSecurityCommandResponseObject); ok {
+		if err := validResponse.VisitGetOwnSecurityCommandResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListOwnSessions operation middleware
+func (sh *strictHandler) ListOwnSessions(w http.ResponseWriter, r *http.Request) {
+	var request ListOwnSessionsRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListOwnSessions(ctx, request.(ListOwnSessionsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListOwnSessions")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListOwnSessionsResponseObject); ok {
+		if err := validResponse.VisitListOwnSessionsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RevokeOtherSessions operation middleware
+func (sh *strictHandler) RevokeOtherSessions(w http.ResponseWriter, r *http.Request, params RevokeOtherSessionsParams) {
+	var request RevokeOtherSessionsRequestObject
+
+	request.Params = params
+
+	var body RevokeOtherSessionsJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RevokeOtherSessions(ctx, request.(RevokeOtherSessionsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RevokeOtherSessions")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RevokeOtherSessionsResponseObject); ok {
+		if err := validResponse.VisitRevokeOtherSessionsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RevokeOwnSession operation middleware
+func (sh *strictHandler) RevokeOwnSession(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RevokeOwnSessionParams) {
+	var request RevokeOwnSessionRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RevokeOwnSession(ctx, request.(RevokeOwnSessionRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RevokeOwnSession")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RevokeOwnSessionResponseObject); ok {
+		if err := validResponse.VisitRevokeOwnSessionResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // SetupAdmin operation middleware
-func (sh *strictHandler) SetupAdmin(w http.ResponseWriter, r *http.Request) {
+func (sh *strictHandler) SetupAdmin(w http.ResponseWriter, r *http.Request, params SetupAdminParams) {
 	var request SetupAdminRequestObject
+
+	request.Params = params
 
 	var body SetupAdminJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -33419,6 +41610,94 @@ func (sh *strictHandler) RevokeOwnToken(w http.ResponseWriter, r *http.Request, 
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(RevokeOwnTokenResponseObject); ok {
 		if err := validResponse.VisitRevokeOwnTokenResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetClassification operation middleware
+func (sh *strictHandler) GetClassification(w http.ResponseWriter, r *http.Request) {
+	var request GetClassificationRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetClassification(ctx, request.(GetClassificationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetClassification")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetClassificationResponseObject); ok {
+		if err := validResponse.VisitGetClassificationResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PublishClassification operation middleware
+func (sh *strictHandler) PublishClassification(w http.ResponseWriter, r *http.Request, params PublishClassificationParams) {
+	var request PublishClassificationRequestObject
+
+	request.Params = params
+
+	var body PublishClassificationJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PublishClassification(ctx, request.(PublishClassificationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PublishClassification")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PublishClassificationResponseObject); ok {
+		if err := validResponse.VisitPublishClassificationResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PreviewClassification operation middleware
+func (sh *strictHandler) PreviewClassification(w http.ResponseWriter, r *http.Request) {
+	var request PreviewClassificationRequestObject
+
+	var body PreviewClassificationJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PreviewClassification(ctx, request.(PreviewClassificationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PreviewClassification")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PreviewClassificationResponseObject); ok {
+		if err := validResponse.VisitPreviewClassificationResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -34381,8 +42660,10 @@ func (sh *strictHandler) ReadCookieCloudConfigReceipt(w http.ResponseWriter, r *
 }
 
 // ListIntegrationDeliveries operation middleware
-func (sh *strictHandler) ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request) {
+func (sh *strictHandler) ListIntegrationDeliveries(w http.ResponseWriter, r *http.Request, params ListIntegrationDeliveriesParams) {
 	var request ListIntegrationDeliveriesRequestObject
+
+	request.Params = params
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
 		return sh.ssi.ListIntegrationDeliveries(ctx, request.(ListIntegrationDeliveriesRequestObject))
@@ -34496,6 +42777,37 @@ func (sh *strictHandler) ListNotificationBatches(w http.ResponseWriter, r *http.
 	}
 }
 
+// ReceiveSeerrWebhook operation middleware
+func (sh *strictHandler) ReceiveSeerrWebhook(w http.ResponseWriter, r *http.Request) {
+	var request ReceiveSeerrWebhookRequestObject
+
+	var body ReceiveSeerrWebhookJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReceiveSeerrWebhook(ctx, request.(ReceiveSeerrWebhookRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReceiveSeerrWebhook")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReceiveSeerrWebhookResponseObject); ok {
+		if err := validResponse.VisitReceiveSeerrWebhookResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // ListLibraryRootSelections operation middleware
 func (sh *strictHandler) ListLibraryRootSelections(w http.ResponseWriter, r *http.Request) {
 	var request ListLibraryRootSelectionsRequestObject
@@ -34539,6 +42851,100 @@ func (sh *strictHandler) ListLibraryCatalog(w http.ResponseWriter, r *http.Reque
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(ListLibraryCatalogResponseObject); ok {
 		if err := validResponse.VisitListLibraryCatalogResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetSubtitleCandidates operation middleware
+func (sh *strictHandler) GetSubtitleCandidates(w http.ResponseWriter, r *http.Request, fileId openapi_types.UUID) {
+	var request GetSubtitleCandidatesRequestObject
+
+	request.FileId = fileId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetSubtitleCandidates(ctx, request.(GetSubtitleCandidatesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetSubtitleCandidates")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetSubtitleCandidatesResponseObject); ok {
+		if err := validResponse.VisitGetSubtitleCandidatesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// QuerySubtitleCandidates operation middleware
+func (sh *strictHandler) QuerySubtitleCandidates(w http.ResponseWriter, r *http.Request, fileId openapi_types.UUID, params QuerySubtitleCandidatesParams) {
+	var request QuerySubtitleCandidatesRequestObject
+
+	request.FileId = fileId
+	request.Params = params
+
+	var body QuerySubtitleCandidatesJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.QuerySubtitleCandidates(ctx, request.(QuerySubtitleCandidatesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "QuerySubtitleCandidates")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(QuerySubtitleCandidatesResponseObject); ok {
+		if err := validResponse.VisitQuerySubtitleCandidatesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ConfirmSubtitleCandidate operation middleware
+func (sh *strictHandler) ConfirmSubtitleCandidate(w http.ResponseWriter, r *http.Request, fileId openapi_types.UUID, candidateId openapi_types.UUID) {
+	var request ConfirmSubtitleCandidateRequestObject
+
+	request.FileId = fileId
+	request.CandidateId = candidateId
+
+	var body ConfirmSubtitleCandidateJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ConfirmSubtitleCandidate(ctx, request.(ConfirmSubtitleCandidateRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ConfirmSubtitleCandidate")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ConfirmSubtitleCandidateResponseObject); ok {
+		if err := validResponse.VisitConfirmSubtitleCandidateResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -34608,8 +43014,10 @@ func (sh *strictHandler) CorrectFileMapping(w http.ResponseWriter, r *http.Reque
 }
 
 // GetFileMappingOptions operation middleware
-func (sh *strictHandler) GetFileMappingOptions(w http.ResponseWriter, r *http.Request) {
+func (sh *strictHandler) GetFileMappingOptions(w http.ResponseWriter, r *http.Request, params GetFileMappingOptionsParams) {
 	var request GetFileMappingOptionsRequestObject
+
+	request.Params = params
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
 		return sh.ssi.GetFileMappingOptions(ctx, request.(GetFileMappingOptionsRequestObject))
@@ -34738,6 +43146,145 @@ func (sh *strictHandler) ConfirmLibraryReuse(w http.ResponseWriter, r *http.Requ
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(ConfirmLibraryReuseResponseObject); ok {
 		if err := validResponse.VisitConfirmLibraryReuseResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedCompanions operation middleware
+func (sh *strictHandler) ReadUntrackedCompanions(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID) {
+	var request ReadUntrackedCompanionsRequestObject
+
+	request.OperationId = operationId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedCompanions(ctx, request.(ReadUntrackedCompanionsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedCompanions")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedCompanionsResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedCompanionsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SelectUntrackedCompanions operation middleware
+func (sh *strictHandler) SelectUntrackedCompanions(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID, params SelectUntrackedCompanionsParams) {
+	var request SelectUntrackedCompanionsRequestObject
+
+	request.OperationId = operationId
+	request.Params = params
+
+	var body SelectUntrackedCompanionsJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SelectUntrackedCompanions(ctx, request.(SelectUntrackedCompanionsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SelectUntrackedCompanions")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SelectUntrackedCompanionsResponseObject); ok {
+		if err := validResponse.VisitSelectUntrackedCompanionsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DiscoverUntrackedCompanions operation middleware
+func (sh *strictHandler) DiscoverUntrackedCompanions(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID) {
+	var request DiscoverUntrackedCompanionsRequestObject
+
+	request.OperationId = operationId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.DiscoverUntrackedCompanions(ctx, request.(DiscoverUntrackedCompanionsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DiscoverUntrackedCompanions")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(DiscoverUntrackedCompanionsResponseObject); ok {
+		if err := validResponse.VisitDiscoverUntrackedCompanionsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ExecuteUntrackedCompanion operation middleware
+func (sh *strictHandler) ExecuteUntrackedCompanion(w http.ResponseWriter, r *http.Request, operationId openapi_types.UUID, attachmentId openapi_types.UUID) {
+	var request ExecuteUntrackedCompanionRequestObject
+
+	request.OperationId = operationId
+	request.AttachmentId = attachmentId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ExecuteUntrackedCompanion(ctx, request.(ExecuteUntrackedCompanionRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ExecuteUntrackedCompanion")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ExecuteUntrackedCompanionResponseObject); ok {
+		if err := validResponse.VisitExecuteUntrackedCompanionResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ListUntrackedReviewScopes operation middleware
+func (sh *strictHandler) ListUntrackedReviewScopes(w http.ResponseWriter, r *http.Request, params ListUntrackedReviewScopesParams) {
+	var request ListUntrackedReviewScopesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListUntrackedReviewScopes(ctx, request.(ListUntrackedReviewScopesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListUntrackedReviewScopes")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListUntrackedReviewScopesResponseObject); ok {
+		if err := validResponse.VisitListUntrackedReviewScopesResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -34915,6 +43462,34 @@ func (sh *strictHandler) ConfirmUntrackedFile(w http.ResponseWriter, r *http.Req
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(ConfirmUntrackedFileResponseObject); ok {
 		if err := validResponse.VisitConfirmUntrackedFileResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadUntrackedReviewEpisodeOptions operation middleware
+func (sh *strictHandler) ReadUntrackedReviewEpisodeOptions(w http.ResponseWriter, r *http.Request, scopeId openapi_types.UUID, fileId openapi_types.UUID, params ReadUntrackedReviewEpisodeOptionsParams) {
+	var request ReadUntrackedReviewEpisodeOptionsRequestObject
+
+	request.ScopeId = scopeId
+	request.FileId = fileId
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadUntrackedReviewEpisodeOptions(ctx, request.(ReadUntrackedReviewEpisodeOptionsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadUntrackedReviewEpisodeOptions")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadUntrackedReviewEpisodeOptionsResponseObject); ok {
+		if err := validResponse.VisitReadUntrackedReviewEpisodeOptionsResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -35987,6 +44562,94 @@ func (sh *strictHandler) ListCompleteTVOrganizations(w http.ResponseWriter, r *h
 	}
 }
 
+// GetOperationDownloadControl operation middleware
+func (sh *strictHandler) GetOperationDownloadControl(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params GetOperationDownloadControlParams) {
+	var request GetOperationDownloadControlRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetOperationDownloadControl(ctx, request.(GetOperationDownloadControlRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetOperationDownloadControl")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetOperationDownloadControlResponseObject); ok {
+		if err := validResponse.VisitGetOperationDownloadControlResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ControlOperationDownload operation middleware
+func (sh *strictHandler) ControlOperationDownload(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ControlOperationDownloadParams) {
+	var request ControlOperationDownloadRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	var body ControlOperationDownloadJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ControlOperationDownload(ctx, request.(ControlOperationDownloadRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ControlOperationDownload")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ControlOperationDownloadResponseObject); ok {
+		if err := validResponse.VisitControlOperationDownloadResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ObserveOperationDownloadControl operation middleware
+func (sh *strictHandler) ObserveOperationDownloadControl(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params ObserveOperationDownloadControlParams) {
+	var request ObserveOperationDownloadControlRequestObject
+
+	request.Id = id
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ObserveOperationDownloadControl(ctx, request.(ObserveOperationDownloadControlRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ObserveOperationDownloadControl")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ObserveOperationDownloadControlResponseObject); ok {
+		if err := validResponse.VisitObserveOperationDownloadControlResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // ListOwnOperationRequirements operation middleware
 func (sh *strictHandler) ListOwnOperationRequirements(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
 	var request ListOwnOperationRequirementsRequestObject
@@ -36041,6 +44704,42 @@ func (sh *strictHandler) WithdrawOwnRequirement(w http.ResponseWriter, r *http.R
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(WithdrawOwnRequirementResponseObject); ok {
 		if err := validResponse.VisitWithdrawOwnRequirementResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ObserveOperationSeeding operation middleware
+func (sh *strictHandler) ObserveOperationSeeding(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+	var request ObserveOperationSeedingRequestObject
+
+	request.Id = id
+
+	var body ObserveOperationSeedingJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		if !errors.Is(err, io.EOF) {
+			sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+			return
+		}
+	} else {
+		request.Body = &body
+	}
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ObserveOperationSeeding(ctx, request.(ObserveOperationSeedingRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ObserveOperationSeeding")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ObserveOperationSeedingResponseObject); ok {
+		if err := validResponse.VisitObserveOperationSeedingResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -36621,6 +45320,30 @@ func (sh *strictHandler) SearchMovieReleases(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// ListSeerrReceipts operation middleware
+func (sh *strictHandler) ListSeerrReceipts(w http.ResponseWriter, r *http.Request) {
+	var request ListSeerrReceiptsRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListSeerrReceipts(ctx, request.(ListSeerrReceiptsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListSeerrReceipts")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListSeerrReceiptsResponseObject); ok {
+		if err := validResponse.VisitListSeerrReceiptsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // GetSettings operation middleware
 func (sh *strictHandler) GetSettings(w http.ResponseWriter, r *http.Request) {
 	var request GetSettingsRequestObject
@@ -36638,6 +45361,92 @@ func (sh *strictHandler) GetSettings(w http.ResponseWriter, r *http.Request) {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetSettingsResponseObject); ok {
 		if err := validResponse.VisitGetSettingsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// RunMetadataDiagnostic operation middleware
+func (sh *strictHandler) RunMetadataDiagnostic(w http.ResponseWriter, r *http.Request) {
+	var request RunMetadataDiagnosticRequestObject
+
+	var body RunMetadataDiagnosticJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.RunMetadataDiagnostic(ctx, request.(RunMetadataDiagnosticRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RunMetadataDiagnostic")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(RunMetadataDiagnosticResponseObject); ok {
+		if err := validResponse.VisitRunMetadataDiagnosticResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetSeerrConfiguration operation middleware
+func (sh *strictHandler) GetSeerrConfiguration(w http.ResponseWriter, r *http.Request) {
+	var request GetSeerrConfigurationRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetSeerrConfiguration(ctx, request.(GetSeerrConfigurationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetSeerrConfiguration")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetSeerrConfigurationResponseObject); ok {
+		if err := validResponse.VisitGetSeerrConfigurationResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// SaveSeerrConfiguration operation middleware
+func (sh *strictHandler) SaveSeerrConfiguration(w http.ResponseWriter, r *http.Request) {
+	var request SaveSeerrConfigurationRequestObject
+
+	var body SaveSeerrConfigurationJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.SaveSeerrConfiguration(ctx, request.(SaveSeerrConfigurationRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "SaveSeerrConfiguration")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(SaveSeerrConfigurationResponseObject); ok {
+		if err := validResponse.VisitSaveSeerrConfigurationResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -36758,8 +45567,10 @@ func (sh *strictHandler) GetSubscriptionCreationReceipt(w http.ResponseWriter, r
 }
 
 // ListSubscriptions operation middleware
-func (sh *strictHandler) ListSubscriptions(w http.ResponseWriter, r *http.Request) {
+func (sh *strictHandler) ListSubscriptions(w http.ResponseWriter, r *http.Request, params ListSubscriptionsParams) {
 	var request ListSubscriptionsRequestObject
+
+	request.Params = params
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
 		return sh.ssi.ListSubscriptions(ctx, request.(ListSubscriptionsRequestObject))
@@ -37215,6 +46026,32 @@ func (sh *strictHandler) PreviewEpisodeMapping(w http.ResponseWriter, r *http.Re
 	}
 }
 
+// GetSubscriptionExecution operation middleware
+func (sh *strictHandler) GetSubscriptionExecution(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+	var request GetSubscriptionExecutionRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetSubscriptionExecution(ctx, request.(GetSubscriptionExecutionRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetSubscriptionExecution")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetSubscriptionExecutionResponseObject); ok {
+		if err := validResponse.VisitGetSubscriptionExecutionResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // RefreshTVEpisodeMetadata operation middleware
 func (sh *strictHandler) RefreshTVEpisodeMetadata(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, params RefreshTVEpisodeMetadataParams) {
 	var request RefreshTVEpisodeMetadataRequestObject
@@ -37242,6 +46079,32 @@ func (sh *strictHandler) RefreshTVEpisodeMetadata(w http.ResponseWriter, r *http
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(RefreshTVEpisodeMetadataResponseObject); ok {
 		if err := validResponse.VisitRefreshTVEpisodeMetadataResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetMovieDiscovery operation middleware
+func (sh *strictHandler) GetMovieDiscovery(w http.ResponseWriter, r *http.Request, id openapi_types.UUID) {
+	var request GetMovieDiscoveryRequestObject
+
+	request.Id = id
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetMovieDiscovery(ctx, request.(GetMovieDiscoveryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetMovieDiscovery")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetMovieDiscoveryResponseObject); ok {
+		if err := validResponse.VisitGetMovieDiscoveryResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -37413,6 +46276,33 @@ func (sh *strictHandler) PreviewTVCoverageCandidateReview(w http.ResponseWriter,
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(PreviewTVCoverageCandidateReviewResponseObject); ok {
 		if err := validResponse.VisitPreviewTVCoverageCandidateReviewResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetTVEpisodeDiscovery operation middleware
+func (sh *strictHandler) GetTVEpisodeDiscovery(w http.ResponseWriter, r *http.Request, id openapi_types.UUID, unitId openapi_types.UUID) {
+	var request GetTVEpisodeDiscoveryRequestObject
+
+	request.Id = id
+	request.UnitId = unitId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetTVEpisodeDiscovery(ctx, request.(GetTVEpisodeDiscoveryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetTVEpisodeDiscovery")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetTVEpisodeDiscoveryResponseObject); ok {
+		if err := validResponse.VisitGetTVEpisodeDiscoveryResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -38037,6 +46927,30 @@ func (sh *strictHandler) StreamSystemLogs(w http.ResponseWriter, r *http.Request
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(StreamSystemLogsResponseObject); ok {
 		if err := validResponse.VisitStreamSystemLogsResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// ReadSystemMetrics operation middleware
+func (sh *strictHandler) ReadSystemMetrics(w http.ResponseWriter, r *http.Request) {
+	var request ReadSystemMetricsRequestObject
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ReadSystemMetrics(ctx, request.(ReadSystemMetricsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ReadSystemMetrics")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ReadSystemMetricsResponseObject); ok {
+		if err := validResponse.VisitReadSystemMetricsResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

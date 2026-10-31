@@ -155,7 +155,7 @@ func TestAuthenticationLoginWaitsForAccountLockPG(t *testing.T) {
 	defer ticker.Stop()
 	waiting := false
 	for !waiting {
-		if err := pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE '%LockUserForLogin%')`).Scan(&waiting); err != nil {
+		if err := pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE '%LockAccountForSecurity%')`).Scan(&waiting); err != nil {
 			t.Fatal(err)
 		}
 		if !waiting {

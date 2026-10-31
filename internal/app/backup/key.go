@@ -10,7 +10,22 @@ import (
 
 // Validate native BYTEA ciphertext as bytes; only settings use base64 JSON.
 func validateKey(ctx context.Context, db *pgx.Conn, key []byte) error {
-	rows, e := db.Query(ctx, `SELECT api_key_encrypted FROM indexer UNION ALL SELECT link_encrypted FROM release_candidate UNION ALL SELECT password_encrypted FROM download_client UNION ALL SELECT api_key_encrypted FROM media_server UNION ALL SELECT config_encrypted FROM notification_channel UNION ALL SELECT rss_url_encrypted FROM indexer`)
+	query := `SELECT api_key_encrypted FROM indexer UNION ALL SELECT link_encrypted FROM release_candidate UNION ALL SELECT password_encrypted FROM download_client UNION ALL SELECT api_key_encrypted FROM media_server UNION ALL SELECT config_encrypted FROM notification_channel UNION ALL SELECT rss_url_encrypted FROM indexer`
+	// Restore validates before migration, so historical dumps may lack these tables.
+	for _, secret := range []struct{ table, column string }{
+		{"account_totp", "secret_ciphertext"},
+		{"seerr_configuration", "credential_encrypted"},
+		{"subtitle_candidate", "content_encrypted"},
+	} {
+		var exists bool
+		if e := db.QueryRow(ctx, `SELECT to_regclass($1) IS NOT NULL`, secret.table).Scan(&exists); e != nil {
+			return errors.New("secret inventory unavailable")
+		}
+		if exists {
+			query += " UNION ALL SELECT " + pgx.Identifier{secret.column}.Sanitize() + " FROM " + pgx.Identifier{secret.table}.Sanitize()
+		}
+	}
+	rows, e := db.Query(ctx, query)
 	if e != nil {
 		return errors.New("secret inventory unavailable")
 	}

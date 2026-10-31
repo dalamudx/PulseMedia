@@ -277,7 +277,7 @@ func runM5EndpointChrome(t *testing.T, mode string) {
 			router.ServeHTTP(w, r)
 			return
 		}
-		if strings.HasPrefix(r.URL.Path, "/assets/") {
+		if r.URL.Path == "/theme.js" || strings.HasPrefix(r.URL.Path, "/assets/") {
 			files.ServeHTTP(w, r)
 			return
 		}

@@ -142,14 +142,7 @@ func (c *Client) Send(ctx context.Context, n ports.Notification) error {
 	return ports.ErrRejected
 }
 func (c *Client) rateLimit(value string) error {
-	delay := time.Minute
-	if v, e := strconv.ParseInt(value, 10, 32); e == nil && v > 0 && v <= 86400 {
-		delay = time.Duration(v) * time.Second
-	} else if v, e := http.ParseTime(value); e == nil {
-		if d := v.Sub(c.now()); d > 0 && d <= 24*time.Hour {
-			delay = d
-		}
-	}
+	delay := transport.RetryAfter(value, c.now(), time.Minute)
 	return ports.NewRateLimitError(delay, "notification channel rate limited")
 }
 func (c *Client) payload(n ports.Notification) (string, map[string]any) {

@@ -29,8 +29,12 @@ func (s *ServerHandler) CreateSubscription(ctx context.Context, req CreateSubscr
 	}
 	b := req.Body
 	in := ports.SubscriptionCreationInput{
-		MediaID: b.MediaId, TMDBID: b.TmdbId, RootID: b.RootId,
+		MediaID: b.MediaId, TMDBID: b.TmdbId, RootID: b.RootId, ClassificationVersion: b.ClassificationVersion,
 		DownloaderID: b.DownloaderId, ExpectedIntentVersion: b.ExpectedIntentVersion,
+	}
+	in.ClassificationPreviewRootID = b.ClassificationPreviewRootId
+	if b.ClassificationPreviewStamp != nil {
+		in.ClassificationPreviewStamp = *b.ClassificationPreviewStamp
 	}
 	if b.MediaType != nil {
 		in.MediaType = string(*b.MediaType)
@@ -127,6 +131,10 @@ func subscriptionCreationError(ctx context.Context, err error) subscriptionCreat
 		status, code, message = http.StatusNotFound, "NOT_FOUND", "subscription command or selected object not found"
 	case errors.Is(err, ports.ErrSubscriptionBindingsConflict):
 		status, code, message = http.StatusConflict, "VERSION_CONFLICT", "command or intent changed; reread before changing the original request"
+	case errors.Is(err, ports.ErrClassificationConflict):
+		status, code, message = http.StatusConflict, "CLASSIFICATION_CONFLICT", "classification version or target changed; reread before creating"
+	case errors.Is(err, ports.ErrClassificationEvidence):
+		status, code, message = http.StatusConflict, "INSUFFICIENT_EVIDENCE", "trusted media metadata is required for classification"
 	case errors.Is(err, ports.ErrNoSubscriptionRoot):
 		status, code, message = http.StatusBadRequest, "NO_ROOT_AVAILABLE", "select a matching online library root"
 	case errors.Is(err, ports.ErrAmbiguousSubscriptionRoot):

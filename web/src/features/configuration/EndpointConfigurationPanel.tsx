@@ -1,6 +1,23 @@
 import { useEndpointConfiguration, type EndpointFamily } from "./useEndpointConfiguration";
 import "./configuration.css";
 
+export function downloadCapabilities(type: string): { supported: string; limits: string } {
+  switch (type) {
+    case "qbittorrent": return {
+      supported: "普通电影、标准单集、自动追剧、整季包和电影升级均有对应入口。",
+      limits: "全局速率需管理员启用部署开关；做种达标移除仅限已验证入库的普通任务，始终保留文件。各入口仍需单独核验授权。",
+    };
+    case "transmission": return {
+      supported: "支持普通电影、自动追剧标准单集、整季包获取与显式整理，以及电影升级、观察和退役。",
+      limits: "暂不支持手工单集。全局速率需启用部署开关；做种移除仅限已验证入库的普通任务，始终保留文件。各入口仍需单独核验授权。"
+    };
+    case "rtorrent": return {
+      supported: "支持普通电影下载、原任务观察、暂停/恢复和硬链接入库；可采集全局上传与下载速率。",
+      limits: "暂不支持自动追剧、手工单集、整季包、电影升级和做种自动移除。全局速率需管理员启用部署开关；仅支持 HTTP(S) XML-RPC，SCGI 需要外部桥接。",
+    };
+    default: return { supported: "当前类型的业务能力尚未确认。", limits: "请选用支持的下载器类型；连接测试成功不能证明可以执行下载或整理。" };
+  }
+}
 export function EndpointConfigurationPanel({ family }: { family: EndpointFamily }) {
   const model = useEndpointConfiguration(family);
   const download = family === "download_client", label = download ? "下载器" : "媒体服务器";
@@ -13,7 +30,7 @@ export function EndpointConfigurationPanel({ family }: { family: EndpointFamily 
 
   return <section className="card" aria-labelledby={`${prefix}-title`} aria-busy={model.busy !== null}>
     <div className="card-header config-heading">
-      <h3 id={`${prefix}-title`}>{label}配置{download ? " (qBittorrent / Transmission)" : " (Jellyfin / Emby)"}</h3>
+      <h3 id={`${prefix}-title`}>{label}配置</h3>
       <button type="button" className="btn-sm btn-secondary" disabled={model.busy !== null} onClick={() => { void (reread ? model.reread() : model.refresh()); }}>
         {model.busy === "read" ? "读取中..." : reread ? "重新读取（放弃草稿）" : model.gate === "unknown" ? "重新读取并核对" : model.listStatus === "error" || model.gate === "saved" ? "重新读取" : "刷新列表"}
       </button>
@@ -41,10 +58,15 @@ export function EndpointConfigurationPanel({ family }: { family: EndpointFamily 
           <div className="form-grid">
             <div className="form-group">
               <label htmlFor={`${prefix}-type`}>{download ? "下载器类型" : "服务器类型"}</label>
-              <select id={`${prefix}-type`} value={draft.type} onChange={event => model.change("type", event.target.value)}>
+              <select id={`${prefix}-type`} value={draft.type} aria-describedby={download ? `${prefix}-capabilities` : undefined} onChange={event => model.change("type", event.target.value)}>
                 {legacy ? <option value={draft.type} disabled>{draft.type}（已有配置）</option> : null}
                 {options.map(([value, name]) => <option key={value} value={value}>{name}</option>)}
               </select>
+              {download ? <div id={`${prefix}-capabilities`} role="status">
+                <p className="config-description">{downloadCapabilities(draft.type).supported}</p>
+                <p className="config-description">{downloadCapabilities(draft.type).limits}</p>
+                <p className="config-description">硬链接要求源与目标位于同一文件系统。NAS 挂载成功不代表支持安全复制或移动，执行前仍需核验目录能力。</p>
+              </div> : null}
             </div>
             <div className="form-group">
               <label htmlFor={`${prefix}-name`}>{label}名称</label>

@@ -23,7 +23,7 @@ func TestCompleteTVOrganizationMediaSizeBoundaryPG(t *testing.T) {
 				minimum++
 			}
 			ids := idgen.New()
-			repository := transferstore.NewRepositoryWithMinimumMediaBytes(f.n.f.a.DBPool(), ids, outbox.New(f.n.f.a.DBPool(), ids, clock.New()), rootfs.NewFilesystem(), minimum)
+			repository := transferstore.NewRepositoryWithMinimumMediaBytes(f.n.f.a.DBPool(), ids, outbox.New(f.n.f.a.DBPool(), ids, clock.New()), rootfs.NewFilesystem(), minimum, transfer.ExecutePreparedPlan)
 			service := transfer.NewCompleteTVOrganizationService(repository)
 			snapshot := func() string {
 				t.Helper()
@@ -67,7 +67,7 @@ func TestCompleteTVOrganizationMediaSizeBoundaryPG(t *testing.T) {
 				if err != nil || receipt == nil {
 					t.Fatal("exact minimum rejected full bundle", err)
 				}
-				highRepo := transferstore.NewRepositoryWithMinimumMediaBytes(f.n.f.a.DBPool(), ids, outbox.New(f.n.f.a.DBPool(), ids, clock.New()), rootfs.NewFilesystem(), minimum+1)
+				highRepo := transferstore.NewRepositoryWithMinimumMediaBytes(f.n.f.a.DBPool(), ids, outbox.New(f.n.f.a.DBPool(), ids, clock.New()), rootfs.NewFilesystem(), minimum+1, transfer.ExecutePreparedPlan)
 				replay, err := transfer.NewCompleteTVOrganizationService(highRepo).Confirm(t.Context(), f.n.actor, f.command, "size-boundary")
 				if err != nil || replay == nil || *replay != *receipt {
 					t.Fatal("higher minimum invalidated original receipt", err)

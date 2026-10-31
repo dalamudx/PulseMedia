@@ -39,8 +39,8 @@ func taskDTO(t *db.DownloadTask, e error) (*ports.DownloadExecutionTask, error) 
 	}
 	return out, e
 }
-func (r *Repository) SubmitDownload(ctx context.Context, op, client, candidate uuid.UUID, path string, authority ...ports.JobLease) (*ports.DownloadExecutionTask, error) {
-	return taskDTO(r.execution.SubmitDownload(ctx, op, client, candidate, path, authority...))
+func (r *Repository) PrepareDownload(ctx context.Context, op, client, candidate uuid.UUID, path string, authority ...ports.JobLease) (*ports.PreparedDownload, error) {
+	return r.execution.PrepareDownload(ctx, op, client, candidate, path, authority...)
 }
 func (r *Repository) ReconcileTask(ctx context.Context, op uuid.UUID) (*ports.DownloadExecutionTask, error) {
 	return taskDTO(r.execution.ReconcileTask(ctx, op))

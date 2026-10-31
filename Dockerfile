@@ -7,7 +7,10 @@ ARG COMMIT=uncommitted
 LABEL org.opencontainers.image.title="PulseMedia" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${COMMIT}"
-RUN groupadd --gid 10001 pulsemedia \
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates \
+ && rm -rf /var/lib/apt/lists/* \
+ && groupadd --gid 10001 pulsemedia \
  && useradd --uid 10001 --gid 10001 --home-dir /app --no-create-home pulsemedia \
  && install -d -m 0700 -o 10001 -g 10001 /app/data /data/temp
 WORKDIR /app

@@ -4,6 +4,802 @@ info:
   version: 0.1.0
   description: HTTP API specification for PulseMedia media automation hub.
 paths:
+  /api/v1/subscriptions/{id}/tv-episode-upgrade-previews:
+    post:
+      operationId: previewTVEpisodeUpgrade
+      tags: [Subscriptions]
+      description: Administrator Cookie-only read-only comparison of one canonical episode, one current file and one candidate. Does not authorize execution.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/TVEpisodeUpgradeInput'}
+      responses:
+        '200': {description: Current comparison, content: {application/json: {schema: {$ref: '#/components/schemas/TVEpisodeUpgradeResult'}}}}
+        default: {description: Safe admission or stale-evidence error, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/subscriptions/{id}/tv-episode-upgrade-commands:
+    post:
+      operationId: commandTVEpisodeUpgrade
+      tags: [Subscriptions]
+      description: Explicit dedicated single-episode phase. Original command keys recover receipts without repeating physical writes. Unknown outcomes retain reservations and require observation.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 128}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/TVEpisodeUpgradeCommand'}
+      responses:
+        '202': {description: Durable phase receipt; execution_allowed is false, content: {application/json: {schema: {$ref: '#/components/schemas/TVEpisodeUpgradeResult'}}}}
+        default: {description: Safe admission or stale-evidence error, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/subscriptions/{id}/tv-episode-upgrade-commands/{key}:
+    get:
+      operationId: readTVEpisodeUpgradeCommand
+      tags: [Subscriptions]
+      description: Cookie-only database receipt recovery; never invokes the downloader or filesystem.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 128}}
+      responses:
+        '200': {description: Original receipt, content: {application/json: {schema: {$ref: '#/components/schemas/TVEpisodeUpgradeResult'}}}}
+        default: {description: Safe admission or absent-receipt error, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/settings/metadata-diagnostics:
+    post:
+      operationId: runMetadataDiagnostic
+      tags: [Settings]
+      description: Explicit administrator Cookie-only test of a fixed TMDB target using the current production configuration. No arbitrary URLs, automatic requests, business writes or secret responses. All outcomes are private and not cached.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/MetadataDiagnosticInput'}
+      responses:
+        '200': {description: Safe diagnostic result, content: {application/json: {schema: {$ref: '#/components/schemas/MetadataDiagnosticResult'}}}}
+        '400': {description: Rejected request, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Authentication required, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Current administrator Cookie required, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Diagnostic unavailable, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/operations/{id}/seeding-observations:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    post:
+      operationId: observeOperationSeeding
+      tags: [Operations]
+      description: Manually inspect the original torrent using the current Cookie session and object authority. Transient read only; no scheduling or persistence.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              maxProperties: 0
+      responses:
+        '200':
+          description: Transient native seeding facts; unknown fields remain null
+          headers:
+            Cache-Control:
+              schema: { type: string, enum: ['private, no-store'] }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SeedingInspection' }
+        '400': { $ref: '#/components/responses/MPError' }
+        '401': { $ref: '#/components/responses/MPError' }
+        '403': { $ref: '#/components/responses/MPError' }
+        '404': { $ref: '#/components/responses/MPError' }
+        '409': { $ref: '#/components/responses/MPError' }
+        '503': { $ref: '#/components/responses/MPError' }
+  /api/v1/auth/security/commands/{command_key}:
+    get:
+      operationId: getOwnSecurityCommand
+      summary: Read the original safe account command receipt without replaying a write
+      parameters:
+        - {name: command_key, in: path, required: true, schema: {type: string, minLength: 1, maxLength: 160}}
+      responses:
+        '200':
+          description: Safe original receipt; secrets and recovery codes are never included
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SecurityCommandReceipt'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/accounts:
+    get:
+      operationId: listAccounts
+      summary: Account security operation requiring the current cookie session
+      responses:
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountList'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+    post:
+      operationId: createAccount
+      summary: Account security operation requiring the current cookie session
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateAccountRequest'}
+      responses:
+        '429': {$ref: '#/components/responses/MPError'}
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountCommandResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/accounts/{id}:
+    put:
+      operationId: updateAccount
+      summary: Account security operation requiring the current cookie session
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/UpdateAccountRequest'}
+      responses:
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountCommandResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/accounts/{id}/password:
+    post:
+      operationId: resetAccountPassword
+      summary: Reset a family member password after administrator reauthentication
+      description: >-
+        Requires the current administrator Cookie session and the administrator's current password
+        and enabled MFA. The target must be a different member account. Revokes all target sessions
+        and API Tokens and cancels pending MFA enrollment, while retaining enabled MFA and the
+        account's active/disabled state. Password, audit and original-key receipt commit atomically.
+        Replay and receipt reads never return passwords. Responses are private and no-store.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ChangeOwnPasswordRequest'}
+      responses:
+        '200':
+          description: Safe confirmation; no credentials are returned
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountCommandResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '408': {$ref: '#/components/responses/MPError'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '429': {$ref: '#/components/responses/MPError'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/sessions:
+    get:
+      operationId: listOwnSessions
+      summary: Account security operation requiring the current cookie session
+      responses:
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OwnSessionList'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/sessions/revoke-others:
+    post:
+      operationId: revokeOtherSessions
+      summary: Reauthenticate and revoke other sessions while retaining the current session and API tokens
+      description: Cookie only. Password and the enabled second factor are checked under the account lock. The original receipt retains the original kept session; replay does not revoke sessions created later.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DisableOwnMFARequest'}
+      responses:
+        '200':
+          description: Safe original command result; no credential or factor is returned
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountCommandResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '429': {$ref: '#/components/responses/MPError'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/sessions/{id}/revoke:
+    post:
+      operationId: revokeOwnSession
+      summary: Account security operation requiring the current cookie session
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountCommandResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/password:
+    post:
+      operationId: changeOwnPassword
+      summary: Account security operation requiring the current cookie session
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ChangeOwnPasswordRequest'}
+      responses:
+        '429': {$ref: '#/components/responses/MPError'}
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountCommandResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/mfa:
+    get:
+      operationId: getOwnMFA
+      summary: Account security operation requiring the current cookie session
+      responses:
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OwnMFAStatus'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/mfa/setup:
+    post:
+      operationId: beginOwnMFA
+      summary: Account security operation requiring the current cookie session
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/BeginOwnMFARequest'}
+      responses:
+        '429': {$ref: '#/components/responses/MPError'}
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OwnMFASetupResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/mfa/confirm:
+    post:
+      operationId: confirmOwnMFA
+      summary: Account security operation requiring the current cookie session
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ConfirmOwnMFARequest'}
+      responses:
+        '429': {$ref: '#/components/responses/MPError'}
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OwnMFAConfirmResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/mfa/disable:
+    post:
+      operationId: disableOwnMFA
+      summary: Account security operation requiring the current cookie session
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DisableOwnMFARequest'}
+      responses:
+        '429': {$ref: '#/components/responses/MPError'}
+        '200':
+          description: Safe result; replay never returns setup secrets or recovery codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AccountCommandResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/auth/mfa/recovery-codes:
+    post:
+      operationId: regenerateOwnMFARecoveryCodes
+      summary: Replace recovery codes after password and second-factor reauthentication
+      description: Requires enabled MFA and the current Cookie session. Replaces all old recovery codes and revokes other sessions and API Tokens atomically, retaining the current session and TOTP binding. Ten new codes are returned only by the first committed response; original-key replay and safe receipts never reveal codes. No automatic retry.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DisableOwnMFARequest'}
+      responses:
+        '200':
+          description: First committed response contains new recovery codes; replay is a safe receipt without codes
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OwnMFAConfirmResult'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '429': {$ref: '#/components/responses/MPError'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
+  /api/v1/operations/{id}/download-control:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: { type: string, minLength: 1, maxLength: 160 }
+    post:
+      operationId: controlOperationDownload
+      tags: [Operations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DownloadControlCommand' }
+      responses:
+        '200':
+          description: Persistent command receipt
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DownloadControlReceipt' }
+        '400':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '401':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '403':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '409':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '503':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+    get:
+      operationId: getOperationDownloadControl
+      tags: [Operations]
+      responses:
+        '400': {$ref: '#/components/responses/MPError'}
+        '200':
+          description: Persistent command receipt
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DownloadControlReceipt' }
+        '401':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '403':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '409':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '503':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+  /api/v1/operations/{id}/download-control/observations:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+      - name: Idempotency-Key
+        in: header
+        required: true
+        schema: { type: string, minLength: 1, maxLength: 160 }
+    post:
+      operationId: observeOperationDownloadControl
+      tags: [Operations]
+      responses:
+        '400': {$ref: '#/components/responses/MPError'}
+        '200':
+          description: Persistent command receipt
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DownloadControlReceipt' }
+        '401':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '403':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '404':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '409':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '503':
+          description: Request could not be completed
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+  /api/v1/settings/seerr:
+    get:
+      operationId: getSeerrConfiguration
+      responses:
+        default: {$ref: '#/components/responses/MPError'}
+        '200': {description: Safe configuration, content: {application/json: {schema: {$ref: '#/components/schemas/SeerrConfiguration'}}}}
+    put:
+      operationId: saveSeerrConfiguration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SeerrConfigurationInput'}
+      responses:
+        default: {$ref: '#/components/responses/MPError'}
+        '200': {description: Saved configuration, content: {application/json: {schema: {$ref: '#/components/schemas/SeerrConfiguration'}}}}
+  /api/v1/seerr/receipts:
+    get:
+      operationId: listSeerrReceipts
+      responses:
+        default: {$ref: '#/components/responses/MPError'}
+        '200': {description: Latest safe ingress receipts, content: {application/json: {schema: {type: object, required: [items], properties: {items: {type: array, items: {$ref: '#/components/schemas/SeerrReceipt'}}}}}}}
+  /api/v1/integrations/seerr:
+    post:
+      operationId: receiveSeerrWebhook
+      security: []
+      description: Dedicated webhook; Authorization header equals dedicated configured secret. Body <=64KiB. Accepts MEDIA_APPROVED and MEDIA_AUTO_APPROVED only. Both create a local pending request requiring local approval; TV requests require explicit Requested Seasons. Reusing a request ID with changed notification type or payload conflicts.
+      requestBody:
+        required: true
+        content: {application/json: {schema: {type: object, additionalProperties: true}}}
+      responses:
+        default: {$ref: '#/components/responses/MPError'}
+        '202': {description: Pending local request, content: {application/json: {schema: {$ref: '#/components/schemas/SeerrReceipt'}}}}
+  /api/v1/library/files/{file_id}/subtitle-candidates:
+    parameters: [{name: file_id, in: path, required: true, schema: {type: string, format: uuid}}]
+    get:
+      operationId: getSubtitleCandidates
+      responses:
+        default: {$ref: '#/components/responses/MPError'}
+        '200': {description: Latest stored query, content: {application/json: {schema: {$ref: '#/components/schemas/SubtitleCandidateState'}}}}
+  /api/v1/library/files/{file_id}/subtitle-candidates/queries:
+    parameters: [{name: file_id, in: path, required: true, schema: {type: string, format: uuid}}]
+    post:
+      operationId: querySubtitleCandidates
+      parameters: [{name: Idempotency-Key, in: header, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/SubtitleCandidateCommand'}}}
+      responses:
+        default: {$ref: '#/components/responses/MPError'}
+        '200': {description: Query outcome, content: {application/json: {schema: {$ref: '#/components/schemas/SubtitleCandidateState'}}}}
+  /api/v1/library/files/{file_id}/subtitle-candidates/{candidate_id}/confirm:
+    parameters: [{name: file_id, in: path, required: true, schema: {type: string, format: uuid}}, {name: candidate_id, in: path, required: true, schema: {type: string, format: uuid}}]
+    post:
+      operationId: confirmSubtitleCandidate
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/SubtitleCandidateCommand'}}}
+      responses:
+        default: {$ref: '#/components/responses/MPError'}
+        '200': {description: Publication outcome, content: {application/json: {schema: {$ref: '#/components/schemas/SubtitleCandidateState'}}}}
+  "/api/v1/subscriptions/{id}/execution":
+    "get":
+      "operationId": "getSubscriptionExecution"
+      "tags": ["Subscriptions"]
+      "parameters": [{"in":"path","name":"id","required":true,"schema":{"type":"string","format":"uuid"}}]
+      "responses":
+        "200":
+          "description": "Success"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/SubscriptionExecution"
+        "400":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "401":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "403":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "404":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "409":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "503":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v1/classification":
+    "get":
+      "operationId": "getClassification"
+      "tags": ["Settings"]
+      "responses":
+        "200":
+          "description": "Success"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ClassificationDocument"
+        "400":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "401":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "403":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "404":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "409":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "503":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+    "put":
+      "operationId": "publishClassification"
+      "tags": ["Settings"]
+      "parameters": [{"in":"header","name":"Idempotency-Key","required":true,"schema":{"type":"string","minLength":1,"maxLength":160}}]
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/ClassificationPublish"
+      "responses":
+        "200":
+          "description": "Success"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ClassificationDocument"
+        "400":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "401":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "403":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "404":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "409":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "503":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v1/classification/previews":
+    "post":
+      "operationId": "previewClassification"
+      "tags": ["Settings"]
+      "requestBody":
+        "required": true
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/ClassificationPreviewInput"
+      "responses":
+        "200":
+          "description": "Success"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ClassificationPreview"
+        "400":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "401":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "403":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "404":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "409":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
+        "503":
+          "description": "Request rejected"
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ErrorResponse"
   /api/v1/metadata/bangumi/calendar:
     get:
       operationId: getBangumiCalendar
@@ -309,6 +1105,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /api/v1/system/metrics:
+    get:
+      operationId: readSystemMetrics
+      summary: Read Prometheus process and queue metrics
+      description: Current administrators only, via a session or read-scoped API token. Prometheus text format 0.0.4, no cache. HTTP counters reset on process restart. Fixed worker-stage histograms and in-flight gauges describe six instrumented worker calls since App construction; call return is not business success, and cancellation does not end a still-running physical call. Pool gauges, lock waiters and oldest lock wait for the current database and login role, aggregate indexer time gates (not execution authorization), and aggregate job/outbox backlog are read on demand with a two-second database deadline; no native I/O or business mutation. Unavailable observations return 503, never fabricated zeroes. Successful retained job/delivery history is excluded; expired leases are observations, not authorization to retry.
+      responses:
+        '200':
+          description: Current process and database observations
+          headers:
+            Cache-Control: {schema: {type: string, enum: ['private, no-store']}}
+          content:
+            text/plain:
+              schema: {type: string}
+        '401':
+          description: Authentication required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Administrator and credential read permission required
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Current metrics unavailable
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+
   /api/v1/system/logs:
     get:
       summary: Real-time system log stream
@@ -408,6 +1233,12 @@ paths:
     post:
       summary: Initial administrator setup
       operationId: setupAdmin
+      parameters:
+        - in: header
+          name: X-Setup-Token
+          required: false
+          description: Deployment token required when PULSE_SETUP_TOKEN is configured; without it only direct loopback setup is allowed.
+          schema: {type: string}
       requestBody:
         required: true
         content:
@@ -1838,6 +2669,18 @@ paths:
     get:
       summary: List subscriptions for current user or all if admin
       operationId: listSubscriptions
+      description: Bounded local snapshot; never calls metadata providers. Default summary omits wanted_items. Calendar returns only a page of real dated episodes in a range of at most 42 days, or a separate unknown-date page. Offset pages are not frozen across requests. Counts and items share one authorized snapshot. All responses are private, no-store.
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 100, default: 50}}
+        - {name: offset, in: query, schema: {type: integer, minimum: 0, maximum: 1000000, default: 0}}
+        - {name: search, in: query, schema: {type: string, maxLength: 200}}
+        - {name: media_type, in: query, schema: {type: string, enum: [movie, tv]}}
+        - {name: tmdb_id, in: query, schema: {type: integer, format: int64, minimum: 1, maximum: 9007199254740991}}
+        - {name: own_only, in: query, schema: {type: boolean, default: false}}
+        - {name: view, in: query, schema: {type: string, enum: [summary, calendar], default: summary}}
+        - {name: start, in: query, schema: {type: string, format: date}}
+        - {name: end, in: query, schema: {type: string, format: date}}
+        - {name: unknown_dates, in: query, schema: {type: boolean, default: false}}
       responses:
         '200':
           description: Subscriptions list
@@ -1854,6 +2697,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Invalid pagination, filters or calendar range
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '403':
+          description: Current account or scope cannot read subscriptions
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
+        '503':
+          description: Subscription snapshot unavailable
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
     post:
       summary: Create a new subscription
       operationId: createSubscription
@@ -1965,6 +2823,134 @@ paths:
             application/json:
               schema: {$ref: '#/components/schemas/ErrorResponse'}
 
+  /api/v1/subscriptions/{id}/movie-discovery:
+    get:
+      operationId: getMovieDiscovery
+      summary: Read the current movie upgrade discovery search
+      description: Current owner administrator only. Reads stored discovery state without scheduling or external requests. Search candidates require a fresh explicit upgrade preview and separate execution authorization.
+      tags: [Subscriptions]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200':
+          description: Current discovery state; never an execution permit
+          headers: {Cache-Control: {schema: {type: string}}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/MovieDiscoveryStatus'}}}
+        '400': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '404': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '409': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/library/untracked-scopes:
+    get:
+      operationId: listUntrackedReviewScopes
+      summary: List the current administrator's configured external directory scopes
+      description: Read-only persisted scope summaries, sorted by UUID with a fixed page size of 100. No filesystem, metadata network, queue, or import activity. Disabled configurations remain visible and are not executable. Never lists arbitrary roots or another owner's scope.
+      parameters:
+        - {name: cursor, in: query, required: false, schema: {type: string, format: uuid, x-go-type: string}}
+      responses:
+        '200':
+          description: Owner configured scope summaries
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedReviewScopePage'}
+        '400': {description: Request rejected, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Authentication required, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Administrator ownership required, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '409': {description: Configuration changed, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Unavailable, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/episode-options:
+    parameters:
+      - {name: scope_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: file_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readUntrackedReviewEpisodeOptions
+      summary: Read current trusted canonical episodes for one observed external file
+      description: Current owner administrator Cookie only. Read-only local metadata; no filesystem, network, jobs, or writes. Empty items means no trusted current season metadata. Options freeze actual TMDB identity and current media/unit versions for a subsequent explicit review request.
+      parameters:
+        - {name: tmdb_id, in: query, required: true, schema: {type: integer, format: int64, minimum: 1}}
+        - {name: season, in: query, required: true, schema: {type: integer, minimum: 1, maximum: 99}}
+      responses:
+        '200':
+          description: Current canonical episode choices
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/UntrackedReviewEpisodeOptions'}
+        '400': {description: Request could not be completed, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Request could not be completed, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Request could not be completed, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '404': {description: Request could not be completed, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '409': {description: Request could not be completed, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Request could not be completed, content: {application/problem+json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/library/untracked-organizations/{operation_id}/companions:
+    parameters:
+      - {name: operation_id, in: path, required: true, schema: {type: string, format: uuid}}
+    get:
+      operationId: readUntrackedCompanions
+      responses:
+        '200':
+          description: Persisted independent companion outcomes for completed video
+          headers: {Cache-Control: {schema: {type: string}}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/UntrackedCompanionView'}}}
+        '400': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '404': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '409': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+    post:
+      operationId: selectUntrackedCompanions
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, minLength: 1, maxLength: 160}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/UntrackedCompanionSelection'}}}
+      responses:
+        '200':
+          description: Selection frozen; execution is separate. Original key returns current stored outcomes without filesystem access.
+          headers: {Cache-Control: {schema: {type: string}}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/UntrackedCompanionView'}}}
+        '400': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '404': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '409': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/library/untracked-organizations/{operation_id}/companions/discover:
+    parameters:
+      - {name: operation_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      operationId: discoverUntrackedCompanions
+      responses:
+        '200':
+          description: Complete bounded same-directory observations; does not select or publish
+          headers: {Cache-Control: {schema: {type: string}}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/UntrackedCompanionCandidates'}}}
+        '400': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '404': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '409': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+  /api/v1/library/untracked-organizations/{operation_id}/companions/{attachment_id}/execute:
+    parameters:
+      - {name: operation_id, in: path, required: true, schema: {type: string, format: uuid}}
+      - {name: attachment_id, in: path, required: true, schema: {type: string, format: uuid}}
+    post:
+      operationId: executeUntrackedCompanion
+      responses:
+        '200':
+          description: Per-attachment result. Existing permanent permit only authorizes observation.
+          headers: {Cache-Control: {schema: {type: string}}}
+          content: {application/json: {schema: {$ref: '#/components/schemas/UntrackedCompanionAttachment'}}}
+        '400': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '401': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '403': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '404': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '409': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+        '503': {description: Request could not be completed, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}
+
   /api/v1/subscriptions/{id}/status:
     get:
       operationId: getSubscriptionStatus
@@ -2058,16 +3044,45 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/ErrorResponse'}
+  /api/v1/subscriptions/{id}/tv-episode-discovery/{unit_id}:
+    get:
+      operationId: getTVEpisodeDiscovery
+      summary: Read an existing bounded upgrade-candidate discovery for one standard TV episode
+      description: Current administrator session only. Reads persisted scope and results without network requests or creating jobs. Stale scope hides candidate search and file identities. Candidate discovery grants no download or replacement authority.
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string, format: uuid}}
+        - {name: unit_id, in: path, required: true, schema: {type: string, format: uuid}}
+      responses:
+        '200':
+          description: Current read-only unit discovery state
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TVEpisodeDiscoveryStatus'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
+        '401': {$ref: '#/components/responses/PolicyUnauthorized'}
+        '403': {$ref: '#/components/responses/PolicyForbidden'}
+        '404': {$ref: '#/components/responses/PolicyNotFound'}
+        '409': {$ref: '#/components/responses/PolicyConflict'}
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
   /api/v1/library/mapping-options:
     get:
       operationId: getFileMappingOptions
-      summary: Administrator index and persisted media choices, latest 100 only; not evidence of physical presence
+      summary: Administrator file and existing-media choices with independent filters and cursors; not physical presence evidence
+      parameters:
+        - {name: root_id, in: query, required: false, schema: {type: string, format: uuid}}
+        - {name: cursor, in: query, required: false, schema: {type: string, minLength: 1, maxLength: 512}}
+        - {name: media_query, in: query, required: false, schema: {type: string, minLength: 1, maxLength: 120}, description: Literal title or original-title substring among existing local media}
+        - {name: media_type, in: query, required: false, schema: {type: string, enum: [movie, tv]}}
+        - {name: tmdb_id, in: query, required: false, schema: {type: integer, format: int64, minimum: 1}}
+        - {name: media_cursor, in: query, required: false, schema: {type: string, minLength: 1, maxLength: 512}, description: Independent media cursor bound to media query/type/TMDB ID; no cross-page snapshot guarantee}
+        - {name: media_id, in: query, required: false, schema: {type: string, format: uuid}, description: Read an existing saved selection by identity independently of the current media page or filters}
       responses:
         '200':
           description: Current choices
           content:
             application/json:
               schema: {$ref: '#/components/schemas/FileMappingOptions'}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
         '401': {$ref: '#/components/responses/PolicyUnauthorized'}
         '403': {$ref: '#/components/responses/PolicyForbidden'}
         '503': {$ref: '#/components/responses/PolicyUnavailable'}
@@ -2145,18 +3160,25 @@ paths:
   /api/v1/integrations/deliveries:
     get:
       operationId: listIntegrationDeliveries
-      summary: Administrator delivery observations, latest 100 only; no payload or credentials
+      summary: Administrator delivery observations with state filtering and bounded cursor pagination; no payload or credentials
+      parameters:
+        - {name: event_id, in: query, required: false, schema: {type: string, format: uuid}, description: "Only original deliveries for this persisted event; does not replay or redirect."}
+        - {name: state, in: query, required: false, schema: {type: string, enum: ['', pending, delivering, delivered, dead, skipped]}}
+        - {name: cursor, in: query, required: false, schema: {type: string, maxLength: 512}, description: "Opaque continuation bound to state and event_id; changing filters starts a new page."}
+        - {name: limit, in: query, required: false, schema: {type: integer, minimum: 1, maximum: 100, default: 100}}
       responses:
         '200':
-          description: Recent deliveries, not a complete history
+          description: A bounded page of persisted delivery observations; state filtering precedes pagination. Reads never replay or skip a delivery.
           content:
             application/json:
               schema:
                 type: object
-                required: [items, limit]
+                required: [items, limit, next_cursor]
                 properties:
                   limit: {type: integer}
+                  next_cursor: {type: string, maxLength: 512, description: "Empty on the last page. Bound to state; not a cross-page snapshot."}
                   items: {type: array, items: {$ref: '#/components/schemas/DeliverySummary'}}
+        '400': {$ref: '#/components/responses/PolicyBadRequest'}
         '401': {$ref: '#/components/responses/PolicyUnauthorized'}
         '403': {$ref: '#/components/responses/PolicyForbidden'}
         '503': {$ref: '#/components/responses/PolicyUnavailable'}
@@ -3089,6 +4111,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '503': {$ref: '#/components/responses/PolicyUnavailable'}
 
     delete:
       summary: Disabled versionless deletion; use versioned control state archived
@@ -6161,7 +7184,9 @@ paths:
 
   /api/v1/indexers/{id}/checkin:
     post:
-      summary: Perform automated check-in on PT site
+      summary: Retired legacy check-in; configure persistent sign-in instead
+      deprecated: true
+      description: Returns 410 without reading a source or sending a request. Use /api/v1/indexers/{indexer_id}/checkin/config and persisted history.
       operationId: checkinIndexer
       parameters:
         - name: id
@@ -6171,12 +7196,11 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
-          description: Checkin result
+        '410':
+          description: Legacy endpoint retired; no check-in is performed
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/CheckinIndexerResponse'
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
         '401':
           description: Unauthorized
           content:
@@ -6285,7 +7309,9 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
   /api/v1/transfer/scan:
     post:
-      summary: Scan directory and recognize media files for reorganization
+      summary: Retired legacy directory scan; use observed untracked files
+      deprecated: true
+      description: Returns 410 without accessing client-supplied paths. Use /api/v1/library/untracked-scopes and the explicit discovery/recognition/confirmation flow.
       operationId: scanDirectoryReorganize
       requestBody:
         required: true
@@ -6300,12 +7326,11 @@ paths:
                 target_root:
                   type: string
       responses:
-        '200':
-          description: Scan result
+        '410':
+          description: Legacy endpoint retired; no scan is performed
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ScanReorganizeResponse'
+              schema: {$ref: '#/components/schemas/ErrorResponse'}
         '401':
           description: Unauthorized
           content:
@@ -6785,6 +7810,405 @@ paths:
             application/problem+json:
               schema: {$ref: '#/components/schemas/ErrorResponse'}
 
+  "/api/v1/library/untracked-scopes/{scope_id}/external-batches":
+    post:
+      operationId: "createExternalBatchPreview"
+      tags: ["Library"]
+      description: "Freeze 1–20 explicitly reviewed files from one directory, work and season. This immutable manifest neither confirms rows nor queues organization. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "scope_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          "$ref": "#/components/parameters/MediaRequestKey"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ExternalBatchInput"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ExternalBatchView"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library/untracked-scopes/{scope_id}/external-batches/{batch_id}":
+    get:
+      operationId: "readExternalBatchPreview"
+      tags: ["Library"]
+      description: "Read the original batch and independent confirmation, queue and completion receipts without retrying any mutation. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "scope_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          in: "path"
+          name: "batch_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ExternalBatchView"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library/untracked-scopes/{scope_id}/external-batch-commands/{key}":
+    get:
+      operationId: "readExternalBatchPreviewReceipt"
+      tags: ["Library"]
+      description: "Recover a lost batch-creation response with the original key. No new review, confirmation or job is created. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "scope_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          in: "path"
+          name: "key"
+          required: true
+          schema:
+            type: "string"
+            minLength: 1
+            maxLength: 80
+            pattern: "^[A-Za-z0-9:_.-]+$"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ExternalBatchView"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library/untracked-scopes/{scope_id}/external-batches/{batch_id}/rows/{row}/confirm":
+    post:
+      operationId: "confirmExternalBatchRow"
+      tags: ["Library"]
+      description: "Explicitly confirm one frozen row after current scope, file and canonical metadata checks. The server binds its permanent key to this batch and row. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "scope_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          in: "path"
+          name: "batch_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          in: "path"
+          name: "row"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 0
+            maximum: 19
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ExplicitLibraryConfirmation"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/UntrackedConfirmationReceipt"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library/untracked-scopes/{scope_id}/external-batches/{batch_id}/rows/{row}/organize":
+    post:
+      operationId: "organizeExternalBatchRow"
+      tags: ["Library"]
+      description: "Explicitly queue one previously confirmed row through the existing narrow organization transaction. Other rows remain independent; no automatic batch execution. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "scope_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          in: "path"
+          name: "batch_id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          in: "path"
+          name: "row"
+          required: true
+          schema:
+            type: "integer"
+            minimum: 0
+            maximum: 19
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ExplicitLibraryConfirmation"
+      responses:
+        "202":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/UntrackedOrganizationReceipt"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library/files/{id}/sidecar-update-previews":
+    post:
+      operationId: "previewManagedSidecarUpdate"
+      tags: ["Library"]
+      description: "Compare current canonical NFO and poster.jpg with trusted application-generation evidence and new trusted metadata. Legacy or manually edited files remain held. The preview performs bounded metadata I/O but no sidecar replacement. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ManagedSidecarPreviewInput"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ManagedSidecarUpdateResult"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library/files/{id}/sidecar-update-commands":
+    post:
+      operationId: "commandManagedSidecarUpdate"
+      tags: ["Library"]
+      description: "Confirm a frozen unexpired preview. Only unchanged application-generated files can be replaced. Unknown physical outcomes retain their permanent exclusion; receipts never authorize a retry. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          "$ref": "#/components/parameters/MediaRequestKey"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ManagedSidecarCommandInput"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ManagedSidecarUpdateResult"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library/files/{id}/sidecar-update-commands/{key}":
+    get:
+      operationId: "readManagedSidecarUpdateCommand"
+      tags: ["Library"]
+      description: "Read the original safe update receipt without metadata requests or filesystem writes. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+        -
+          in: "path"
+          name: "key"
+          required: true
+          schema:
+            type: "string"
+            minLength: 1
+            maxLength: 80
+            pattern: "^[A-Za-z0-9:_.-]+$"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ManagedSidecarUpdateResult"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library-maintenance/reorganization-previews":
+    post:
+      operationId: "previewLibraryReorganization"
+      tags: ["Library"]
+      description: "Preview an explicit same-root rename of a single imported file with one effective canonical mapping. Observe physical identities and require an absent target; no rename occurs. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/LibraryReorganizationRequest"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/LibraryReorganizationPreview"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library-maintenance/recycle-previews":
+    post:
+      operationId: "previewLibraryRecycle"
+      tags: ["Library"]
+      description: "Explicitly observe one retired movie or episode file for original-path restoration or retention-expired cleanup. Recheck both old and replacement identities and current permissions; no mutation occurs. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/LibraryRecyclePreviewRequest"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/LibraryRecycleItem"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library-maintenance/commands":
+    post:
+      operationId: "commandLibraryMaintenance"
+      tags: ["Library"]
+      description: "Confirm a frozen reorganization, original-path restore or expired cleanup. Preserve replacement files and use permanent physical permits. Unknown outcomes require manual review and cannot authorize another physical write. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          "$ref": "#/components/parameters/MediaRequestKey"
+      requestBody:
+        required: true
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/LibraryMaintenanceCommand"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/LibraryMaintenanceResult"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library-maintenance/commands/{key}":
+    get:
+      operationId: "readLibraryMaintenanceCommand"
+      tags: ["Library"]
+      description: "Read the original owner-bound maintenance receipt without filesystem I/O or replay. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "path"
+          name: "key"
+          required: true
+          schema:
+            type: "string"
+            minLength: 1
+            maxLength: 80
+            pattern: "^[A-Za-z0-9:_.-]+$"
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/LibraryMaintenanceResult"
+        default:
+          "$ref": "#/components/responses/MPError"
+  "/api/v1/library-maintenance/recycle":
+    get:
+      operationId: "listLibraryRecycle"
+      tags: ["Library"]
+      description: "Read persisted retirement history without filesystem I/O. Disk usage remains unknown until explicit observation; visible retention expiry never itself authorizes deletion. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority."
+      parameters:
+        -
+          in: "query"
+          name: "cursor"
+          required: false
+          schema:
+            type: "string"
+            maxLength: 2048
+        -
+          in: "query"
+          name: "limit"
+          required: false
+          schema:
+            type: "integer"
+            minimum: 1
+            maximum: 100
+            default: 20
+        -
+          in: "query"
+          name: "kind"
+          required: false
+          description: "Limit persisted retirement records to movies or TV; empty means all."
+          schema:
+            type: "string"
+            enum: ["", "movie", "tv"]
+        -
+          in: "query"
+          name: "q"
+          required: false
+          description: "Trimmed, case-insensitive literal substring of the original relative path; no wildcard expansion. Cursors are bound to kind and this normalized query. Legacy unfiltered cursors require no filters."
+          schema:
+            type: "string"
+            maxLength: 128
+      responses:
+        "200":
+          description: "Current result or safe original-command receipt."
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/LibraryRecycleList"
+        default:
+          "$ref": "#/components/responses/MPError"
 components:
   parameters:
     MediaRequestKey:
@@ -6798,6 +8222,11 @@ components:
       required: true
       schema: {type: string, minLength: 1, maxLength: 160}
   responses:
+    MPError:
+      description: Request rejected, forbidden, conflicted, rate limited or unavailable; no-store.
+      content:
+        application/problem+json:
+          schema: {$ref: "#/components/schemas/ErrorResponse"}
     MediaRequestFailure:
       description: Cookie session required (401/403); invalid input (400/422), missing record (404), version or original-key conflict (409), pending limit (429), or unverifiable storage/metadata result (503). All responses are private and no-store.
       content:
@@ -6834,6 +8263,741 @@ components:
         application/json:
           schema: {$ref: '#/components/schemas/ErrorResponse'}
   schemas:
+    ExplicitLibraryConfirmation:
+      type: "object"
+      additionalProperties: false
+      required: ["confirmed"]
+      properties:
+        confirmed:
+          type: "boolean"
+          enum: [true]
+    ExternalBatchInput:
+      type: "object"
+      additionalProperties: false
+      required: ["rows"]
+      properties:
+        rows:
+          type: "array"
+          minItems: 1
+          maxItems: 20
+          items:
+            "$ref": "#/components/schemas/ExternalBatchSelection"
+    ExternalBatchSelection:
+      type: "object"
+      additionalProperties: false
+      required: ["file_id","confirmation"]
+      properties:
+        file_id:
+          type: "string"
+          format: "uuid"
+        confirmation:
+          "$ref": "#/components/schemas/UntrackedConfirmationInput"
+    ExternalBatchRow:
+      type: "object"
+      additionalProperties: false
+      required: ["selection","scope","file","review"]
+      properties:
+        selection:
+          "$ref": "#/components/schemas/ExternalBatchSelection"
+        scope:
+          "$ref": "#/components/schemas/UntrackedScope"
+        file:
+          "$ref": "#/components/schemas/UntrackedDiscoveryObservation"
+        review:
+          "$ref": "#/components/schemas/UntrackedReviewView"
+    ExternalBatchManifest:
+      type: "object"
+      additionalProperties: false
+      required: ["id","actor_id","scope_id","command_key","created_at","rows","execution_allowed"]
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        actor_id:
+          type: "string"
+          format: "uuid"
+        scope_id:
+          type: "string"
+          format: "uuid"
+        command_key:
+          type: "string"
+        created_at:
+          type: "string"
+          format: "date-time"
+        rows:
+          type: "array"
+          minItems: 1
+          maxItems: 20
+          items:
+            "$ref": "#/components/schemas/ExternalBatchRow"
+        execution_allowed:
+          type: "boolean"
+          enum: [false]
+    ExternalBatchRowStatus:
+      type: "object"
+      additionalProperties: false
+      required: ["confirmation","organization","progress"]
+      properties:
+        confirmation:
+          nullable: true
+          allOf:
+            -
+              "$ref": "#/components/schemas/UntrackedConfirmationReceipt"
+        organization:
+          nullable: true
+          allOf:
+            -
+              "$ref": "#/components/schemas/UntrackedOrganizationReceipt"
+        progress:
+          nullable: true
+          allOf:
+            -
+              "$ref": "#/components/schemas/UntrackedOrganizationView"
+    ExternalBatchView:
+      type: "object"
+      additionalProperties: false
+      required: ["batch","status"]
+      properties:
+        batch:
+          "$ref": "#/components/schemas/ExternalBatchManifest"
+        status:
+          type: "array"
+          maxItems: 20
+          items:
+            "$ref": "#/components/schemas/ExternalBatchRowStatus"
+    ManagedSidecarPreviewInput:
+      type: "object"
+      additionalProperties: false
+      required: ["unit_id"]
+      properties:
+        unit_id:
+          type: "string"
+          format: "uuid"
+    ManagedSidecarCommandInput:
+      type: "object"
+      additionalProperties: false
+      required: ["preview_id","confirmed"]
+      properties:
+        preview_id:
+          type: "string"
+          format: "uuid"
+        confirmed:
+          type: "boolean"
+          enum: [true]
+    ManagedSidecarArtifact:
+      type: "object"
+      additionalProperties: false
+      required: ["name","state"]
+      properties:
+        name:
+          type: "string"
+          enum: ["movie.nfo","tvshow.nfo","poster.jpg"]
+        state:
+          type: "string"
+          enum: ["ready","held","unchanged","updated","review_required"]
+        old_hash:
+          type: "string"
+          pattern: "^[0-9a-f]{64}$"
+        new_hash:
+          type: "string"
+          pattern: "^[0-9a-f]{64}$"
+    ManagedSidecarUpdateResult:
+      type: "object"
+      additionalProperties: false
+      required: ["id","file_id","state","expires_at","artifacts"]
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        file_id:
+          type: "string"
+          format: "uuid"
+        state:
+          type: "string"
+          enum: ["preview","held","completed","review_required"]
+        expires_at:
+          type: "string"
+          format: "date-time"
+        artifacts:
+          type: "array"
+          maxItems: 2
+          items:
+            "$ref": "#/components/schemas/ManagedSidecarArtifact"
+        command_key:
+          type: "string"
+    LibraryReorganizationRequest:
+      type: "object"
+      additionalProperties: false
+      required: ["file_id","target_relative_path"]
+      properties:
+        file_id:
+          type: "string"
+          format: "uuid"
+        target_relative_path:
+          type: "string"
+          minLength: 1
+    LibraryReorganizationPreview:
+      type: "object"
+      additionalProperties: false
+      required: ["file_id","root_id","source_relative_path","target_relative_path","version","can_confirm","execution_allowed"]
+      properties:
+        file_id:
+          type: "string"
+          format: "uuid"
+        root_id:
+          type: "string"
+          format: "uuid"
+        source_relative_path:
+          type: "string"
+        target_relative_path:
+          type: "string"
+        version:
+          type: "string"
+          pattern: "^[0-9a-f]{64}$"
+        can_confirm:
+          type: "boolean"
+        execution_allowed:
+          type: "boolean"
+          enum: [false]
+    LibraryRecyclePreviewRequest:
+      type: "object"
+      additionalProperties: false
+      required: ["recycle_id","action"]
+      properties:
+        recycle_id:
+          type: "string"
+        action:
+          type: "string"
+          enum: ["restore","cleanup"]
+    LibraryMaintenanceCommand:
+      type: "object"
+      additionalProperties: false
+      required: ["action","expected_version","confirmed"]
+      properties:
+        action:
+          type: "string"
+          enum: ["reorganize","restore","cleanup"]
+        file_id:
+          type: "string"
+          format: "uuid"
+        target_relative_path:
+          type: "string"
+        recycle_id:
+          type: "string"
+        expected_version:
+          type: "string"
+          pattern: "^[0-9a-f]{64}$"
+        confirmed:
+          type: "boolean"
+          enum: [true]
+    LibraryMaintenanceResult:
+      type: "object"
+      additionalProperties: false
+      required: ["command_id","action","status","file_id","version","execution_allowed"]
+      properties:
+        command_id:
+          type: "string"
+          format: "uuid"
+        action:
+          type: "string"
+          enum: ["reorganize","restore","cleanup"]
+        status:
+          type: "string"
+          enum: ["completed","unknown_requires_review"]
+        file_id:
+          type: "string"
+          format: "uuid"
+        version:
+          type: "string"
+          pattern: "^[0-9a-f]{64}$"
+        execution_allowed:
+          type: "boolean"
+          enum: [false]
+    LibraryRecycleItem:
+      type: "object"
+      additionalProperties: false
+      required: ["recycle_id","kind","old_file_id","replacement_file_id","root_id","original_relative_path","retained_until","version","status","size_bytes","allocated_bytes","link_count","usage_observed_at","can_confirm","execution_allowed"]
+      properties:
+        recycle_id:
+          type: "string"
+        kind:
+          type: "string"
+          enum: ["movie","tv"]
+        old_file_id:
+          type: "string"
+          format: "uuid"
+        replacement_file_id:
+          type: "string"
+          format: "uuid"
+        root_id:
+          type: "string"
+          format: "uuid"
+        original_relative_path:
+          type: "string"
+        retained_until:
+          type: "string"
+          format: "date-time"
+        version:
+          type: "string"
+        status:
+          type: "string"
+        size_bytes:
+          type: "integer"
+          format: "int64"
+          minimum: 0
+        allocated_bytes:
+          type: "integer"
+          format: "int64"
+          minimum: 0
+          nullable: true
+        link_count:
+          type: "integer"
+          format: "int64"
+          minimum: 0
+          nullable: true
+        usage_observed_at:
+          type: "string"
+          format: "date-time"
+          nullable: true
+        can_confirm:
+          type: "boolean"
+        execution_allowed:
+          type: "boolean"
+          enum: [false]
+    LibraryRecycleList:
+      type: "object"
+      additionalProperties: false
+      required: ["items","next_cursor"]
+      properties:
+        items:
+          type: "array"
+          maxItems: 100
+          items:
+            "$ref": "#/components/schemas/LibraryRecycleItem"
+        next_cursor:
+          type: "string"
+    SeedingInspection:
+      type: object
+      additionalProperties: false
+      required: [observed_at, complete, share_ratio, infinite_share_ratio, seeding_seconds]
+      properties:
+        observed_at: { type: string, format: date-time }
+        complete: { type: boolean }
+        share_ratio: { type: number, nullable: true, minimum: 0 }
+        infinite_share_ratio: { type: boolean }
+        seeding_seconds: { type: string, nullable: true, pattern: '^(0|[1-9][0-9]*)$' }
+
+    SecurityCommandReceipt:
+      type: object
+      required: [action, result]
+      properties:
+        action: {type: string}
+        result:
+          oneOf:
+            - {$ref: '#/components/schemas/AccountCommandResult'}
+            - {$ref: '#/components/schemas/OwnMFASetupResult'}
+            - {$ref: '#/components/schemas/OwnMFAConfirmResult'}
+    ManagedAccount:
+      type: object
+      required: [id, username, role, is_active, created_at, updated_at]
+      properties:
+        id: {type: string, format: uuid}
+        username: {type: string}
+        role: {type: string, enum: [admin, member]}
+        is_active: {type: boolean}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+    AccountList:
+      type: object
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/ManagedAccount'}}
+    CreateAccountRequest:
+      type: object
+      additionalProperties: false
+      required: [username, password, role]
+      properties:
+        username: {type: string, minLength: 3, maxLength: 80}
+        password: {type: string, minLength: 8, maxLength: 1024}
+        role: {type: string, enum: [admin, member]}
+    UpdateAccountRequest:
+      type: object
+      additionalProperties: false
+      required: [role, is_active]
+      properties:
+        role: {type: string, enum: [admin, member]}
+        is_active: {type: boolean}
+    AccountCommandResult:
+      type: object
+      required: [replayed]
+      properties:
+        user: {$ref: '#/components/schemas/ManagedAccount'}
+        session_id: {type: string, format: uuid}
+        replayed: {type: boolean}
+    ManagedSession:
+      type: object
+      required: [id, created_at, last_seen_at, expires_at, current]
+      properties:
+        id: {type: string, format: uuid}
+        created_at: {type: string, format: date-time}
+        last_seen_at: {type: string, format: date-time}
+        expires_at: {type: string, format: date-time}
+        current: {type: boolean}
+    OwnSessionList:
+      type: object
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/ManagedSession'}}
+    ChangeOwnPasswordRequest:
+      type: object
+      additionalProperties: false
+      required: [current_password, new_password]
+      properties:
+        current_password: {type: string, maxLength: 1024}
+        new_password: {type: string, minLength: 8, maxLength: 1024}
+        otp: {type: string, maxLength: 6}
+        recovery_code: {type: string, maxLength: 64}
+    OwnMFAStatus:
+      type: object
+      required: [enabled, recovery_codes_remaining]
+      properties:
+        enabled: {type: boolean}
+        recovery_codes_remaining: {type: integer}
+    BeginOwnMFARequest:
+      type: object
+      additionalProperties: false
+      required: [current_password]
+      properties:
+        current_password: {type: string, maxLength: 1024}
+    OwnMFASetupResult:
+      type: object
+      required: [challenge_id, expires_at, replayed]
+      properties:
+        challenge_id: {type: string, format: uuid}
+        expires_at: {type: string, format: date-time}
+        replayed: {type: boolean}
+        secret: {type: string}
+        otpauth_url: {type: string}
+    ConfirmOwnMFARequest:
+      type: object
+      additionalProperties: false
+      required: [challenge_id, otp]
+      properties:
+        challenge_id: {type: string, format: uuid}
+        otp: {type: string, minLength: 6, maxLength: 6}
+    OwnMFAConfirmResult:
+      type: object
+      required: [enabled, replayed]
+      properties:
+        enabled: {type: boolean}
+        replayed: {type: boolean}
+        recovery_codes: {type: array, items: {type: string}}
+    DisableOwnMFARequest:
+      type: object
+      additionalProperties: false
+      required: [current_password]
+      properties:
+        current_password: {type: string, maxLength: 1024}
+        otp: {type: string, maxLength: 6}
+        recovery_code: {type: string, maxLength: 64}
+    DownloadControlCommand:
+      type: object
+      additionalProperties: false
+      required: [action, confirmed]
+      properties:
+        action: { type: string, enum: [pause, resume] }
+        confirmed: { type: boolean, enum: [true] }
+        affect_shared: { type: boolean, default: false }
+    DownloadControlReceipt:
+      type: object
+      additionalProperties: false
+      required: [command_id, operation_id, action, state]
+      properties:
+        command_id: { type: string, format: uuid }
+        operation_id: { type: string, format: uuid }
+        action: { type: string, enum: [pause, resume] }
+        state: { type: string, enum: [confirmed, unknown] }
+    SeerrConfiguration:
+      type: object
+      required: [enabled, version, credential_present]
+      properties:
+        enabled: {type: boolean}
+        version: {type: integer, format: int64}
+        owner_id: {type: string, format: uuid}
+        credential_present: {type: boolean}
+    SeerrConfigurationInput:
+      type: object
+      additionalProperties: false
+      required: [enabled, expected_version, owner_id]
+      properties:
+        enabled: {type: boolean}
+        expected_version: {type: integer, format: int64, minimum: 0}
+        owner_id: {type: string, format: uuid}
+        credential: {type: string, minLength: 32, maxLength: 256, writeOnly: true}
+    SeerrReceipt:
+      type: object
+      required: [external_request_id, request_id, config_version, state, created_at]
+      properties:
+        external_request_id: {type: string}
+        request_id: {type: string, format: uuid}
+        config_version: {type: integer, format: int64}
+        state: {type: string, enum: [pending]}
+        created_at: {type: string, format: date-time}
+    SubtitleCandidateCommand:
+      type: object
+      additionalProperties: false
+      required: [expected_mapping_revision]
+      properties:
+        expected_mapping_revision: {type: integer, format: int64, minimum: 1}
+    SubtitleCandidateState:
+      type: object
+      required: [file_id, mapping_revision, outcome, candidates]
+      properties:
+        file_id: {type: string, format: uuid}
+        mapping_revision: {type: integer, format: int64}
+        query_id: {type: string, format: uuid}
+        outcome: {type: string, enum: [not_queried, querying, candidates, not_found, already_present, too_small, provider_error, confirming, confirmed, review_required]}
+        candidates:
+          type: array
+          items:
+            type: object
+            required: [id, provider, language_hint, format]
+            properties:
+              id: {type: string, format: uuid}
+              provider: {type: string, enum: [shooter]}
+              language_hint: {type: string, enum: [Han]}
+              format: {type: string, enum: [srt]}
+              summary:
+                type: object
+                description: Validated cue count and earliest start/latest end in milliseconds; not video duration or translation quality. Omitted when unavailable.
+                required: [cue_count, start_ms, end_ms]
+                properties:
+                  cue_count: {type: integer, minimum: 1}
+                  start_ms: {type: integer, format: int64, minimum: 0, maximum: 359999999}
+                  end_ms: {type: integer, format: int64, minimum: 0, maximum: 359999999}
+    "ClassificationRule":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["id","media_type","genres","languages","countries","root_id"]
+      "properties":
+        "id":
+          "type": "string"
+          "minLength": 1
+          "maxLength": 64
+        "media_type":
+          "type": "string"
+          "enum": ["movie","tv"]
+        "genres":
+          "type": "array"
+          "items":
+            "type": "string"
+          "maxItems": 32
+        "languages":
+          "type": "array"
+          "items":
+            "type": "string"
+          "maxItems": 32
+        "countries":
+          "type": "array"
+          "items":
+            "type": "string"
+          "maxItems": 32
+        "root_id":
+          "type": "string"
+          "format": "uuid"
+    "ClassificationDocument":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["version","rules"]
+      "properties":
+        "version":
+          "type": "integer"
+          "format": "int64"
+        "rules":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ClassificationRule"
+        "published_at":
+          "type": "string"
+          "format": "date-time"
+    "ClassificationPublish":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["expected_version","rules"]
+      "properties":
+        "expected_version":
+          "type": "integer"
+          "format": "int64"
+        "rules":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ClassificationRule"
+          "maxItems": 64
+    "ClassificationPreviewInput":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["version"]
+      "properties":
+        "version":
+          "type": "integer"
+          "format": "int64"
+        "media_id":
+          "type": "string"
+          "format": "uuid"
+        "media_type":
+          "type": "string"
+          "enum": ["movie","tv"]
+        "tmdb_id":
+          "type": "integer"
+          "format": "int64"
+    "ClassificationPreview":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["version","observed_at","result"]
+      "properties":
+        "preview_stamp": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Present only for a matched, usable target; binds trusted facts and target generation."}
+        "version":
+          "type": "integer"
+          "format": "int64"
+        "observed_at":
+          "type": "string"
+          "format": "date-time"
+        "result":
+          "$ref": "#/components/schemas/ClassificationResult"
+    "ClassificationResult":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["status","matches","reasons"]
+      "properties":
+        "status":
+          "type": "string"
+          "enum": ["matched","no_match","conflict","insufficient_evidence","target_unavailable"]
+        "root_id":
+          "type": "string"
+          "format": "uuid"
+        "matches":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/ClassificationMatch"
+        "reasons":
+          "type": "array"
+          "items":
+            "type": "string"
+    "ClassificationMatch":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["rule_id","root_id","reasons"]
+      "properties":
+        "rule_id":
+          "type": "string"
+        "root_id":
+          "type": "string"
+          "format": "uuid"
+        "reasons":
+          "type": "array"
+          "items":
+            "type": "string"
+    "SubscriptionExecution":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["subscription_id","observed_at","waiting","next_step","limited","rounds"]
+      "properties":
+        "subscription_id":
+          "type": "string"
+          "format": "uuid"
+        "observed_at":
+          "type": "string"
+          "format": "date-time"
+        "waiting":
+          "type": "string"
+        "next_step":
+          "type": "string"
+        "limited":
+          "type": "boolean"
+        "rounds":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/SubscriptionExecutionRound"
+    "SubscriptionExecutionRound":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["id","kind","state","created_at","deadline","intent_version","reason","sources","candidates","limited"]
+      "properties":
+        "id":
+          "type": "string"
+          "format": "uuid"
+        "kind":
+          "type": "string"
+        "state":
+          "type": "string"
+        "created_at":
+          "type": "string"
+          "format": "date-time"
+        "deadline":
+          "type": "string"
+          "format": "date-time"
+        "intent_version":
+          "type": "integer"
+          "format": "int64"
+        "reason":
+          "type": "string"
+        "sources":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/SubscriptionExecutionSource"
+        "candidates":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/SubscriptionExecutionCandidate"
+        "limited":
+          "type": "boolean"
+    "SubscriptionExecutionSource":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["indexer_id","state","pages"]
+      "properties":
+        "indexer_id":
+          "type": "string"
+          "format": "uuid"
+        "state":
+          "type": "string"
+        "pages":
+          "type": "array"
+          "items":
+            "$ref": "#/components/schemas/SubscriptionExecutionPage"
+    "SubscriptionExecutionPage":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["query_id","page","state","results","offset_verified","receipt_present"]
+      "properties":
+        "query_id":
+          "type": "string"
+          "format": "uuid"
+        "page":
+          "type": "integer"
+        "state":
+          "type": "string"
+        "results":
+          "type": "integer"
+        "offset_verified":
+          "type": "boolean"
+        "receipt_present":
+          "type": "boolean"
+        "finished_at":
+          "type": "string"
+          "format": "date-time"
+    "SubscriptionExecutionCandidate":
+      "type": "object"
+      "additionalProperties": false
+      "required": ["id","outcome","reason"]
+      "properties":
+        "id":
+          "type": "string"
+          "format": "uuid"
+        "outcome":
+          "type": "string"
+        "reason":
+          "type": "string"
     PersonFollowBindings:
       type: object
       additionalProperties: false
@@ -7268,6 +9432,12 @@ components:
         file_revision: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
         media_type: {type: string, enum: [movie, tv], x-go-type: string, description: Must agree with the selected target root type}
         tmdb_id: {type: integer, format: int64, minimum: 0, description: Zero requests an automatic suggestion; a positive ID is explicit typed identity}
+        canonical_unit_id: {type: string, format: uuid, x-go-type: string, description: Explicit current canonical episode UUID; all six proof fields required together}
+        media_metadata_version: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        unit_metadata_version: {type: integer, format: int64, minimum: 1, maximum: 9223372036854775806}
+        season: {type: integer, minimum: 1, maximum: 99}
+        episode: {type: integer, minimum: 1, maximum: 9999}
+        tmdb_episode_id: {type: integer, format: int64, minimum: 1}
     UntrackedReviewRequest:
       type: object
       additionalProperties: false
@@ -7821,12 +9991,17 @@ components:
 
     LoginRequest:
       type: object
+      additionalProperties: false
       required: [username, password]
       properties:
+        otp: {type: string, minLength: 6, maxLength: 6}
+        recovery_code: {type: string, minLength: 1, maxLength: 64}
         username:
           type: string
+          maxLength: 80
         password:
           type: string
+          maxLength: 1024
 
     AuthResponse:
       type: object
@@ -7849,6 +10024,7 @@ components:
         role:
           type: string
           enum: [admin, member]
+          x-enum-varnames: [Admin, Member]
         is_active:
           type: boolean
         created_at:
@@ -8157,6 +10333,19 @@ components:
     CreateSubscriptionRequest:
       type: object
       properties:
+        classification_version:
+          type: integer
+          format: int64
+          minimum: 1
+          description: Explicit published classification revision; root_id must be omitted.
+        classification_preview_stamp:
+          type: string
+          pattern: '^[0-9a-f]{64}$'
+          description: Required with classification_version; original trusted preview facts and root generation must still match.
+        classification_preview_root_id:
+          type: string
+          format: uuid
+          description: Required with classification_version; advisory preview target, revalidated during creation. root_id remains omitted.
         expected_intent_version:
           type: integer
           format: int64
@@ -8239,6 +10428,151 @@ components:
           type: string
         wait_reason:
           type: string
+
+    TVEpisodeUpgradeInput:
+      type: object
+      additionalProperties: false
+      required: [unit_id, current_file_id, candidate_id]
+      properties:
+        unit_id: {type: string, format: uuid}
+        current_file_id: {type: string, format: uuid}
+        candidate_id: {type: string, format: uuid}
+    TVEpisodeUpgradeCommand:
+      type: object
+      additionalProperties: false
+      required: [unit_id, current_file_id, candidate_id, action, expected_version, confirmed]
+      properties:
+        unit_id: {type: string, format: uuid}
+        current_file_id: {type: string, format: uuid}
+        candidate_id: {type: string, format: uuid}
+        operation_id: {type: string, format: uuid}
+        action: {type: string, enum: [reserve, prepare, send, observe, organization-preview, organization-confirm, organize, retirement-preview, retirement-confirm, retire]}
+        expected_version: {type: string, minLength: 1, maxLength: 1024}
+        confirmed: {type: boolean, enum: [true]}
+    TVEpisodeUpgradeResult:
+      type: object
+      required: [status, unit_id, current_file_id, candidate_id, version, comparable, improvement, execution_allowed]
+      properties:
+        status: {type: string}
+        unit_id: {type: string, format: uuid}
+        current_file_id: {type: string, format: uuid}
+        candidate_id: {type: string, format: uuid}
+        operation_id: {type: string, format: uuid}
+        new_file_id: {type: string, format: uuid}
+        version: {type: string}
+        reason: {type: string}
+        comparable: {type: boolean}
+        improvement: {type: boolean}
+        current_score: {type: integer}
+        candidate_score: {type: integer}
+        execution_allowed: {type: boolean, enum: [false]}
+    MetadataDiagnosticInput:
+      type: object
+      additionalProperties: false
+      required: [target]
+      properties:
+        target: {type: string, enum: [tmdb_api, tmdb_image, fanart_api, tvdb_api], x-go-type: string}
+    MetadataDiagnosticResult:
+      type: object
+      additionalProperties: false
+      required: [target, category, elapsed_ms, host_responded, image_retrieved]
+      properties:
+        target: {type: string, enum: [tmdb_api, tmdb_image, fanart_api, tvdb_api], x-go-type: string}
+        category: {type: string, enum: [available, host_response, auth_required, rate_limited, timeout, cancelled, unavailable, bad_response, not_configured, configuration_changed], x-go-type: string}
+        elapsed_ms: {type: integer, format: int64, minimum: 0}
+        host_responded: {type: boolean}
+        image_retrieved: {type: boolean}
+    MovieDiscoveryStatus:
+      type: object
+      additionalProperties: false
+      required: [subscription_id, state, execution_allowed]
+      properties:
+        subscription_id: {type: string, format: uuid}
+        search_id: {type: string, format: uuid}
+        current_file_id: {type: string, format: uuid}
+        next_discovery_at: {type: string, format: date-time}
+        state: {type: string, enum: [not_scheduled, waiting, running, succeeded, partial, failed, expired, stale, cancelled]}
+        execution_allowed: {type: boolean, enum: [false]}
+    UntrackedReviewScopeOption:
+      type: object
+      additionalProperties: false
+      required: [id, version, enabled, local_root, target_root_path, target_media_type]
+      properties:
+        id: {type: string, format: uuid, x-go-type: string}
+        version: {type: integer, format: int64, minimum: 1}
+        enabled: {type: boolean}
+        local_root: {type: string}
+        target_root_path: {type: string}
+        target_media_type: {type: string, enum: [movie, tv], x-go-type: string}
+    UntrackedReviewScopePage:
+      type: object
+      additionalProperties: false
+      required: [items, next_cursor, has_more]
+      properties:
+        items: {type: array, maxItems: 100, items: {$ref: '#/components/schemas/UntrackedReviewScopeOption'}}
+        next_cursor: {type: string}
+        has_more: {type: boolean}
+    UntrackedReviewEpisodeOption:
+      type: object
+      additionalProperties: false
+      required: [canonical_unit_id, media_metadata_version, unit_metadata_version, season, episode, tmdb_episode_id, unit_key, title]
+      properties:
+        canonical_unit_id: {type: string, format: uuid, x-go-type: string}
+        media_metadata_version: {type: integer, format: int64, minimum: 1}
+        unit_metadata_version: {type: integer, format: int64, minimum: 1}
+        season: {type: integer, minimum: 1, maximum: 99}
+        episode: {type: integer, minimum: 1, maximum: 9999}
+        tmdb_episode_id: {type: integer, format: int64, minimum: 1}
+        unit_key: {type: string}
+        title: {type: string}
+    UntrackedReviewEpisodeOptions:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items:
+          type: array
+          maxItems: 5000
+          items: {$ref: '#/components/schemas/UntrackedReviewEpisodeOption'}
+    UntrackedCompanionCandidate:
+      type: object
+      additionalProperties: false
+      required: [key, source_relative_path, target_relative_path]
+      properties:
+        key: {type: string, pattern: '^[0-9a-f]{64}$'}
+        source_relative_path: {type: string}
+        target_relative_path: {type: string}
+    UntrackedCompanionCandidates:
+      type: object
+      additionalProperties: false
+      required: [items]
+      properties:
+        items: {type: array, items: {$ref: '#/components/schemas/UntrackedCompanionCandidate'}}
+    UntrackedCompanionSelection:
+      type: object
+      additionalProperties: false
+      required: [candidate_keys, action]
+      properties:
+        candidate_keys: {type: array, minItems: 1, maxItems: 32, uniqueItems: true, items: {type: string, pattern: '^[0-9a-f]{64}$'}}
+        action: {type: string, enum: [copy, hardlink]}
+    UntrackedCompanionAttachment:
+      type: object
+      additionalProperties: false
+      required: [id, operation_id, candidate, action, state, source_retained]
+      properties:
+        id: {type: string, format: uuid}
+        operation_id: {type: string, format: uuid}
+        candidate: {$ref: '#/components/schemas/UntrackedCompanionCandidate'}
+        action: {type: string, enum: [copy, hardlink]}
+        state: {type: string, enum: [pending, running, unknown, completed, review_required]}
+        source_retained: {type: boolean, enum: [true]}
+    UntrackedCompanionView:
+      type: object
+      additionalProperties: false
+      required: [video_state, items]
+      properties:
+        video_state: {type: string, enum: [completed]}
+        items: {type: array, items: {$ref: '#/components/schemas/UntrackedCompanionAttachment'}}
 
     SubscriptionStatusReport:
       type: object
@@ -8349,13 +10683,28 @@ components:
 
     SubscriptionListResponse:
       type: object
-      required: [items]
+      required: [items, total, movie_count, tv_count]
       properties:
+        total: {type: integer, format: int64, minimum: 0, description: "Matching subscriptions, or matching episodes for calendar pages."}
+        movie_count: {type: integer, format: int64, minimum: 0, description: Movie count under search and identity filters before media_type; zero for calendar.}
+        tv_count: {type: integer, format: int64, minimum: 0, description: TV count under search and identity filters before media_type; zero for calendar.}
         items:
           type: array
           items:
             $ref: '#/components/schemas/SubscriptionDetails'
 
+    TVEpisodeDiscoveryStatus:
+      type: object
+      additionalProperties: false
+      required: [subscription_id, unit_id, state, execution_allowed]
+      properties:
+        subscription_id: {type: string, format: uuid}
+        unit_id: {type: string, format: uuid}
+        state: {type: string}
+        execution_allowed: {type: boolean, enum: [false]}
+        search_id: {type: string, format: uuid}
+        current_file_id: {type: string, format: uuid}
+        next_discovery_at: {type: string, format: date-time}
     FileMappingUnit:
       type: object
       required: [id, media_id, unit_key, metadata_version, retired]
@@ -8373,9 +10722,21 @@ components:
         active: {type: boolean}
     FileMappingOptions:
       type: object
-      required: [files, media, limit]
+      required: [files, media, limit, files_next_cursor, files_has_more, media_next_cursor, media_has_more]
       properties:
         limit: {type: integer}
+
+        files_next_cursor: {type: string, description: Opaque cursor for the next file page within the same root filter}
+        files_has_more: {type: boolean, description: Further file choices are available; media choices retain their own limit}
+        media_next_cursor: {type: string, description: Cursor for the next existing-media page with the same media filters}
+        media_has_more: {type: boolean}
+        selected_media:
+          type: object
+          required: [id, title, media_type]
+          properties:
+            id: {type: string, format: uuid}
+            title: {type: string}
+            media_type: {type: string}
         files:
           type: array
           items:
@@ -9086,7 +11447,7 @@ components:
       properties:
         id: {type: string, format: uuid}
         name: {type: string}
-        client_type: {type: string, enum: [qbittorrent, transmission]}
+        client_type: {type: string, enum: [qbittorrent, transmission, rtorrent]}
         state: {type: string, enum: [disabled, unobserved, configuration_changed, unknown, failed, stale, observed]}
         failure_code: {type: string, enum: ['', unavailable, auth_required, timeout, blocked, bad_response, rate_limited]}
         observed_at: {type: string, format: date-time, nullable: true}

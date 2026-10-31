@@ -19,5 +19,8 @@ func (s *WatchObserver) ObserveDownloadWatchTarget(ctx context.Context, target p
 	if s == nil || s.repo == nil {
 		return nil, ports.ErrUnavailable
 	}
+	if preparer, ok := s.repo.(ports.DownloadObservationPreparer); ok {
+		return ObserveDownloadWatchTarget(ctx, preparer, target)
+	}
 	return s.repo.ObserveDownloadWatchTarget(ctx, target)
 }

@@ -210,7 +210,7 @@ func (s *CompleteTVAcquisitionStore) AcquireCompleteTVCoverage(ctx context.Conte
 	if e != nil {
 		return nil, e
 	}
-	if client.ClientType != "qbittorrent" || strings.TrimSpace(client.Url) == "" || len(client.PasswordEncrypted) == 0 || cand.SizeBytes <= 0 || idx.ID != cand.IndexerID {
+	if (client.ClientType != "qbittorrent" && client.ClientType != "transmission") || strings.TrimSpace(client.Url) == "" || len(client.PasswordEncrypted) == 0 || cand.SizeBytes <= 0 || idx.ID != cand.IndexerID {
 		return nil, conflict
 	}
 	observed, e := readTVCoverageCandidate(ctx, q, a, sub.ID, cand.ID)

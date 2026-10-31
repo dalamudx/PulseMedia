@@ -8,8 +8,6 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/google/uuid"
-
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
@@ -19,6 +17,8 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
 	"github.com/dalamudx/PulseMedia/internal/store/transfer"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
+	"github.com/google/uuid"
 )
 
 const migrationsDir = "../../../migrations"
@@ -44,7 +44,7 @@ func setupTransferTest(t *testing.T) (*transfer.Service, *db.Queries, uuid.UUID,
 	gen := idgen.New()
 	c := clock.New()
 	ob := outbox.New(pool, gen, c)
-	svc := transfer.NewService(pool, gen, ob, rootfs.NewFilesystem())
+	svc := transfer.NewService(pool, gen, ob, rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	queries := postgres.Queries(pool)
 
 	tempDir, err := os.MkdirTemp("", "pulsemedia-transfer-test-*")

@@ -113,7 +113,7 @@ func TestLibraryReuseBrowser(t *testing.T) {
 				t.Fatal(e)
 			}
 			t.Cleanup(func() { _ = application.Close() })
-			local := transfer.NewLibraryReuseService(transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem()))
+			local := transfer.NewLibraryReuseService(transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 			handler := httpapi.NewServerHandler(application, authService, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 			handler.SetLibraryReuseService(local)
 			handler.SetSubscriptionStatusService(subscription.NewStatusService(postgres.NewSubscriptionStatusStore(f.pool)))

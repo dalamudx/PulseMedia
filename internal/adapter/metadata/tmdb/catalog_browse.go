@@ -165,6 +165,8 @@ func decodeCatalogTVDetails(raw []byte, tmdbID int64) (*ports.TVDetails, error) 
 		VoteAverage      float64         `json:"vote_average"`
 		NumberOfSeasons  json.RawMessage `json:"number_of_seasons"`
 		NumberOfEpisodes json.RawMessage `json:"number_of_episodes"`
+		OriginalLanguage string          `json:"original_language"`
+		OriginCountry    []string        `json:"origin_country"`
 		Genres           []struct {
 			Name string `json:"name"`
 		} `json:"genres"`
@@ -183,12 +185,16 @@ func decodeCatalogTVDetails(raw []byte, tmdbID int64) (*ports.TVDetails, error) 
 	if !valid {
 		return nil, ports.ErrBadResponse
 	}
+	if !validClassificationOrigin(d.OriginalLanguage, d.OriginCountry) {
+		return nil, ports.ErrBadResponse
+	}
 	tv := &ports.TVDetails{
 		TMDBID: d.ID, Title: d.Name, OriginalTitle: d.OriginalName, Year: year,
 		Overview: d.Overview, Rating: d.VoteAverage,
 		PosterURL: catalogImageURL(d.PosterPath), BackdropURL: catalogImageURL(d.BackdropPath),
 		Genres: make([]string, 0, len(d.Genres)), Seasons: make([]ports.TVSeasonDetails, 0, len(d.Seasons)),
 	}
+	tv.OriginalLanguage, tv.Countries = d.OriginalLanguage, append([]string(nil), d.OriginCountry...)
 	for _, genre := range d.Genres {
 		tv.Genres = append(tv.Genres, genre.Name)
 	}

@@ -21,6 +21,8 @@ func TestAuthLifecycleBrowserHTTPPG(t *testing.T) {
 	if os.Getenv("PULSE_UI_FIXTURE") != "1" {
 		t.Skip("owned browser fixture required")
 	}
+	t.Setenv("PULSE_SETUP_TOKEN", "synthetic-auth-ui-deployment-token")
+	t.Setenv("PULSE_AUTH_UI_SETUP_TOKEN", "synthetic-auth-ui-deployment-token")
 	a, _, _ := setupAuthHTTP(t)
 	service := auth.NewService(postgres.NewAuthenticationStore(a.DBPool()), crypto.AuthenticationSecrets{}, a.Clock(), a.IDGen())
 	handler := httpapi.NewServerHandler(a, service, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)

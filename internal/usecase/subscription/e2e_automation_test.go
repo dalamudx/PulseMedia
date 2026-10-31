@@ -316,7 +316,7 @@ func TestFullSubscriptionAutomationLifecycle(t *testing.T) {
 	}
 
 	// Hardlink transfer into library root
-	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem()))
+	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 	qProf := quality.Profile{Resolution: quality.Res2160p, ResolutionParserVersion: quality.ResolutionTokenParserVersion, Source: quality.SourceRemux, SourceParserVersion: quality.SourceTokenParserVersion}
 	plan, _, err := transferSvc.CreateMoviePlan(ctx, finRep.OperationID, root.ID, unitID, downloadedFile, "Inception", 2010, qProf)
 	if err != nil {

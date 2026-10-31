@@ -162,6 +162,9 @@ func validCreationKey(key string) bool {
 
 func canonicalCreationInput(input ports.SubscriptionCreationInput) (ports.SubscriptionCreationInput, error) {
 	in := cloneCreationInput(input)
+	if in.ClassificationVersion != nil && (*in.ClassificationVersion < 1 || in.RootID != nil || in.ExpectedIntentVersion != nil || in.ClassificationPreviewRootID == nil || *in.ClassificationPreviewRootID == uuid.Nil || len(in.ClassificationPreviewStamp) != 64 || strings.Trim(in.ClassificationPreviewStamp, "0123456789abcdef") != "") || in.ClassificationVersion == nil && (in.ClassificationPreviewRootID != nil || in.ClassificationPreviewStamp != "") {
+		return ports.SubscriptionCreationInput{}, ports.ErrInvalidSubscriptionBindings
+	}
 	invalid := func() (ports.SubscriptionCreationInput, error) {
 		return ports.SubscriptionCreationInput{}, ports.ErrInvalidSubscriptionBindings
 	}
@@ -407,7 +410,7 @@ func creationError(ctx context.Context, err error) error {
 	if ctx.Err() != nil {
 		return ctx.Err()
 	}
-	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, ports.ErrUnauthorized, ports.ErrForbidden, ports.ErrNotFound, ports.ErrInvalidSubscriptionBindings, ports.ErrSubscriptionBindingsConflict, ports.ErrMediaRequestConflict, ports.ErrNoSubscriptionRoot, ports.ErrAmbiguousSubscriptionRoot, ports.ErrBadResponse, ports.ErrTimeout} {
+	for _, safe := range []error{context.Canceled, context.DeadlineExceeded, ports.ErrUnauthorized, ports.ErrForbidden, ports.ErrNotFound, ports.ErrInvalidSubscriptionBindings, ports.ErrSubscriptionBindingsConflict, ports.ErrMediaRequestConflict, ports.ErrNoSubscriptionRoot, ports.ErrAmbiguousSubscriptionRoot, ports.ErrClassificationConflict, ports.ErrClassificationEvidence, ports.ErrBadResponse, ports.ErrTimeout} {
 		if errors.Is(err, safe) {
 			return safe
 		}
@@ -430,6 +433,8 @@ func cloneCreationInput(in ports.SubscriptionCreationInput) ports.SubscriptionCr
 	in.MediaID = creationPtr(in.MediaID)
 	in.TMDBID = creationPtr(in.TMDBID)
 	in.RootID = creationPtr(in.RootID)
+	in.ClassificationVersion = creationPtr(in.ClassificationVersion)
+	in.ClassificationPreviewRootID = creationPtr(in.ClassificationPreviewRootID)
 	in.DownloaderID = creationPtr(in.DownloaderID)
 	in.ExpectedIntentVersion = creationPtr(in.ExpectedIntentVersion)
 	in.IndexerIDs = slices.Clone(in.IndexerIDs)
@@ -464,6 +469,13 @@ func cloneCreationMetadata(in *ports.PreparedSubscriptionCreationMetadata) *port
 		return nil
 	}
 	out := *in
+	if in.ClassificationFacts != nil {
+		f := *in.ClassificationFacts
+		f.Genres = slices.Clone(f.Genres)
+		f.Languages = slices.Clone(f.Languages)
+		f.Countries = slices.Clone(f.Countries)
+		out.ClassificationFacts = &f
+	}
 	out.Media.Year = creationPtr(in.Media.Year)
 	out.Media.Seasons = slices.Clone(in.Media.Seasons)
 	out.Units = slices.Clone(in.Units)

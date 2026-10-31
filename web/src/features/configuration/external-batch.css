@@ -1,0 +1,19 @@
+.external-batch { min-width: 0; }
+.external-batch-scroll { width: 100%; min-width: 0; overflow-x: auto; margin-block: 1rem; }
+.external-batch table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.external-batch th, .external-batch td { padding: .75rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-color, #d1d5db); overflow-wrap: anywhere; }
+.external-batch caption { text-align: left; margin-bottom: .5rem; }
+.external-batch input:not([type="checkbox"]), .external-batch select { width: 100%; min-width: 0; max-width: 100%; }
+.external-batch button, .external-batch select { min-height: 44px; }
+.external-batch td button { margin-block: .25rem; }
+.external-batch-file { overflow-wrap: anywhere; }
+.config-panel.external-batch button.btn-secondary, .config-panel.external-batch button.btn-primary { min-height: 44px; min-width: 44px; }
+@media (max-width: 600px) {
+  .external-batch-scroll { overflow-x: visible; }
+  .external-batch table, .external-batch tbody, .external-batch tr, .external-batch td { display: block; width: 100%; min-width: 0; }
+  .external-batch caption { display: block; }
+  .external-batch thead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .external-batch tr { border-bottom: 1px solid var(--border-color, #d1d5db); padding-block: .75rem; }
+  .external-batch td { border: 0; padding: .5rem 0; }
+  .external-batch td::before { content: attr(data-label); display: block; font-weight: 600; margin-bottom: .4rem; }
+}

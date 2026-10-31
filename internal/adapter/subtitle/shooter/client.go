@@ -110,37 +110,45 @@ func (c *Client) FindChineseSubtitle(ctx context.Context, hash ports.SubtitleVid
 }
 
 func (c *Client) subtitleLink(body []byte) (string, error) {
+	links, err := c.subtitleLinks(body)
+	if err != nil || len(links) == 0 {
+		return "", err
+	}
+	return links[0], nil
+}
+
+func (c *Client) subtitleLinks(body []byte) ([]string, error) {
 	var packages []*struct{ Files json.RawMessage }
 	if err := json.Unmarshal(body, &packages); err != nil || packages == nil || len(packages) > maxPackages {
-		return "", ports.ErrBadResponse
+		return nil, ports.ErrBadResponse
 	}
-	selected, count := "", 0
+	selected, count := []string{}, 0
 	for _, pkg := range packages {
 		if pkg == nil {
-			return "", ports.ErrBadResponse
+			return nil, ports.ErrBadResponse
 		}
 		var files []*struct {
 			Ext  *string
 			Link *string
 		}
 		if err := json.Unmarshal(pkg.Files, &files); err != nil || files == nil {
-			return "", ports.ErrBadResponse
+			return nil, ports.ErrBadResponse
 		}
 		count += len(files)
 		if len(files) > 64 || count > maxFiles {
-			return "", ports.ErrBadResponse
+			return nil, ports.ErrBadResponse
 		}
 		for _, f := range files {
 			if f == nil || f.Ext == nil || f.Link == nil || *f.Ext == "" || *f.Link == "" {
-				return "", ports.ErrBadResponse
+				return nil, ports.ErrBadResponse
 			}
 			u, err := url.Parse(*f.Link)
 			if err != nil || strings.Contains(*f.Link, "#") || !safeURL(u) || !sameOrigin(c.apiURL, u) {
-				return "", ports.ErrBadResponse
+				return nil, ports.ErrBadResponse
 			}
 			ext := strings.TrimPrefix(strings.ToLower(*f.Ext), ".")
-			if selected == "" && ext == "srt" {
-				selected = u.String()
+			if ext == "srt" {
+				selected = append(selected, u.String())
 			}
 		}
 	}

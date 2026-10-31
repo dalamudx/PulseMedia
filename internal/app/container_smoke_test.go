@@ -100,7 +100,7 @@ func TestContainerRuntimeSmoke(t *testing.T) {
 			t.Error("owned smoke container cleanup failed")
 		}
 	})
-	runtime := command("run", "--rm", "--network", "none", "--read-only", "--entrypoint", "/bin/sh", image, "-ec", "test \"$(id -u)\" = 10001; pg_dump --version; pg_restore --version; test -r /app/migrations/00083_restore_isolation.sql; test -x /app/pulsebackup; /app/pulsebackup restore --help >/dev/null; test \"$(stat -c %a /data/temp)\" = 700")
+	runtime := command("run", "--rm", "--network", "none", "--read-only", "--entrypoint", "/bin/sh", image, "-ec", "test \"$(id -u)\" = 10001; test -s /etc/ssl/certs/ca-certificates.crt; openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt /usr/share/ca-certificates/mozilla/Amazon_Root_CA_1.crt; pg_dump --version; pg_restore --version; test -r /app/migrations/00083_restore_isolation.sql; test -x /app/pulsebackup; /app/pulsebackup restore --help >/dev/null; test \"$(stat -c %a /data/temp)\" = 700")
 	if !strings.Contains(runtime, "pg_dump (PostgreSQL) 18.6 (") || !strings.Contains(runtime, "pg_restore (PostgreSQL) 18.6 (") {
 		t.Fatal("PG18.6 clients absent")
 	}

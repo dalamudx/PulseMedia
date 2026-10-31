@@ -1,0 +1,121 @@
+rule_files:
+  - pulsemedia.rules.yml
+evaluation_interval: 1m
+tests:
+  - name: scheduling failures fire, recover and respect scrape availability
+    interval: 1m
+    input_series:
+      - series: 'up{job="pulsemedia",instance="local"}'
+        values: '1x35'
+      - series: 'up{job="pulsemedia",instance="offline"}'
+        values: '0x35'
+      - series: 'pulse_work_stage_failures_total{job="pulsemedia",instance="local",stage="cookiecloud_schedule"}'
+        values: '0+1x18 18+0x17'
+      - series: 'pulse_work_stage_failures_total{job="pulsemedia",instance="offline",stage="cookiecloud_schedule"}'
+        values: '0+1x35'
+    alert_rule_test:
+      - eval_time: 16m
+        alertname: PulseMediaSchedulingFailures
+        exp_alerts:
+          - exp_labels:
+              job: pulsemedia
+              instance: local
+              stage: cookiecloud_schedule
+              severity: warning
+            exp_annotations:
+              summary: PulseMedia periodic scheduling keeps failing
+              description: Check configuration, current permissions and database availability. This counter counts failed cycles, not objects; do not bypass execution authorization.
+      - eval_time: 30m
+        alertname: PulseMediaSchedulingFailures
+        exp_alerts: []
+  - name: sustained pressure fires and recovery clears
+    interval: 1m
+    input_series:
+      - series: 'up{job="pulsemedia",instance="local"}'
+        values: '1x15'
+      - series: 'pulse_db_pool_acquired_connections{job="pulsemedia",instance="local"}'
+        values: '8x6 0x8'
+      - series: 'pulse_db_pool_max_connections{job="pulsemedia",instance="local"}'
+        values: '8x15'
+      - series: 'pulse_queue_ready_age_seconds{job="pulsemedia",instance="local",queue="job",state="queued"}'
+        values: '600x6 0x8'
+      - series: 'pulse_db_lock_wait_age_seconds{job="pulsemedia",instance="local"}'
+        values: '6x6 0x8'
+      - series: 'pulse_db_lock_waiters{job="pulsemedia",instance="local"}'
+        values: '1x6 0x8'
+      - series: 'pulse_queue_expired_leases{job="pulsemedia",instance="local",queue="job",state="running"}'
+        values: '1x6 0x8'
+    promql_expr_test:
+      - expr: 'count(ALERTS{alertstate="firing"})'
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 4
+      - expr: 'ALERTS{alertstate="firing"}'
+        eval_time: 8m
+        exp_samples: []
+    alert_rule_test:
+      - eval_time: 5m
+        alertname: PulseMediaExpiredLeases
+        exp_alerts:
+          - exp_labels: {job: pulsemedia, instance: local, severity: warning}
+            exp_annotations:
+              summary: PulseMedia has expired logical task leases
+              description: Inspect original task and physical execution evidence. Lease expiry never authorizes releasing reservations or resending external actions.
+  - name: scrape failure suppresses stale business observations
+    interval: 1m
+    input_series:
+      - series: 'up{job="pulsemedia",instance="local"}'
+        values: '0x10'
+      - series: 'pulse_db_pool_acquired_connections{job="pulsemedia",instance="local"}'
+        values: '8x10'
+      - series: 'pulse_db_pool_max_connections{job="pulsemedia",instance="local"}'
+        values: '8x10'
+      - series: 'pulse_queue_ready_age_seconds{job="pulsemedia",instance="local",queue="job",state="queued"}'
+        values: '600x10'
+      - series: 'pulse_db_lock_wait_age_seconds{job="pulsemedia",instance="local"}'
+        values: '6x10'
+      - series: 'pulse_db_lock_waiters{job="pulsemedia",instance="local"}'
+        values: '1x10'
+      - series: 'pulse_queue_expired_leases{job="pulsemedia",instance="local",queue="job",state="running"}'
+        values: '1x10'
+    promql_expr_test:
+      - expr: 'count(ALERTS{alertstate="firing"})'
+        eval_time: 6m
+        exp_samples:
+          - labels: '{}'
+            value: 1
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: PulseMediaScrapeUnavailable
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: PulseMediaScrapeUnavailable
+        exp_alerts:
+          - exp_labels: {job: pulsemedia, instance: local, severity: warning}
+            exp_annotations:
+              summary: PulseMedia metrics collection is unavailable
+              description: Check reachability, administrator token permissions, and database availability. Missing observations are not zero backlog.
+  - name: healthy instance and other jobs never fire
+    interval: 1m
+    input_series:
+      - series: 'up{job="pulsemedia",instance="local"}'
+        values: '1x10'
+      - series: 'up{job="other",instance="foreign"}'
+        values: '0x10'
+      - series: 'pulse_db_pool_acquired_connections{job="pulsemedia",instance="local"}'
+        values: '1x10'
+      - series: 'pulse_db_pool_max_connections{job="pulsemedia",instance="local"}'
+        values: '8x10'
+      - series: 'pulse_queue_ready_age_seconds{job="pulsemedia",instance="local",queue="job",state="queued"}'
+        values: '0x10'
+      - series: 'pulse_db_lock_wait_age_seconds{job="pulsemedia",instance="local"}'
+        values: '0x10'
+      - series: 'pulse_db_lock_waiters{job="pulsemedia",instance="local"}'
+        values: '0x10'
+      - series: 'pulse_queue_expired_leases{job="pulsemedia",instance="local",queue="job",state="running"}'
+        values: '0x10'
+    promql_expr_test:
+      - expr: 'ALERTS{alertstate="firing"}'
+        eval_time: 6m
+        exp_samples: []

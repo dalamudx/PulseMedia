@@ -6,22 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/dalamudx/PulseMedia/internal/adapter/downloader/qbittorrent"
-	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/torznab"
-	"github.com/dalamudx/PulseMedia/internal/adapter/torrent"
-	"github.com/dalamudx/PulseMedia/internal/platform/clock"
-	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
-	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
-	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
-	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
-	"github.com/dalamudx/PulseMedia/internal/store/download"
-	"github.com/dalamudx/PulseMedia/internal/store/postgres"
-	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
-	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
-	"github.com/dalamudx/PulseMedia/internal/usecase/acquisition"
-	"github.com/dalamudx/PulseMedia/internal/usecase/library"
-	"github.com/dalamudx/PulseMedia/internal/usecase/search"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -32,9 +16,26 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/adapter/downloader/qbittorrent"
+	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/torznab"
+	"github.com/dalamudx/PulseMedia/internal/adapter/torrent"
 	"github.com/dalamudx/PulseMedia/internal/domain/media"
+	"github.com/dalamudx/PulseMedia/internal/platform/clock"
+	"github.com/dalamudx/PulseMedia/internal/platform/crypto"
+	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
+	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
+	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
 	"github.com/dalamudx/PulseMedia/internal/ports"
+	"github.com/dalamudx/PulseMedia/internal/store/download"
+	"github.com/dalamudx/PulseMedia/internal/store/postgres"
+	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
+	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
+	"github.com/dalamudx/PulseMedia/internal/usecase/acquisition"
+	"github.com/dalamudx/PulseMedia/internal/usecase/library"
+	"github.com/dalamudx/PulseMedia/internal/usecase/search"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // These fixtures exercise pure validation only, not execution authorization.
@@ -365,7 +366,7 @@ func newAutomaticTVOrganizationFixture(t *testing.T) *automaticTVOrganizationFix
 		}
 	}
 	f.lease = automaticTVOrganizationClaim(t, f.q, "download_organization")
-	f.svc = NewService(f.pool, idgen.New(), outbox.New(f.pool, idgen.New(), clock.New()), rootfs.NewFilesystem())
+	f.svc = NewService(f.pool, idgen.New(), outbox.New(f.pool, idgen.New(), clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	return f
 }
 
@@ -563,7 +564,7 @@ func TestAutomaticTVOrganizationRollbackAndSamePlanRetryPG(t *testing.T) {
 			automaticTVOrganizationExec(t, f.pool, `UPDATE job SET lease_until=clock_timestamp()-interval '1 second' WHERE id=$1`, f.lease.ID)
 			automaticTVOrganizationExec(t, f.pool, `UPDATE job SET state='queued',lease_owner=NULL,lease_until=NULL WHERE id=$1`, f.lease.ID)
 			f.lease = automaticTVOrganizationClaim(t, f.q, "download_organization")
-			f.svc = NewService(f.pool, idgen.New(), outbox.New(f.pool, idgen.New(), clock.New()), rootfs.NewFilesystem())
+			f.svc = NewService(f.pool, idgen.New(), outbox.New(f.pool, idgen.New(), clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 			if e = f.svc.OrganizeDownload(t.Context(), f.lease); e != nil {
 				t.Fatal("same-plan restart retry", e)
 			}

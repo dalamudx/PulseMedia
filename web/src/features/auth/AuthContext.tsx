@@ -12,8 +12,8 @@ interface AuthContextType {
   checking: boolean;
   statusError: string | null;
   error: string | null;
-  login: (username: string, password: string) => Promise<boolean>;
-  setup: (username: string, password: string) => Promise<boolean>;
+  login: (username: string, password: string, factor?: {otp?: string; recovery_code?: string}) => Promise<boolean>;
+  setup: (username: string, password: string, deploymentToken?: string) => Promise<boolean>;
   logout: () => Promise<boolean>;
   checkStatus: () => Promise<void>;
 }
@@ -105,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [checkStatus]);
 
-  async function authenticate(kind: "login" | "setup", username: string, password: string): Promise<boolean> {
+  async function authenticate(kind: "login" | "setup", username: string, password: string, deploymentToken?: string, factor?: {otp?: string; recovery_code?: string}): Promise<boolean> {
     if (writing.current) return false;
     writing.current = true;
     const version = ++epoch.current;
@@ -116,12 +116,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await clearPush();
       if (!mounted.current || version !== epoch.current) return false;
       const result = kind === "login"
-        ? await api.POST("/api/v1/auth/login", { body: { username, password } })
-        : await api.POST("/api/v1/auth/setup", { body: { username, password } });
+        ? await api.POST("/api/v1/auth/login", { body: { username, password, ...factor } })
+        : await api.POST("/api/v1/auth/setup", { body: { username, password }, headers: deploymentToken ? { "X-Setup-Token": deploymentToken } : undefined });
       if (!mounted.current || version !== epoch.current) return false;
       if (result.response.status >= 500) throw new Error("authentication unconfirmed");
       if (result.error || !result.data?.user) {
-        setError(result.error?.message || (kind === "login" ? "登录失败" : "初始化失败"));
+        setError(result.error?.code === "SETUP_RESTRICTED" ? "初始化需要部署令牌，请填写部署者提供的令牌后重试。" : result.error?.message || (kind === "login" ? "登录失败" : "初始化失败"));
         return false;
       }
       setInitialized(true);
@@ -142,8 +142,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (mounted.current && version === epoch.current) setLoading(false);
     }
   }
-  const login = (username: string, password: string) => authenticate("login", username, password);
-  const setup = (username: string, password: string) => authenticate("setup", username, password);
+  const login = (username: string, password: string, factor?: {otp?: string; recovery_code?: string}) => authenticate("login", username, password, undefined, factor);
+  const setup = (username: string, password: string, deploymentToken?: string) => authenticate("setup", username, password, deploymentToken);
 
   async function logout(): Promise<boolean> {
     if (writing.current) return false;

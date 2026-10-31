@@ -55,6 +55,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediascrape"
 	"github.com/dalamudx/PulseMedia/internal/usecase/mediaserver"
 	metadatausecase "github.com/dalamudx/PulseMedia/internal/usecase/metadata"
+	"github.com/dalamudx/PulseMedia/internal/usecase/metadatadiagnostics"
 	"github.com/dalamudx/PulseMedia/internal/usecase/metadatasidecar"
 	"github.com/dalamudx/PulseMedia/internal/usecase/notify"
 	"github.com/dalamudx/PulseMedia/internal/usecase/personfollow"
@@ -64,6 +65,7 @@ import (
 	usecaseSearch "github.com/dalamudx/PulseMedia/internal/usecase/search"
 	"github.com/dalamudx/PulseMedia/internal/usecase/settings"
 	siteusecase "github.com/dalamudx/PulseMedia/internal/usecase/site"
+
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subtitle"
 	"github.com/dalamudx/PulseMedia/internal/usecase/transfer"
@@ -80,6 +82,7 @@ type App struct {
 	lock                   *lockfile.DataDirLock
 	version                string
 	dbPool                 *pgxpool.Pool
+	stages                 workStageRecorder
 	metadataHTTPClient     *http.Client
 	notificationHTTPClient *http.Client
 	sseHub                 *httpapi.SSEHub
@@ -317,7 +320,12 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	var feedSvc *usecaseSearch.FeedService
 	var healthSvc *usecaseSearch.HealthService
 	var scheduler *usecaseScheduler.AutoFulfillScheduler
+	var movieDiscoverySvc *usecaseSearch.MovieDiscoveryService
+	var tvEpisodeDiscoverySvc *usecaseSearch.TVEpisodeDiscoveryService
 	var dlMgr *download.Manager
+	var downloadControlSvc *download.ControlService
+	var tvEpisodeUpgradeSvc httpapi.TVEpisodeUpgradeApplication
+	var seedingInspectionSvc *download.SeedingInspectionService
 	var downloadWatchRepo ports.DownloadWatchRepository
 	var downloadWatchObserver ports.DownloadWatchObserver
 	var completeTVWatchRepo ports.DownloadWatchRepository
@@ -369,7 +377,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		})
 		acqSvc = acquisition.NewService(postgres.NewAcquisitionStore(a.dbPool, a.idgen, a.clock, acquisition.SelectMovieRound))
 		acqSvc.SetRequirementRepository(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen))
-		transferSvc = transfer.NewService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes))
+		transferSvc = transfer.NewService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes, transfer.ExecutePreparedPlan))
 		subSvcStore := postgres.NewSubscriptionIntentStore(a.dbPool, a.idgen)
 		subSvc = subscription.NewService(subSvcStore, subSvcStore, postgres.NewSubscriptionControlStore(a.dbPool, a.idgen), subSvcStore)
 		polSvc = policy.NewService(postgres.NewPolicyStore(a.dbPool, a.idgen))
@@ -405,6 +413,13 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		dlMgr = download.NewManager(downloadRepo)
 		dlMgr.SetSubmissionRepository(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen))
 		dlMgr.SetClientFactory(NativeDownloadClient)
+		downloadControlSvc = download.NewControlService(downloadRepo)
+		tvUpgrade, tvUpgradeErr := a.tvEpisodeUpgradeService(downloadRepo)
+		if tvUpgradeErr != nil {
+			return fmt.Errorf("initialize TV episode upgrade: %w", tvUpgradeErr)
+		}
+		tvEpisodeUpgradeSvc = tvUpgrade
+		seedingInspectionSvc = download.NewSeedingInspectionService(downloadRepo, a.clock)
 
 		runtime, observer, observationErr := a.movieUpgradeObservationServices(downloadRepo)
 		if observationErr != nil {
@@ -451,6 +466,8 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		searchSvc.SetConfiguredClientFactory(newConfiguredIndexerClient)
 		interactiveSearchRepo = postgres.NewInteractiveSearchStore(a.dbPool, a.idgen)
 		interactiveSearchSvc = usecaseSearch.NewInteractiveSearchService(interactiveSearchRepo, crypto.NewSecretProtector(masterKey))
+		movieDiscoverySvc = usecaseSearch.NewMovieDiscoveryService(postgres.NewMovieDiscoveryStore(a.dbPool, a.idgen))
+		tvEpisodeDiscoverySvc = usecaseSearch.NewTVEpisodeDiscoveryService(postgres.NewTVEpisodeDiscoveryStore(a.dbPool, a.idgen))
 		searchSvc.SetFeedClientFactory(func(kind, baseURL, apiKey string) ports.IndexerClient {
 			if kind == "rss" {
 				return universal_rss.NewFeedClient(baseURL, nil)
@@ -496,7 +513,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	if a.dbPool != nil {
 		statsRepo = postgres.NewSiteAccountStatsStore(a.dbPool, a.idgen, a.indexerDecoder)
 		checkinRepo = postgres.NewSiteCheckinStore(a.dbPool, a.idgen, a.indexerDecoder)
-		cookieCloudRepo = postgres.NewCookieCloudSyncStore(a.dbPool, a.idgen, a.indexerDecoder, crypto.NewSecretProtector(masterKey))
+		cookieCloudRepo = postgres.NewCookieCloudSyncStore(a.dbPool, a.idgen, a.indexerDecoder, crypto.NewSecretProtector(masterKey), postgres.NewScheduleLimits(a.clock))
 	}
 	if queue != nil && len(masterKey) > 0 {
 		siteStatsSvc = siteusecase.NewAccountStatsCollector(statsRepo, &siteAccountStatsClientBuilder{httpClient: a.metadataHTTPClient, clock: a.clock})
@@ -510,10 +527,10 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		globalRatesSvc = downloadmetrics.NewService(globalRatesRepo, downloadGlobalRatesBuilder{}, a.clock)
 	}
 	if queue != nil && len(masterKey) > 0 {
-		doubanWishRepo = postgres.NewDoubanWishSyncStore(a.dbPool, a.idgen)
+		doubanWishRepo = postgres.NewDoubanWishSyncStore(a.dbPool, a.idgen, postgres.NewScheduleLimits(a.clock))
 		creator := &doubanWishSubscriptionCreator{pool: a.dbPool, ids: a.idgen, provider: metaProvider, episodes: metaProvider, protector: crypto.NewSecretProtector(masterKey)}
 		doubanWishSvc = watchlist.NewSyncService(doubanWishRepo, douban.NewWishClient("", a.metadataHTTPClient), metaProvider, creator)
-		personFollowRepo = postgres.NewPersonFollowSyncStore(a.dbPool, a.idgen)
+		personFollowRepo = postgres.NewPersonFollowSyncStore(a.dbPool, a.idgen, postgres.NewScheduleLimits(a.clock))
 		personCreator := &personFollowSubscriptionCreator{pool: a.dbPool, ids: a.idgen, provider: metaProvider, episodes: metaProvider, protector: crypto.NewSecretProtector(masterKey)}
 		personFollowSvc = personfollow.NewSyncService(personFollowRepo, metaProvider, personCreator)
 	}
@@ -527,6 +544,12 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	tvdbFallback := tvdbSource{settings: settingsSvc, httpClient: a.metadataHTTPClient, identity: metaProvider, resolver: metaProvider}
 	browserMetadata := &tvdbBrowseProvider{MetadataProvider: metaProvider, translations: metaProvider, source: tvdbFallback}
 	serverHandler := httpapi.NewServerHandler(a, authSvc, settingsSvc, acqSvc, transferSvc, browserMetadata, subSvc, polSvc, searchSvc, scheduler, dlMgr, syncSvc, masterKey)
+	a.configureReviewServices(serverHandler, authSvc, downloadControlSvc, seedingInspectionSvc, masterKey, metaProvider)
+	serverHandler.SetMovieDiscoveryService(movieDiscoverySvc)
+	serverHandler.SetTVEpisodeDiscoveryService(tvEpisodeDiscoverySvc)
+	serverHandler.SetTVEpisodeUpgradeService(tvEpisodeUpgradeSvc)
+	serverHandler.SetMetadataDiagnosticsService(metadatadiagnostics.NewService(newMetadataDiagnosticCatalogue(metaProvider)))
+	serverHandler.SetUntrackedCompanionsService(library.NewUntrackedCompanions(postgres.NewUntrackedCompanionStore(a.dbPool, a.idgen, a.clock), rootfs.NewFilesystem()))
 	serverHandler.SetDoubanSyncConfigService(watchlist.NewConfigService(postgres.NewDoubanSyncConfigStore(a.dbPool, a.idgen)))
 	serverHandler.SetSiteAccountStatsConfigService(siteusecase.NewAccountStatsConfigService(postgres.NewSiteAccountStatsConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
 	serverHandler.SetSiteCheckinConfigService(siteusecase.NewCheckinConfigService(postgres.NewSiteCheckinConfigStore(a.dbPool, a.idgen, a.indexerDecoder)))
@@ -534,8 +557,13 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	serverHandler.SetSeedingConfigService(seedingusecase.NewConfigService(postgres.NewSeedingConfigStore(a.dbPool, a.idgen)))
 	serverHandler.SetUntrackedScopeService(library.NewUntrackedScopeService(postgres.NewUntrackedScopeStore(a.dbPool, a.idgen, a.clock), rootfs.NewFilesystem()))
 	serverHandler.SetUntrackedDiscoveryService(library.NewUntrackedDiscoveryReader(untrackedDiscoveryRepo))
-	serverHandler.SetUntrackedReviewService(library.NewUntrackedReviewService(untrackedReviewRepo, rootfs.NewFilesystem()))
-	serverHandler.SetUntrackedOrganizationService(library.NewUntrackedOrganizationService(untrackedOrganizationRepo, rootfs.NewFilesystem()))
+	untrackedReviews := library.NewUntrackedReviewService(untrackedReviewRepo, rootfs.NewFilesystem())
+	untrackedOrganizations := library.NewUntrackedOrganizationService(untrackedOrganizationRepo, rootfs.NewFilesystem())
+	serverHandler.SetUntrackedReviewService(untrackedReviews)
+	serverHandler.SetUntrackedOrganizationService(untrackedOrganizations)
+	if a.dbPool != nil {
+		serverHandler.SetExternalBatchService(library.NewExternalBatchService(postgres.NewExternalBatchStore(a.dbPool, a.idgen, a.clock), untrackedReviews, untrackedOrganizations))
+	}
 	serverHandler.SetSiteCheckinHistoryService(siteusecase.NewCheckinHistoryReader(postgres.NewSiteCheckinHistoryStore(a.dbPool)))
 	serverHandler.SetSiteAccountStatsService(siteusecase.NewAccountStatsReader(statsRepo))
 	serverHandler.SetMetadataDetailService(metadatausecase.NewDetailService(metaProvider))
@@ -558,12 +586,16 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		indexerManagementStore := postgres.NewIndexerManagementStore(a.dbPool, a.idgen, a.indexerDecoder)
 		serverHandler.SetIndexerManagementServices(usecaseSearch.NewIndexerManagementService(indexerManagementStore, crypto.NewSecretProtector(masterKey)), usecaseSearch.NewIndexerManagementReceiptService(indexerManagementStore))
 		serverHandler.SetWithdrawalService(acquisition.NewWithdrawalService(postgres.NewDownloadSubmissionStore(a.dbPool, a.idgen)))
-		serverHandler.SetTransferRecoveryService(transfer.NewRecoveryService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes)))
-		serverHandler.SetCompleteTVOrganizationPreviewService(transfer.NewCompleteTVOrganizationPreviewService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, nil, nil, a.cfg.Organization.MinMediaBytes)))
-		serverHandler.SetTransferRevisionService(transfer.NewRevisionService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes)))
-		reuseSvc = transfer.NewLibraryReuseService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes))
+		serverHandler.SetTransferRecoveryService(transfer.NewRecoveryService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes, transfer.ExecutePreparedPlan)))
+		serverHandler.SetCompleteTVOrganizationPreviewService(transfer.NewCompleteTVOrganizationPreviewService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, nil, nil, a.cfg.Organization.MinMediaBytes, transfer.ExecutePreparedPlan)))
+		serverHandler.SetTransferRevisionService(transfer.NewRevisionService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes, transfer.ExecutePreparedPlan)))
+		reuseSvc = transfer.NewLibraryReuseService(transferstore.NewRepositoryWithMinimumMediaBytes(a.dbPool, a.idgen, ob, rootfs.NewFilesystem(), a.cfg.Organization.MinMediaBytes, transfer.ExecutePreparedPlan))
 		serverHandler.SetLibraryReuseService(reuseSvc)
 		serverHandler.SetMediaScrapeService(mediascrape.NewService(scrapestore.NewRepository(a.dbPool), a.idgen))
+		serverHandler.SetManagedSidecarUpdateService(metadatasidecar.NewManagedUpdateService(sidecarstore.NewManagedUpdateRepository(a.dbPool, a.idgen), rootfs.NewFilesystem(), metaProvider, tmdbartwork.New(a.metadataHTTPClient, metaProvider.budget), a.idgen))
+		if err := a.configureLibraryMaintenance(serverHandler); err != nil {
+			return err
+		}
 		serverHandler.SetAuditTimelineService(audit.NewTimelineService(postgres.NewAuditTimelineStore(a.dbPool)))
 		serverHandler.SetRootSelectionService(subscription.NewRootSelectionService(postgres.NewLibraryRootSelectionStore(a.dbPool)))
 		serverHandler.SetSubscriptionCreationService(subscription.NewSubscriptionCreationService(postgres.NewSubscriptionCreationStore(a.dbPool, a.idgen), metaProvider, metaProvider, crypto.NewSecretProtector(masterKey)))
@@ -705,6 +737,15 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 	mediaSubtitleDone := make(chan struct{})
 	doubanWishDone := make(chan struct{})
 	personFollowDone := make(chan struct{})
+	historyRetentionDone := make(chan struct{})
+	if a.dbPool != nil {
+		go func() {
+			defer close(historyRetentionDone)
+			a.runHistoryRetentionWorker(workerCtx, postgres.NewHistoryRetentionStore(a.dbPool))
+		}()
+	} else {
+		close(historyRetentionDone)
+	}
 	globalRatesDone := make(chan struct{})
 	if globalRatesSvc != nil {
 		go func() {
@@ -814,7 +855,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		go func() { defer close(outboxDone); a.runOutboxWorkers(workerCtx, ob, syncSvc, notifySvc) }()
 		go func() {
 			defer close(searchDone)
-			a.runAllSearchWorkers(workerCtx, queue, scheduler, searchSvc, feedSvc, healthSvc, interactiveSearchRepo, automaticTVRounds, automaticTVFinalizer)
+			a.runAllSearchWorkers(workerCtx, queue, scheduler, searchSvc, feedSvc, healthSvc, interactiveSearchRepo, automaticTVRounds, automaticTVFinalizer, movieDiscoverySvc)
 		}()
 		go func() { defer close(libraryDone); a.runLibraryWorkers(workerCtx, queue, metaProvider) }()
 	} else {
@@ -836,7 +877,7 @@ func (a *App) Run(ctx context.Context) (runErr error) {
 		cancelWorker()
 		budget, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
-		waitRuntime(budget, a.logger, workerDone, downloadWatchDone, completeTVWatchDone, automaticTVWatchDone, movieUpgradeWatchDone, untrackedDiscoveryDone, untrackedDiscoveryWatchDone, untrackedReviewDone, untrackedOrganizationDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, personFollowDone, globalRatesDone, siteStatsDone, siteCheckinDone, cookieCloudDone, seedingDone, outboxDone, searchDone, libraryDone)
+		waitRuntime(budget, a.logger, workerDone, downloadWatchDone, completeTVWatchDone, automaticTVWatchDone, movieUpgradeWatchDone, untrackedDiscoveryDone, untrackedDiscoveryWatchDone, untrackedReviewDone, untrackedOrganizationDone, completeTVDone, automaticTVDownloadDone, upgradeObservationDone, upgradeTrackingDone, upgradeSendDone, upgradeOrganizationDone, organizationDone, mediaSidecarDone, mediaSubtitleDone, doubanWishDone, personFollowDone, globalRatesDone, historyRetentionDone, siteStatsDone, siteCheckinDone, cookieCloudDone, seedingDone, outboxDone, searchDone, libraryDone)
 	}
 	defer stopWorker()
 

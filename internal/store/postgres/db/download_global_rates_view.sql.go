@@ -16,7 +16,7 @@ const listDownloadGlobalRateSources = `-- name: ListDownloadGlobalRateSources :m
 SELECT c.id,c.name,c.client_type,COALESCE(pulse_global_rates_binding(c.id),'')::text AS config_stamp,
  s.latest_job_id,s.last_good_job_id
 FROM download_client c LEFT JOIN download_global_rate_schedule s ON s.client_id=c.id
-WHERE c.client_type IN ('qbittorrent','transmission') ORDER BY c.id
+WHERE c.client_type IN ('qbittorrent','transmission','rtorrent') ORDER BY c.id
 `
 
 type ListDownloadGlobalRateSourcesRow struct {
@@ -57,7 +57,7 @@ func (q *Queries) ListDownloadGlobalRateSources(ctx context.Context) ([]ListDown
 
 const listDownloadGlobalRateViewSamples = `-- name: ListDownloadGlobalRateViewSamples :many
 SELECT a.job_id, a.client_id, a.config_stamp, a.state, a.execution_owner, a.execution_token, a.started_at, a.observed_at, a.finished_at, a.download_bytes_per_second, a.upload_bytes_per_second, a.failure_code FROM download_global_rate_attempt a JOIN download_client c ON c.id=a.client_id
-WHERE c.client_type IN ('qbittorrent','transmission') AND a.state IN ('succeeded','failed','abandoned')
+WHERE c.client_type IN ('qbittorrent','transmission','rtorrent') AND a.state IN ('succeeded','failed','abandoned')
 AND (COALESCE(a.observed_at,a.finished_at)>=$1::timestamptz OR a.job_id=ANY($2::uuid[]))
 ORDER BY COALESCE(a.observed_at,a.finished_at),a.job_id
 `

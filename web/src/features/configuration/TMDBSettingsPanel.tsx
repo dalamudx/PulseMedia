@@ -26,15 +26,17 @@ export function TMDBSettingsPanel(){
  };
  const save=async(event:FormEvent)=>{
   event.preventDefault();if(gate.current||!readable||!metadata||!secret.trim())return;gate.current=true;setBusy(true);
-  const command=pending??{key:crypto.randomUUID(),version:metadata.version};const input=original.current?.secret??secret.trim();
+  let requestStarted=false;
   try{
+   const command=pending??{key:crypto.randomUUID(),version:metadata.version};const input=original.current?.secret??secret.trim();
    if(!pending){try{localStorage.setItem(storageKey,JSON.stringify(command));}catch{setMessage("无法保存恢复记录，尚未提交请求。");return;}setPending(command);}original.current={command,secret:input};
    const csrf=decodeURIComponent(document.cookie.split("; ").find(c=>c.startsWith("csrf_token="))?.slice("csrf_token=".length)??"");
+   requestStarted=true;
    const {data,error,response}=await api.PUT("/api/v1/settings/{key}",{params:{path:{key:"tmdb.api_key"}},headers:{"Idempotency-Key":command.key,"X-CSRF-Token":csrf},body:{expected_version:command.version,value:{api_key:input}}});
    if(!alive.current||currentOwner.current!==owner)return;
    if(!data||error){if(response.status===409){original.current=null;setSecret("");setMessage("请求内容不一致，请查询原保存结果。");return;}if([400,403,412].includes(response.status)){clear();setMessage(response.status===412?"配置已变化，请刷新后重新输入密钥。":"保存被拒绝，请刷新后重新输入密钥。");await load();}else setMessage("保存结果尚未确认，请查询原请求结果或使用同一请求重试。");return;}
    clear();setMessage("TMDB 密钥已保存。");await load();
-  }catch{if(alive.current)setMessage("保存结果尚未确认，请查询原请求结果或使用同一请求重试。");}
+  }catch{if(alive.current)setMessage(requestStarted?"保存结果尚未确认，请查询原请求结果或使用同一请求重试。":"无法准备保存请求，尚未提交。请刷新后重试。");}
   finally{gate.current=false;if(alive.current)setBusy(false);}
  };
  return <div className="card"><div className="card-header"><h3>TMDB 影视元数据 API 密钥配置</h3></div>

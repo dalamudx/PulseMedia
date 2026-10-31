@@ -10,7 +10,6 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // PersonFollowExecution keeps the physical session until the caller's I/O has
@@ -18,7 +17,7 @@ import (
 type PersonFollowExecution struct {
 	mu          sync.Mutex
 	store       *PersonFollowSyncStore
-	conn        *pgxpool.Conn
+	conn        *PhysicalConnection
 	lease       ports.JobLease
 	configID    uuid.UUID
 	runID       uuid.UUID
@@ -29,7 +28,7 @@ type PersonFollowExecution struct {
 	closed      bool
 }
 
-func personFollowUnlockConnection(conn *pgxpool.Conn, config uuid.UUID) {
+func personFollowUnlockConnection(conn *PhysicalConnection, config uuid.UUID) {
 	cleanup, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	unlocked, err := db.New(conn).UnlockPersonFollowPhysicalLock(cleanup, config)
@@ -53,7 +52,7 @@ func (s *PersonFollowSyncStore) BeginExecution(ctx context.Context, lease ports.
 	if e != nil {
 		return nil, e
 	}
-	conn, e := s.pool.Acquire(bounded)
+	conn, e := AcquirePhysicalConnection(bounded, s.pool)
 	if e != nil {
 		return nil, e
 	}
@@ -272,7 +271,7 @@ func (s *PersonFollowSyncStore) ExecutionReleased(ctx context.Context, job uuid.
 	if err != nil {
 		return false, personFollowError(ctx, err)
 	}
-	conn, err := s.pool.Acquire(ctx)
+	conn, err := AcquirePhysicalConnection(ctx, s.pool)
 	if err != nil {
 		return false, personFollowError(ctx, err)
 	}

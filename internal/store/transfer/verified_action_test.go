@@ -15,6 +15,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/google/uuid"
 )
 
@@ -174,7 +175,7 @@ func TestVerifiedActionImportRollbackAndRestartPG(t *testing.T) {
 				t.Fatal(err)
 			}
 			gen := idgen.New()
-			restarted := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem())
+			restarted := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 			if err := restarted.ExecutePlan(ctx, p.ID); err != nil {
 				t.Fatalf("restart failed to observe %s: %v", action, err)
 			}
@@ -223,7 +224,7 @@ func TestVerifiedActionApprovalAndDigestImmutablePG(t *testing.T) {
 func TestVerifiedActionConcurrentWorkersPG(t *testing.T) {
 	f, p, step, _ := verifiedFixture(t, "copy")
 	gen := idgen.New()
-	other := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem())
+	other := NewService(f.pool, gen, outbox.New(f.pool, gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	var wg sync.WaitGroup
 	errs := make(chan error, 2)
 	for _, svc := range []*Service{f.svc, other} {

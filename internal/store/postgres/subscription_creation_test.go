@@ -50,7 +50,7 @@ func newCreationFixture(t *testing.T, through ...int64) creationFixture {
 	if err = pool.QueryRow(ctx, "SHOW server_version").Scan(&version); err != nil || !strings.HasPrefix(version, "18.6") {
 		t.Fatalf("requires PG18.6: %s %v", version, err)
 	}
-	path, err := os.MkdirTemp("/data/temp", "subscription-creation-fixture.")
+	path, err := os.MkdirTemp(os.Getenv("PULSE_TEST_TEMP_ROOT"), "subscription-creation-fixture.")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -12,6 +12,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/transfer"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/google/uuid"
 	"os"
 	"path/filepath"
@@ -144,7 +145,7 @@ func TestMovieUpgradeOrganizationPhysicalPlanPG(t *testing.T) {
 	if e := f.p.QueryRow(ctx, `SELECT p.state,p.execution_token,s.target_path FROM transfer_plan p JOIN transfer_step s ON s.plan_id=p.id WHERE p.id=$1`, result.PlanID).Scan(&state, &token, &target); e != nil || state != "review_required" || token != 0 {
 		t.Fatal(state, token, e)
 	}
-	svc := transfer.NewService(f.p, idgen.New(), nil, rootfs.NewFilesystem())
+	svc := transfer.NewService(f.p, idgen.New(), nil, rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	if e := svc.ExecutePlan(ctx, result.PlanID); !errors.Is(e, ports.ErrTransferExecutionRejected) {
 		t.Fatal("generic execution", e)
 	}

@@ -4,6 +4,516 @@
  */
 
 export interface paths {
+    "/api/v1/subscriptions/{id}/tv-episode-upgrade-previews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Administrator Cookie-only read-only comparison of one canonical episode, one current file and one candidate. Does not authorize execution. */
+        post: operations["previewTVEpisodeUpgrade"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/{id}/tv-episode-upgrade-commands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Explicit dedicated single-episode phase. Original command keys recover receipts without repeating physical writes. Unknown outcomes retain reservations and require observation. */
+        post: operations["commandTVEpisodeUpgrade"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/{id}/tv-episode-upgrade-commands/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Cookie-only database receipt recovery; never invokes the downloader or filesystem. */
+        get: operations["readTVEpisodeUpgradeCommand"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/settings/metadata-diagnostics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Explicit administrator Cookie-only test of a fixed TMDB target using the current production configuration. No arbitrary URLs, automatic requests, business writes or secret responses. All outcomes are private and not cached. */
+        post: operations["runMetadataDiagnostic"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/{id}/seeding-observations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Manually inspect the original torrent using the current Cookie session and object authority. Transient read only; no scheduling or persistence. */
+        post: operations["observeOperationSeeding"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/security/commands/{command_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the original safe account command receipt without replaying a write */
+        get: operations["getOwnSecurityCommand"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Account security operation requiring the current cookie session */
+        get: operations["listAccounts"];
+        put?: never;
+        /** Account security operation requiring the current cookie session */
+        post: operations["createAccount"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Account security operation requiring the current cookie session */
+        put: operations["updateAccount"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{id}/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reset a family member password after administrator reauthentication
+         * @description Requires the current administrator Cookie session and the administrator's current password and enabled MFA. The target must be a different member account. Revokes all target sessions and API Tokens and cancels pending MFA enrollment, while retaining enabled MFA and the account's active/disabled state. Password, audit and original-key receipt commit atomically. Replay and receipt reads never return passwords. Responses are private and no-store.
+         */
+        post: operations["resetAccountPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Account security operation requiring the current cookie session */
+        get: operations["listOwnSessions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/sessions/revoke-others": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reauthenticate and revoke other sessions while retaining the current session and API tokens
+         * @description Cookie only. Password and the enabled second factor are checked under the account lock. The original receipt retains the original kept session; replay does not revoke sessions created later.
+         */
+        post: operations["revokeOtherSessions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/sessions/{id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Account security operation requiring the current cookie session */
+        post: operations["revokeOwnSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Account security operation requiring the current cookie session */
+        post: operations["changeOwnPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/mfa": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Account security operation requiring the current cookie session */
+        get: operations["getOwnMFA"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/mfa/setup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Account security operation requiring the current cookie session */
+        post: operations["beginOwnMFA"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/mfa/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Account security operation requiring the current cookie session */
+        post: operations["confirmOwnMFA"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/mfa/disable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Account security operation requiring the current cookie session */
+        post: operations["disableOwnMFA"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/mfa/recovery-codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Replace recovery codes after password and second-factor reauthentication
+         * @description Requires enabled MFA and the current Cookie session. Replaces all old recovery codes and revokes other sessions and API Tokens atomically, retaining the current session and TOTP binding. Ten new codes are returned only by the first committed response; original-key replay and safe receipts never reveal codes. No automatic retry.
+         */
+        post: operations["regenerateOwnMFARecoveryCodes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/{id}/download-control": {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get: operations["getOperationDownloadControl"];
+        put?: never;
+        post: operations["controlOperationDownload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/{id}/download-control/observations": {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["observeOperationDownloadControl"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/settings/seerr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getSeerrConfiguration"];
+        put: operations["saveSeerrConfiguration"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/seerr/receipts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listSeerrReceipts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/integrations/seerr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Dedicated webhook; Authorization header equals dedicated configured secret. Body <=64KiB. Accepts MEDIA_APPROVED and MEDIA_AUTO_APPROVED only. Both create a local pending request requiring local approval; TV requests require explicit Requested Seasons. Reusing a request ID with changed notification type or payload conflicts. */
+        post: operations["receiveSeerrWebhook"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/files/{file_id}/subtitle-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        get: operations["getSubtitleCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/files/{file_id}/subtitle-candidates/queries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["querySubtitleCandidates"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/files/{file_id}/subtitle-candidates/{candidate_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+                candidate_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["confirmSubtitleCandidate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/{id}/execution": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getSubscriptionExecution"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/classification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getClassification"];
+        put: operations["publishClassification"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/classification/previews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["previewClassification"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/metadata/bangumi/calendar": {
         parameters: {
             query?: never;
@@ -237,6 +747,26 @@ export interface paths {
          * @description Authenticated dashboard status. Only current administrators receive the data directory.
          */
         get: operations["getSystemStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/system/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Prometheus process and queue metrics
+         * @description Current administrators only, via a session or read-scoped API token. Prometheus text format 0.0.4, no cache. HTTP counters reset on process restart. Fixed worker-stage histograms and in-flight gauges describe six instrumented worker calls since App construction; call return is not business success, and cancellation does not end a still-running physical call. Pool gauges, lock waiters and oldest lock wait for the current database and login role, aggregate indexer time gates (not execution authorization), and aggregate job/outbox backlog are read on demand with a two-second database deadline; no native I/O or business mutation. Unavailable observations return 503, never fabricated zeroes. Successful retained job/delivery history is excluded; expired leases are observations, not authorization to retry.
+         */
+        get: operations["readSystemMetrics"];
         put?: never;
         post?: never;
         delete?: never;
@@ -916,7 +1446,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List subscriptions for current user or all if admin */
+        /**
+         * List subscriptions for current user or all if admin
+         * @description Bounded local snapshot; never calls metadata providers. Default summary omits wanted_items. Calendar returns only a page of real dated episodes in a range of at most 42 days, or a separate unknown-date page. Offset pages are not frozen across requests. Counts and items share one authorized snapshot. All responses are private, no-store.
+         */
         get: operations["listSubscriptions"];
         put?: never;
         /**
@@ -944,6 +1477,124 @@ export interface paths {
         get: operations["getSubscriptionCreationReceipt"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/subscriptions/{id}/movie-discovery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the current movie upgrade discovery search
+         * @description Current owner administrator only. Reads stored discovery state without scheduling or external requests. Search candidates require a fresh explicit upgrade preview and separate execution authorization.
+         */
+        get: operations["getMovieDiscovery"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List the current administrator's configured external directory scopes
+         * @description Read-only persisted scope summaries, sorted by UUID with a fixed page size of 100. No filesystem, metadata network, queue, or import activity. Disabled configurations remain visible and are not executable. Never lists arbitrary roots or another owner's scope.
+         */
+        get: operations["listUntrackedReviewScopes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/discoveries/{file_id}/episode-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        /**
+         * Read current trusted canonical episodes for one observed external file
+         * @description Current owner administrator Cookie only. Read-only local metadata; no filesystem, network, jobs, or writes. Empty items means no trusted current season metadata. Options freeze actual TMDB identity and current media/unit versions for a subsequent explicit review request.
+         */
+        get: operations["readUntrackedReviewEpisodeOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-organizations/{operation_id}/companions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operation_id: string;
+            };
+            cookie?: never;
+        };
+        get: operations["readUntrackedCompanions"];
+        put?: never;
+        post: operations["selectUntrackedCompanions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-organizations/{operation_id}/companions/discover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operation_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["discoverUntrackedCompanions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-organizations/{operation_id}/companions/{attachment_id}/execute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operation_id: string;
+                attachment_id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["executeUntrackedCompanion"];
         delete?: never;
         options?: never;
         head?: never;
@@ -987,6 +1638,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/subscriptions/{id}/tv-episode-discovery/{unit_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read an existing bounded upgrade-candidate discovery for one standard TV episode
+         * @description Current administrator session only. Reads persisted scope and results without network requests or creating jobs. Stale scope hides candidate search and file identities. Candidate discovery grants no download or replacement authority.
+         */
+        get: operations["getTVEpisodeDiscovery"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/library/mapping-options": {
         parameters: {
             query?: never;
@@ -994,7 +1665,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Administrator index and persisted media choices, latest 100 only; not evidence of physical presence */
+        /** Administrator file and existing-media choices with independent filters and cursors; not physical presence evidence */
         get: operations["getFileMappingOptions"];
         put?: never;
         post?: never;
@@ -1048,7 +1719,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Administrator delivery observations, latest 100 only; no payload or credentials */
+        /** Administrator delivery observations with state filtering and bounded cursor pagination; no payload or credentials */
         get: operations["listIntegrationDeliveries"];
         put?: never;
         post?: never;
@@ -2603,7 +3274,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Perform automated check-in on PT site */
+        /**
+         * Retired legacy check-in; configure persistent sign-in instead
+         * @deprecated
+         * @description Returns 410 without reading a source or sending a request. Use /api/v1/indexers/{indexer_id}/checkin/config and persisted history.
+         */
         post: operations["checkinIndexer"];
         delete?: never;
         options?: never;
@@ -2641,7 +3316,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Scan directory and recognize media files for reorganization */
+        /**
+         * Retired legacy directory scan; use observed untracked files
+         * @deprecated
+         * @description Returns 410 without accessing client-supplied paths. Use /api/v1/library/untracked-scopes and the explicit discovery/recognition/confirmation flow.
+         */
         post: operations["scanDirectoryReorganize"];
         delete?: never;
         options?: never;
@@ -2907,10 +3586,655 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/library/untracked-scopes/{scope_id}/external-batches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Freeze 1–20 explicitly reviewed files from one directory, work and season. This immutable manifest neither confirms rows nor queues organization. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["createExternalBatchPreview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/external-batches/{batch_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Read the original batch and independent confirmation, queue and completion receipts without retrying any mutation. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        get: operations["readExternalBatchPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/external-batch-commands/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Recover a lost batch-creation response with the original key. No new review, confirmation or job is created. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        get: operations["readExternalBatchPreviewReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/external-batches/{batch_id}/rows/{row}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Explicitly confirm one frozen row after current scope, file and canonical metadata checks. The server binds its permanent key to this batch and row. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["confirmExternalBatchRow"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/untracked-scopes/{scope_id}/external-batches/{batch_id}/rows/{row}/organize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Explicitly queue one previously confirmed row through the existing narrow organization transaction. Other rows remain independent; no automatic batch execution. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["organizeExternalBatchRow"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/files/{id}/sidecar-update-previews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Compare current canonical NFO and poster.jpg with trusted application-generation evidence and new trusted metadata. Legacy or manually edited files remain held. The preview performs bounded metadata I/O but no sidecar replacement. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["previewManagedSidecarUpdate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/files/{id}/sidecar-update-commands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Confirm a frozen unexpired preview. Only unchanged application-generated files can be replaced. Unknown physical outcomes retain their permanent exclusion; receipts never authorize a retry. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["commandManagedSidecarUpdate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library/files/{id}/sidecar-update-commands/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Read the original safe update receipt without metadata requests or filesystem writes. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        get: operations["readManagedSidecarUpdateCommand"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library-maintenance/reorganization-previews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Preview an explicit same-root rename of a single imported file with one effective canonical mapping. Observe physical identities and require an absent target; no rename occurs. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["previewLibraryReorganization"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library-maintenance/recycle-previews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Explicitly observe one retired movie or episode file for original-path restoration or retention-expired cleanup. Recheck both old and replacement identities and current permissions; no mutation occurs. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["previewLibraryRecycle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library-maintenance/commands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Confirm a frozen reorganization, original-path restore or expired cleanup. Preserve replacement files and use permanent physical permits. Unknown outcomes require manual review and cannot authorize another physical write. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        post: operations["commandLibraryMaintenance"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library-maintenance/commands/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Read the original owner-bound maintenance receipt without filesystem I/O or replay. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        get: operations["readLibraryMaintenanceCommand"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/library-maintenance/recycle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Read persisted retirement history without filesystem I/O. Disk usage remains unknown until explicit observation; visible retention expiry never itself authorizes deletion. Current administrator Cookie session only; private/no-store. Historical reads never grant execution authority. */
+        get: operations["listLibraryRecycle"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ExplicitLibraryConfirmation: {
+            /** @enum {boolean} */
+            confirmed: true;
+        };
+        ExternalBatchInput: {
+            rows: components["schemas"]["ExternalBatchSelection"][];
+        };
+        ExternalBatchSelection: {
+            /** Format: uuid */
+            file_id: string;
+            confirmation: components["schemas"]["UntrackedConfirmationInput"];
+        };
+        ExternalBatchRow: {
+            selection: components["schemas"]["ExternalBatchSelection"];
+            scope: components["schemas"]["UntrackedScope"];
+            file: components["schemas"]["UntrackedDiscoveryObservation"];
+            review: components["schemas"]["UntrackedReviewView"];
+        };
+        ExternalBatchManifest: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            actor_id: string;
+            /** Format: uuid */
+            scope_id: string;
+            command_key: string;
+            /** Format: date-time */
+            created_at: string;
+            rows: components["schemas"]["ExternalBatchRow"][];
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        ExternalBatchRowStatus: {
+            confirmation: components["schemas"]["UntrackedConfirmationReceipt"] | null;
+            organization: components["schemas"]["UntrackedOrganizationReceipt"] | null;
+            progress: components["schemas"]["UntrackedOrganizationView"] | null;
+        };
+        ExternalBatchView: {
+            batch: components["schemas"]["ExternalBatchManifest"];
+            status: components["schemas"]["ExternalBatchRowStatus"][];
+        };
+        ManagedSidecarPreviewInput: {
+            /** Format: uuid */
+            unit_id: string;
+        };
+        ManagedSidecarCommandInput: {
+            /** Format: uuid */
+            preview_id: string;
+            /** @enum {boolean} */
+            confirmed: true;
+        };
+        ManagedSidecarArtifact: {
+            /** @enum {string} */
+            name: "movie.nfo" | "tvshow.nfo" | "poster.jpg";
+            /** @enum {string} */
+            state: "ready" | "held" | "unchanged" | "updated" | "review_required";
+            old_hash?: string;
+            new_hash?: string;
+        };
+        ManagedSidecarUpdateResult: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            file_id: string;
+            /** @enum {string} */
+            state: "preview" | "held" | "completed" | "review_required";
+            /** Format: date-time */
+            expires_at: string;
+            artifacts: components["schemas"]["ManagedSidecarArtifact"][];
+            command_key?: string;
+        };
+        LibraryReorganizationRequest: {
+            /** Format: uuid */
+            file_id: string;
+            target_relative_path: string;
+        };
+        LibraryReorganizationPreview: {
+            /** Format: uuid */
+            file_id: string;
+            /** Format: uuid */
+            root_id: string;
+            source_relative_path: string;
+            target_relative_path: string;
+            version: string;
+            can_confirm: boolean;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        LibraryRecyclePreviewRequest: {
+            recycle_id: string;
+            /** @enum {string} */
+            action: "restore" | "cleanup";
+        };
+        LibraryMaintenanceCommand: {
+            /** @enum {string} */
+            action: "reorganize" | "restore" | "cleanup";
+            /** Format: uuid */
+            file_id?: string;
+            target_relative_path?: string;
+            recycle_id?: string;
+            expected_version: string;
+            /** @enum {boolean} */
+            confirmed: true;
+        };
+        LibraryMaintenanceResult: {
+            /** Format: uuid */
+            command_id: string;
+            /** @enum {string} */
+            action: "reorganize" | "restore" | "cleanup";
+            /** @enum {string} */
+            status: "completed" | "unknown_requires_review";
+            /** Format: uuid */
+            file_id: string;
+            version: string;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        LibraryRecycleItem: {
+            recycle_id: string;
+            /** @enum {string} */
+            kind: "movie" | "tv";
+            /** Format: uuid */
+            old_file_id: string;
+            /** Format: uuid */
+            replacement_file_id: string;
+            /** Format: uuid */
+            root_id: string;
+            original_relative_path: string;
+            /** Format: date-time */
+            retained_until: string;
+            version: string;
+            status: string;
+            /** Format: int64 */
+            size_bytes: number;
+            /** Format: int64 */
+            allocated_bytes: number | null;
+            /** Format: int64 */
+            link_count: number | null;
+            /** Format: date-time */
+            usage_observed_at: string | null;
+            can_confirm: boolean;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        LibraryRecycleList: {
+            items: components["schemas"]["LibraryRecycleItem"][];
+            next_cursor: string;
+        };
+        SeedingInspection: {
+            /** Format: date-time */
+            observed_at: string;
+            complete: boolean;
+            share_ratio: number | null;
+            infinite_share_ratio: boolean;
+            seeding_seconds: string | null;
+        };
+        SecurityCommandReceipt: {
+            action: string;
+            result: components["schemas"]["AccountCommandResult"] | components["schemas"]["OwnMFASetupResult"] | components["schemas"]["OwnMFAConfirmResult"];
+        };
+        ManagedAccount: {
+            /** Format: uuid */
+            id: string;
+            username: string;
+            /** @enum {string} */
+            role: "admin" | "member";
+            is_active: boolean;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        AccountList: {
+            items: components["schemas"]["ManagedAccount"][];
+        };
+        CreateAccountRequest: {
+            username: string;
+            password: string;
+            /** @enum {string} */
+            role: "admin" | "member";
+        };
+        UpdateAccountRequest: {
+            /** @enum {string} */
+            role: "admin" | "member";
+            is_active: boolean;
+        };
+        AccountCommandResult: {
+            user?: components["schemas"]["ManagedAccount"];
+            /** Format: uuid */
+            session_id?: string;
+            replayed: boolean;
+        };
+        ManagedSession: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            last_seen_at: string;
+            /** Format: date-time */
+            expires_at: string;
+            current: boolean;
+        };
+        OwnSessionList: {
+            items: components["schemas"]["ManagedSession"][];
+        };
+        ChangeOwnPasswordRequest: {
+            current_password: string;
+            new_password: string;
+            otp?: string;
+            recovery_code?: string;
+        };
+        OwnMFAStatus: {
+            enabled: boolean;
+            recovery_codes_remaining: number;
+        };
+        BeginOwnMFARequest: {
+            current_password: string;
+        };
+        OwnMFASetupResult: {
+            /** Format: uuid */
+            challenge_id: string;
+            /** Format: date-time */
+            expires_at: string;
+            replayed: boolean;
+            secret?: string;
+            otpauth_url?: string;
+        };
+        ConfirmOwnMFARequest: {
+            /** Format: uuid */
+            challenge_id: string;
+            otp: string;
+        };
+        OwnMFAConfirmResult: {
+            enabled: boolean;
+            replayed: boolean;
+            recovery_codes?: string[];
+        };
+        DisableOwnMFARequest: {
+            current_password: string;
+            otp?: string;
+            recovery_code?: string;
+        };
+        DownloadControlCommand: {
+            /** @enum {string} */
+            action: "pause" | "resume";
+            /** @enum {boolean} */
+            confirmed: true;
+            /** @default false */
+            affect_shared: boolean;
+        };
+        DownloadControlReceipt: {
+            /** Format: uuid */
+            command_id: string;
+            /** Format: uuid */
+            operation_id: string;
+            /** @enum {string} */
+            action: "pause" | "resume";
+            /** @enum {string} */
+            state: "confirmed" | "unknown";
+        };
+        SeerrConfiguration: {
+            enabled: boolean;
+            /** Format: int64 */
+            version: number;
+            /** Format: uuid */
+            owner_id?: string;
+            credential_present: boolean;
+        };
+        SeerrConfigurationInput: {
+            enabled: boolean;
+            /** Format: int64 */
+            expected_version: number;
+            /** Format: uuid */
+            owner_id: string;
+            credential?: string;
+        };
+        SeerrReceipt: {
+            external_request_id: string;
+            /** Format: uuid */
+            request_id: string;
+            /** Format: int64 */
+            config_version: number;
+            /** @enum {string} */
+            state: "pending";
+            /** Format: date-time */
+            created_at: string;
+        };
+        SubtitleCandidateCommand: {
+            /** Format: int64 */
+            expected_mapping_revision: number;
+        };
+        SubtitleCandidateState: {
+            /** Format: uuid */
+            file_id: string;
+            /** Format: int64 */
+            mapping_revision: number;
+            /** Format: uuid */
+            query_id?: string;
+            /** @enum {string} */
+            outcome: "not_queried" | "querying" | "candidates" | "not_found" | "already_present" | "too_small" | "provider_error" | "confirming" | "confirmed" | "review_required";
+            candidates: {
+                /** Format: uuid */
+                id: string;
+                /** @enum {string} */
+                provider: "shooter";
+                /** @enum {string} */
+                language_hint: "Han";
+                /** @enum {string} */
+                format: "srt";
+                /** @description Validated cue count and earliest start/latest end in milliseconds; not video duration or translation quality. Omitted when unavailable. */
+                summary?: {
+                    cue_count: number;
+                    /** Format: int64 */
+                    start_ms: number;
+                    /** Format: int64 */
+                    end_ms: number;
+                };
+            }[];
+        };
+        ClassificationRule: {
+            id: string;
+            /** @enum {string} */
+            media_type: "movie" | "tv";
+            genres: string[];
+            languages: string[];
+            countries: string[];
+            /** Format: uuid */
+            root_id: string;
+        };
+        ClassificationDocument: {
+            /** Format: int64 */
+            version: number;
+            rules: components["schemas"]["ClassificationRule"][];
+            /** Format: date-time */
+            published_at?: string;
+        };
+        ClassificationPublish: {
+            /** Format: int64 */
+            expected_version: number;
+            rules: components["schemas"]["ClassificationRule"][];
+        };
+        ClassificationPreviewInput: {
+            /** Format: int64 */
+            version: number;
+            /** Format: uuid */
+            media_id?: string;
+            /** @enum {string} */
+            media_type?: "movie" | "tv";
+            /** Format: int64 */
+            tmdb_id?: number;
+        };
+        ClassificationPreview: {
+            /** @description Present only for a matched, usable target; binds trusted facts and target generation. */
+            preview_stamp?: string;
+            /** Format: int64 */
+            version: number;
+            /** Format: date-time */
+            observed_at: string;
+            result: components["schemas"]["ClassificationResult"];
+        };
+        ClassificationResult: {
+            /** @enum {string} */
+            status: "matched" | "no_match" | "conflict" | "insufficient_evidence" | "target_unavailable";
+            /** Format: uuid */
+            root_id?: string;
+            matches: components["schemas"]["ClassificationMatch"][];
+            reasons: string[];
+        };
+        ClassificationMatch: {
+            rule_id: string;
+            /** Format: uuid */
+            root_id: string;
+            reasons: string[];
+        };
+        SubscriptionExecution: {
+            /** Format: uuid */
+            subscription_id: string;
+            /** Format: date-time */
+            observed_at: string;
+            waiting: string;
+            next_step: string;
+            limited: boolean;
+            rounds: components["schemas"]["SubscriptionExecutionRound"][];
+        };
+        SubscriptionExecutionRound: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            state: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            deadline: string;
+            /** Format: int64 */
+            intent_version: number;
+            reason: string;
+            sources: components["schemas"]["SubscriptionExecutionSource"][];
+            candidates: components["schemas"]["SubscriptionExecutionCandidate"][];
+            limited: boolean;
+        };
+        SubscriptionExecutionSource: {
+            /** Format: uuid */
+            indexer_id: string;
+            state: string;
+            pages: components["schemas"]["SubscriptionExecutionPage"][];
+        };
+        SubscriptionExecutionPage: {
+            /** Format: uuid */
+            query_id: string;
+            page: number;
+            state: string;
+            results: number;
+            offset_verified: boolean;
+            receipt_present: boolean;
+            /** Format: date-time */
+            finished_at?: string;
+        };
+        SubscriptionExecutionCandidate: {
+            /** Format: uuid */
+            id: string;
+            outcome: string;
+            reason: string;
+        };
         PersonFollowBindings: {
             indexer_ids: string[];
             /** Format: uuid */
@@ -3351,6 +4675,19 @@ export interface components {
              * @description Zero requests an automatic suggestion; a positive ID is explicit typed identity
              */
             tmdb_id: number;
+            /**
+             * Format: uuid
+             * @description Explicit current canonical episode UUID; all six proof fields required together
+             */
+            canonical_unit_id?: string;
+            /** Format: int64 */
+            media_metadata_version?: number;
+            /** Format: int64 */
+            unit_metadata_version?: number;
+            season?: number;
+            episode?: number;
+            /** Format: int64 */
+            tmdb_episode_id?: number;
         };
         UntrackedReviewRequest: {
             /** Format: uuid */
@@ -3840,6 +5177,8 @@ export interface components {
             password: string;
         };
         LoginRequest: {
+            otp?: string;
+            recovery_code?: string;
             username: string;
             password: string;
         };
@@ -4048,6 +5387,18 @@ export interface components {
         CreateSubscriptionRequest: {
             /**
              * Format: int64
+             * @description Explicit published classification revision; root_id must be omitted.
+             */
+            classification_version?: number;
+            /** @description Required with classification_version; original trusted preview facts and root generation must still match. */
+            classification_preview_stamp?: string;
+            /**
+             * Format: uuid
+             * @description Required with classification_version; advisory preview target, revalidated during creation. root_id remains omitted.
+             */
+            classification_preview_root_id?: string;
+            /**
+             * Format: int64
              * @description Required when changing an existing intent; omission can only ensure an equivalent subscription.
              */
             expected_intent_version?: number;
@@ -4107,6 +5458,142 @@ export interface components {
             is_satisfied: boolean;
             current_fact_stage?: string;
             wait_reason?: string;
+        };
+        TVEpisodeUpgradeInput: {
+            /** Format: uuid */
+            unit_id: string;
+            /** Format: uuid */
+            current_file_id: string;
+            /** Format: uuid */
+            candidate_id: string;
+        };
+        TVEpisodeUpgradeCommand: {
+            /** Format: uuid */
+            unit_id: string;
+            /** Format: uuid */
+            current_file_id: string;
+            /** Format: uuid */
+            candidate_id: string;
+            /** Format: uuid */
+            operation_id?: string;
+            /** @enum {string} */
+            action: "reserve" | "prepare" | "send" | "observe" | "organization-preview" | "organization-confirm" | "organize" | "retirement-preview" | "retirement-confirm" | "retire";
+            expected_version: string;
+            /** @enum {boolean} */
+            confirmed: true;
+        };
+        TVEpisodeUpgradeResult: {
+            status: string;
+            /** Format: uuid */
+            unit_id: string;
+            /** Format: uuid */
+            current_file_id: string;
+            /** Format: uuid */
+            candidate_id: string;
+            /** Format: uuid */
+            operation_id?: string;
+            /** Format: uuid */
+            new_file_id?: string;
+            version: string;
+            reason?: string;
+            comparable: boolean;
+            improvement: boolean;
+            current_score?: number;
+            candidate_score?: number;
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        MetadataDiagnosticInput: {
+            /** @enum {string} */
+            target: "tmdb_api" | "tmdb_image" | "fanart_api" | "tvdb_api";
+        };
+        MetadataDiagnosticResult: {
+            /** @enum {string} */
+            target: "tmdb_api" | "tmdb_image" | "fanart_api" | "tvdb_api";
+            /** @enum {string} */
+            category: "available" | "host_response" | "auth_required" | "rate_limited" | "timeout" | "cancelled" | "unavailable" | "bad_response" | "not_configured" | "configuration_changed";
+            /** Format: int64 */
+            elapsed_ms: number;
+            host_responded: boolean;
+            image_retrieved: boolean;
+        };
+        MovieDiscoveryStatus: {
+            /** Format: uuid */
+            subscription_id: string;
+            /** Format: uuid */
+            search_id?: string;
+            /** Format: uuid */
+            current_file_id?: string;
+            /** Format: date-time */
+            next_discovery_at?: string;
+            /** @enum {string} */
+            state: "not_scheduled" | "waiting" | "running" | "succeeded" | "partial" | "failed" | "expired" | "stale" | "cancelled";
+            /** @enum {boolean} */
+            execution_allowed: false;
+        };
+        UntrackedReviewScopeOption: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            version: number;
+            enabled: boolean;
+            local_root: string;
+            target_root_path: string;
+            /** @enum {string} */
+            target_media_type: "movie" | "tv";
+        };
+        UntrackedReviewScopePage: {
+            items: components["schemas"]["UntrackedReviewScopeOption"][];
+            next_cursor: string;
+            has_more: boolean;
+        };
+        UntrackedReviewEpisodeOption: {
+            /** Format: uuid */
+            canonical_unit_id: string;
+            /** Format: int64 */
+            media_metadata_version: number;
+            /** Format: int64 */
+            unit_metadata_version: number;
+            season: number;
+            episode: number;
+            /** Format: int64 */
+            tmdb_episode_id: number;
+            unit_key: string;
+            title: string;
+        };
+        UntrackedReviewEpisodeOptions: {
+            items: components["schemas"]["UntrackedReviewEpisodeOption"][];
+        };
+        UntrackedCompanionCandidate: {
+            key: string;
+            source_relative_path: string;
+            target_relative_path: string;
+        };
+        UntrackedCompanionCandidates: {
+            items: components["schemas"]["UntrackedCompanionCandidate"][];
+        };
+        UntrackedCompanionSelection: {
+            candidate_keys: string[];
+            /** @enum {string} */
+            action: "copy" | "hardlink";
+        };
+        UntrackedCompanionAttachment: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            operation_id: string;
+            candidate: components["schemas"]["UntrackedCompanionCandidate"];
+            /** @enum {string} */
+            action: "copy" | "hardlink";
+            /** @enum {string} */
+            state: "pending" | "running" | "unknown" | "completed" | "review_required";
+            /** @enum {boolean} */
+            source_retained: true;
+        };
+        UntrackedCompanionView: {
+            /** @enum {string} */
+            video_state: "completed";
+            items: components["schemas"]["UntrackedCompanionAttachment"][];
         };
         SubscriptionStatusReport: {
             /** Format: uuid */
@@ -4193,7 +5680,37 @@ export interface components {
             wanted_items?: components["schemas"]["WantedItemDetails"][];
         };
         SubscriptionListResponse: {
+            /**
+             * Format: int64
+             * @description Matching subscriptions, or matching episodes for calendar pages.
+             */
+            total: number;
+            /**
+             * Format: int64
+             * @description Movie count under search and identity filters before media_type; zero for calendar.
+             */
+            movie_count: number;
+            /**
+             * Format: int64
+             * @description TV count under search and identity filters before media_type; zero for calendar.
+             */
+            tv_count: number;
             items: components["schemas"]["SubscriptionDetails"][];
+        };
+        TVEpisodeDiscoveryStatus: {
+            /** Format: uuid */
+            subscription_id: string;
+            /** Format: uuid */
+            unit_id: string;
+            state: string;
+            /** @enum {boolean} */
+            execution_allowed: false;
+            /** Format: uuid */
+            search_id?: string;
+            /** Format: uuid */
+            current_file_id?: string;
+            /** Format: date-time */
+            next_discovery_at?: string;
         };
         FileMappingUnit: {
             /** Format: uuid */
@@ -4211,6 +5728,19 @@ export interface components {
         };
         FileMappingOptions: {
             limit: number;
+            /** @description Opaque cursor for the next file page within the same root filter */
+            files_next_cursor: string;
+            /** @description Further file choices are available; media choices retain their own limit */
+            files_has_more: boolean;
+            /** @description Cursor for the next existing-media page with the same media filters */
+            media_next_cursor: string;
+            media_has_more: boolean;
+            selected_media?: {
+                /** Format: uuid */
+                id: string;
+                title: string;
+                media_type: string;
+            };
             files: {
                 /** Format: uuid */
                 id: string;
@@ -4963,7 +6493,7 @@ export interface components {
             id: string;
             name: string;
             /** @enum {string} */
-            client_type: "qbittorrent" | "transmission";
+            client_type: "qbittorrent" | "transmission" | "rtorrent";
             /** @enum {string} */
             state: "disabled" | "unobserved" | "configuration_changed" | "unknown" | "failed" | "stale" | "observed";
             /** @enum {string} */
@@ -5680,6 +7210,15 @@ export interface components {
         };
     };
     responses: {
+        /** @description Request rejected, forbidden, conflicted, rate limited or unavailable; no-store. */
+        MPError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["ErrorResponse"];
+            };
+        };
         /** @description Cookie session required (401/403); invalid input (400/422), missing record (404), version or original-key conflict (409), pending limit (429), or unverifiable storage/metadata result (503). All responses are private and no-store. */
         MediaRequestFailure: {
             headers: {
@@ -5754,6 +7293,1345 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    previewTVEpisodeUpgrade: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TVEpisodeUpgradeInput"];
+            };
+        };
+        responses: {
+            /** @description Current comparison */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TVEpisodeUpgradeResult"];
+                };
+            };
+            /** @description Safe admission or stale-evidence error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    commandTVEpisodeUpgrade: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TVEpisodeUpgradeCommand"];
+            };
+        };
+        responses: {
+            /** @description Durable phase receipt; execution_allowed is false */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TVEpisodeUpgradeResult"];
+                };
+            };
+            /** @description Safe admission or stale-evidence error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readTVEpisodeUpgradeCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Original receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TVEpisodeUpgradeResult"];
+                };
+            };
+            /** @description Safe admission or absent-receipt error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    runMetadataDiagnostic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MetadataDiagnosticInput"];
+            };
+        };
+        responses: {
+            /** @description Safe diagnostic result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetadataDiagnosticResult"];
+                };
+            };
+            /** @description Rejected request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current administrator Cookie required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Diagnostic unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    observeOperationSeeding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Transient native seeding facts; unknown fields remain null */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedingInspection"];
+                };
+            };
+            400: components["responses"]["MPError"];
+            401: components["responses"]["MPError"];
+            403: components["responses"]["MPError"];
+            404: components["responses"]["MPError"];
+            409: components["responses"]["MPError"];
+            503: components["responses"]["MPError"];
+        };
+    };
+    getOwnSecurityCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                command_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Safe original receipt; secrets and recovery codes are never included */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SecurityCommandReceipt"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    listAccounts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountList"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    createAccount: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAccountRequest"];
+            };
+        };
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCommandResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    updateAccount: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAccountRequest"];
+            };
+        };
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCommandResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    resetAccountPassword: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeOwnPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Safe confirmation; no credentials are returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCommandResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            408: components["responses"]["MPError"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    listOwnSessions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnSessionList"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    revokeOtherSessions: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DisableOwnMFARequest"];
+            };
+        };
+        responses: {
+            /** @description Safe original command result; no credential or factor is returned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCommandResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    revokeOwnSession: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCommandResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    changeOwnPassword: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChangeOwnPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCommandResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    getOwnMFA: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnMFAStatus"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    beginOwnMFA: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BeginOwnMFARequest"];
+            };
+        };
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnMFASetupResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    confirmOwnMFA: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmOwnMFARequest"];
+            };
+        };
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnMFAConfirmResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    disableOwnMFA: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DisableOwnMFARequest"];
+            };
+        };
+        responses: {
+            /** @description Safe result; replay never returns setup secrets or recovery codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountCommandResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    regenerateOwnMFARecoveryCodes: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DisableOwnMFARequest"];
+            };
+        };
+        responses: {
+            /** @description First committed response contains new recovery codes; replay is a safe receipt without codes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnMFAConfirmResult"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            429: components["responses"]["MPError"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    getOperationDownloadControl: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persistent command receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DownloadControlReceipt"];
+                };
+            };
+            400: components["responses"]["MPError"];
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    controlOperationDownload: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DownloadControlCommand"];
+            };
+        };
+        responses: {
+            /** @description Persistent command receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DownloadControlReceipt"];
+                };
+            };
+            /** @description Request could not be completed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    observeOperationDownloadControl: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persistent command receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DownloadControlReceipt"];
+                };
+            };
+            400: components["responses"]["MPError"];
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getSeerrConfiguration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Safe configuration */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeerrConfiguration"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    saveSeerrConfiguration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SeerrConfigurationInput"];
+            };
+        };
+        responses: {
+            /** @description Saved configuration */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeerrConfiguration"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    listSeerrReceipts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Latest safe ingress receipts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: components["schemas"]["SeerrReceipt"][];
+                    };
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    receiveSeerrWebhook: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description Pending local request */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeerrReceipt"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    getSubtitleCandidates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Latest stored query */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubtitleCandidateState"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    querySubtitleCandidates: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubtitleCandidateCommand"];
+            };
+        };
+        responses: {
+            /** @description Query outcome */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubtitleCandidateState"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    confirmSubtitleCandidate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                file_id: string;
+                candidate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubtitleCandidateCommand"];
+            };
+        };
+        responses: {
+            /** @description Publication outcome */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubtitleCandidateState"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    getSubscriptionExecution: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubscriptionExecution"];
+                };
+            };
+            /** @description Request rejected */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getClassification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassificationDocument"];
+                };
+            };
+            /** @description Request rejected */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    publishClassification: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClassificationPublish"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassificationDocument"];
+                };
+            };
+            /** @description Request rejected */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    previewClassification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClassificationPreviewInput"];
+            };
+        };
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassificationPreview"];
+                };
+            };
+            /** @description Request rejected */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request rejected */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getBangumiCalendar: {
         parameters: {
             query?: {
@@ -6231,6 +9109,54 @@ export interface operations {
             };
         };
     };
+    readSystemMetrics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current process and database observations */
+            200: {
+                headers: {
+                    "Cache-Control"?: "private, no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Administrator and credential read permission required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current metrics unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     streamSystemLogs: {
         parameters: {
             query?: {
@@ -6377,7 +9303,10 @@ export interface operations {
     setupAdmin: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description Deployment token required when PULSE_SETUP_TOKEN is configured; without it only direct loopback setup is allowed. */
+                "X-Setup-Token"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -8128,7 +11057,18 @@ export interface operations {
     };
     listSubscriptions: {
         parameters: {
-            query?: never;
+            query?: {
+                limit?: number;
+                offset?: number;
+                search?: string;
+                media_type?: "movie" | "tv";
+                tmdb_id?: number;
+                own_only?: boolean;
+                view?: "summary" | "calendar";
+                start?: string;
+                end?: string;
+                unknown_dates?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -8144,6 +11084,15 @@ export interface operations {
                     "application/json": components["schemas"]["SubscriptionListResponse"];
                 };
             };
+            /** @description Invalid pagination, filters or calendar range */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -8151,6 +11100,24 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Current account or scope cannot read subscriptions */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Subscription snapshot unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -8307,6 +11274,545 @@ export interface operations {
             };
         };
     };
+    getMovieDiscovery: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current discovery state; never an execution permit */
+            200: {
+                headers: {
+                    "Cache-Control"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MovieDiscoveryStatus"];
+                };
+            };
+            /** @description Request could not be completed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    listUntrackedReviewScopes: {
+        parameters: {
+            query?: {
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Owner configured scope summaries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedReviewScopePage"];
+                };
+            };
+            /** @description Request rejected */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Administrator ownership required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Configuration changed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedReviewEpisodeOptions: {
+        parameters: {
+            query: {
+                tmdb_id: number;
+                season: number;
+            };
+            header?: never;
+            path: {
+                scope_id: string;
+                file_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current canonical episode choices */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedReviewEpisodeOptions"];
+                };
+            };
+            /** @description Request could not be completed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    readUntrackedCompanions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Persisted independent companion outcomes for completed video */
+            200: {
+                headers: {
+                    "Cache-Control"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedCompanionView"];
+                };
+            };
+            /** @description Request could not be completed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    selectUntrackedCompanions: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                operation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UntrackedCompanionSelection"];
+            };
+        };
+        responses: {
+            /** @description Selection frozen; execution is separate. Original key returns current stored outcomes without filesystem access. */
+            200: {
+                headers: {
+                    "Cache-Control"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedCompanionView"];
+                };
+            };
+            /** @description Request could not be completed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    discoverUntrackedCompanions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Complete bounded same-directory observations; does not select or publish */
+            200: {
+                headers: {
+                    "Cache-Control"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedCompanionCandidates"];
+                };
+            };
+            /** @description Request could not be completed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    executeUntrackedCompanion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operation_id: string;
+                attachment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Per-attachment result. Existing permanent permit only authorizes observation. */
+            200: {
+                headers: {
+                    "Cache-Control"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedCompanionAttachment"];
+                };
+            };
+            /** @description Request could not be completed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request could not be completed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getSubscriptionStatus: {
         parameters: {
             query?: never;
@@ -8447,9 +11953,49 @@ export interface operations {
             };
         };
     };
-    getFileMappingOptions: {
+    getTVEpisodeDiscovery: {
         parameters: {
             query?: never;
+            header?: never;
+            path: {
+                id: string;
+                unit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current read-only unit discovery state */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TVEpisodeDiscoveryStatus"];
+                };
+            };
+            400: components["responses"]["PolicyBadRequest"];
+            401: components["responses"]["PolicyUnauthorized"];
+            403: components["responses"]["PolicyForbidden"];
+            404: components["responses"]["PolicyNotFound"];
+            409: components["responses"]["PolicyConflict"];
+            503: components["responses"]["PolicyUnavailable"];
+        };
+    };
+    getFileMappingOptions: {
+        parameters: {
+            query?: {
+                root_id?: string;
+                cursor?: string;
+                /** @description Literal title or original-title substring among existing local media */
+                media_query?: string;
+                media_type?: "movie" | "tv";
+                tmdb_id?: number;
+                /** @description Independent media cursor bound to media query/type/TMDB ID; no cross-page snapshot guarantee */
+                media_cursor?: string;
+                /** @description Read an existing saved selection by identity independently of the current media page or filters */
+                media_id?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -8465,6 +12011,7 @@ export interface operations {
                     "application/json": components["schemas"]["FileMappingOptions"];
                 };
             };
+            400: components["responses"]["PolicyBadRequest"];
             401: components["responses"]["PolicyUnauthorized"];
             403: components["responses"]["PolicyForbidden"];
             503: components["responses"]["PolicyUnavailable"];
@@ -8567,14 +12114,21 @@ export interface operations {
     };
     listIntegrationDeliveries: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Only original deliveries for this persisted event; does not replay or redirect. */
+                event_id?: string;
+                state?: "" | "pending" | "delivering" | "delivered" | "dead" | "skipped";
+                /** @description Opaque continuation bound to state and event_id; changing filters starts a new page. */
+                cursor?: string;
+                limit?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Recent deliveries, not a complete history */
+            /** @description A bounded page of persisted delivery observations; state filtering precedes pagination. Reads never replay or skip a delivery. */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -8582,10 +12136,13 @@ export interface operations {
                 content: {
                     "application/json": {
                         limit: number;
+                        /** @description Empty on the last page. Bound to state; not a cross-page snapshot. */
+                        next_cursor: string;
                         items: components["schemas"]["DeliverySummary"][];
                     };
                 };
             };
+            400: components["responses"]["PolicyBadRequest"];
             401: components["responses"]["PolicyUnauthorized"];
             403: components["responses"]["PolicyForbidden"];
             503: components["responses"]["PolicyUnavailable"];
@@ -9730,6 +13287,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            503: components["responses"]["PolicyUnavailable"];
         };
     };
     deleteSubscription: {
@@ -14059,15 +17617,6 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Checkin result */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CheckinIndexerResponse"];
-                };
-            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -14085,6 +17634,15 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Legacy endpoint retired; no check-in is performed */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -14227,15 +17785,6 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Scan result */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ScanReorganizeResponse"];
-                };
-            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -14243,6 +17792,15 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Legacy endpoint retired; no scan is performed */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
@@ -14879,6 +18437,349 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
                 };
             };
+        };
+    };
+    createExternalBatchPreview: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["MediaRequestKey"];
+            };
+            path: {
+                scope_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExternalBatchInput"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalBatchView"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    readExternalBatchPreview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                batch_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalBatchView"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    readExternalBatchPreviewReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExternalBatchView"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    confirmExternalBatchRow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                batch_id: string;
+                row: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExplicitLibraryConfirmation"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedConfirmationReceipt"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    organizeExternalBatchRow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope_id: string;
+                batch_id: string;
+                row: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExplicitLibraryConfirmation"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UntrackedOrganizationReceipt"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    previewManagedSidecarUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManagedSidecarPreviewInput"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedSidecarUpdateResult"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    commandManagedSidecarUpdate: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["MediaRequestKey"];
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManagedSidecarCommandInput"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedSidecarUpdateResult"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    readManagedSidecarUpdateCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedSidecarUpdateResult"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    previewLibraryReorganization: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LibraryReorganizationRequest"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryReorganizationPreview"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    previewLibraryRecycle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LibraryRecyclePreviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryRecycleItem"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    commandLibraryMaintenance: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": components["parameters"]["MediaRequestKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LibraryMaintenanceCommand"];
+            };
+        };
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryMaintenanceResult"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    readLibraryMaintenanceCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryMaintenanceResult"];
+                };
+            };
+            default: components["responses"]["MPError"];
+        };
+    };
+    listLibraryRecycle: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+                /** @description Limit persisted retirement records to movies or TV; empty means all. */
+                kind?: "" | "movie" | "tv";
+                /** @description Trimmed, case-insensitive literal substring of the original relative path; no wildcard expansion. Cursors are bound to kind and this normalized query. Legacy unfiltered cursors require no filters. */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current result or safe original-command receipt. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryRecycleList"];
+                };
+            };
+            default: components["responses"]["MPError"];
         };
     };
 }

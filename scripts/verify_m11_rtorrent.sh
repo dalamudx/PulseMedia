@@ -22,7 +22,7 @@ if [[ ${PULSE_M11_RTORRENT_PG_STAGE:-} == 1 ]];then
  fi
  if [[ "$mode" == app || "$mode" == all ]];then
   run_group native_movie ./internal/app 2 '^TestM11RTorrentMovie(Native|LostReceiptRecovery)PG$'
-  run_group public_cookie ./internal/httpapi 1 '^TestM11RTorrentConfigurationCookiePG$'
+  run_group public_cookie ./internal/httpapi 2 '^Test(M11RTorrentConfigurationCookiePG|RTorrentOrdinaryDownloadControlCookieHTTPPG)$'
   run_group movie_compatibility ./internal/app 1 '^TestAppRunFullMoviePipelineUsesOnePhysicalAcquisition$'
   run_group prototype_compatibility ./internal/app 1 '^TestFullM11EcosystemIntegration$'
  fi
@@ -32,17 +32,17 @@ work=$(mktemp -d /data/temp/pulse-m11-rtorrent-formal.XXXXXX)
 cleanup(){ rc=$?;test ! -L "$work";test "$(realpath -- "$work")" = "$work";rm -rf -- "$work";test ! -e "$work" || exit 1;echo M11_RTORRENT_FORMAL_TEMP_CLEANUP_VERIFIED;exit "$rc"; }
 trap cleanup EXIT
 export PULSE_M11_RTORRENT_WORK="$work" TMPDIR="$work" TMP="$work" TEMP="$work"
-export PULSE_M5_ENDPOINT_CONFIGURATION_ACCEPTANCE=1
+export PULSE_M5_ENDPOINT_CONFIGURATION_ACCEPTANCE=1 PULSE_M5_SUBSCRIPTION_CREATION_ACCEPTANCE=1
 parents=0
 if [[ "$mode" == pure || "$mode" == all ]];then
- run_group native_rpc ./internal/adapter/downloader/rtorrent 12 '^Test(RPC|RTorrent)'
- parents=$((parents+12))
+ run_group native_rpc ./internal/adapter/downloader/rtorrent 18 '^Test(RPC|RTorrent)'
+ parents=$((parents+18))
 fi
 if [[ "$mode" != pure ]];then
  if ! PULSE_M11_RTORRENT_PG_STAGE=1 bash scripts/with_podman_test_postgres.sh bash scripts/verify_m11_rtorrent.sh "$mode" >"$work/postgres.log" 2>&1;then tail -n 130 "$work/postgres.log";exit 1;fi
  cat "$work/postgres.log"
  grep -q '^OWNED_PODMAN_TEST_DATABASE_CLEANUP_VERIFIED' "$work/postgres.log"
  grep -q '^OWNED_PODMAN_TEST_CONTAINER_AND_TEMP_CLEANUP_VERIFIED' "$work/postgres.log"
- case "$mode" in store) parents=$((parents+6));;app) parents=$((parents+5));;all) parents=$((parents+11));;esac
+ case "$mode" in store) parents=$((parents+6));;app) parents=$((parents+6));;all) parents=$((parents+12));;esac
 fi
 printf 'M11_RTORRENT_FORMAL_PASS mode=%s parents=%s skipped=0 race=true\n' "$mode" "$parents"

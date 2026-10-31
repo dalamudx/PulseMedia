@@ -1,7 +1,9 @@
 -- name: ListDueCookieCloudOwners :many
-SELECT c.owner_id FROM cookiecloud_configuration c JOIN app_user u ON u.id=c.owner_id
+SELECT c.owner_id,c.version,COALESCE(s.next_due_at,c.updated_at)::timestamptz AS scan_at FROM cookiecloud_configuration c JOIN app_user u ON u.id=c.owner_id
 LEFT JOIN cookiecloud_sync_schedule s ON s.owner_id=c.owner_id
 WHERE c.enabled AND u.is_active AND u.role='admin'
+AND (sqlc.arg(after_owner_id)::uuid='00000000-0000-0000-0000-000000000000'::uuid
+ OR (COALESCE(s.next_due_at,c.updated_at),c.owner_id)>(sqlc.arg(after_scan_at)::timestamptz,sqlc.arg(after_owner_id)::uuid))
 AND (s.owner_id IS NULL OR s.state='idle')
 AND (CASE WHEN s.config_version=c.version THEN s.next_due_at ELSE c.updated_at+c.interval_seconds*interval '1 second' END)<=clock_timestamp()
 AND NOT EXISTS(SELECT 1 FROM cookiecloud_sync_attempt a WHERE a.owner_id=c.owner_id AND a.state IN ('queued','running','review_required'))

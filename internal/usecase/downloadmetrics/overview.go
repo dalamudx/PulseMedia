@@ -126,7 +126,7 @@ func projectOverview(snapshot *ports.DownloadGlobalRatesSnapshot, enabled bool) 
 	current := make(map[uuid.UUID]*ports.DownloadGlobalRateSample, len(snapshot.Sources))
 	for _, source := range snapshot.Sources {
 		stamp, err := hex.DecodeString(source.ConfigStamp)
-		if source.ID == uuid.Nil || seen[source.ID] || err != nil || len(stamp) != 32 || source.ConfigStamp != strings.ToLower(source.ConfigStamp) || (source.ClientType != "qbittorrent" && source.ClientType != "transmission") {
+		if source.ID == uuid.Nil || seen[source.ID] || err != nil || len(stamp) != 32 || source.ConfigStamp != strings.ToLower(source.ConfigStamp) || (source.ClientType != "qbittorrent" && source.ClientType != "transmission" && source.ClientType != "rtorrent") {
 			return nil, ports.ErrUnavailable
 		}
 		seen[source.ID] = true

@@ -1,0 +1,10 @@
+.untracked-companions fieldset { margin-block: 1rem; border: 1px solid var(--border); padding: 1rem; }
+.companion-choice { display: flex; align-items: flex-start; gap: .75rem; min-height: 44px; padding-block: .5rem; }
+.companion-choice input { margin-top: .25rem; flex-shrink: 0; }
+.companion-choice span, .companion-results span { min-width: 0; overflow-wrap: anywhere; }
+.untracked-companions small { display: block; margin-top: .25rem; color: var(--text-secondary); }
+.companion-action { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-block: .75rem; }
+.companion-results { list-style: none; padding: 0; margin-block: 1rem 0; }
+.companion-results li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; padding-block: .75rem; border-top: 1px solid var(--border); }
+.untracked-companions .card-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; }
+.card.untracked-companions button, .card.untracked-companions select { min-width: 44px; min-height: 44px; max-width: 100%; }

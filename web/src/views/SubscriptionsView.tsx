@@ -46,7 +46,6 @@ const {user}=useAuth();
 const listAccount = `${user?.id ?? ""}:${user?.role ?? ""}`;
 const listLiveAccount = useRef(listAccount); listLiveAccount.current = listAccount;
 const [listSnapshotAccount, setListSnapshotAccount] = useState(listAccount);
-const visibleSubscriptions = useMemo(() => listSnapshotAccount === listAccount ? subscriptions : [], [listSnapshotAccount, listAccount, subscriptions]);
 const listOwner = useRef<AbortController | null>(null);
 const controlStorageKey=user?`pulsemedia.subscription-state.${user.id}`:null;
 const [pendingControl,updatePendingControl]=useState<PendingStateControl|null>(()=>readStateControl(controlStorageKey));
@@ -56,6 +55,12 @@ const controlOwner=useRef<AbortController|null>(null);
 useEffect(()=>()=>controlOwner.current?.abort(),[]);
   const [activeTab, setActiveTab] = useState<"all" | "movie" | "tv" | "calendar" | "people">("all");
   const [searchFilter, setSearchFilter] = useState("");
+  const [offset,setOffset]=useState(0);
+  const [counts,setCounts]=useState<{total:number;movies:number;tv:number}|null>(null);
+  const [listError,setListError]=useState("");
+  const listQueryKey=`${listAccount}:${activeTab}:${offset}:${searchFilter}`;
+  const listLiveQuery=useRef(listQueryKey);listLiveQuery.current=listQueryKey;
+  const visibleSubscriptions=useMemo(()=>listSnapshotAccount===listQueryKey?subscriptions:[],[listSnapshotAccount,listQueryKey,subscriptions]);
 
   // Selected subscription for detail modal
   const selectionIdentity = `${user?.id ?? ""}:${user?.role ?? ""}`;
@@ -65,6 +70,18 @@ useEffect(()=>()=>controlOwner.current?.abort(),[]);
     identity: selectionIdentity, value: typeof value === "function" ? value(previous.identity === selectionIdentity ? previous.value : null) : value,
   }));
 
+  const detailOwner=useRef<AbortController|null>(null);
+  useEffect(()=>()=>detailOwner.current?.abort(),[listAccount]);
+  async function openSubscription(id:string){
+    detailOwner.current?.abort();const controller=new AbortController();detailOwner.current=controller;
+    setTargetError("");setSelectedSub(null);
+    try {
+      const {data,error}=await api.GET("/api/v1/subscriptions/{id}",{signal:controller.signal,cache:"no-store",params:{path:{id}}});
+      if(controller.signal.aborted||listLiveAccount.current!==listAccount)return;
+      if(error||!data){setTargetError("订阅详情读取失败，请重新打开。");return;}
+      setSelectedSub({...visibleSubscriptions.find(item=>item.id===id),...data});
+    }catch{if(!controller.signal.aborted)setTargetError("订阅详情连接失败，请重新打开。");}
+  }
   useEffect(() => {
     if (!targetSubscription || !user) return;
     setSelectedSub(null); setTargetError("");
@@ -90,55 +107,28 @@ useEffect(()=>()=>controlOwner.current?.abort(),[]);
     })();
     return () => controller.abort();
   }, [targetSubscription, location.key, user?.id, user?.role]);
-  const movieCount = useMemo(
-    () => visibleSubscriptions.filter((s) => s.media_type === "movie").length,
-    [visibleSubscriptions]
-  );
-  const tvCount = useMemo(
-    () =>
-      visibleSubscriptions.filter(
-        (s) => s.media_type === "tv"
-      ).length,
-    [visibleSubscriptions]
-  );
-
-  const filteredSubscriptions = useMemo(() => {
-    let list = visibleSubscriptions;
-    if (activeTab === "movie") {
-      list = list.filter((s) => s.media_type === "movie");
-    } else if (activeTab === "tv") {
-      list = list.filter((s) => s.media_type === "tv");
-    }
-
-    if (searchFilter.trim()) {
-      const q = searchFilter.trim().toLowerCase();
-      list = list.filter(
-        (s) =>
-          (s.title && s.title.toLowerCase().includes(q)) ||
-          s.id.toLowerCase().includes(q) ||
-          (s.root_path && s.root_path.toLowerCase().includes(q))
-      );
-    }
-    return list;
-  }, [activeTab, visibleSubscriptions, searchFilter]);
+  const currentCounts=listSnapshotAccount===listQueryKey?counts:null;
+  const movieCount = currentCounts?.movies??"—";
+  const tvCount = currentCounts?.tv??"—";
+  const filteredSubscriptions = visibleSubscriptions;
 
 
   const loadSubscriptions = async () => {
     listOwner.current?.abort();
     const controller = new AbortController(); listOwner.current = controller;
-    const current = () => !controller.signal.aborted && listOwner.current === controller && listLiveAccount.current === listAccount;
-    setLoading(true);
+    const current = () => !controller.signal.aborted && listOwner.current === controller && listLiveQuery.current === listQueryKey;
+    setLoading(true);setListError("");
     try {
-      const {data, error} = await api.GET("/api/v1/subscriptions", {signal: controller.signal, cache: "no-store"});
+      const {data, error} = await api.GET("/api/v1/subscriptions", {signal: controller.signal, cache: "no-store", params:{query:{limit:50,offset,search:searchFilter.trim()||undefined,media_type:activeTab==="movie"||activeTab==="tv"?activeTab:undefined}}});
       if (!current()) return false;
-      setListSnapshotAccount(listAccount);
-      if (error || !data) {setSubscriptions([]); setSelectedSub(null); setControlError("订阅列表读取失败，未沿用旧计数与控制状态。请重试读取。"); return false;}
+      setListSnapshotAccount(listQueryKey);
+      if (error || !data) {setCounts(null);setSubscriptions([]); setSelectedSub(null); setListError("订阅列表读取失败，未沿用旧计数与控制状态。请重试读取。"); return false;}
       const items = data.items;
       setSubscriptions(items);
-      setSelectedSub(previous => previous ? items.find(item => item.id === previous.id) ? {...previous, ...items.find(item => item.id === previous.id)!} : null : null);
+      setCounts({total:data.total,movies:data.movie_count,tv:data.tv_count});
       return true;
     } catch {
-      if (current()) {setListSnapshotAccount(listAccount); setSubscriptions([]); setSelectedSub(null); setControlError("订阅连接失败，未沿用旧状态。请重试读取。");}
+      if (current()) {setListSnapshotAccount(listQueryKey);setCounts(null); setSubscriptions([]); setSelectedSub(null); setListError("订阅连接失败，未沿用旧状态。请重试读取。");}
       return false;
     } finally {
       if (current()) {listOwner.current = null; setLoading(false);}
@@ -146,9 +136,9 @@ useEffect(()=>()=>controlOwner.current?.abort(),[]);
   };
 
   useEffect(() => {
-    void loadSubscriptions();
+    if(activeTab!=="calendar"&&activeTab!=="people") void loadSubscriptions();
     return () => listOwner.current?.abort();
-  }, [user?.id, user?.role]);
+  }, [user?.id, user?.role, offset, activeTab, searchFilter]);
 
   const applyState = async (id:string,state:"active"|"paused"|"archived") => {
 if(controlOwner.current||controlBlocked)return;const current=selectedSub?.id===id?selectedSub:visibleSubscriptions.find(s=>s.id===id);if(!current)return;
@@ -216,20 +206,20 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
         <div className="tabs-bar" style={{ marginBottom: 0, borderBottom: "none", paddingBottom: 0 }}>
           <button
             className={`tab-btn ${activeTab === "all" ? "active" : ""}`}
-            onClick={() => setActiveTab("all")}
+            onClick={() => {setOffset(0);setActiveTab("all")}}
           >
-            全部订阅 ({visibleSubscriptions.length})
+            全部订阅 ({currentCounts?currentCounts.movies+currentCounts.tv:"—"})
           </button>
           <button
             className={`tab-btn ${activeTab === "movie" ? "active" : ""}`}
-            onClick={() => setActiveTab("movie")}
+            onClick={() => {setOffset(0);setActiveTab("movie")}}
           >
             <Film size={14} />
             <span>电影订阅 ({movieCount})</span>
           </button>
           <button
             className={`tab-btn ${activeTab === "tv" ? "active" : ""}`}
-            onClick={() => setActiveTab("tv")}
+            onClick={() => {setOffset(0);setActiveTab("tv")}}
           >
             <Tv size={14} />
             <span>电视剧追更 ({tvCount})</span>
@@ -245,7 +235,7 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
               type="text"
               placeholder="搜索已订阅影片..."
               value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
+              onChange={(e) => {setOffset(0);setSearchFilter(e.target.value)}}
               className="media-filter-input"
             />
           </div>
@@ -253,13 +243,13 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
       </div>
 
       {/* Main View Container */}
-      {activeTab === "people" ? <PersonFollowsPanel /> : loading || listSnapshotAccount !== listAccount ? (
+      {activeTab === "people" ? <PersonFollowsPanel /> : activeTab === "calendar" ? <SubscriptionCalendar key={listAccount} onOpen={id=>void openSubscription(id)}/> : loading || listSnapshotAccount !== listQueryKey ? (
         <div className="loading-state">
           <div className="spinner"></div>
           <p>正在加载订阅列表...</p>
         </div>
-      ) : activeTab === "calendar" ? (
-        <SubscriptionCalendar key={listAccount} subscriptions={filteredSubscriptions} onOpen={id => { const sub=visibleSubscriptions.find(item=>item.id===id);if(sub)setSelectedSub(sub); }} />
+      ) : listError ? (
+        <p role="alert">{listError} <button type="button" onClick={()=>void loadSubscriptions()}>重新读取订阅列表</button></p>
       ) : filteredSubscriptions.length === 0 ? (
         /* Empty State */
         <div className="empty-state">
@@ -283,7 +273,7 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
             const poster = sub.poster_url || undefined;
 
             return (
-              <div key={sub.id} className="media-card-wrap sub-poster-card" onClick={() => setSelectedSub(sub)}>
+              <div key={sub.id} className="media-card-wrap sub-poster-card" onClick={() => void openSubscription(sub.id)}>
                 <div className="poster-container">
                   {/* Real Poster Image with Graceful SVG Placeholder Fallback */}
                   {poster ? (
@@ -373,7 +363,7 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
 
                 {/* Below Poster Info */}
                 <div className="card-caption">
-                  <button type="button" className="caption-title subscription-open" aria-label={`查看${sub.title || "影视作品"}订阅详情`} onClick={event => { event.stopPropagation(); setSelectedSub(sub); }}>
+                  <button type="button" className="caption-title subscription-open" aria-label={`查看${sub.title || "影视作品"}订阅详情`} onClick={event => { event.stopPropagation(); void openSubscription(sub.id); }}>
                     {sub.title || "影视作品"}
                   </button>
                   <div className="caption-sub-row">
@@ -399,6 +389,11 @@ const deleteSub=(sub:SubDetail)=>{if(confirm(`归档《${sub.title||"该影片"}
         </div>
       )}
 
+      {activeTab!=="calendar"&&activeTab!=="people"&&<nav className="config-actions" aria-label="订阅分页">
+        <button type="button" className="btn-secondary" disabled={loading||offset===0} onClick={()=>setOffset(value=>Math.max(0,value-50))}>上一页</button>
+        <span aria-live="polite">共 {currentCounts?.total??"—"} 个订阅 · 第 {Math.floor(offset/50)+1} 页</span>
+        <button type="button" className="btn-secondary" disabled={loading||!currentCounts||offset+50>=currentCounts.total} onClick={()=>setOffset(value=>value+50)}>下一页</button>
+      </nav>}
       {/* Subscription Detail & Episode Matrix Modal (按季分组折叠排列！) */}
       {/* High-End Modern Subscription Detail Modal */}
       {selectedSub && (

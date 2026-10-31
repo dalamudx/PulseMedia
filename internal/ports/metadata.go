@@ -7,20 +7,22 @@ import (
 
 // MovieMetadata represents normalized movie or TV show information from a metadata provider.
 type MovieMetadata struct {
-	TMDBID        int64    `json:"tmdb_id"`
-	MediaType     string   `json:"media_type"` // "movie" or "tv"
-	IMDbID        string   `json:"imdb_id,omitempty"`
-	Title         string   `json:"title"`
-	OriginalTitle string   `json:"original_title,omitempty"`
-	Year          int      `json:"year,omitempty"`
-	Overview      string   `json:"overview,omitempty"`
-	PosterURL     string   `json:"poster_url,omitempty"`
-	BackdropURL   string   `json:"backdrop_url,omitempty"`
-	Genres        []string `json:"genres,omitempty"`
-	Runtime       int      `json:"runtime,omitempty"`
-	Rating        float64  `json:"rating,omitempty"`
-	SeasonsCount  int      `json:"seasons_count,omitempty"`
-	EpisodesCount int      `json:"episodes_count,omitempty"`
+	TMDBID           int64    `json:"tmdb_id"`
+	MediaType        string   `json:"media_type"` // "movie" or "tv"
+	IMDbID           string   `json:"imdb_id,omitempty"`
+	Title            string   `json:"title"`
+	OriginalTitle    string   `json:"original_title,omitempty"`
+	Year             int      `json:"year,omitempty"`
+	Overview         string   `json:"overview,omitempty"`
+	PosterURL        string   `json:"poster_url,omitempty"`
+	BackdropURL      string   `json:"backdrop_url,omitempty"`
+	Genres           []string `json:"genres,omitempty"`
+	OriginalLanguage string   `json:"original_language,omitempty"`
+	Countries        []string `json:"countries,omitempty"`
+	Runtime          int      `json:"runtime,omitempty"`
+	Rating           float64  `json:"rating,omitempty"`
+	SeasonsCount     int      `json:"seasons_count,omitempty"`
+	EpisodesCount    int      `json:"episodes_count,omitempty"`
 }
 
 type TVSeasonDetails struct {
@@ -41,6 +43,8 @@ type TVDetails struct {
 	BackdropURL       string               `json:"backdrop_url,omitempty"`
 	Rating            float64              `json:"rating,omitempty"`
 	Genres            []string             `json:"genres,omitempty"`
+	OriginalLanguage  string               `json:"original_language,omitempty"`
+	Countries         []string             `json:"countries,omitempty"`
 	SeasonsCount      int                  `json:"seasons_count"`
 	EpisodesCount     int                  `json:"episodes_count"`
 	Seasons           []TVSeasonDetails    `json:"seasons"`

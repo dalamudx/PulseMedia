@@ -72,6 +72,11 @@ func (r *Repository) Complete(ctx context.Context, lease ports.JobLease, expecte
 		if err != nil {
 			return ports.ErrMediaSidecarResult
 		}
+		if !review && r.kind == ports.MediaSidecarJobKind {
+			if err := recordManagedGeneration(ctx, q, lease, expected, result); err != nil {
+				return err
+			}
+		}
 		// Audit first: a tail lock wait must not bypass the final DB-clock lease check.
 		if _, err = q.InsertAuditLog(ctx, db.InsertAuditLogParams{ID: r.ids.NewUUID(), ActorType: "system", ActorID: "media_sidecar", Action: "media.sidecar.completed", TargetType: "job", TargetID: lease.ID.String(), Payload: encoded}); err != nil {
 			return err

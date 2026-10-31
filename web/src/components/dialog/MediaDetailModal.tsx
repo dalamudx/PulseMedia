@@ -9,6 +9,7 @@ import type { MovieDetail } from "@/features/configuration/mediaDetailSelection"
 import { EndpointBindingFields } from "@/features/configuration/EndpointBindingFields";
 import { PolicySelector } from "@/features/configuration/PolicySelector";
 import { RootSelector } from "@/features/configuration/RootSelector";
+import {useClassificationTarget} from "@/features/configuration/useClassificationTarget";
 import "@/features/configuration/media-detail.css";
 
 interface MediaDetailModalProps {
@@ -25,7 +26,10 @@ interface MediaDetailModalProps {
     downloaderId?: string,
     indexerIds?: string[],
     policyId?: string,
-    rootId?: string
+    rootId?: string,
+    classificationVersion?: number,
+    classificationPreviewStamp?: string,
+    classificationPreviewRootID?: string
   ) => void;
   onSearchReleases: (m: MediaItem) => void;
 }
@@ -67,11 +71,17 @@ function MediaDetailDialog({ media, subscribing = false, onClose, onSubscribe, o
   const [policyReady, setPolicyReady] = useState(false);
   const [rootId, setRootId] = useState("");
   const [rootReady, setRootReady] = useState(false);
-  const ready = model.canSubscribe && bindingsReady && policyReady && rootReady;
+  const {user}=useAuth();
+  const [classify,setClassify]=useState(false);
+  const classification=useClassificationTarget({enabled:classify&&user?.role==="admin",userID:user?.id??"",mediaType:isTV?"tv":"movie",tmdbID:media.tmdb_id});
+  const useClassification=classify&&user?.role==="admin";
+  const ready = model.canSubscribe && bindingsReady && policyReady && (useClassification?classification.ready:rootReady);
   const submit = () => {
     const intent = model.getSubscription();
     if (!ready || !intent) return;
-    onSubscribe(media, intent.scope, intent.seasons, intent.episodes, intent.includeSpecials, downloaderId || undefined, [...indexerIds], policyId, rootId);
+    const selection=useClassification?classification.getSelection():undefined;
+    if(useClassification&&!selection)return;
+    onSubscribe(media, intent.scope, intent.seasons, intent.episodes, intent.includeSpecials, downloaderId || undefined, [...indexerIds], policyId, useClassification?undefined:rootId, selection?.version,selection?.stamp,selection?.rootID);
   };
   const episodeEditing = custom && chosenSeason && season?.status === "ready";
   const totalSelected = selection.selectedSeasons.reduce((n, s) => n + (selection.episodes[s]?.length ?? 0), 0);
@@ -171,7 +181,8 @@ function MediaDetailDialog({ media, subscribing = false, onClose, onSubscribe, o
           <h3>订阅配置</h3><p className="config-description">新订阅使用所选策略的当前版本；未选索引器时仅保存订阅。</p>
           <fieldset className="media-detail-fieldset" disabled={subscribing}>
             <legend className="media-detail-sr-only">目标根、策略和端点</legend>
-            <RootSelector mediaType={isTV ? "tv" : "movie"} value={rootId} onChange={setRootId} onReady={setRootReady} disabled={subscribing} />
+            {user?.role==="admin"?<label><input type="checkbox" checked={useClassification} onChange={e=>setClassify(e.target.checked)}/> 使用已发布分类选择目标根</label>:null}
+            {useClassification?<div><p role="status">{classification.busy?"正在核对已发布分类…":classification.message}</p>{classification.ready?<p>版本 {classification.version} · {classification.rootName} · 命中规则：{classification.rules.join("、")}</p>:null}<button type="button" className="btn-secondary" disabled={subscribing||classification.busy} onClick={classification.refresh}>重新预览分类</button></div>:<RootSelector mediaType={isTV ? "tv" : "movie"} value={rootId} onChange={setRootId} onReady={setRootReady} disabled={subscribing} />}
             <PolicySelector value={policyId} onChange={setPolicyId} onReady={setPolicyReady} disabled={subscribing} />
             <EndpointBindingFields indexerIds={indexerIds} downloaderId={downloaderId} disabled={subscribing} onReady={setBindingsReady} onIndexers={setIndexerIds} onDownloader={setDownloaderId} />
           </fieldset>

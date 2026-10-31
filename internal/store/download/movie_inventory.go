@@ -10,11 +10,7 @@ import (
 	"strings"
 )
 
-func (m *Manager) observeMovieDirectory(ctx context.Context, task db.DownloadTask, client ports.DownloadClient, info *ports.TorrentInfo, stamp string) (*episodeInventoryObservation, error) {
-	provider, ok := client.(ports.DownloadFileInventoryClient)
-	if !ok {
-		return nil, ErrReconcilePending
-	}
+func (m *Manager) completeMovieDirectory(ctx context.Context, task db.DownloadTask, info *ports.TorrentInfo, stamp string, files []ports.TorrentFile, second *ports.TorrentInfo) (*episodeInventoryObservation, error) {
 	if path.Clean(info.SavePath) != path.Clean(task.SavePath) {
 		return nil, ErrReconcilePending
 	}
@@ -30,17 +26,9 @@ func (m *Manager) observeMovieDirectory(ctx context.Context, task db.DownloadTas
 			return nil, ErrReconcilePending
 		}
 	}
-	files, e := provider.GetTorrentFiles(ctx, task.InfoHash)
-	if e != nil {
-		return nil, e
-	}
 	_, selected, ok := naming.MovieDirectoryVideo(path.Clean(task.SavePath), info.ContentPath, files, info.TotalBytes)
 	if !ok {
 		return nil, ErrReconcilePending
-	}
-	second, e := client.GetTorrent(ctx, task.InfoHash)
-	if e != nil {
-		return nil, e
 	}
 	if second == nil || !completedObservation(second) || !strings.EqualFold(second.InfoHash, info.InfoHash) || second.SavePath != info.SavePath || second.ContentPath != info.ContentPath || second.TotalBytes != info.TotalBytes {
 		return nil, ErrReconcilePending

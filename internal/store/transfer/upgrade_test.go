@@ -7,9 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
-
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
@@ -19,6 +16,9 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
 	"github.com/dalamudx/PulseMedia/internal/store/transfer"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func TestUpgradeMediaFileAtomicSwitchAndFactRevocation(t *testing.T) {
@@ -39,7 +39,7 @@ func TestUpgradeMediaFileAtomicSwitchAndFactRevocation(t *testing.T) {
 	gen := idgen.New()
 	mockClock := clock.NewMock(time.Date(2026, 10, 5, 12, 0, 0, 0, time.UTC))
 	ob := outbox.New(pool, gen, mockClock)
-	transferSvc := transfer.NewService(pool, gen, ob, rootfs.NewFilesystem())
+	transferSvc := transfer.NewService(pool, gen, ob, rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	queries := postgres.Queries(pool)
 
 	tempDir, err := os.MkdirTemp("", "pulsemedia-upgrade-test-*")

@@ -142,7 +142,7 @@ func (s *DownloadGlobalRatesStore) RecoverExpired(ctx context.Context) error {
 
 type downloadGlobalRatesPermit struct {
 	store            *DownloadGlobalRatesStore
-	conn             *pgxpool.Conn
+	conn             *PhysicalConnection
 	lease            ports.JobLease
 	source           ports.DownloadGlobalRatesSource
 	mu               sync.Mutex
@@ -159,7 +159,7 @@ func (s *DownloadGlobalRatesStore) material(ctx context.Context, q *db.Queries, 
 	if err != nil {
 		return out, err
 	}
-	if client.ClientType != "qbittorrent" && client.ClientType != "transmission" {
+	if client.ClientType != "qbittorrent" && client.ClientType != "transmission" && client.ClientType != "rtorrent" {
 		return out, ports.ErrRejected
 	}
 	stamp, err := q.DownloadGlobalRatesBinding(ctx, id)
@@ -191,7 +191,7 @@ func (s *DownloadGlobalRatesStore) Acquire(ctx context.Context, lease ports.JobL
 	if err != nil {
 		return nil, err
 	}
-	conn, err := s.pool.Acquire(ctx)
+	conn, err := AcquirePhysicalConnection(ctx, s.pool)
 	if err != nil {
 		return nil, err
 	}

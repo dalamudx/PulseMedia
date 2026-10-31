@@ -9,3 +9,7 @@ import (
 func (a *App) SubscriptionListReader() ports.SubscriptionListReader {
 	return postgres.NewSubscriptionListStore(a.dbPool)
 }
+
+func (a *App) SubscriptionDetailsReader() ports.SubscriptionDetailsReader {
+	return postgres.NewSubscriptionListStore(a.dbPool)
+}

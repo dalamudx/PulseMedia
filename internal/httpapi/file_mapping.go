@@ -58,7 +58,29 @@ func (s *ServerHandler) GetFileMappingOptions(ctx context.Context, r GetFileMapp
 	if s.fileMappingSvc == nil {
 		return mappingFailure(ctx, ports.ErrUnavailable), nil
 	}
-	out, e := s.fileMappingSvc.Options(ctx, GetActor(ctx))
+	query := ports.FileMappingOptionsQuery{}
+	if r.Params.RootId != nil {
+		query.RootID = *r.Params.RootId
+	}
+	if r.Params.Cursor != nil {
+		query.Cursor = *r.Params.Cursor
+	}
+	if r.Params.MediaQuery != nil {
+		query.MediaQuery = *r.Params.MediaQuery
+	}
+	if r.Params.MediaType != nil {
+		query.MediaType = string(*r.Params.MediaType)
+	}
+	if r.Params.TmdbId != nil {
+		query.TMDBID = *r.Params.TmdbId
+	}
+	if r.Params.MediaCursor != nil {
+		query.MediaCursor = *r.Params.MediaCursor
+	}
+	if r.Params.MediaId != nil {
+		query.MediaID = *r.Params.MediaId
+	}
+	out, e := s.fileMappingSvc.Options(ctx, GetActor(ctx), query)
 	if e != nil {
 		return mappingFailure(ctx, e), nil
 	}

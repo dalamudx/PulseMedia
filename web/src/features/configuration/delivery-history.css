@@ -1,0 +1,5 @@
+.delivery-history { min-width: 0; overflow-wrap: anywhere; }
+.delivery-history > label { display: flex; flex-direction: column; align-items: stretch; gap: 8px; max-width: 28rem; margin-block: 16px; }
+.delivery-history select { min-height: 44px; max-width: 100%; }
+:root .delivery-history .channel-state-button { min-height: 44px; max-width: 100%; }
+.delivery-history .config-heading { flex-wrap: wrap; }

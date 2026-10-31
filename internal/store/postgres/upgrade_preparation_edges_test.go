@@ -180,7 +180,7 @@ func TestMovieUpgradePreparationIsolationPG(t *testing.T) {
 	m := download.NewManager(f.p, idgen.New(), make([]byte, 32))
 	probe := &frozenNoCalls{}
 	m.RegisterClient(f.client, probe)
-	if _, err := m.SubmitDownload(ctx, f.operation, f.client, f.candidate, "/never-open"); !errors.Is(err, ports.ErrUpgradeNotExecutable) {
+	if _, err := m.PrepareDownload(ctx, f.operation, f.client, f.candidate, "/never-open"); !errors.Is(err, ports.ErrUpgradeNotExecutable) {
 		t.Fatal(err)
 	}
 	if _, err := m.ReconcileTask(ctx, f.operation); !errors.Is(err, ports.ErrUpgradeNotExecutable) {

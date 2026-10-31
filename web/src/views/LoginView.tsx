@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/AuthContext";
-import { Zap } from "lucide-react";
+import { AudioLines } from "lucide-react";
 
 export const LoginView: React.FC = () => {
   const { login, loading, error } = useAuth();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [factor, setFactor] = useState("");
+  const [useRecoveryCode, setUseRecoveryCode] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = await login(username, password);
+    const code = factor.trim();
+    const ok = await login(username, password, code ? useRecoveryCode ? {recovery_code: code} : {otp: code} : undefined);
+    setPassword(""); setFactor("");
     if (ok) {
       navigate("/");
     }
@@ -24,7 +28,7 @@ export const LoginView: React.FC = () => {
       <div className="auth-card">
         <div className="brand-header">
           <div className="logo-box">
-            <Zap size={28} />
+            <AudioLines size={28} aria-hidden="true" />
           </div>
           <h2>登录 PulseMedia</h2>
           <p className="subtitle">现代化自托管影视自动化控制中枢</p>
@@ -60,6 +64,12 @@ export const LoginView: React.FC = () => {
             </div>
           </div>
 
+          <details className="form-group">
+            <summary>使用双因素验证码或恢复码</summary>
+            <label htmlFor="login-second-factor">{useRecoveryCode ? "一次性恢复码" : "六位动态验证码"}</label>
+            <input id="login-second-factor" type="text" value={factor} onChange={e=>setFactor(e.target.value)} autoComplete="one-time-code" inputMode={useRecoveryCode ? "text" : "numeric"} maxLength={useRecoveryCode ? 64 : 6} />
+            <label><input type="checkbox" checked={useRecoveryCode} onChange={e=>{setUseRecoveryCode(e.target.checked);setFactor("")}} />使用恢复码</label>
+          </details>
           <button type="submit" className="btn-auth" disabled={loading}>
             {loading ? "正在验证登录..." : "进入系统控制台 →"}
           </button>

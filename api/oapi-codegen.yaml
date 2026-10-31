@@ -4,3 +4,24 @@ generate:
   models: true
   std-http-server: true
   strict-server: true
+# Standalone authenticated handlers keep strict raw transport and durable receipts.
+# Generate their public models without registering duplicate ServeMux patterns.
+output-options:
+  skip-prune: true
+  exclude-operation-ids:
+    - previewTVEpisodeUpgrade
+    - commandTVEpisodeUpgrade
+    - readTVEpisodeUpgradeCommand
+    - createExternalBatchPreview
+    - readExternalBatchPreview
+    - readExternalBatchPreviewReceipt
+    - confirmExternalBatchRow
+    - organizeExternalBatchRow
+    - previewManagedSidecarUpdate
+    - commandManagedSidecarUpdate
+    - readManagedSidecarUpdateCommand
+    - previewLibraryReorganization
+    - previewLibraryRecycle
+    - commandLibraryMaintenance
+    - readLibraryMaintenanceCommand
+    - listLibraryRecycle

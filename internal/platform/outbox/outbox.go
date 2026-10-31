@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,6 +19,7 @@ import (
 
 var (
 	ErrStaleDeliveryLease = ports.ErrStaleDeliveryLease
+	ErrInvalidDuration    = errors.New("outbox duration must be a positive int32 millisecond interval")
 )
 
 type Outbox struct {
@@ -92,9 +94,9 @@ func (o *Outbox) Publish(ctx context.Context, qtx *db.Queries, aggregateType, ag
 
 // Claim claims the next ordered pending delivery for a consumer, strictly ensuring no uncompleted predecessors exist.
 func (o *Outbox) Claim(ctx context.Context, consumer, owner string, leaseDuration time.Duration) (*db.OutboxDelivery, error) {
-	leaseMs := int32(leaseDuration.Milliseconds())
-	if leaseMs <= 0 {
-		leaseMs = 30000
+	leaseMs, err := durationMilliseconds(leaseDuration, 30*time.Second)
+	if err != nil {
+		return nil, err
 	}
 
 	delivery, err := o.queries.ClaimOutboxDelivery(ctx, db.ClaimOutboxDeliveryParams{
@@ -138,9 +140,9 @@ func (o *Outbox) Finish(ctx context.Context, deliveryID uuid.UUID, owner string,
 
 // Fail records delivery failure, scheduling retry or marking dead.
 func (o *Outbox) Fail(ctx context.Context, deliveryID uuid.UUID, owner string, leaseToken int64, errMsg string, retryAfter time.Duration) error {
-	retryMs := int32(retryAfter.Milliseconds())
-	if retryMs <= 0 {
-		retryMs = 5000
+	retryMs, err := durationMilliseconds(retryAfter, 5*time.Second)
+	if err != nil {
+		return err
 	}
 
 	tx, err := o.pool.Begin(ctx)
@@ -166,4 +168,16 @@ func (o *Outbox) Fail(ctx context.Context, deliveryID uuid.UUID, owner string, l
 		return fmt.Errorf("failed to fail outbox delivery: %w", err)
 	}
 	return tx.Commit(ctx)
+}
+
+// Validate before narrowing so oversized intervals cannot become short retries.
+func durationMilliseconds(value, defaultValue time.Duration) (int32, error) {
+	if value <= 0 {
+		value = defaultValue
+	}
+	millis := value.Milliseconds()
+	if millis <= 0 || millis > math.MaxInt32 {
+		return 0, ErrInvalidDuration
+	}
+	return int32(millis), nil
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 )
 
 func setAutomaticTVNaming(t *testing.T, f *automaticTVOrganizationFixture, rules naming.TemplateRules) int64 {
@@ -121,7 +122,7 @@ func TestAutomaticTVNamingPublishedRollbackKeepsOriginalTargetPG(t *testing.T) {
 	automaticTVOrganizationExec(t, f.pool, `UPDATE job SET lease_until=clock_timestamp()-interval '1 second' WHERE id=$1`, f.lease.ID)
 	automaticTVOrganizationExec(t, f.pool, `UPDATE job SET state='queued',lease_owner=NULL,lease_until=NULL WHERE id=$1`, f.lease.ID)
 	f.lease = automaticTVOrganizationClaim(t, f.q, "download_organization")
-	f.svc = NewService(f.pool, idgen.New(), outbox.New(f.pool, idgen.New(), clock.New()), rootfs.NewFilesystem())
+	f.svc = NewService(f.pool, idgen.New(), outbox.New(f.pool, idgen.New(), clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	if err = f.svc.OrganizeDownload(t.Context(), f.lease); err != nil {
 		t.Fatal("recovery consulted changed naming rules", err)
 	}

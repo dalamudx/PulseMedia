@@ -36,7 +36,7 @@ func revisionSetup(t *testing.T) (*organizationFixture, *usecase.RevisionService
 		t.Fatal(e)
 	}
 	f.observe(t)
-	repo := transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem())
+	repo := transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem(), usecase.ExecutePreparedPlan)
 	made, e := repo.PrepareMovieTransfer(ctx, ports.MovieTransferRequest{OperationID: f.op, RootID: f.root, UnitID: f.unit, SourcePath: f.path, Title: "Movie", Year: 2020, Quality: quality.Profile{Resolution: quality.Res1080p}})
 	if e != nil {
 		t.Fatal(e)

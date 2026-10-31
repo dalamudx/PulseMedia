@@ -381,7 +381,7 @@ func TestM6OperationActivityActualChromeHTTPPG(t *testing.T) {
 			w.WriteHeader(204)
 			return
 		}
-		if strings.HasPrefix(r.URL.Path, "/assets/") {
+		if r.URL.Path == "/theme.js" || strings.HasPrefix(r.URL.Path, "/assets/") {
 			files.ServeHTTP(w, r)
 			return
 		}

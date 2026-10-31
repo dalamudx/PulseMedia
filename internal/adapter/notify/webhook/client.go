@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/dalamudx/PulseMedia/internal/adapter/notify/transport"
@@ -69,15 +68,7 @@ func (c *Client) Send(ctx context.Context, n ports.Notification) error {
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusTooManyRequests {
-		retry := time.Minute
-		if seconds, parseErr := strconv.ParseInt(resp.Header.Get("Retry-After"), 10, 32); parseErr == nil && seconds > 0 && seconds <= 86400 {
-			retry = time.Duration(seconds) * time.Second
-		} else if at, parseErr := http.ParseTime(resp.Header.Get("Retry-After")); parseErr == nil {
-			wait := time.Until(at)
-			if wait > 0 && wait <= 24*time.Hour {
-				retry = wait
-			}
-		}
+		retry := transport.RetryAfter(resp.Header.Get("Retry-After"), time.Now(), time.Minute)
 		return &ports.RateLimitError{RetryAfter: retry, Reason: "webhook rate limited"}
 	}
 	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {

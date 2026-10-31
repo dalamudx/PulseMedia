@@ -9,6 +9,32 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type AccountSecurityCommand struct {
+	OwnerID       uuid.UUID
+	CommandKey    string
+	RequestDigest string
+	Action        string
+	TargetID      uuid.UUID
+	Response      []byte
+	CreatedAt     pgtype.Timestamptz
+}
+
+type AccountTotp struct {
+	UserID           uuid.UUID
+	Enabled          bool
+	SecretCiphertext []byte
+	LastCounter      int64
+	ChallengeID      uuid.UUID
+	ExpiresAt        pgtype.Timestamptz
+	UpdatedAt        pgtype.Timestamptz
+}
+
+type AccountTotpRecovery struct {
+	UserID   uuid.UUID
+	CodeHash []byte
+	UsedAt   pgtype.Timestamptz
+}
+
 type AcquisitionReservation struct {
 	ID               uuid.UUID
 	UnitID           uuid.UUID
@@ -479,6 +505,52 @@ type DownloadClient struct {
 	UpdatedAt         pgtype.Timestamptz
 }
 
+type DownloadControlAuthority struct {
+	CommandID     uuid.UUID
+	PhysicalToken uuid.UUID
+	Scope         string
+	Digest        string
+}
+
+type DownloadControlCommand struct {
+	ID           uuid.UUID
+	TaskID       uuid.UUID
+	OperationID  uuid.UUID
+	ActorID      uuid.UUID
+	RequestKey   string
+	Action       string
+	AffectShared bool
+	ClientID     uuid.UUID
+	ClientStamp  string
+	InfoHash     string
+	SavePath     string
+	Requirements []byte
+	BackendPid   int32
+	Nonce        uuid.UUID
+	ExpiresAt    pgtype.Timestamptz
+	CreatedAt    pgtype.Timestamptz
+}
+
+type DownloadControlConfirmation struct {
+	CommandID   uuid.UUID
+	Source      string
+	ConfirmedAt pgtype.Timestamptz
+}
+
+type DownloadControlPhysical struct {
+	OperationID  uuid.UUID
+	Token        uuid.UUID
+	Scope        string
+	BackendPid   int32
+	BackendStart pgtype.Timestamptz
+	AdvisoryKey  int64
+}
+
+type DownloadControlReturn struct {
+	CommandID  uuid.UUID
+	ReturnedAt pgtype.Timestamptz
+}
+
 type DownloadFileInventory struct {
 	TaskID      uuid.UUID
 	OperationID uuid.UUID
@@ -621,6 +693,16 @@ type EpisodeMappingRevision struct {
 	Mappings       []byte
 	CreatedAt      pgtype.Timestamptz
 	ValidUntil     pgtype.Timestamptz
+}
+
+type ExternalImportBatch struct {
+	ID         uuid.UUID
+	OwnerID    uuid.UUID
+	ScopeID    uuid.UUID
+	CommandKey string
+	InputHash  string
+	Manifest   []byte
+	CreatedAt  pgtype.Timestamptz
 }
 
 type IdempotencyRecord struct {
@@ -788,6 +870,53 @@ type LibraryFileUnit struct {
 	RetiredAt pgtype.Timestamptz
 }
 
+type LibraryMaintenanceCommand struct {
+	ID          uuid.UUID
+	ActorID     uuid.UUID
+	RequestKey  string
+	Action      string
+	Input       []byte
+	RequestHash string
+	RootID      uuid.UUID
+	FileID      uuid.UUID
+	RecycleID   pgtype.Text
+	Frozen      []byte
+	CreatedAt   pgtype.Timestamptz
+}
+
+type LibraryMaintenancePermit struct {
+	CommandID    uuid.UUID
+	Owner        uuid.UUID
+	Token        uuid.UUID
+	BackendPid   int32
+	BackendStart pgtype.Timestamptz
+	Nonce        uuid.UUID
+	StartedAt    pgtype.Timestamptz
+	LeaseUntil   pgtype.Timestamptz
+}
+
+type LibraryMaintenanceReturn struct {
+	CommandID  uuid.UUID
+	Owner      uuid.UUID
+	Token      uuid.UUID
+	Status     string
+	Result     []byte
+	AfterState []byte
+	AuditID    uuid.UUID
+	EventID    uuid.UUID
+	ReturnedAt pgtype.Timestamptz
+}
+
+type LibraryRecycleObservation struct {
+	ID             uuid.UUID
+	RecycleID      string
+	ActorID        uuid.UUID
+	Identity       []byte
+	AllocatedBytes int64
+	LinkCount      int64
+	ObservedAt     pgtype.Timestamptz
+}
+
 type LibraryReuseContent struct {
 	PlanID   uuid.UUID
 	Content  []byte
@@ -846,6 +975,51 @@ type LibraryScanSchedule struct {
 	LastScanJobID pgtype.UUID
 }
 
+type LibraryVerifiedRecycle struct {
+	RecycleID          interface{}
+	Kind               string
+	OldFileID          uuid.UUID
+	ReplacementFileID  uuid.UUID
+	RootID             uuid.UUID
+	OriginalRel        interface{}
+	RecycleRel         string
+	RetainedUntil      pgtype.Timestamptz
+	Identity           interface{}
+	RootIdentity       interface{}
+	RootPath           interface{}
+	RootGeneration     int64
+	RetirementEvidence []byte
+}
+
+type ManagedSidecarContent struct {
+	ID          uuid.UUID
+	FileID      uuid.UUID
+	UnitID      uuid.UUID
+	SourceJobID uuid.UUID
+	RootID      uuid.UUID
+	Directory   string
+	Name        string
+	Identity    []byte
+	Content     []byte
+	ContentHash string
+	CreatedAt   pgtype.Timestamptz
+}
+
+type ManagedSidecarUpdate struct {
+	ID         uuid.UUID
+	OwnerID    uuid.UUID
+	FileID     uuid.UUID
+	Ticket     []byte
+	Result     []byte
+	ExpiresAt  pgtype.Timestamptz
+	CommandKey pgtype.Text
+	Permit     pgtype.UUID
+	LeaseUntil pgtype.Timestamptz
+	ReleasedAt pgtype.Timestamptz
+	State      string
+	CreatedAt  pgtype.Timestamptz
+}
+
 type MediaArtwork struct {
 	MediaID         uuid.UUID
 	Provider        string
@@ -854,6 +1028,22 @@ type MediaArtwork struct {
 	MetadataVersion int64
 	PosterPath      string
 	RecordedAt      pgtype.Timestamptz
+}
+
+type MediaClassificationFact struct {
+	MediaID         uuid.UUID
+	MetadataVersion int64
+	Facts           []byte
+	ObservedAt      pgtype.Timestamptz
+}
+
+type MediaClassificationPolicy struct {
+	Version     int64
+	Rules       []byte
+	ActorID     uuid.UUID
+	RequestKey  string
+	RequestHash string
+	PublishedAt pgtype.Timestamptz
 }
 
 type MediaIdentity struct {
@@ -1746,6 +1936,26 @@ type SeedingRemovalSchedule struct {
 	UpdatedAt     pgtype.Timestamptz
 }
 
+type SeerrConfiguration struct {
+	Singleton           bool
+	SourceID            uuid.UUID
+	Enabled             bool
+	Version             int64
+	OwnerID             uuid.UUID
+	ConfiguredBy        uuid.UUID
+	CredentialEncrypted []byte
+}
+
+type SeerrIngressReceipt struct {
+	SourceID          uuid.UUID
+	ExternalRequestID string
+	PayloadHash       string
+	ConfigVersion     int64
+	OwnerID           uuid.UUID
+	RequestID         uuid.UUID
+	CreatedAt         pgtype.Timestamptz
+}
+
 type Setting struct {
 	Key       string
 	Value     []byte
@@ -1893,6 +2103,64 @@ type Subscription struct {
 	UpgradeMode            string
 }
 
+type SubscriptionClassificationChoice struct {
+	SubscriptionID uuid.UUID
+	PolicyVersion  int64
+	RootID         uuid.UUID
+	RootGeneration int64
+	Result         []byte
+	Facts          []byte
+	CreatedAt      pgtype.Timestamptz
+}
+
+type SubscriptionMovieDiscovery struct {
+	SubscriptionID  uuid.UUID
+	SearchID        pgtype.UUID
+	NextDiscoveryAt pgtype.Timestamptz
+}
+
+type SubscriptionMovieDiscoveryRun struct {
+	SearchID       uuid.UUID
+	SubscriptionID uuid.UUID
+	InputStamp     string
+	CreatedAt      pgtype.Timestamptz
+}
+
+type SubscriptionTvEpisodeDiscovery struct {
+	SubscriptionID  uuid.UUID
+	UnitID          uuid.UUID
+	SearchID        pgtype.UUID
+	NextDiscoveryAt pgtype.Timestamptz
+}
+
+type SubscriptionTvEpisodeDiscoveryRun struct {
+	SearchID       uuid.UUID
+	SubscriptionID uuid.UUID
+	UnitID         uuid.UUID
+	InputStamp     string
+	CreatedAt      pgtype.Timestamptz
+}
+
+type SubtitleCandidate struct {
+	ID               uuid.UUID
+	QueryID          uuid.UUID
+	Ordinal          int32
+	ContentEncrypted []byte
+}
+
+type SubtitleCandidateQuery struct {
+	ID                  uuid.UUID
+	OwnerID             uuid.UUID
+	FileID              uuid.UUID
+	MappingRevision     int64
+	CommandKey          string
+	Outcome             string
+	Snapshot            []byte
+	ConfirmPermit       bool
+	CreatedAt           pgtype.Timestamptz
+	SelectedCandidateID pgtype.UUID
+}
+
 type TransferContentEvidence struct {
 	StepID        uuid.UUID
 	Content       []byte
@@ -1960,6 +2228,58 @@ type TvCoverageCandidateReview struct {
 	CreatedAt      pgtype.Timestamptz
 }
 
+type TvEpisodeUpgradeAuthority struct {
+	OperationID    uuid.UUID
+	ActorID        uuid.UUID
+	SubscriptionID uuid.UUID
+	UnitID         uuid.UUID
+	RootID         uuid.UUID
+	OldFileID      uuid.UUID
+	OldFactID      uuid.UUID
+	CandidateID    uuid.UUID
+	ClientID       uuid.UUID
+	Version        string
+	Snapshot       []byte
+	ValidUntil     pgtype.Timestamptz
+	CreatedAt      pgtype.Timestamptz
+}
+
+type TvEpisodeUpgradePermit struct {
+	OperationID  uuid.UUID
+	Action       string
+	Owner        uuid.UUID
+	Token        uuid.UUID
+	BackendPid   int32
+	BackendStart pgtype.Timestamptz
+	LockKey      int64
+	Nonce        uuid.UUID
+	LeaseUntil   pgtype.Timestamptz
+	RequestKey   string
+	RequestHash  string
+	CreatedAt    pgtype.Timestamptz
+}
+
+type TvEpisodeUpgradePhase struct {
+	OperationID uuid.UUID
+	Action      string
+	ActorID     uuid.UUID
+	RequestKey  string
+	RequestHash string
+	Result      []byte
+	Evidence    []byte
+	CreatedAt   pgtype.Timestamptz
+}
+
+type TvEpisodeUpgradeReturn struct {
+	OperationID uuid.UUID
+	Action      string
+	Owner       uuid.UUID
+	Token       uuid.UUID
+	Status      string
+	Evidence    []byte
+	ReturnedAt  pgtype.Timestamptz
+}
+
 type TvSeasonMetadataSnapshot struct {
 	MediaID      uuid.UUID
 	MediaVersion int64
@@ -2016,6 +2336,26 @@ type UnitReservation struct {
 	ExpiresAt   pgtype.Timestamptz
 	CreatedAt   pgtype.Timestamptz
 	UpdatedAt   pgtype.Timestamptz
+}
+
+type UntrackedCompanion struct {
+	ID             uuid.UUID
+	OperationID    uuid.UUID
+	CommandKey     string
+	SelectionHash  string
+	Candidate      []byte
+	Action         string
+	State          string
+	ExecutionOwner pgtype.UUID
+	ExecutionToken int64
+	LeaseUntil     pgtype.Timestamptz
+	Content        []byte
+	PermitOwner    pgtype.UUID
+	PermitToken    pgtype.Int8
+	PermitIssuedAt pgtype.Timestamptz
+	Result         []byte
+	CreatedAt      pgtype.Timestamptz
+	UpdatedAt      pgtype.Timestamptz
 }
 
 type UntrackedDirectoryScope struct {

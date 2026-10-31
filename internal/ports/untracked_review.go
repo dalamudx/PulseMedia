@@ -14,10 +14,16 @@ var ErrUntrackedReviewStale = errors.New("untracked review material changed")
 
 // A zero TMDBID requests a suggestion; a positive ID is explicit typed intent.
 type UntrackedReviewInput struct {
-	ScopeVersion int64  `json:"scope_version"`
-	FileRevision int64  `json:"file_revision"`
-	MediaType    string `json:"media_type"`
-	TMDBID       int64  `json:"tmdb_id"`
+	ScopeVersion         int64  `json:"scope_version"`
+	FileRevision         int64  `json:"file_revision"`
+	MediaType            string `json:"media_type"`
+	TMDBID               int64  `json:"tmdb_id"`
+	CanonicalUnitID      string `json:"canonical_unit_id,omitempty"`
+	MediaMetadataVersion int64  `json:"media_metadata_version,omitempty"`
+	UnitMetadataVersion  int64  `json:"unit_metadata_version,omitempty"`
+	Season               int    `json:"season,omitempty"`
+	Episode              int    `json:"episode,omitempty"`
+	TMDBEpisodeID        int64  `json:"tmdb_episode_id,omitempty"`
 }
 
 type UntrackedReviewRequest struct {

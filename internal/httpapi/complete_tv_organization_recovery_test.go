@@ -203,7 +203,7 @@ func TestCompleteTVOrganizationPGRealDMLRoleAndHistory(t *testing.T) {
 		t.Fatal("not a DML role", e)
 	}
 	gen := idgen.New()
-	repo := transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem())
+	repo := transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem(), transfer.ExecutePreparedPlan)
 	f.service = transfer.NewCompleteTVOrganizationService(repo)
 	f.worker = transfer.NewService(repo)
 	r, e := f.confirm("dml")

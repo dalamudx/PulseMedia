@@ -552,16 +552,12 @@ func TestCompleteTVResultPGVersionedProofDowngrade(t *testing.T) {
 	f := newTVResultFixture(t)
 	before := f.snapshot(t)
 	ctx := context.Background()
-	// Isolate the original v2 contract from later unrelated empty migrations.
-	for version := postgres.CurrentMigrationVersion; version > 61; version-- {
-		if got, err := postgres.Rollback(ctx, f.f.a.DBPool().Config().ConnString(), "../../migrations"); err != nil || got != int64(version-1) {
-			t.Fatalf("rollback unrelated migration %d: version=%d error=%v", version, got, err)
-		}
+	err := attemptProtectedMigrationDown(ctx, f.f.a.DBPool(), "00061_complete_tv_prepared_path.sql")
+	var pgErr *pgconn.PgError
+	if !errors.As(err, &pgErr) || pgErr.Code != "P0001" || !strings.Contains(pgErr.Message, "cannot downgrade complete TV preparation while v2 evidence exists") {
+		t.Fatalf("v2 evidence did not block its migration: %v", err)
 	}
-	if _, e := postgres.Rollback(ctx, f.f.a.DBPool().Config().ConnString(), "../../migrations"); e == nil {
-		t.Fatal("downgrade discarded v2 evidence contract")
-	}
-	if e := postgres.CheckSchemaVersion(ctx, f.f.a.DBPool(), 61); e != nil {
+	if e := postgres.CheckSchemaVersion(ctx, f.f.a.DBPool(), postgres.CurrentMigrationVersion); e != nil {
 		t.Fatal("failed downgrade changed schema version")
 	}
 	if f.snapshot(t) != before {

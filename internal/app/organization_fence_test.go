@@ -36,7 +36,7 @@ func TestOrganizationExpiredJobCannotCommitOrReleasePhysicalSlot(t *testing.T) {
 	f.observe(t)
 	lease := f.claim(t, "old")
 	gate := &organizationLinkGate{TransferFilesystem: rootfs.NewFilesystem(), reached: make(chan struct{}), release: make(chan struct{})}
-	old := transfer.NewService(transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), gate))
+	old := transfer.NewService(transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), gate, transfer.ExecutePreparedPlan))
 	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
 	defer cancel()
 	done := make(chan error, 1)

@@ -39,9 +39,13 @@ func (a *App) runOrganizationWorkerWithWake(ctx context.Context, queue *jobs.Que
 			lease := ports.JobLease{ID: job.ID, Owner: owner, Token: job.LeaseToken}
 			var err error
 			if job.Kind == "library_reuse" {
+				finish := a.stages.begin(ports.StageLibraryReuse)
 				err = local.Execute(workCtx, lease)
+				finish()
 			} else {
+				finish := a.stages.begin(ports.StageDownloadOrganization)
 				err = svc.OrganizeDownload(workCtx, lease)
+				finish()
 			}
 			cancel()
 			if ctx.Err() != nil {

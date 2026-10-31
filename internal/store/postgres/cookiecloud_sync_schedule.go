@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dalamudx/PulseMedia/internal/ports"
@@ -20,14 +21,17 @@ import (
 )
 
 type CookieCloudSyncStore struct {
-	pool      *pgxpool.Pool
-	ids       ports.IDGen
-	decoder   ports.CredentialDecoder
-	protector ports.SecretProtector
+	pool           *pgxpool.Pool
+	ids            ports.IDGen
+	decoder        ports.CredentialDecoder
+	protector      ports.SecretProtector
+	scheduleMu     sync.Mutex
+	scheduleCursor db.ListDueCookieCloudOwnersParams
+	scheduleLimits *ScheduleLimits
 }
 
-func NewCookieCloudSyncStore(pool *pgxpool.Pool, ids ports.IDGen, decoder ports.CredentialDecoder, protector ports.SecretProtector) *CookieCloudSyncStore {
-	return &CookieCloudSyncStore{pool: pool, ids: ids, decoder: decoder, protector: protector}
+func NewCookieCloudSyncStore(pool *pgxpool.Pool, ids ports.IDGen, decoder ports.CredentialDecoder, protector ports.SecretProtector, limits ...*ScheduleLimits) *CookieCloudSyncStore {
+	return &CookieCloudSyncStore{pool: pool, ids: ids, decoder: decoder, protector: protector, scheduleLimits: optionalScheduleLimits(limits)}
 }
 
 type cookieCloudJobPayload struct {
@@ -119,13 +123,62 @@ func (s *CookieCloudSyncStore) event(ctx context.Context, q *db.Queries, owner, 
 	return err
 }
 
-// EnqueueDue publishes a bounded batch in one transaction. Saved configuration
-// first becomes due after its configured interval; saving never invokes this.
+// Each owner commits its own queue graph; one broken configuration cannot roll
+// back healthy peers. Saving still only starts the configured waiting interval.
 func (s *CookieCloudSyncStore) EnqueueDue(ctx context.Context) (err error) {
-	defer func() { err = cookieCloudRuntimeError(err) }()
+	defer func(parent context.Context) {
+		if parent.Err() != nil {
+			err = parent.Err()
+		} else {
+			err = cookieCloudRuntimeError(err)
+		}
+	}(ctx)
 	if s == nil || s.pool == nil || s.ids == nil || s.decoder == nil || s.protector == nil {
 		return ports.ErrUnavailable
 	}
+	if !s.scheduleMu.TryLock() {
+		return nil
+	}
+	defer s.scheduleMu.Unlock()
+	ctx, cancel := s.scheduleLimits.bound(ctx)
+	defer cancel()
+	q := db.New(s.pool)
+	if err = cookieCloudRuntimeGuard(ctx, q); err != nil {
+		return err
+	}
+	owners, err := q.ListDueCookieCloudOwners(ctx, s.scheduleCursor)
+	if err != nil {
+		return err
+	}
+	if len(owners) == 0 && s.scheduleCursor.AfterOwnerID != uuid.Nil {
+		s.scheduleCursor = db.ListDueCookieCloudOwnersParams{}
+		owners, err = q.ListDueCookieCloudOwners(ctx, s.scheduleCursor)
+		if err != nil {
+			return err
+		}
+	}
+	var firstErr error
+	for _, owner := range owners {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		if candidateErr := s.scheduleLimits.run(ctx, owner.OwnerID, owner.Version, func() error { return s.enqueueOwner(ctx, owner.OwnerID) }); candidateErr != nil && firstErr == nil {
+			firstErr = candidateErr
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		s.scheduleCursor = db.ListDueCookieCloudOwnersParams{AfterOwnerID: owner.OwnerID, AfterScanAt: owner.ScanAt}
+	}
+	if len(owners) < 64 {
+		s.scheduleCursor = db.ListDueCookieCloudOwnersParams{}
+	}
+	return firstErr
+}
+
+func (s *CookieCloudSyncStore) enqueueOwner(ctx context.Context, owner uuid.UUID) error {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return err
@@ -135,55 +188,46 @@ func (s *CookieCloudSyncStore) EnqueueDue(ctx context.Context) (err error) {
 	if err = cookieCloudRuntimeGuard(ctx, q); err != nil {
 		return err
 	}
-	if err = q.LockOutboxAggregate(ctx, db.LockOutboxAggregateParams{AggregateType: "cookiecloud.scheduler", AggregateID: "global"}); err != nil {
-		return err
+	frozen, err := s.execution(ctx, q, owner)
+	if errors.Is(err, ports.ErrForbidden) || errors.Is(err, ports.ErrCookieCloudConfigConflict) || errors.Is(err, pgx.ErrNoRows) {
+		return nil
 	}
-	owners, err := q.ListDueCookieCloudOwners(ctx)
 	if err != nil {
 		return err
 	}
-	for _, owner := range owners {
-		frozen, e := s.execution(ctx, q, owner)
-		if errors.Is(e, ports.ErrForbidden) || errors.Is(e, ports.ErrCookieCloudConfigConflict) || errors.Is(e, pgx.ErrNoRows) {
-			continue
+	schedule, err := q.GetCookieCloudSyncSchedule(ctx, owner)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return err
+	}
+	now, err := q.GetSearchDatabaseTime(ctx)
+	if err != nil {
+		return err
+	}
+	due := frozen.Config.UpdatedAt.Add(time.Duration(frozen.Config.IntervalSeconds) * time.Second)
+	if schedule.OwnerID != uuid.Nil {
+		if schedule.State != "idle" || schedule.ActiveJobID.Valid {
+			return nil
 		}
-		if e != nil {
-			return e
+		if schedule.ConfigVersion == frozen.Config.Version {
+			due = schedule.NextDueAt.Time
 		}
-		schedule, e := q.GetCookieCloudSyncSchedule(ctx, owner)
-		if e != nil && !errors.Is(e, pgx.ErrNoRows) {
-			return e
-		}
-		now, e := q.GetSearchDatabaseTime(ctx)
-		if e != nil {
-			return e
-		}
-		due := frozen.Config.UpdatedAt.Add(time.Duration(frozen.Config.IntervalSeconds) * time.Second)
-		if schedule.OwnerID != uuid.Nil {
-			if schedule.State != "idle" || schedule.ActiveJobID.Valid {
-				continue
-			}
-			if schedule.ConfigVersion == frozen.Config.Version {
-				due = schedule.NextDueAt.Time
-			}
-		}
-		if !now.Valid || due.After(now.Time) {
-			continue
-		}
-		payload, _ := json.Marshal(cookieCloudJobPayload{owner, frozen.Config.Version})
-		job, e := q.CreateCookieCloudSyncJob(ctx, db.CreateCookieCloudSyncJobParams{ID: s.ids.NewUUID(), DedupeKey: pgtype.Text{String: fmt.Sprintf("%s:%d", owner, frozen.Config.Version), Valid: true}, Payload: payload})
-		if e != nil {
-			return e
-		}
-		if e = q.CreateCookieCloudSyncAttempt(ctx, db.CreateCookieCloudSyncAttemptParams{JobID: job.ID, OwnerID: owner, ConfigVersion: frozen.Config.Version}); e != nil {
-			return e
-		}
-		if e = q.QueueCookieCloudSyncSchedule(ctx, db.QueueCookieCloudSyncScheduleParams{OwnerID: owner, ConfigVersion: frozen.Config.Version, ActiveJobID: pgtype.UUID{Bytes: job.ID, Valid: true}}); e != nil {
-			return e
-		}
-		if e = s.event(ctx, q, owner, job.ID, frozen.Config.Version, "cookiecloud.sync_queued"); e != nil {
-			return e
-		}
+	}
+	if !now.Valid || due.After(now.Time) {
+		return nil
+	}
+	payload, _ := json.Marshal(cookieCloudJobPayload{owner, frozen.Config.Version})
+	job, err := q.CreateCookieCloudSyncJob(ctx, db.CreateCookieCloudSyncJobParams{ID: s.ids.NewUUID(), DedupeKey: pgtype.Text{String: fmt.Sprintf("%s:%d", owner, frozen.Config.Version), Valid: true}, Payload: payload})
+	if err != nil {
+		return err
+	}
+	if err = q.CreateCookieCloudSyncAttempt(ctx, db.CreateCookieCloudSyncAttemptParams{JobID: job.ID, OwnerID: owner, ConfigVersion: frozen.Config.Version}); err != nil {
+		return err
+	}
+	if err = q.QueueCookieCloudSyncSchedule(ctx, db.QueueCookieCloudSyncScheduleParams{OwnerID: owner, ConfigVersion: frozen.Config.Version, ActiveJobID: pgtype.UUID{Bytes: job.ID, Valid: true}}); err != nil {
+		return err
+	}
+	if err = s.event(ctx, q, owner, job.ID, frozen.Config.Version, "cookiecloud.sync_queued"); err != nil {
+		return err
 	}
 	if err = cookieCloudRuntimeGuard(ctx, q); err != nil {
 		return err
@@ -199,7 +243,7 @@ func (s *CookieCloudSyncStore) RecoverExpired(ctx context.Context) (err error) {
 	if s == nil || s.pool == nil || s.ids == nil {
 		return ports.ErrUnavailable
 	}
-	conn, err := s.pool.Acquire(ctx)
+	conn, err := AcquirePhysicalConnection(ctx, s.pool)
 	if err != nil {
 		return err
 	}

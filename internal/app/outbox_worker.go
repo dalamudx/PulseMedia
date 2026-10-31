@@ -48,6 +48,7 @@ func (a *App) runOutboxWorkers(ctx context.Context, ob *outbox.Outbox, ms *media
 	q := db.New(a.dbPool)
 	var wg sync.WaitGroup
 	active := make(map[string]bool)
+	finished := make(chan string)
 	slots := make(chan struct{}, 4)
 	defer wg.Wait()
 	ticker := time.NewTicker(time.Second)
@@ -77,12 +78,24 @@ func (a *App) runOutboxWorkers(ctx context.Context, ob *outbox.Outbox, ms *media
 			go func(consumer, kind string, recipient uuid.UUID) {
 				defer wg.Done()
 				a.runOutboxConsumer(ctx, ob, ms, n, slots, consumer, kind, recipient)
+				select {
+				case finished <- consumer:
+				case <-ctx.Done():
+				}
 			}(consumer, parts[0], recipient)
 		}
-		select {
-		case <-ctx.Done():
-			return
-		case <-ticker.C:
+		// Retire completions immediately, but dispatch only on the shared tick.
+		// A future/blocked delivery must not trigger an exit/restart busy loop.
+	wait:
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case consumer := <-finished:
+				delete(active, consumer)
+			case <-ticker.C:
+				break wait
+			}
 		}
 	}
 }
@@ -97,12 +110,7 @@ func (a *App) runOutboxConsumer(ctx context.Context, ob *outbox.Outbox, ms *medi
 			var e error
 			permit, e = ms.AcquireRefreshPermit(ctx, recipient)
 			if e != nil {
-				select {
-				case <-ctx.Done():
-					return
-				case <-ticker.C:
-					continue
-				}
+				return // The coordinator retries due work on its next bounded tick.
 			}
 		}
 		if _, e := q.RecoverExpiredOutboxDeliveries(ctx, consumer); e != nil && ctx.Err() == nil {
@@ -143,6 +151,9 @@ func (a *App) runOutboxConsumer(ctx context.Context, ob *outbox.Outbox, ms *medi
 		<-slots
 		if permit != nil {
 			permit.Release()
+		}
+		if d == nil {
+			return
 		}
 		select {
 		case <-ctx.Done():

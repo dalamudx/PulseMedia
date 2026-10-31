@@ -130,6 +130,7 @@ linters:
             - "!**/internal/httpapi/tv_refresh_test.go"
             - "!**/internal/httpapi/complete_tv_submission_test.go"
             - "!**/internal/httpapi/complete_tv_sender_test.go"
+            - "!**/internal/httpapi/complete_tv_transmission_test.go"
             - "!**/internal/httpapi/m4_r3_real_variants_test.go"
             - "!**/internal/httpapi/complete_tv_sender_concurrency_test.go"
             - "!**/internal/httpapi/complete_tv_sender_fences_test.go"

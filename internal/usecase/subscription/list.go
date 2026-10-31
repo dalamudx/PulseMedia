@@ -2,79 +2,38 @@ package subscription
 
 import (
 	"context"
-	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
 
 	"github.com/dalamudx/PulseMedia/internal/ports"
-	"github.com/google/uuid"
 )
 
-// ListService enriches a complete authorized database snapshot after it is closed.
-type ListService struct {
-	reader   ports.SubscriptionListReader
-	metadata ports.MetadataProvider
+type ListService struct{ reader ports.SubscriptionListReader }
+
+func NewListService(reader ports.SubscriptionListReader) *ListService {
+	return &ListService{reader: reader}
 }
 
-func NewListService(reader ports.SubscriptionListReader, metadata ports.MetadataProvider) *ListService {
-	return &ListService{reader: reader, metadata: metadata}
-}
-
-type ListEntry struct {
-	ports.SubscriptionListEntry
-	PosterURL                        *string
-	TotalEpisodes, SatisfiedEpisodes int
-}
-
-func (s *ListService) List(ctx context.Context, actor *ports.Actor) ([]ListEntry, error) {
+func (s *ListService) List(ctx context.Context, actor *ports.Actor, in ports.SubscriptionListQuery) (*ports.SubscriptionListPage, error) {
 	if actor == nil {
 		return nil, ports.ErrUnauthorized
 	}
 	if s.reader == nil {
 		return nil, ports.ErrUnavailable
 	}
-	rows, err := s.reader.ReadSubscriptionList(ctx, actor)
-	if err != nil {
-		return nil, err
+	if in.Limit == 0 {
+		in.Limit = 50
 	}
-	items := make([]ListEntry, len(rows))
-	// Request-local memoization preserves provider behavior for each distinct media.
-	posters := make(map[uuid.UUID]*string)
-	for i, row := range rows {
-		item := ListEntry{SubscriptionListEntry: row}
-		for _, wanted := range row.WantedItems {
-			if !wanted.IsSkipped {
-				item.TotalEpisodes++
-				if wanted.IsSatisfied {
-					item.SatisfiedEpisodes++
-				}
-			}
-		}
-		if item.TotalEpisodes == 0 && len(row.WantedItems) > 0 {
-			item.TotalEpisodes = len(row.WantedItems)
-		}
-		poster, seen := posters[row.MediaID]
-		if !seen {
-			poster = s.poster(ctx, row)
-			posters[row.MediaID] = poster
-		}
-		item.PosterURL = poster
-		items[i] = item
+	in.Search = strings.TrimSpace(in.Search)
+	if in.Limit < 1 || in.Limit > 100 || in.Offset < 0 || in.Offset > 1000000 || utf8.RuneCountInString(in.Search) > 200 || (in.MediaType != "" && in.MediaType != "movie" && in.MediaType != "tv") {
+		return nil, ports.ErrInvalidSubscriptionQuery
 	}
-	return items, nil
-}
-
-func (s *ListService) poster(ctx context.Context, row ports.SubscriptionListEntry) *string {
-	id, _ := strconv.ParseInt(row.TMDBExternalID, 10, 64)
-	if id <= 0 || s.metadata == nil {
-		return nil
+	if in.Calendar && (in.Start.IsZero() || in.End.IsZero() || in.End.Before(in.Start) || in.End.Sub(in.Start) > 41*24*time.Hour || in.Search != "" || in.TMDBID != "" || in.OwnOnly || in.MediaType != "") {
+		return nil, ports.ErrInvalidSubscriptionQuery
 	}
-	if row.MediaType == "tv" {
-		if tv, err := s.metadata.GetTVDetails(ctx, id, "zh-CN"); err == nil && tv != nil && tv.PosterURL != "" {
-			return &tv.PosterURL
-		}
-	} else {
-		if movie, err := s.metadata.GetMovieDetails(ctx, id, "zh-CN"); err == nil && movie != nil && movie.PosterURL != "" {
-			return &movie.PosterURL
-		}
+	if !in.Calendar && (in.UnknownDates || !in.Start.IsZero() || !in.End.IsZero()) {
+		return nil, ports.ErrInvalidSubscriptionQuery
 	}
-	return nil
+	return s.reader.ReadSubscriptionList(ctx, actor, in)
 }

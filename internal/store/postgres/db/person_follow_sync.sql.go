@@ -64,9 +64,11 @@ func (q *Queries) InsertPersonFollowSyncPage(ctx context.Context, arg InsertPers
 }
 
 const listDuePersonFollowConfigs = `-- name: ListDuePersonFollowConfigs :many
-SELECT c.id,c.owner_id FROM person_follow_config c JOIN app_user u ON u.id=c.owner_id
+SELECT c.id,c.owner_id,c.version FROM person_follow_config c JOIN app_user u ON u.id=c.owner_id
 JOIN policy p ON p.id=c.quality_policy_id AND p.current_revision=c.quality_policy_revision
 WHERE c.enabled AND u.is_active AND u.role IN ('admin','member')
+AND ($1::uuid='00000000-0000-0000-0000-000000000000'::uuid
+ OR (c.owner_id,c.id)>($2::uuid,$1::uuid))
 AND (c.movie_root_id IS NULL OR EXISTS(SELECT 1 FROM library_root WHERE id=c.movie_root_id AND media_type='movie' AND health='online'))
 AND (c.tv_root_id IS NULL OR EXISTS(SELECT 1 FROM library_root WHERE id=c.tv_root_id AND media_type='tv' AND health='online'))
 AND NOT EXISTS(SELECT 1 FROM person_follow_indexer b LEFT JOIN indexer_lifecycle l ON l.indexer_id=b.indexer_id WHERE b.config_id=c.id AND (NOT coalesce(l.enabled,true) OR l.deleted_at IS NOT NULL))
@@ -75,13 +77,19 @@ AND NOT EXISTS(SELECT 1 FROM person_follow_sync_run r WHERE r.config_id=c.id AND
 ORDER BY c.owner_id,c.id LIMIT 64
 `
 
+type ListDuePersonFollowConfigsParams struct {
+	AfterID      uuid.UUID
+	AfterOwnerID uuid.UUID
+}
+
 type ListDuePersonFollowConfigsRow struct {
 	ID      uuid.UUID
 	OwnerID uuid.UUID
+	Version int64
 }
 
-func (q *Queries) ListDuePersonFollowConfigs(ctx context.Context) ([]ListDuePersonFollowConfigsRow, error) {
-	rows, err := q.db.Query(ctx, listDuePersonFollowConfigs)
+func (q *Queries) ListDuePersonFollowConfigs(ctx context.Context, arg ListDuePersonFollowConfigsParams) ([]ListDuePersonFollowConfigsRow, error) {
+	rows, err := q.db.Query(ctx, listDuePersonFollowConfigs, arg.AfterID, arg.AfterOwnerID)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +97,7 @@ func (q *Queries) ListDuePersonFollowConfigs(ctx context.Context) ([]ListDuePers
 	var items []ListDuePersonFollowConfigsRow
 	for rows.Next() {
 		var i ListDuePersonFollowConfigsRow
-		if err := rows.Scan(&i.ID, &i.OwnerID); err != nil {
+		if err := rows.Scan(&i.ID, &i.OwnerID, &i.Version); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

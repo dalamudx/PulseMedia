@@ -14,7 +14,7 @@ func notificationRoute(path string) bool {
 }
 func notificationNoStore(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if notificationRoute(r.URL.Path) {
+		if notificationRoute(r.URL.Path) || r.URL.Path == "/api/v1/integrations/deliveries" {
 			w.Header().Set("Cache-Control", "private, no-store")
 		}
 		next.ServeHTTP(w, r)

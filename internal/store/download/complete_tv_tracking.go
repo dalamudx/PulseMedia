@@ -113,17 +113,16 @@ func (m *Manager) ObserveCompleteTVTracking(ctx context.Context, repository port
 	if e != nil || client == nil {
 		return nil, ports.ErrUnavailable
 	}
-	capable, ok := client.(interface {
-		CompleteTVTrackingObserver() ports.CompleteTVTrackingClient
-	})
-	if !ok {
-		return nil, ports.ErrUnavailable
+	observer, exporter, e := dedicatedTrackingClient(client, config.ClientType)
+	if e != nil {
+		return nil, e
 	}
-	observer := capable.CompleteTVTrackingObserver()
-	if observer == nil {
-		return nil, ports.ErrUnavailable
+	if exporter != nil {
+		exporter = completeTVHintReadClient{CompleteTVTrackingClient: exporter, probe: probe}
+		observer = exporter
+	} else {
+		observer = completeTVHintManifestReadClient{CompleteTVManifestTrackingClient: observer, probe: probe}
 	}
-	observer = completeTVHintReadClient{CompleteTVTrackingClient: observer, probe: probe}
 	// Check that the original session is alive immediately before native I/O too.
 	if e = conn.Ping(ctx); e != nil {
 		return nil, e
@@ -147,13 +146,15 @@ func (m *Manager) ObserveCompleteTVTracking(ctx context.Context, repository port
 	// Inventory is read only after a precise native completion result. The store
 	// independently verifies identity and both sides of the inventory read.
 	if len(before) == 1 && before[0] != nil && before[0].Progress == 1 && before[0].DownloadedBytes >= snapshot.TotalBytes {
-		raw, readErr := observer.GetTorrentMetainfo(ctx, snapshot.InfoHash)
-		if readErr != nil {
-			return nil, readErr
-		}
-		metainfo, e = ports.InspectCompleteTVMetainfo(inspector, raw)
-		if e != nil {
-			return nil, e
+		if exporter != nil {
+			raw, readErr := exporter.GetTorrentMetainfo(ctx, snapshot.InfoHash)
+			if readErr != nil {
+				return nil, readErr
+			}
+			metainfo, e = ports.InspectCompleteTVMetainfo(inspector, raw)
+			if e != nil {
+				return nil, e
+			}
 		}
 		files, e = observer.GetTorrentFiles(ctx, snapshot.InfoHash)
 		if e != nil {

@@ -17,6 +17,10 @@ const storage = () => {
   return { values, getItem: k => values.get(k) ?? null, setItem(k, v) { values.set(k, v); }, removeItem(k) { values.delete(k); } };
 };
 const never = async () => assert.fail('unexpected API request');
+test('explicit classification version is frozen in original creation recovery and excludes manual root',()=>{
+ const {root_id,expected_intent_version,...manual}=body;const classified={...manual,classification_version:3,classification_preview_stamp:"a".repeat(64),classification_preview_root_id:uuid(88)};const s=storage();m.saveSubscriptionRecovery(s,{...record,body:classified});assert.deepEqual(m.parseSubscriptionRecovery(saved(s),userId).body,classified);
+ for(const invalid of [{...classified,root_id},{...classified,expected_intent_version:1},{...classified,classification_version:0},{...classified,classification_version:1.5}])assert.throws(()=>m.cleanSubscriptionIntent(invalid));
+});
 const saved = s => s.getItem(m.subscriptionRecoveryKey(userId));
 
 test('whitelist excludes hints and secrets while preserving original indexer ordering and optional omission', () => {
@@ -229,5 +233,7 @@ for (const [file, name] of [['DiscoverView.tsx', 'subscribeMedia'], ['DashboardV
   assert.equal(calls.at(-1).scope_type, 'selected'); assert.deepEqual(calls.at(-1).episodes, ['S02E03']); assert.deepEqual(calls.at(-1).indexer_ids, []);
   fn({ tmdb_id: 9 }, 'all'); assert.equal(calls.at(-1).indexer_ids, undefined); assert.equal(calls.at(-1).media_type, undefined); assert.equal(calls.at(-1).expected_intent_version, undefined);
   assert(!Object.hasOwn(calls[0], 'title')); assert(!Object.hasOwn(calls[0], 'year')); assert(closes.every(value => value === false));
+  fn(media, 'all', [], [], false, undefined, [], 'default', uuid(4), 3,'a'.repeat(64),uuid(88));
+  assert.equal(calls.at(-1).classification_version, 3);assert.equal(calls.at(-1).classification_preview_stamp,'a'.repeat(64));assert.equal(calls.at(-1).classification_preview_root_id,uuid(88));assert(!Object.hasOwn(calls.at(-1), 'root_id'));
   const count = calls.length; fn({ ...media, media_type: 'multi' }); assert.equal(calls.length, count); assert.equal(errors.length, 1);
 });

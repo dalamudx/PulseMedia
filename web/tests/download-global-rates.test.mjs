@@ -181,3 +181,26 @@ test('actual panel distinguishes disabled, no clients, stale rates and read fail
   const stale = await panel({ data: snapshot(), elapsedMs: 46000 }); assert(text(stale).includes('当前速率未知')); assert.equal(walk(stale).filter(n => n.props.className === 'global-rate-value' && text(n) === '未知').length, 2);
   const error = await panel({ error: '速率读取失败，请稍后重试。' }); assert(walk(error).some(n => n.props.role === 'alert')); assert.equal(walk(error).filter(n => n.props.role === 'img').length, 0);
 });
+
+
+test('mixed qBittorrent, Transmission and rTorrent response reaches the actual hook and labels', async () => {
+  const value = snapshot();
+  value.clients = ['qbittorrent', 'transmission', 'rtorrent'].map((client_type, index) => ({ ...value.clients[0], id: `00000000-0000-4000-8000-00000000000${index + 1}`, name: `source ${index + 1}`, client_type, download_bytes_per_second: String(1024 * (index + 1)), last_good: undefined }));
+  value.download_bytes_per_second = '6144'; value.download_known_clients = 3; value.upload_known_clients = 3;
+  value.series = [{ ...point(0, '6144'), download_known_clients: 3, upload_known_clients: 3 }];
+  assert.equal(helpers.validGlobalRateSnapshot(value), true);
+  const client = await host();
+  try {
+    client.calls[0].reply(value); await client.flush();
+    assert.equal(client.out.error, ''); assert.equal(client.out.data.clients.length, 3);
+    const rendered = text(await panel({ data: client.out.data }));
+    for (const label of ['qBittorrent', 'Transmission', 'rTorrent', '6.0 KiB/s']) assert(rendered.includes(label), label);
+    for (const badType of ['unknown', 'constructor', '__proto__']) {
+      const invalid = structuredClone(value); invalid.clients[2].client_type = badType;
+      assert.equal(helpers.validGlobalRateSnapshot(invalid), false);
+    }
+    const invalid = structuredClone(value); invalid.clients[2].download_bytes_per_second = -1;
+    const refresh = client.out.refresh(); client.calls.at(-1).reply(invalid);
+    assert.equal(await refresh, false); await client.flush(); assert.equal(client.out.data, null);
+  } finally { await client.dispose(); }
+});

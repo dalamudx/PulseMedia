@@ -195,43 +195,82 @@ type responseRecorder struct {
 }
 
 func (r *responseRecorder) WriteHeader(statusCode int) {
-	r.statusCode = statusCode
+	if r.statusCode != 0 {
+		return
+	}
+	// Informational responses do not commit the final status (except protocol upgrade).
+	if statusCode >= 100 && statusCode < 200 && statusCode != http.StatusSwitchingProtocols {
+		r.ResponseWriter.WriteHeader(statusCode)
+		return
+	}
 	r.ResponseWriter.WriteHeader(statusCode)
+	r.statusCode = statusCode
 }
 
 func (r *responseRecorder) Write(b []byte) (int, error) {
 	if r.statusCode == 0 {
-		r.statusCode = http.StatusOK
+		r.WriteHeader(http.StatusOK)
 	}
 	n, err := r.ResponseWriter.Write(b)
 	r.written += int64(n)
 	return n, err
 }
 
-func (r *responseRecorder) Flush() {
-	if f, ok := r.ResponseWriter.(http.Flusher); ok {
-		f.Flush()
+func (r *responseRecorder) Unwrap() http.ResponseWriter { return r.ResponseWriter }
+func (r *responseRecorder) FlushError() error {
+	if r.statusCode == 0 {
+		r.WriteHeader(http.StatusOK)
 	}
+	return http.NewResponseController(r.ResponseWriter).Flush()
+}
+func (r *responseRecorder) Flush() { _ = r.FlushError() }
+
+// LoggingMiddleware records bounded route templates, never raw paths or query values.
+// The optional resolver must return a registered route pattern, not request data.
+func LoggingMiddleware(logger *slog.Logger, route ...func(*http.Request) string) func(http.Handler) http.Handler {
+	return requestDiagnostics(logger, nil, route...)
 }
 
-// LoggingMiddleware logs every HTTP request with duration, status, and request ID.
-func LoggingMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
+func requestDiagnostics(logger *slog.Logger, metrics *requestMetrics, route ...func(*http.Request) string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
+			pattern := "unmatched"
+			if len(route) == 1 {
+				if resolved := route[0](r); resolved != "" {
+					pattern = resolved
+				}
+			}
+			method := r.Method
+			switch method {
+			case http.MethodGet, http.MethodHead, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete, http.MethodOptions, http.MethodConnect, http.MethodTrace:
+			default:
+				method = "OTHER"
+			}
 			rec := &responseRecorder{ResponseWriter: w}
-
+			if metrics != nil {
+				metrics.mu.Lock()
+				metrics.inFlight++
+				metrics.mu.Unlock()
+				defer func() {
+					status := rec.statusCode
+					if status == 0 {
+						status = http.StatusOK
+					}
+					metrics.observe(pattern, method, status, time.Since(start).Seconds(), rec.written)
+				}()
+			}
 			next.ServeHTTP(rec, r)
-
-			duration := time.Since(start)
-			reqID := GetRequestID(r.Context())
-
+			status := rec.statusCode
+			if status == 0 {
+				status = http.StatusOK
+			}
 			logger.InfoContext(r.Context(), "http request served",
-				slog.String("method", r.Method),
-				slog.String("path", r.URL.Path),
-				slog.Int("status", rec.statusCode),
-				slog.Duration("duration", duration),
-				slog.String("request_id", reqID),
+				slog.String("method", method),
+				slog.String("path", pattern),
+				slog.Int("status", status),
+				slog.Duration("duration", time.Since(start)),
+				slog.String("request_id", GetRequestID(r.Context())),
 				slog.Int64("bytes", rec.written),
 			)
 		})
@@ -248,7 +287,7 @@ func RecoveryMiddleware(logger *slog.Logger) func(http.Handler) http.Handler {
 					stack := string(debug.Stack())
 
 					logger.ErrorContext(r.Context(), "http panic recovered",
-						slog.Any("error", rec),
+						slog.String("error", "handler panic"),
 						slog.String("request_id", reqID),
 						slog.String("stack", stack),
 					)

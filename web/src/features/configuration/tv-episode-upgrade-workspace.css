@@ -1,0 +1,43 @@
+.tv-upgrade-workspace {
+  min-width: 0;
+  max-width: 100%;
+  padding-block: 16px;
+  border-top: 1px solid var(--border);
+  overflow-wrap: anywhere;
+  color: var(--text);
+}
+.tv-upgrade-workspace h3 { margin: 0 0 12px; font-size: 1.1rem; }
+.tv-upgrade-workspace p { max-width: 72ch; line-height: 1.6; }
+.tv-upgrade-workspace :is(button, input, select, summary) {
+  min-height: 44px;
+  max-width: 100%;
+  min-width: 0;
+  font: inherit;
+}
+.tv-upgrade-workspace button {
+  padding: 10px 14px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  border-radius: var(--radius-md, 8px);
+}
+.tv-upgrade-workspace button:disabled { cursor: not-allowed; opacity: .6; }
+.tv-upgrade-workspace :is(button, input, select, summary):focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+.tv-upgrade-workspace :is(select, input:not([type="checkbox"])) { width: 100%; }
+.tv-upgrade-workspace input[type="checkbox"] { width: 22px; height: 22px; min-height: 22px; flex-shrink: 0; }
+.tv-upgrade-workspace label:has(input[type="checkbox"]) { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.tv-upgrade-workspace summary { padding-block: 12px; cursor: pointer; }
+.tv-upgrade-workspace details { margin-block: 12px; }
+.tv-upgrade-workspace ol { padding-inline-start: 24px; }
+.tv-upgrade-workspace li { margin-block: 8px; }
+.tv-upgrade-workspace dd { margin-inline-start: 16px; }
+.tv-upgrade-selection { display: grid; gap: 12px; margin-block: 20px; min-width: 0; }
+.tv-upgrade-selection p { margin: 0; }
+.tv-upgrade-selection > button { justify-self: start; }
+.tv-upgrade-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 400px) {
+  .tv-upgrade-workspace button { width: 100%; }
+  .tv-upgrade-actions { flex-direction: column; }
+}

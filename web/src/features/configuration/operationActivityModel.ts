@@ -84,3 +84,23 @@ export function validTimeline(value: unknown, id: string): value is OperationTim
       typeof step.action === "string" && typeof step.state === "string" && typeof step.file_name === "string" &&
       typeof step.updated_at === "string" && (step.finished_at === undefined || typeof step.finished_at === "string"));
 }
+
+export function recoveryGuidance(operation: OperationDetails, stale: boolean): { title: string; steps: string[] } {
+  if (stale) return { title: "先更新操作状态", steps: ["当前显示的是上次读取结果。请查询 / 刷新，确认最新下载与整理状态后再处理。", "读取失败不表示下载失败，也不表示文件不存在。"] };
+  const states = [operation.status, operation.download_status, operation.plan_status];
+  if (operation.download_status === "unknown" || operation.download_status === "submitting" || (!operation.plan_id && (operation.status === "unknown" || operation.status === "submitting"))) return {
+    title: "先核对原任务，避免重复下载",
+    steps: ["下载器可能已经接收请求。请在原下载器核对任务，并刷新此操作查看观测结果。", "保留原操作和已有文件，不要换资源重下或删除任务来解除等待。", "如已有未确认命令，请使用下方原命令恢复入口；是否允许继续由最新核对结果决定。"],
+  };
+  if (states.some(state => state === "review_required" || state === "conflict" || state === "failed" || state === "dead" || state === "unknown")) return {
+    title: "核对阻塞步骤后处理",
+    steps: operation.plan_id
+      ? ["在整理步骤中核对最后完成的步骤、源文件与目标文件，并检查目标目录是否在线。", "管理员可在下方观察原计划，按最新结果恢复原硬链接或修订目标；已有文件不要自行覆盖。"]
+      : ["先核对原下载器中的任务和下载目录，确认请求是否已发生。", "管理员可使用下方原提交检查入口。未确认结果之前，保留原任务和获取保护。"],
+  };
+  if (operation.status === "completed") return { title: "操作已完成", steps: ["可到媒体库核对文件。媒体服务器刷新与确认独立推进，下载进度本身不能证明媒体服务器已收录。"] };
+  if (operation.status === "organizing" || operation.status === "waiting_organization" || operation.download_status === "completed") return {
+    title: "等待整理和入库核验", steps: ["下载已完成，接下来核对整理步骤。文件核验和入库记录完成前，请保留下载目录中的源文件。"],
+  };
+  return { title: "查看原操作进度", steps: ["根据下载观测和整理步骤确认进展；需要复核时在此处理，状态未知时先刷新。"] };
+}

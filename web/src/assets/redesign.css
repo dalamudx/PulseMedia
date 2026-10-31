@@ -1,0 +1,463 @@
+/*
+ * PulseMedia workspace design layer.
+ * Loaded after workspace.css; it only rearranges existing components and never
+ * introduces new data. Every rule keeps the API, permission and recovery
+ * behaviour owned by the components themselves.
+ */
+
+:root {
+  --dash-gap: 24px;
+  --panel-pad: 24px;
+}
+
+/* Page rhythm ------------------------------------------------------------ */
+:root .page-content > * + * { margin-top: var(--dash-gap); }
+:root .dashboard-container { display: flex; flex-direction: column; gap: var(--dash-gap); }
+:root .dashboard-container > * { margin-bottom: 0; }
+
+/* Attention first: pending approvals and read failures ------------------- */
+:root .pending-requests-panel {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  background: var(--primary-soft);
+}
+:root .pending-requests-panel .facts-heading h2 { font-size: 15px; }
+:root .pending-requests-panel .pending-requests-line { align-items: baseline; gap: 12px; }
+:root .dashboard-container > .empty-hint[role="alert"] {
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--warning);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warning) 12%, var(--surface));
+  color: var(--text);
+  font-size: 13px;
+}
+
+/* Two-column work area: library facts beside transfer rates -------------- */
+:root .dash-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: var(--dash-gap);
+  align-items: start;
+}
+:root .dash-columns > .dashboard-facts,
+:root .dash-columns > .download-global-rates { margin: 0; }
+:root .dashboard-facts { display: block; }
+:root .dashboard-facts-stack { display: flex; flex-direction: column; gap: var(--dash-gap); }
+:root .dashboard-facts .facts-section {
+  padding: var(--panel-pad);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: none;
+}
+:root .dashboard-facts .facts-subsection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+:root .dashboard-facts .facts-subsection .facts-heading { margin-bottom: 8px; }
+:root .dashboard-facts .facts-subsection h3 { font-size: 13px; font-weight: 650; margin: 0; }
+:root .dashboard-facts .facts-root { padding: 12px 0; border-top: 1px solid var(--border); }
+:root .dashboard-facts .facts-root:first-child { border-top: 0; }
+:root .dashboard-facts .facts-activity {
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+:root .dashboard-facts .facts-activity:first-child { border-top: 0; }
+:root .dashboard-facts .facts-activity .facts-row strong { font-size: 13px; font-weight: 600; }
+:root .dashboard-facts .facts-errors {
+  padding: 12px 16px;
+  border: 1px solid var(--danger);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+}
+:root .dashboard-facts .facts-errors p { margin: 0; font-size: 13px; color: var(--text); }
+
+/* Subscription counters stay a quiet row, not a hero --------------------- */
+:root .stats-grid-modern { margin: 0; gap: 12px; }
+:root .stat-card-modern { padding: 14px 18px; }
+:root .stat-value-row strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+
+/* Poster wall ------------------------------------------------------------ */
+:root .poster-wall-card-modern { margin: 0; }
+:root .wall-carousel-wrap { gap: 18px; }
+:root .wall-card-modern { flex: 0 0 148px; }
+:root .wall-poster-box-modern { aspect-ratio: 2 / 3; }
+:root .system-summary-card { margin: 0; }
+:root .sys-summary-grid { gap: 16px; }
+:root .sys-item-val { overflow-wrap: anywhere; }
+
+/* Sign-in surfaces follow the active theme ------------------------------- */
+:root .auth-wrapper { background: var(--bg); }
+:root .ambient-glow { display: none; }
+:root .auth-card { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 32px; }
+:root .brand-header { text-align: left; margin-bottom: 24px; }
+:root .logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  box-shadow: none;
+  margin-bottom: 14px;
+}
+:root .brand-header h2 { color: var(--text); font-size: 20px; font-weight: 650; letter-spacing: -.4px; }
+:root .brand-header .subtitle { color: var(--text-secondary); font-size: 13px; }
+:root .auth-card .form-group label { color: var(--text); font-size: 13px; font-weight: 500; }
+:root .input-wrap input {
+  background: var(--bg);
+  border: 1px solid var(--border-hover);
+  border-radius: 6px;
+  color: var(--text);
+  min-height: 40px;
+  font-size: 13px;
+}
+:root .input-wrap input:focus { border-color: var(--primary); outline: none; }
+:root .auth-card .alert-error {
+  padding: 10px 12px;
+  border: 1px solid var(--danger);
+  border-left-width: 3px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  color: var(--text);
+  font-size: 13px;
+}
+:root .auth-card .btn-auth { min-height: 40px; border-radius: 6px; font-size: 13px; }
+:root .auth-footer { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 16px; text-align: left; }
+:root .feature-pills { justify-content: flex-start; gap: 6px 14px; color: var(--muted); }
+
+/* Discovery: one control surface instead of five stacked blocks ---------- */
+:root .discover-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+:root .discover-controls > * { margin: 0; }
+:root .discover-controls .search-box { padding: 0 0 14px; border: 0; background: none; border-radius: 0; }
+:root .discover-controls .recommend-box { padding: 12px 0; border-top: 1px solid var(--border); }
+:root .discover-controls .recommend-label { color: var(--muted); font-size: 12px; }
+:root .discover-controls .type-filter.source-filter { margin: 0; padding: 12px 0; border-top: 1px solid var(--border); width: 100% !important; }
+:root .discover-controls .tabs-bar { margin: 0; padding: 4px 0 0; border-top: 1px solid var(--border); gap: 20px; }
+:root .discover-controls .tabs-bar .tab-btn { padding: 10px 0; }
+:root .discover-controls .tabs-bar .tab-btn.active { background: none; }
+
+/* Activity: operation list beside the step timeline ---------------------- */
+:root .activity-container.operation-activity { display: flex; flex-direction: column; gap: 20px; }
+:root .activity-split {
+  display: grid;
+  grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+:root .activity-split > * { min-width: 0; }
+:root .activity-split .operation-inbox { margin: 0; }
+:root .activity-split .operation-inbox .config-heading { flex-wrap: wrap; gap: 8px; }
+:root .activity-split .operation-inbox .config-heading h3 { font-size: 15px; }
+:root .activity-split .operation-inbox .config-actions { flex-wrap: wrap; }
+:root .activity-detail { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+:root .activity-detail .media-control-bar { margin: 0; }
+:root .activity-empty {
+  margin: 0;
+  padding: 24px;
+  border: 1px dashed var(--border-hover);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  background: var(--surface);
+}
+:root .activity-split .op-card { margin: 0; }
+
+/* Settings: grouped, left-aligned navigation ----------------------------- */
+:root .settings-nav { gap: 2px; }
+:root .settings-nav .settings-nav-group {
+  margin: 16px 8px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+:root .settings-nav .settings-nav-group:first-child { margin-top: 4px; }
+:root .nav-tab-btn {
+  justify-content: flex-start;
+  text-align: left;
+  gap: 10px;
+  padding: 9px 12px;
+  min-height: 38px;
+  border: 1px solid transparent;
+  background: transparent;
+}
+:root .nav-tab-btn > span { flex: 1; min-width: 0; }
+:root .nav-tab-btn:hover { background: var(--surface-hover); color: var(--text); }
+:root .nav-tab-btn.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+
+/* Tables and chips shared by management pages ---------------------------- */
+:root .pm-table-wrap { overflow-x: auto; }
+:root .pm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+:root .pm-table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+:root .pm-table td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+:root .pm-table tr:last-child td { border-bottom: 0; }
+:root .pm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+:root .pm-chip.ok { background: var(--primary-soft); color: var(--success); }
+:root .pm-chip.warn { background: color-mix(in srgb, var(--warning) 16%, var(--surface)); color: var(--warning); }
+:root .pm-chip.bad { background: color-mix(in srgb, var(--danger) 14%, var(--surface)); color: var(--danger); }
+
+/* Requests: pending queue first, the form beside it ---------------------- */
+:root .requests-view {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
+  grid-template-areas:
+    "head head"
+    "list form"
+    "list command";
+  gap: 24px;
+  align-items: start;
+}
+:root .requests-view > .requests-heading { grid-area: head; }
+:root .requests-view > section[aria-labelledby="requests-create-title"] { grid-area: form; }
+:root .requests-view > section.requests-command { grid-area: command; }
+:root .requests-view > section[aria-labelledby="requests-list-title"] { grid-area: list; }
+:root .requests-view section {
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+:root .requests-view > .requests-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+:root .requests-view > .requests-heading h1 { font-size: clamp(22px, 2vw, 28px); font-weight: 650; letter-spacing: -.6px; }
+:root .requests-view > .requests-heading a { font-size: 12px; color: var(--primary); text-decoration: none; }
+:root .requests-view h2 { font-size: 15px; font-weight: 650; margin: 0 0 12px; }
+:root .requests-view h3 { font-size: 14px; font-weight: 600; }
+:root .requests-view p { font-size: 13px; color: var(--text-secondary); margin: 8px 0; }
+:root .requests-view fieldset { border-color: var(--border); border-radius: 8px; padding: 14px 16px; margin: 12px 0 0; }
+:root .requests-view legend { font-size: 13px; font-weight: 600; color: var(--text); }
+:root .requests-view input:not([type="checkbox"]),
+:root .requests-view select,
+:root .requests-view textarea { background: var(--bg); border-color: var(--border-hover); border-radius: 6px; font-size: 13px; }
+:root .requests-view button { border-radius: 6px; min-height: 38px; padding: 8px 14px; font-size: 13px; font-weight: 600; }
+:root .requests-view button[type="submit"] { background: var(--primary); color: var(--primary-ink); border-color: transparent; }
+:root .requests-view .requests-list { margin: 8px 0 0; }
+:root .requests-view .requests-row { padding: 16px 0; }
+:root .requests-view .requests-row:first-child { border-top: 0; }
+:root .requests-view .requests-row dl { gap: 10px 20px; margin: 10px 0; }
+:root .requests-view .requests-row dt { font-size: 12px; color: var(--muted); }
+:root .requests-view .requests-row dd { font-size: 13px; }
+:root .requests-view .requests-row-heading h3 { font-size: 14px; }
+:root .requests-view .requests-row-heading strong {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--warning) 16%, var(--surface));
+  color: var(--warning);
+}
+:root .requests-view summary { font-size: 13px; color: var(--primary); padding: 10px 0; }
+:root .requests-view [role="alert"] { border-left: 3px solid var(--danger); padding: 8px 0 8px 12px; }
+
+/* Subscriptions: denser cards with readable projection facts -------------- */
+:root .subscriptions-container { display: flex; flex-direction: column; gap: 16px; }
+:root .subscriptions-container > * { margin-bottom: 0; }
+:root .subscriptions-container .page-header { margin-bottom: 0; }
+:root .subscriptions-container > .config-description {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+:root .subscriptions-container .media-control-bar {
+  margin: 0;
+  padding: 4px 0 0;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+:root .subscriptions-container .movie-grid { gap: 24px 16px !important; }
+:root .subscriptions-container .sub-poster-card { cursor: pointer; }
+:root .subscriptions-container .sub-poster-card .poster-container { border: 1px solid var(--border); }
+:root .subscriptions-container .card-caption { padding: 10px 0 0; gap: 4px; }
+:root .subscriptions-container .card-caption .subscription-open { font-size: 14px; font-weight: 600; }
+:root .subscriptions-container .caption-sub-row { font-size: 12px; color: var(--muted); }
+:root .subscriptions-container .caption-progress-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  border-radius: 4px;
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+}
+:root .subscriptions-container .card-mini-bar { margin-top: 6px; height: 4px; border-radius: 2px; background: var(--surface-hover); }
+:root .subscriptions-container .card-mini-fill { background: var(--primary); border-radius: 2px; }
+:root .subscriptions-container .empty-state { border: 1px dashed var(--border-hover); border-radius: 10px; padding: 40px 24px; background: var(--surface); }
+:root .subscriptions-container .empty-state .empty-icon { font-size: 28px; }
+
+/* Sites: keep the add form secondary to the observed site list ----------- */
+:root .sites-container { display: flex; flex-direction: column; gap: 20px; }
+:root .sites-container > * { margin-bottom: 0; }
+:root .sites-container .card { padding: 20px 24px; }
+:root .sites-container .card > h3 { font-size: 15px; font-weight: 650; display: flex; align-items: center; gap: 8px; }
+:root .sites-container form.form { max-width: 760px; }
+:root .sites-container .config-fieldset { border-color: var(--border); border-radius: 8px; }
+:root .sites-container .config-description { font-size: 12px; }
+:root .sites-container .site-card,
+:root .sites-container .site-card-modern { padding: 16px 18px; }
+
+@media (max-width: 1024px) {
+  :root .requests-view {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "form" "command" "list";
+  }
+  :root .sites-container form.form { max-width: none; }
+}
+
+/* Media library: catalogue first, maintenance after ---------------------- */
+:root .media-container { display: flex; flex-direction: column; gap: 16px; }
+:root .media-container > * { margin-block: 0; }
+:root .media-container > .page-header { margin-bottom: 4px; }
+:root .media-container .media-control-bar {
+  margin: 0;
+  padding: 12px 16px;
+  align-items: flex-end;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+:root .media-container .media-tab-btn { min-height: 38px; border-radius: 6px; font-size: 13px; }
+:root .media-container .media-tab-btn.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+:root .media-container .media-control-bar > label { font-size: 12px; color: var(--muted); }
+:root .media-container > [role="status"],
+:root .media-container > p { font-size: 13px; color: var(--text-secondary); }
+:root .media-container > section.config-editor:not(.media-scrape) {
+  padding: 18px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+:root .media-container > section.config-editor h2 { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 650; margin: 0 0 4px; }
+:root .media-container > section.config-editor > .config-description { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+:root .media-container details > summary { font-size: 13px; padding: 8px 0; cursor: pointer; }
+:root .media-container details.config-editor { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+:root .media-container > details.config-editor { background: var(--surface); }
+:root .media-container details p { font-size: 12px; margin: 4px 0; }
+:root .media-container .media-scrape {
+  margin-top: 8px;
+  padding: 18px 22px;
+  border: 1px dashed var(--border-hover);
+  border-radius: 10px;
+  background: transparent;
+}
+:root .media-container .media-scrape-heading h2 { font-size: 14px; font-weight: 650; }
+:root .media-container .media-scrape p { font-size: 12px; }
+:root .media-container .media-scrape button { min-height: 36px; font-size: 13px; }
+
+/* API tokens: token list beside the create form -------------------------- */
+:root .account-tokens {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+  grid-auto-flow: row dense;
+  gap: 16px 24px;
+  align-items: start;
+}
+:root .account-tokens > * { grid-column: 1 / -1; margin: 0; }
+:root .account-tokens > .account-token-form { grid-column: 2; }
+:root .account-tokens > section[aria-labelledby="token-list-title"] { grid-column: 1; }
+:root .account-token-heading h1 { font-size: clamp(22px, 2vw, 28px); font-weight: 650; letter-spacing: -.6px; }
+:root .account-token-description { font-size: 13px; margin-top: -8px; }
+:root .account-tokens h2 { font-size: 15px; font-weight: 650; margin: 0 0 12px; }
+:root .account-tokens h3 { font-size: 14px; font-weight: 600; }
+:root .account-token-form,
+:root .account-tokens > section[aria-labelledby="token-list-title"],
+:root .account-token-secret,
+:root .account-token-recovery {
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+:root .account-token-secret { border-left: 3px solid var(--primary); }
+:root .account-token-recovery { border-left: 3px solid var(--warning); }
+:root .account-token-form fieldset { align-items: stretch; gap: 8px; }
+:root .account-tokens label { font-size: 13px; font-weight: 500; }
+:root .account-tokens input { max-width: none; min-height: 38px; background: var(--bg); border-color: var(--border-hover); border-radius: 6px; font-size: 13px; }
+:root .account-token-form input { margin-bottom: 8px; }
+:root .account-tokens .btn {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border-hover);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+:root .account-tokens .btn:hover:not(:disabled) { background: var(--surface-hover); }
+:root .account-tokens .btn.btn-primary { background: var(--primary); color: var(--primary-ink); border-color: transparent; }
+:root .account-tokens .btn:disabled { opacity: .55; cursor: not-allowed; }
+:root .account-token-list > li { padding: 14px 0; }
+:root .account-token-list > li:first-child { border-top: 0; }
+:root .account-token-record p { font-size: 12px; margin: 4px 0 8px; }
+:root .account-token-record dt { font-size: 12px; color: var(--muted); }
+:root .account-token-record dd { font-size: 13px; }
+:root .account-tokens > section[aria-labelledby="token-list-title"] > p { font-size: 13px; color: var(--text-secondary); }
+:root .account-token-error { border-radius: 6px; background: color-mix(in srgb, var(--danger) 10%, var(--surface)); font-size: 13px; }
+:root .account-token-notice { font-size: 13px; color: var(--text-secondary); }
+
+@media (max-width: 1024px) {
+  :root .account-tokens { grid-template-columns: minmax(0, 1fr); }
+  :root .account-tokens > .account-token-form,
+  :root .account-tokens > section[aria-labelledby="token-list-title"] { grid-column: 1; }
+}
+
+/* Narrow screens --------------------------------------------------------- */
+@media (max-width: 1180px) {
+  :root .dash-columns { grid-template-columns: minmax(0, 1fr); }
+  :root .activity-split { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  :root .dashboard-container { gap: 16px; }
+  :root .dashboard-facts .facts-section { padding: 18px; }
+  :root .wall-card-modern { flex-basis: 132px; }
+}

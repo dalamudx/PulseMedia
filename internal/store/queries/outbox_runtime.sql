@@ -10,10 +10,26 @@ SELECT * FROM outbox_delivery WHERE id=sqlc.arg(id) AND consumer=sqlc.arg(consum
 SELECT * FROM outbox_event WHERE id=$1;
 
 -- name: ListRuntimeOutboxConsumers :many
-SELECT DISTINCT consumer FROM outbox_delivery
-WHERE state IN ('pending','delivering')
- AND (consumer LIKE 'notify:%' OR consumer LIKE 'mediaserver.refresh:%' OR consumer LIKE 'webpush:%')
-ORDER BY consumer;
+SELECT DISTINCT d.consumer FROM outbox_delivery d
+WHERE (d.consumer LIKE 'notify:%' OR d.consumer LIKE 'mediaserver.refresh:%' OR d.consumer LIKE 'webpush:%')
+ AND (
+  -- Expired leases still require recovery, including disabled recipients.
+  (d.state='delivering' AND d.lease_until<=clock_timestamp())
+  OR (d.state='pending' AND d.not_before<=clock_timestamp() AND d.attempts<d.max_attempts
+   -- Keep pending eligibility aligned with ClaimOutboxDelivery.
+   AND NOT EXISTS (SELECT 1 FROM notification_channel n WHERE d.consumer='notify:'||n.id::text AND NOT n.is_enabled)
+   AND NOT EXISTS (
+    SELECT 1 FROM outbox_delivery prev
+    WHERE prev.consumer=d.consumer AND prev.aggregate_type=d.aggregate_type
+     AND prev.aggregate_id=d.aggregate_id AND prev.seq<d.seq AND prev.state NOT IN ('delivered','skipped')
+   )
+   AND NOT (d.aggregate_type='notification.media' AND EXISTS (
+    SELECT 1 FROM outbox_delivery legacy JOIN media_unit u ON legacy.aggregate_type='media' AND legacy.aggregate_id=u.id::text
+    WHERE u.media_id::text=d.aggregate_id AND legacy.consumer=d.consumer AND legacy.state NOT IN ('delivered','skipped')
+   ))
+  )
+ )
+ORDER BY d.consumer;
 
 -- name: RecoverExpiredOutboxDeliveries :execrows
 UPDATE outbox_delivery SET state=CASE WHEN attempts >= max_attempts THEN 'dead' ELSE 'pending' END,

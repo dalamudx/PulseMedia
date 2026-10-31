@@ -195,7 +195,7 @@ func TestR3FaultMatrix(t *testing.T) {
 
 	mockClock := clock.NewMock(time.Now())
 	ob := outbox.New(pool, gen, mockClock)
-	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem()))
+	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 	q := quality.Profile{Resolution: quality.Res1080p, Source: quality.SourceBluray}
 
 	plan, step, err := transferSvc.CreateMoviePlan(ctx, opID, rootID, unitID, srcPath, "Fight Club", 1999, q)

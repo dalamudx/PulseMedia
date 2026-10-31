@@ -1,0 +1,16 @@
+.library-maintenance { min-width: 0; overflow-wrap: anywhere; }
+.library-maintenance .config-field { display: grid; gap: .5rem; margin-block: 1rem; }
+.library-maintenance input:not([type=checkbox]) { width: 100%; min-width: 0; box-sizing: border-box; min-height: 44px; }
+:root .library-maintenance button { min-height: 44px; white-space: normal; }
+.library-maintenance .config-check { min-height: 44px; }
+.library-maintenance dl { display: grid; grid-template-columns: minmax(5rem, auto) minmax(0, 1fr); gap: .5rem 1rem; margin-block: 1rem; }
+.library-maintenance dd { margin: 0; min-width: 0; }
+.library-maintenance dt { color: var(--text-secondary); }
+.library-maintenance article { border-top: 1px solid var(--border); padding-block: 1rem; }
+.library-maintenance .maintenance-review { margin-block: 1rem; }
+.library-maintenance .maintenance-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-block: .75rem; }
+.library-maintenance .maintenance-filters { display: flex; align-items: end; flex-wrap: wrap; gap: .75rem; margin-block: 1rem; }
+.library-maintenance .maintenance-filters .config-field { flex: 1 1 12rem; margin-block: 0; }
+.library-maintenance .maintenance-filters select { width: 100%; min-width: 0; min-height: 44px; }
+@media (max-width: 480px) { .library-maintenance .maintenance-filters .config-field { flex-basis: 100%; } }
+@media (max-width: 480px) { .library-maintenance dl { grid-template-columns: minmax(0, 1fr); gap: .25rem; } .library-maintenance dd { margin-bottom: .75rem; } }

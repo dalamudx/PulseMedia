@@ -6,6 +6,17 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+
 	"github.com/dalamudx/PulseMedia/internal/adapter/indexer/torznab"
 	"github.com/dalamudx/PulseMedia/internal/config"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
@@ -19,17 +30,8 @@ import (
 	transferstore "github.com/dalamudx/PulseMedia/internal/store/transfer"
 	usecaseSearch "github.com/dalamudx/PulseMedia/internal/usecase/search"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/google/uuid"
-	"io"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"path/filepath"
-	"strings"
-	"sync"
-	"sync/atomic"
-	"testing"
-	"time"
 )
 
 type episodePipelineProbe struct {
@@ -320,7 +322,7 @@ func runReviewedEpisodeFullPipeline(t *testing.T, mapped bool, probe ...episodeP
 		// Worker has exited and joined. Model its terminal review outcome, never approve the plan or rewrite its lease/evidence.
 		exec("UPDATE download_task SET organization_state='review_required' WHERE id=$1", taskID)
 		exec("UPDATE job SET state='dead',lease_owner=NULL,lease_until=NULL WHERE kind='download_organization' AND payload->>'task_id'=$1", taskID.String())
-		repo := transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem())
+		repo := transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 		if options.manualRevision {
 			f.path = source
 			f.op = acquired.OperationID

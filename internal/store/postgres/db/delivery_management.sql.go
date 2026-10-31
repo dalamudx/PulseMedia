@@ -13,11 +13,29 @@ import (
 )
 
 const listManagedIntegrationDeliveries = `-- name: ListManagedIntegrationDeliveries :many
-SELECT id, event_id, consumer, aggregate_type, aggregate_id, seq, state, attempts, max_attempts, not_before, lease_owner, lease_token, lease_until, error, created_at, updated_at, delivered_at, skipped_at, skip_reason FROM outbox_delivery WHERE consumer LIKE 'notify:%' OR consumer LIKE 'mediaserver.refresh:%' ORDER BY updated_at DESC,id DESC LIMIT 100
+SELECT id, event_id, consumer, aggregate_type, aggregate_id, seq, state, attempts, max_attempts, not_before, lease_owner, lease_token, lease_until, error, created_at, updated_at, delivered_at, skipped_at, skip_reason FROM outbox_delivery WHERE (consumer LIKE 'notify:%' OR consumer LIKE 'mediaserver.refresh:%') AND (NOT $1::boolean OR event_id=$2::uuid) AND ($3::text='' OR state=$3::text) AND (NOT $4::boolean OR (updated_at,id)<($5::timestamptz,$6::uuid)) ORDER BY updated_at DESC,id DESC LIMIT $7::integer
 `
 
-func (q *Queries) ListManagedIntegrationDeliveries(ctx context.Context) ([]OutboxDelivery, error) {
-	rows, err := q.db.Query(ctx, listManagedIntegrationDeliveries)
+type ListManagedIntegrationDeliveriesParams struct {
+	HasEventID     bool
+	EventID        uuid.UUID
+	State          string
+	HasCursor      bool
+	AfterUpdatedAt pgtype.Timestamptz
+	AfterID        uuid.UUID
+	PageLimit      int32
+}
+
+func (q *Queries) ListManagedIntegrationDeliveries(ctx context.Context, arg ListManagedIntegrationDeliveriesParams) ([]OutboxDelivery, error) {
+	rows, err := q.db.Query(ctx, listManagedIntegrationDeliveries,
+		arg.HasEventID,
+		arg.EventID,
+		arg.State,
+		arg.HasCursor,
+		arg.AfterUpdatedAt,
+		arg.AfterID,
+		arg.PageLimit,
+	)
 	if err != nil {
 		return nil, err
 	}

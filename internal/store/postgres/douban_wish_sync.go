@@ -24,14 +24,17 @@ import (
 )
 
 type DoubanWishSyncStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool           *pgxpool.Pool
+	ids            ports.IDGen
+	scheduleMu     sync.Mutex
+	scheduleCursor db.ListDueDoubanWishConfigsParams
+	scheduleLimits *ScheduleLimits
 }
 
 var _ ports.DoubanWishSyncRepository = (*DoubanWishSyncStore)(nil)
 
-func NewDoubanWishSyncStore(pool *pgxpool.Pool, ids ports.IDGen) *DoubanWishSyncStore {
-	return &DoubanWishSyncStore{pool, ids}
+func NewDoubanWishSyncStore(pool *pgxpool.Pool, ids ports.IDGen, limits ...*ScheduleLimits) *DoubanWishSyncStore {
+	return &DoubanWishSyncStore{pool: pool, ids: ids, scheduleLimits: optionalScheduleLimits(limits)}
 }
 func doubanWishDigest(v any) string {
 	b, err := json.Marshal(v)
@@ -65,19 +68,54 @@ func (s *DoubanWishSyncStore) nextPage(ctx context.Context, tx pgx.Tx, run uuid.
 	}
 	return q.InsertDoubanWishPage(ctx, db.InsertDoubanWishPageParams{JobID: id, RunID: run, MediaType: kind, PageStart: int32(start)})
 }
-func (s *DoubanWishSyncStore) EnqueueDue(ctx context.Context) error {
-	candidates, e := db.New(s.pool).ListDueDoubanWishConfigs(ctx)
-	if e != nil {
-		return ports.ErrUnavailable
+func (s *DoubanWishSyncStore) EnqueueDue(ctx context.Context) (err error) {
+	defer func(parent context.Context) {
+		if parent.Err() != nil {
+			err = parent.Err()
+		} else if err != nil {
+			err = doubanSyncError(err)
+		}
+	}(ctx)
+	// Overlapping ticks share one scan cursor; an active scan already owns the work.
+	if !s.scheduleMu.TryLock() {
+		return nil
 	}
-	for _, c := range candidates {
-		if e = s.enqueue(ctx, c.ID, c.OwnerID); e != nil {
-			return doubanSyncError(e)
+	defer s.scheduleMu.Unlock()
+	ctx, cancel := s.scheduleLimits.bound(ctx)
+	defer cancel()
+	q := db.New(s.pool)
+	candidates, err := q.ListDueDoubanWishConfigs(ctx, s.scheduleCursor)
+	if err != nil {
+		return err
+	}
+	if len(candidates) == 0 && s.scheduleCursor.AfterID != uuid.Nil {
+		s.scheduleCursor = db.ListDueDoubanWishConfigsParams{}
+		candidates, err = q.ListDueDoubanWishConfigs(ctx, s.scheduleCursor)
+		if err != nil {
+			return err
 		}
 	}
-	return nil
+	var firstErr error
+	for _, c := range candidates {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		if candidateErr := s.scheduleLimits.run(ctx, c.ID, c.Version, func() error { return s.enqueue(ctx, c.ID, c.OwnerID) }); candidateErr != nil && firstErr == nil {
+			firstErr = candidateErr
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		s.scheduleCursor = db.ListDueDoubanWishConfigsParams{AfterOwnerID: c.OwnerID, AfterID: c.ID}
+	}
+	if len(candidates) < 64 {
+		s.scheduleCursor = db.ListDueDoubanWishConfigsParams{}
+	}
+	return firstErr
 }
 func (s *DoubanWishSyncStore) enqueue(ctx context.Context, id, owner uuid.UUID) error {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
 	tx, e := s.pool.Begin(ctx)
 	if e != nil {
 		return e
@@ -169,7 +207,7 @@ func wishRoots(ctx context.Context, tx pgx.Tx, c ports.DoubanSyncConfig) error {
 
 type doubanWishPermit struct {
 	store  *DoubanWishSyncStore
-	conn   *pgxpool.Conn
+	conn   *PhysicalConnection
 	lease  ports.JobLease
 	work   ports.DoubanWishSyncWork
 	mu     sync.Mutex
@@ -210,7 +248,7 @@ func (s *DoubanWishSyncStore) Acquire(ctx context.Context, lease ports.JobLease)
 	if e != nil {
 		return nil, ports.ErrUnavailable
 	}
-	conn, e := s.pool.Acquire(ctx)
+	conn, e := AcquirePhysicalConnection(ctx, s.pool)
 	if e != nil {
 		return nil, ports.ErrUnavailable
 	}

@@ -53,8 +53,13 @@ func organizationMediaMatches(m db.Medium, c ports.UntrackedReviewCandidate, kin
 		m.Year.Valid == (c.Year > 0) && (!m.Year.Valid || int(m.Year.Int32) == c.Year) && m.MetadataVersion > 0
 }
 
-func organizationUnitMatches(u db.MediaUnit, w ports.UntrackedReviewUnit, mid uuid.UUID, kind string) bool {
-	if u.ID == uuid.Nil || u.MediaID != mid || u.UnitKey != w.UnitKey || u.Retired || u.MetadataVersion < 1 || u.AbsoluteNumber.Valid {
+func organizationUnitMatches(u db.MediaUnit, w ports.UntrackedReviewUnit, mid uuid.UUID, kind string, in ports.UntrackedReviewInput) bool {
+	if u.ID == uuid.Nil || u.MediaID != mid || u.UnitKey != w.UnitKey || u.Retired || u.MetadataVersion < 1 {
+		return false
+	}
+	// An absolute number is supplemental metadata, never an inferred season/episode mapping.
+	// Only the user's exact frozen canonical selection can authorize this existing unit.
+	if u.AbsoluteNumber.Valid && (kind != "tv" || !in.CanonicalSelectionValid() || in.CanonicalUnitID != u.ID.String() || in.UnitMetadataVersion != u.MetadataVersion || in.Season != w.Season || in.Episode != w.Episode || in.TMDBEpisodeID != w.TMDBEpisodeID) {
 		return false
 	}
 	if kind == "movie" {
@@ -131,7 +136,7 @@ func (s *UntrackedOrganizationStore) publishUnits(ctx context.Context, tx pgx.Tx
 		if e != nil {
 			return nil, e
 		}
-		if !organizationUnitMatches(u, w, mid, kind) {
+		if !organizationUnitMatches(u, w, mid, kind, m.Confirmation.Material.Review.Request.Input) {
 			return nil, ports.ErrUntrackedOrganizationStale
 		}
 		if kind == "tv" {
@@ -167,7 +172,7 @@ func (s *UntrackedOrganizationStore) publishUnits(ctx context.Context, tx pgx.Tx
 	for i, u := range units {
 		u = current[u.ID]
 		w := c.Units[i]
-		if !organizationUnitMatches(u, w, mid, kind) {
+		if !organizationUnitMatches(u, w, mid, kind, m.Confirmation.Material.Review.Request.Input) {
 			return nil, ports.ErrUntrackedOrganizationStale
 		}
 		out = append(out, untrackedOrganizationUnitRow{OperationID: m.Operation.ID, UnitID: u.ID, MediaID: mid, MetadataVersion: u.MetadataVersion, MediaMetadataVersion: work.MetadataVersion, UnitKey: w.UnitKey, TMDBEpisodeID: w.TMDBEpisodeID, CandidateUnit: reviewClone(w), MediaIdentity: organizationIdentity{Namespace: c.Namespace, ExternalID: strconv.FormatInt(c.TMDBID, 10)}})
@@ -251,7 +256,7 @@ func organizationValidateUnits(ctx context.Context, q *db.Queries, m ports.Untra
 		if err != nil {
 			return err
 		}
-		if work.ID != f.MediaID || work.MetadataVersion != f.MediaMetadataVersion || u.ID != f.UnitID || u.MetadataVersion != f.MetadataVersion || !organizationUnitMatches(u, f.CandidateUnit, f.MediaID, kind) {
+		if work.ID != f.MediaID || work.MetadataVersion != f.MediaMetadataVersion || u.ID != f.UnitID || u.MetadataVersion != f.MetadataVersion || !organizationUnitMatches(u, f.CandidateUnit, f.MediaID, kind, m.Confirmation.Material.Review.Request.Input) {
 			return ports.ErrUntrackedOrganizationStale
 		}
 		if kind == "tv" {

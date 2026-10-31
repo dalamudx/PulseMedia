@@ -38,11 +38,11 @@ WITH candidate AS (
 )
 UPDATE outbox_delivery AS d
 SET state = 'delivering', lease_owner = $2::text,
-    lease_until = statement_timestamp() + ($3::integer * interval '1 millisecond'),
+    lease_until = clock_timestamp() + ($3::integer * interval '1 millisecond'),
     lease_token = d.lease_token + 1, attempts = d.attempts + 1,
-    updated_at = statement_timestamp()
+    updated_at = clock_timestamp()
 FROM candidate AS c
-WHERE d.id = c.id AND d.state = 'pending'
+WHERE d.id = c.id AND d.state = 'pending' AND $3::integer > 0
 RETURNING d.id, d.event_id, d.consumer, d.aggregate_type, d.aggregate_id, d.seq, d.state, d.attempts, d.max_attempts, d.not_before, d.lease_owner, d.lease_token, d.lease_until, d.error, d.created_at, d.updated_at, d.delivered_at, d.skipped_at, d.skip_reason
 `
 
@@ -83,12 +83,12 @@ const failOutboxDelivery = `-- name: FailOutboxDelivery :one
 UPDATE outbox_delivery
 SET state = CASE WHEN attempts >= max_attempts THEN 'dead' ELSE 'pending' END,
     error = $4::text,
-    not_before = statement_timestamp() + ($5::integer * interval '1 millisecond'),
+    not_before = clock_timestamp() + ($5::integer * interval '1 millisecond'),
     lease_owner = NULL, lease_until = NULL,
     updated_at = statement_timestamp()
 WHERE id = $1::uuid AND state = 'delivering'
   AND lease_owner = $2::text AND lease_token = $3::bigint
-  AND lease_until > clock_timestamp()
+  AND lease_until > clock_timestamp() AND $5::integer > 0
 RETURNING id, event_id, consumer, aggregate_type, aggregate_id, seq, state, attempts, max_attempts, not_before, lease_owner, lease_token, lease_until, error, created_at, updated_at, delivered_at, skipped_at, skip_reason
 `
 

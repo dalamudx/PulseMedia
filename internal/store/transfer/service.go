@@ -39,10 +39,11 @@ type Service struct {
 	queries           *db.Queries
 	files             ports.TransferFilesystem
 	minimumMediaBytes int64
+	coordinator       ports.TransferExecutionCoordinator
 }
 
-func NewService(pool *pgxpool.Pool, idgen ports.IDGen, ob *outbox.Outbox, files ports.TransferFilesystem) *Service {
-	return &Service{pool: pool, idgen: idgen, outbox: ob, queries: postgres.Queries(pool), files: files, minimumMediaBytes: 1}
+func NewService(pool *pgxpool.Pool, idgen ports.IDGen, ob *outbox.Outbox, files ports.TransferFilesystem, coordinator ports.TransferExecutionCoordinator) *Service {
+	return &Service{pool: pool, idgen: idgen, outbox: ob, queries: postgres.Queries(pool), files: files, minimumMediaBytes: 1, coordinator: coordinator}
 }
 func text(v string) pgtype.Text   { return pgtype.Text{String: v, Valid: true} }
 func integer(v int64) pgtype.Int8 { return pgtype.Int8{Int64: v, Valid: true} }
@@ -389,115 +390,115 @@ func (s *Service) ExecutePlan(ctx context.Context, planID uuid.UUID) error {
 	return s.executePlan(ctx, planID)
 }
 func (s *Service) executePlan(ctx context.Context, planID uuid.UUID, authority ...ports.JobLease) error {
+	if s.coordinator == nil {
+		return ports.ErrUnavailable
+	}
+	return s.coordinator(ctx, s, planID, authority...)
+}
+
+func (s *Service) PrepareTransferExecution(ctx context.Context, planID uuid.UUID, authority ...ports.JobLease) (*ports.PreparedTransfer, error) {
+	authority = append([]ports.JobLease(nil), authority...)
 	plan, err := s.queries.GetTransferPlanByID(ctx, planID)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	completed := func(plan db.TransferPlan, release func()) *ports.PreparedTransfer {
+		return &ports.PreparedTransfer{Completed: true, Release: release, Complete: func(c context.Context) error {
+			if len(authority) == 1 {
+				return s.finishOrganization(c, authority[0], plan, true)
+			}
+			return nil
+		}}
 	}
 	if plan.State == "completed" {
-		if len(authority) == 1 {
-			return s.finishOrganization(ctx, authority[0], plan, true)
-		}
-		return nil
+		return completed(plan, nil), nil
 	}
 	if !plan.RootPath.Valid || !plan.RootGeneration.Valid || !plan.RootDevice.Valid || !plan.RootInode.Valid || (plan.Strategy != "hardlink" && !verifiedAction(plan.Strategy)) {
-		return ErrReviewRequired
+		return nil, ErrReviewRequired
 	}
 	steps, err := s.queries.ListStepsForPlan(ctx, planID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if len(steps) == 0 {
-		return ErrReviewRequired
+		return nil, ErrReviewRequired
 	}
 	paths := []string{plan.RootPath.String}
 	for _, step := range steps {
 		if !step.SourceRoot.Valid || !step.SourceRel.Valid || !step.TargetRel.Valid || !step.SourceDevice.Valid || !step.SourceInode.Valid || len(step.QualityProfile) == 0 || step.Action != plan.Strategy {
-			return ErrReviewRequired
+			return nil, ErrReviewRequired
 		}
 		paths = append(paths, step.SourceRoot.String)
 	}
 	roots, release, err := s.files.LockRoots(ctx, paths...)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer release()
-	rootIdentity, err := roots[plan.RootPath.String].Identity(ctx)
+	handedOff := false
+	defer func() {
+		if !handedOff {
+			release()
+		}
+	}()
+	identity, err := roots[plan.RootPath.String].Identity(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if rootIdentity.Device != plan.RootDevice.Int64 || rootIdentity.Inode != plan.RootInode.Int64 {
-		return ErrReviewRequired
+	if identity.Device != plan.RootDevice.Int64 || identity.Inode != plan.RootInode.Int64 {
+		return nil, ErrReviewRequired
 	}
-	// Re-read after waiting for physical ownership: another executor may be done.
 	plan, err = s.queries.GetTransferPlanByID(ctx, planID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if plan.State == "completed" {
-		if len(authority) == 1 {
-			return s.finishOrganization(ctx, authority[0], plan, true)
-		}
-		return nil
+		handedOff = true
+		return completed(plan, release), nil
 	}
-	owner := text(s.idgen.NewUUID().String())
-	plan, err = s.queries.ClaimTransferPlan(ctx, db.ClaimTransferPlanParams{ID: planID, Owner: owner})
+	plan, err = s.queries.ClaimTransferPlan(ctx, db.ClaimTransferPlanParams{ID: planID, Owner: text(s.idgen.NewUUID().String())})
 	if errors.Is(err, pgx.ErrNoRows) {
-		return ErrExecutionRejected
+		return nil, ErrExecutionRejected
 	}
 	if err != nil {
-		return err
+		return nil, err
 	}
 	currentRoot, err := s.queries.GetLibraryRootByID(ctx, plan.RootID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	marker := currentRoot.MarkerFilename
 	if marker == "" {
 		marker = ".pulsemedia_root"
 	}
+	attempt := &ports.PreparedTransfer{Release: release, Review: func(c context.Context) error { return s.review(c, plan, authority...) }, Complete: func(c context.Context) error {
+		if len(authority) == 1 {
+			return s.finishOrganization(c, authority[0], plan, false)
+		}
+		_, e := s.queries.FinishTransferPlan(c, db.FinishTransferPlanParams{ID: plan.ID, Owner: plan.ExecutionOwner.String, Token: plan.ExecutionToken})
+		if errors.Is(e, pgx.ErrNoRows) {
+			return ErrExecutionRejected
+		}
+		return e
+	}}
 	if _, err := roots[plan.RootPath.String].Inspect(ctx, marker); err != nil {
-		return s.review(ctx, plan, authority...)
+		attempt.ReviewRequired = true
+		handedOff = true
+		return attempt, nil
 	}
 	steps, err = s.queries.ListStepsForPlan(ctx, planID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	for _, step := range steps {
-		if step.State == "completed" {
-			continue
-		}
-		if step.State == "pending" {
-			if !s.stepMediaEligible(step) {
-				return s.review(ctx, plan, authority...)
+		attempt.Steps = append(attempt.Steps, ports.TransferExecutionStep{State: step.State, Eligible: step.State != "pending" || s.stepMediaEligible(step), Execute: func(c context.Context) error {
+			if step.Action == "hardlink" {
+				return s.executeHardlinkStep(c, roots, plan, step, marker, authority)
 			}
-		}
-		var stepErr error
-		if step.Action == "hardlink" {
-			stepErr = s.executeHardlinkStep(ctx, roots, plan, step, marker, authority)
-		} else {
-			stepErr = withTransferLease(ctx,
-				func(c context.Context) error { return s.renewTransferAuthority(c, plan, authority) },
-				func(c context.Context) error { return s.executeVerifiedStep(c, roots, plan, step, marker, authority) },
-				20*time.Second)
-		}
-		if stepErr != nil {
-			if ctx.Err() != nil {
-				return ctx.Err()
-			}
-			if errors.Is(stepErr, ErrReviewRequired) {
-				return s.review(ctx, plan, authority...)
-			}
-			return stepErr
-		}
+			return withTransferLease(c, func(c context.Context) error { return s.renewTransferAuthority(c, plan, authority) }, func(c context.Context) error { return s.executeVerifiedStep(c, roots, plan, step, marker, authority) }, 20*time.Second)
+		}})
 	}
-	if len(authority) == 1 {
-		return s.finishOrganization(ctx, authority[0], plan, false)
-	}
-	_, err = s.queries.FinishTransferPlan(ctx, db.FinishTransferPlanParams{ID: plan.ID, Owner: plan.ExecutionOwner.String, Token: plan.ExecutionToken})
-	if errors.Is(err, pgx.ErrNoRows) {
-		return ErrExecutionRejected
-	}
-	return err
+	handedOff = true
+	return attempt, nil
 }
 func (s *Service) startStep(ctx context.Context, plan db.TransferPlan, step db.TransferStep, authority ...ports.JobLease) error {
 	tx, err := s.pool.Begin(ctx)

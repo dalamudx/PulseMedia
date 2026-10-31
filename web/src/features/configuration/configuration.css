@@ -70,4 +70,9 @@
 .mapping-table-scroll th,.mapping-table-scroll td { padding: .6rem; text-align: left; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
 .mapping-table-scroll caption { padding: .6rem; text-align: left; font-weight: 600; }
 @media(max-width:540px) { .mapping-entry { grid-template-columns: minmax(0,1fr); border-bottom: 1px solid var(--border); padding-bottom: .75rem; } }
-
+.file-mapping-panel { min-width: 0; overflow-wrap: anywhere; }
+.file-mapping-panel .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.file-mapping-panel .form-grid > label { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.file-mapping-panel select { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; }
+.file-mapping-panel button { min-height: 44px; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 540px) { .file-mapping-panel .form-grid { grid-template-columns: minmax(0, 1fr); } }

@@ -71,7 +71,7 @@ func setupEpisodeMappingFixture(t *testing.T) *episodeMappingFixture {
 		h.SetEpisodeCandidateReviewService(subscription.NewEpisodeCandidateReviewService(postgres.NewEpisodeMappingStore(repo, idgen.New())))
 		h.SetTVCoverageCandidateReviewService(subscription.NewTVCoverageCandidateReviewService(postgres.NewTVCoverageCandidateReviewStore(postgres.NewEpisodeMappingStore(repo, idgen.New()))))
 		h.SetEpisodeAcquisitionService(acquisition.NewEpisodeService(postgres.NewEpisodeAcquisitionStore(a.DBPool(), idgen.New())))
-		h.SetTransferRecoveryService(transfer.NewRecoveryService(transferstore.NewRepository(a.DBPool(), idgen.New(), outbox.New(a.DBPool(), idgen.New(), clock.New()), rootfs.NewFilesystem())))
+		h.SetTransferRecoveryService(transfer.NewRecoveryService(transferstore.NewRepository(a.DBPool(), idgen.New(), outbox.New(a.DBPool(), idgen.New(), clock.New()), rootfs.NewFilesystem(), transfer.ExecutePreparedPlan)))
 	})
 	q := a.Queries()
 	root, m := uuid.New(), uuid.New()

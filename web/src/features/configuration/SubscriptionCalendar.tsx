@@ -1,4 +1,5 @@
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
+import {api} from "@/api/client";
 import {
   calendarDays,
   moveCalendarAnchor,
@@ -42,8 +43,7 @@ function EpisodeList({ items, onOpen }: {
   );
 }
 
-export function SubscriptionCalendar({ subscriptions, onOpen }: {
-  subscriptions: readonly CalendarSubscription[];
+export function SubscriptionCalendar({ onOpen }: {
   onOpen: (id: string) => void;
 }) {
   const headingId = useId();
@@ -52,7 +52,30 @@ export function SubscriptionCalendar({ subscriptions, onOpen }: {
   const [mode, setMode] = useState<"week" | "month">("month");
   const today = localToday();
   const days = calendarDays(anchor, mode);
-  const { dated, unknown } = useMemo(() => subscriptionCalendarItems(subscriptions), [subscriptions]);
+  const [offset,setOffset]=useState(0),[unknownOffset,setUnknownOffset]=useState(0),[revision,setRevision]=useState(0);
+  const start=days[0],end=days[days.length-1];
+  const queryKey=`${start}:${end}:${offset}:${unknownOffset}:${revision}`;
+  const [snapshot,setSnapshot]=useState<{key:string;subscriptions:CalendarSubscription[];total:number;unknownTotal:number}|null>(null);
+  const [failure,setFailure]=useState<{key:string;message:string}|null>(null);
+  useEffect(()=>{setOffset(0);setUnknownOffset(0)},[start,end]);
+  useEffect(()=>{
+    const controller=new AbortController();setFailure(null);
+    if(!start||!end)return ()=>controller.abort();
+    void Promise.all([
+      api.GET("/api/v1/subscriptions",{signal:controller.signal,cache:"no-store",params:{query:{view:"calendar",start,end,limit:100,offset}}}),
+      api.GET("/api/v1/subscriptions",{signal:controller.signal,cache:"no-store",params:{query:{view:"calendar",start,end,limit:100,offset:unknownOffset,unknown_dates:true}}}),
+    ]).then(([dated,unknown])=>{
+      if(controller.signal.aborted)return;
+      if(dated.error||unknown.error||!dated.data||!unknown.data){setFailure({key:queryKey,message:"日历读取失败，未沿用旧排期。请重试。"});return}
+      setSnapshot({key:queryKey,subscriptions:[...dated.data.items,...unknown.data.items],total:dated.data.total,unknownTotal:unknown.data.total});
+    }).catch(()=>{if(!controller.signal.aborted)setFailure({key:queryKey,message:"日历连接失败，请重试。"})});
+    return ()=>controller.abort();
+  },[queryKey,start,end,offset,unknownOffset]);
+  const current=snapshot?.key===queryKey?snapshot:null;
+  const error=failure?.key===queryKey?failure.message:"";
+  const loading=!current&&!error;
+  const total=current?.total??0,unknownTotal=current?.unknownTotal??0;
+  const {dated,unknown}=useMemo(()=>subscriptionCalendarItems(current?.subscriptions??[]),[current]);
   const byDate = useMemo(() => {
     const groups = new Map<string, CalendarEpisode[]>();
     for (const item of dated) {
@@ -98,7 +121,13 @@ export function SubscriptionCalendar({ subscriptions, onOpen }: {
         </div>
       </header>
 
-      {!hasScheduled ? <p className="calendar-empty" role="status">当前日期范围内暂无已排期剧集。</p> : null}
+      {error&&<p role="alert">{error} <button type="button" onClick={()=>setRevision(value=>value+1)}>重新读取日历</button></p>}
+      {loading?<p role="status">正在读取日历…</p>:!error&&!hasScheduled?<p className="calendar-empty" role="status">当前日期范围的本页暂无已排期剧集。</p>:null}
+      <nav className="config-actions" aria-label="排期分页">
+        <button type="button" disabled={loading||offset===0} onClick={()=>setOffset(value=>Math.max(0,value-100))}>上一页排期</button>
+        <span>共 {loading||error?"—":total} 集 · 第 {Math.floor(offset/100)+1} 页</span>
+        <button type="button" disabled={loading||offset+100>=total} onClick={()=>setOffset(value=>value+100)}>下一页排期</button>
+      </nav>
 
       <div className={`calendar-days calendar-days-${mode}`}>
         {days.map((day, index) => {
@@ -114,16 +143,20 @@ export function SubscriptionCalendar({ subscriptions, onOpen }: {
                 <time dateTime={day} aria-current={day === today ? "date" : undefined}>{day}</time>
                 <span>{weekdays[index % 7]}{day === today ? " · 今天" : ""}</span>
               </h3>
-              {items.length > 0 ? <EpisodeList items={items} onOpen={onOpen} /> : <p className="calendar-day-empty">暂无排期</p>}
+              {items.length > 0 ? <EpisodeList items={items} onOpen={onOpen} /> : !loading&&!error?<p className="calendar-day-empty">本页暂无排期</p>:null}
             </section>
           );
         })}
       </div>
 
-      {unknown.length > 0 ? (
+      {unknownTotal > 0 || unknownOffset > 0 ? (
         <section className="calendar-unknown" aria-labelledby={unknownId}>
-          <h3 id={unknownId}>播出日期未知（{unknown.length} 集）</h3>
+          <h3 id={unknownId}>播出日期未知（共 {loading||error?"—":unknownTotal} 集）</h3>
           <EpisodeList items={unknown} onOpen={onOpen} />
+          <nav className="config-actions" aria-label="未知日期分页">
+            <button type="button" disabled={loading||unknownOffset===0} onClick={()=>setUnknownOffset(value=>Math.max(0,value-100))}>上一页未知日期</button>
+            <button type="button" disabled={loading||unknownOffset+100>=unknownTotal} onClick={()=>setUnknownOffset(value=>value+100)}>下一页未知日期</button>
+          </nav>
         </section>
       ) : null}
     </section>

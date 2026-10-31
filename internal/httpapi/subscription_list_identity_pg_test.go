@@ -42,12 +42,12 @@ func TestSubscriptionListNativeTMDBNamespacePG(t *testing.T) {
 	actor := &ports.Actor{ID: admin.UserID.String(), Type: ports.ActorTypeUser, Role: "admin"}
 	assertIdentities := func(tv string) {
 		t.Helper()
-		rows, err := reader.ReadSubscriptionList(ctx, actor)
+		rows, err := reader.ReadSubscriptionList(ctx, actor, ports.SubscriptionListQuery{Limit: 100})
 		if err != nil {
 			t.Fatal(err)
 		}
 		seen := map[uuid.UUID]string{}
-		for _, row := range rows {
+		for _, row := range rows.Items {
 			seen[row.MediaID] = row.TMDBExternalID
 		}
 		if seen[movieID] != "550" || seen[tvID] != tv {

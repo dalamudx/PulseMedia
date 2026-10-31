@@ -60,6 +60,10 @@ func TestFileMappingHTTPHistoryAndRecovery(t *testing.T) {
 	}
 	call := func(token, method, path, key string, body any) *httptest.ResponseRecorder {
 		raw, _ := json.Marshal(body)
+
+		if body == nil {
+			raw = nil
+		}
 		r := httptest.NewRequest(method, path, bytes.NewReader(raw))
 		r.Header.Set("Authorization", "Bearer "+token)
 		r.Header.Set("Content-Type", "application/json")

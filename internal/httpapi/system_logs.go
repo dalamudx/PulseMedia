@@ -13,14 +13,15 @@ import (
 // authorized the request. It carries the caller's context so cancellation
 // closes the stream.
 type systemLogsResponse struct {
-	hub   *SSEHub
-	ctx   context.Context
-	level slog.Level
+	hub        *SSEHub
+	ctx        context.Context
+	level      slog.Level
+	authorized func(context.Context) bool
 }
 
 func (r systemLogsResponse) VisitStreamSystemLogsResponse(w http.ResponseWriter) error {
 	request := (&http.Request{Method: http.MethodGet, URL: &url.URL{Path: "/api/v1/system/logs"}}).WithContext(r.ctx)
-	r.hub.ServeLogs(w, request, r.level)
+	r.hub.ServeLogs(w, request, r.level, r.authorized)
 	return nil
 }
 
@@ -32,7 +33,7 @@ func (s *ServerHandler) StreamSystemLogs(ctx context.Context, request StreamSyst
 	if actor == nil {
 		return StreamSystemLogs401ApplicationProblemPlusJSONResponse(problemResponse(http.StatusUnauthorized, "UNAUTHORIZED", "authentication required", requestID)), nil
 	}
-	if actor.Type != ports.ActorTypeUser || !actor.IsAdmin() {
+	if actor.Type != ports.ActorTypeUser || !actor.IsAdmin() || actor.Scopes != nil {
 		return StreamSystemLogs403ApplicationProblemPlusJSONResponse(problemResponse(http.StatusForbidden, "FORBIDDEN", "administrator access required", requestID)), nil
 	}
 	if s.logHub == nil {
@@ -42,7 +43,13 @@ func (s *ServerHandler) StreamSystemLogs(ctx context.Context, request StreamSyst
 	if request.Params.Level != nil {
 		minimum = ParseLogLevel(string(*request.Params.Level))
 	}
-	return systemLogsResponse{hub: s.logHub, ctx: ctx, level: minimum}, nil
+	return systemLogsResponse{hub: s.logHub, ctx: ctx, level: minimum, authorized: func(check context.Context) bool {
+		if s.authSvc == nil {
+			return false
+		}
+		current, err := s.authSvc.AuthenticateToken(check, GetRawToken(ctx))
+		return err == nil && current != nil && current.Type == ports.ActorTypeUser && current.ID == actor.ID && current.IsAdmin() && current.Scopes == nil
+	}}, nil
 }
 
 // SetLogHub injects the process-wide hub used for the live log stream.

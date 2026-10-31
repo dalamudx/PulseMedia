@@ -3,10 +3,8 @@ package download
 import (
 	"context"
 	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
-	"math"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -22,6 +20,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
+	downloadcase "github.com/dalamudx/PulseMedia/internal/usecase/download"
 )
 
 var (
@@ -174,18 +173,18 @@ func sameOrChildPath(root, actual string) bool {
 	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator))
 }
 
-// SubmitDownload submits a torrent to the download client, observing response loss recovery and reuse invariants.
-func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uuid.UUID, savePath string, authority ...ports.JobLease) (*db.DownloadTask, error) {
+// PrepareDownload freezes the original task and connection and retains the
+// physical budget. The usecase owns Add and calls Complete before Release.
+func (m *Manager) PrepareDownload(ctx context.Context, opID, clientID, candID uuid.UUID, savePath string, authority ...ports.JobLease) (*ports.PreparedDownload, error) {
 	if err := m.requireNoFrozenUpgrade(ctx, opID); err != nil {
 		return nil, err
 	}
 	if err := m.requireGenericObservation(ctx, opID); err != nil {
 		return nil, err
 	}
-	// 1. Check if task for this operation already exists (已存在任务复用且不改路径)
 	existing, err := m.queries.GetDownloadTaskByOpID(ctx, opID)
 	if err == nil {
-		return &existing, nil
+		return preparedTask(&existing), nil
 	}
 	if !errors.Is(err, pgx.ErrNoRows) {
 		return nil, fmt.Errorf("failed to check existing download task: %w", err)
@@ -195,27 +194,27 @@ func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uui
 	if err != nil {
 		return nil, err
 	}
-	defer release()
-
-	// 2. Fetch candidate and decrypt download URL
+	retained := false
+	defer func() {
+		if !retained {
+			release()
+		}
+	}()
 	cand, err := m.queries.GetCandidateByID(ctx, candID)
 	if err != nil {
 		return nil, fmt.Errorf("candidate not found: %w", err)
 	}
-
 	decryptedURL, err := crypto.Decrypt(m.masterKey, cand.LinkEncrypted)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt download link: %w", err)
 	}
-
-	// Fetching is outside the transaction; final preparation revalidates the
-	// candidate ciphertext, endpoint version, demand and job lease afterwards.
+	// External source reads stay outside the transaction; preparation revalidates
+	// the ciphertext, endpoint, demand and lease after fetching.
 	payload, err := m.submissionPayload(ctx, cand, string(decryptedURL))
 	if err != nil {
 		return nil, err
 	}
 	infoHash := payload.InfoHash
-
 	var clientSnapshot *db.DownloadClient
 	clientStamp := ""
 	if len(authority) == 1 {
@@ -223,21 +222,9 @@ func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uui
 		if e != nil {
 			return nil, ports.ErrUnavailable
 		}
-		clientSnapshot = &bound.DownloadClient
-		clientStamp = bound.ConfigStamp
+		clientSnapshot, clientStamp = &bound.DownloadClient, bound.ConfigStamp
 	}
-
-	// 3. Create task record in submitting state
 	taskID := m.idgen.NewUUID()
-	params := db.CreateDownloadTaskParams{
-		ID:          taskID,
-		OperationID: opID,
-		ClientID:    clientID,
-		CandidateID: candID,
-		InfoHash:    infoHash,
-		State:       "submitting",
-		SavePath:    savePath,
-	}
 	var task db.DownloadTask
 	if len(authority) > 0 {
 		if len(authority) != 1 || m.submissionStore == nil {
@@ -252,15 +239,14 @@ func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uui
 		}
 		task, err = m.queries.GetDownloadTaskByOpID(ctx, opID)
 		if err == nil && receipt.AlreadyExisted {
-			return &task, nil
+			return preparedTask(&task), nil
 		}
 	} else {
-		task, err = m.queries.CreateDownloadTask(ctx, params)
+		task, err = m.queries.CreateDownloadTask(ctx, db.CreateDownloadTaskParams{ID: taskID, OperationID: opID, ClientID: clientID, CandidateID: candID, InfoHash: infoHash, State: "submitting", SavePath: savePath})
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to create download task: %w", err)
 	}
-
 	var client ports.DownloadClient
 	if clientSnapshot != nil {
 		client, err = m.clientForRateSnapshot(ctx, *clientSnapshot)
@@ -269,259 +255,74 @@ func (m *Manager) SubmitDownload(ctx context.Context, opID, clientID, candID uui
 	}
 	if err != nil {
 		_, _ = m.queries.TransitionTaskToUnknown(ctx, db.TransitionTaskToUnknownParams{ID: task.ID, Error: pgtype.Text{String: "download client unavailable", Valid: true}})
-		return &task, err
+		return preparedTask(&task), err
 	}
+	prepared := preparedTask(&task)
+	prepared.Client = client
+	prepared.Params = ports.AddTorrentParam{InfoHash: infoHash, DownloadURL: payload.DownloadURL, TorrentBytes: payload.TorrentBytes, SavePath: savePath, Tags: fmt.Sprintf("pulsemedia,pulsemedia:op:%s", opID)}
+	frozenAuthority := append([]ports.JobLease(nil), authority...)
+	prepared.Complete = func(c context.Context, addErr error) (*ports.DownloadExecutionTask, error) {
+		return taskDTO(m.completeDownload(c, task, addErr, frozenAuthority...))
+	}
+	prepared.Release = release
+	retained = true
+	return prepared, nil
+}
 
-	tag := fmt.Sprintf("pulsemedia,pulsemedia:op:%s", opID)
-	addErr := client.AddTorrent(ctx, ports.AddTorrentParam{
-		InfoHash:     infoHash,
-		DownloadURL:  payload.DownloadURL,
-		TorrentBytes: payload.TorrentBytes,
-		SavePath:     savePath,
-		Tags:         tag,
-		Paused:       false,
-	})
+func preparedTask(task *db.DownloadTask) *ports.PreparedDownload {
+	dto, _ := taskDTO(task, nil)
+	return &ports.PreparedDownload{Task: dto}
+}
 
+func (m *Manager) completeDownload(ctx context.Context, task db.DownloadTask, addErr error, authority ...ports.JobLease) (*db.DownloadTask, error) {
 	if len(authority) == 1 {
 		if _, e := m.submissionStore.CompleteSubmission(ctx, authority[0], task.ID, addErr == nil); e != nil {
 			return &task, e
 		}
-		updated, e := m.queries.GetDownloadTaskByOpID(ctx, opID)
+		updated, e := m.queries.GetDownloadTaskByOpID(ctx, task.OperationID)
 		if e != nil {
 			return &task, e
 		}
 		return &updated, addErr
 	}
 	if addErr != nil {
-		// Response lost or network failure: transition to unknown (不换资源/释放，进入对账)
-		updated, _ := m.queries.TransitionTaskToUnknown(ctx, db.TransitionTaskToUnknownParams{
-			ID:    task.ID,
-			Error: pgtype.Text{String: "downloader submission outcome unknown", Valid: true},
-		})
+		updated, err := m.queries.TransitionTaskToUnknown(ctx, db.TransitionTaskToUnknownParams{ID: task.ID, Error: pgtype.Text{String: "downloader submission outcome unknown", Valid: true}})
+		if err != nil {
+			return &task, err
+		}
 		return &updated, addErr
 	}
-
-	// Submission confirmed: transition to tracking
 	updated, err := m.queries.TransitionTaskToTracking(ctx, task.ID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to transition task to tracking: %w", err)
+		return &task, fmt.Errorf("failed to transition task to tracking: %w", err)
 	}
 	return &updated, nil
 }
 
-// ReconcileTask performs out-of-band reconciliation for unknown or submitting tasks.
+// Compatibility entry points delegate orchestration to the same usecase as App.
 func (m *Manager) ReconcileTask(ctx context.Context, opID uuid.UUID) (*db.DownloadTask, error) {
-	if err := m.requireNoFrozenUpgrade(ctx, opID); err != nil {
-		return nil, err
-	}
-	task, err := m.queries.GetDownloadTaskByOpID(ctx, opID)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load download task: %w", err)
-	}
-	if err = m.requireGenericObservation(ctx, opID); err != nil {
-		return nil, err
-	}
-	if task.State != "submitting" && task.State != "unknown" {
-		return &task, nil
-	}
-
-	release, err := m.acquireClientBudget(ctx, task.ClientID)
-	if err != nil {
-		return nil, err
-	}
-	defer release()
-
-	client, err := m.clientFor(ctx, task.ClientID)
-	if err != nil {
-		return nil, err
-	}
-
-	var info *ports.TorrentInfo
-	if task.InfoHash != "" {
-		info, err = client.GetTorrent(ctx, task.InfoHash)
-	} else {
-		// If the indexer did not provide a hash, only an exact operation tag
-		// and a single externally observed torrent may establish identity.
-		tag := "pulsemedia:op:" + opID.String()
-		var matches []*ports.TorrentInfo
-		matches, err = client.ListTorrents(ctx, tag)
-		if err == nil {
-			matched := 0
-			for _, candidate := range matches {
-				if candidate == nil {
-					continue
-				}
-				for _, t := range strings.Split(candidate.Tags, ",") {
-					if strings.TrimSpace(t) == tag {
-						matched++
-						info = candidate
-						break
-					}
-				}
-			}
-			if matched != 1 {
-				info = nil
-			}
-		}
-		if err == nil && info != nil {
-			hash := strings.ToLower(info.InfoHash)
-			_, decodeErr := hex.DecodeString(hash)
-			if (len(hash) != 40 && len(hash) != 64) || decodeErr != nil {
-				info = nil
-			} else {
-				task, err = m.queries.SetObservedDownloadInfoHash(ctx, db.SetObservedDownloadInfoHashParams{ID: task.ID, InfoHash: hash})
-			}
-		}
-	}
-	if err != nil {
-		if !errors.Is(err, ports.ErrNotFound) {
-			return nil, err
-		}
-	}
-	if info == nil || (task.InfoHash != "" && !strings.EqualFold(info.InfoHash, task.InfoHash)) {
-		// No observation (or the adapter returned the wrong torrent): keep the
-		// reservation and await operator review, never infer that Add failed.
-		_, _ = m.queries.IncrementReconcileCount(ctx, task.ID)
-		return &task, ErrReconcilePending
-	}
-
-	// Verify save path matches (已存在任务复用且不改路径)
-	if !sameOrChildPath(task.SavePath, info.SavePath) ||
-		(info.ContentPath != "" && !sameOrChildPath(task.SavePath, info.ContentPath)) {
-		_, _ = m.recordObservationState(ctx, task, "unknown", "downloader save path mismatch")
-		return nil, ErrPathMismatch
-	}
-
-	if math.IsNaN(float64(info.Progress)) || math.IsInf(float64(info.Progress), 0) || info.Progress < 0 || info.Progress > 1 || info.TotalBytes < 0 || info.DownloadedBytes < 0 {
-		return nil, ErrReconcilePending
-	}
-	// Successfully reconciled: transition to tracking
-	_, err = m.recordObservationState(ctx, task, "tracking", "")
-	if err != nil {
-		return nil, fmt.Errorf("failed to recover task to tracking: %w", err)
-	}
-
-	// Update latest progress
-	finalTask, err := m.queries.UpdateDownloadTaskProgress(ctx, db.UpdateDownloadTaskProgressParams{
-		ID:              task.ID,
-		State:           "tracking",
-		Progress:        info.Progress,
-		TotalBytes:      info.TotalBytes,
-		DownloadedBytes: info.DownloadedBytes,
-		ContentPath:     pgtype.Text{String: info.ContentPath, Valid: info.ContentPath != ""},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to update reconciled task progress: %w", err)
-	}
-
-	return &finalTask, nil
+	task, err := downloadcase.ReconcileTask(ctx, m, opID)
+	return m.observationTask(ctx, task, err)
 }
-
-// ObserveTask refreshes a tracking download without claiming its files have
-// been imported. Missing torrents and path changes retain the business
-// reservation and require reconciliation; progress alone cannot release it.
 func (m *Manager) observeTask(ctx context.Context, opID uuid.UUID, watch *ports.DownloadWatchTarget) (*db.DownloadTask, error) {
-	if err := m.validateWatch(ctx, m.queries, watch, false); err != nil {
-		return nil, err
-	}
-	if err := m.requireNoFrozenUpgrade(ctx, opID); err != nil {
-		return nil, err
-	}
-	task, err := m.queries.GetDownloadTaskByOpID(ctx, opID)
-	if err != nil {
-		return nil, err
-	}
-	if err = m.requireGenericObservation(ctx, opID); err != nil {
-		return nil, err
-	}
-	if task.State != "tracking" {
-		return &task, nil
-	}
-	release, err := m.acquireClientBudget(ctx, task.ClientID)
-	if err != nil {
-		return nil, err
-	}
-	defer release()
-	if err = m.validateWatch(ctx, m.queries, watch, false); err != nil {
-		return nil, err
-	}
-
-	configSnapshot, err := m.queries.GetDownloadClientByID(ctx, task.ClientID)
-	if err != nil {
-		return nil, ports.ErrUnavailable
-	}
-	var client ports.DownloadClient
-	if m.recordRates || watch != nil {
-		client, err = m.clientForRateSnapshot(ctx, configSnapshot)
+	var task *ports.DownloadExecutionTask
+	var err error
+	if watch == nil {
+		task, err = downloadcase.ObserveTask(ctx, m, opID)
 	} else {
-		client, err = m.clientFor(ctx, task.ClientID)
+		task, err = downloadcase.ObserveDownloadWatchTarget(ctx, m, *watch)
 	}
-	if err != nil {
+	return m.observationTask(ctx, task, err)
+}
+func (m *Manager) observationTask(ctx context.Context, task *ports.DownloadExecutionTask, err error) (*db.DownloadTask, error) {
+	if task == nil {
 		return nil, err
 	}
-	if watch != nil {
-		client = &watchReadClient{DownloadClient: client, manager: m, target: *watch}
+	row, e := m.queries.GetDownloadTaskByOpID(ctx, task.OperationID)
+	if e != nil {
+		return nil, e
 	}
-	info, err := client.GetTorrent(ctx, task.InfoHash)
-	if errors.Is(err, ports.ErrNotFound) {
-		_, err = m.recordObservationStateGuarded(ctx, task, "unknown", "torrent no longer visible; manual reconciliation required", watch)
-		if err != nil {
-			return nil, err
-		}
-		return nil, ErrReconcilePending
-	}
-	if err != nil {
-		if watch != nil {
-			if _, fenceErr := m.writeWatchProgress(ctx, task, configSnapshot, nil, watch); fenceErr != nil {
-				return nil, fenceErr
-			}
-			return nil, err
-		}
-		if m.recordRates && ctx.Err() == nil {
-			if rateErr := m.recordUnknownRate(ctx, task, configSnapshot); rateErr != nil {
-				return nil, rateErr
-			}
-		}
-		return nil, err
-	}
-	if info == nil || task.InfoHash == "" || !strings.EqualFold(info.InfoHash, task.InfoHash) ||
-		!sameOrChildPath(task.SavePath, info.SavePath) ||
-		(info.ContentPath != "" && !sameOrChildPath(task.SavePath, info.ContentPath)) ||
-		math.IsNaN(float64(info.Progress)) || math.IsInf(float64(info.Progress), 0) || info.Progress < 0 || info.Progress > 1 || info.TotalBytes < 0 || info.DownloadedBytes < 0 {
-		_, err = m.recordObservationStateGuarded(ctx, task, "unknown", "download identity or path requires review", watch)
-		if err != nil {
-			return nil, err
-		}
-		return nil, ErrReconcilePending
-	}
-	if completedObservation(info) {
-		inventory, e := m.observeEpisodeInventory(ctx, task, client, info)
-		if e != nil {
-			return nil, e
-		}
-		if inventory == nil && info.ContentPath != "" && !naming.IsVideoPath(info.ContentPath) {
-			inventory, e = m.observeMovieDirectory(ctx, task, client, info, inventoryClientStamp(configSnapshot))
-			if e != nil {
-				return nil, e
-			}
-		}
-		return m.completeForOrganizationGuarded(ctx, task, info, watch, inventory)
-	}
-	if watch != nil {
-		return m.writeWatchProgress(ctx, task, configSnapshot, info, watch)
-	}
-	if m.recordRates {
-		return m.updateProgressWithRate(ctx, task, configSnapshot, info)
-	}
-	observed, err := m.queries.UpdateDownloadTaskProgress(ctx, db.UpdateDownloadTaskProgressParams{
-		ID: task.ID, State: "tracking", Progress: info.Progress,
-		TotalBytes: info.TotalBytes, DownloadedBytes: info.DownloadedBytes,
-		ContentPath: pgtype.Text{String: info.ContentPath, Valid: info.ContentPath != ""},
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &observed, nil
+	return &row, err
 }
 
 // TranslateRemotePath maps remote container paths to local storage paths.

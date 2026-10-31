@@ -1,0 +1,10 @@
+.file-mapping-panel button { min-width: 44px; min-height: 44px; }
+.mapping-object-choices { display: grid; gap: 1rem; min-width: 0; }
+.mapping-object-choices > label, .mapping-media-picker .config-field { display: flex; flex-direction: column; gap: .4rem; min-width: 0; }
+.mapping-media-picker { min-width: 0; }
+.mapping-media-picker .config-fieldset { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: .75rem; align-items: end; }
+.mapping-media-picker input, .mapping-media-picker select { width: 100%; min-width: 0; min-height: 44px; }
+.config-panel.file-mapping-panel .mapping-media-picker button { min-width: 44px; min-height: 44px; }
+@media (max-width: 720px) {
+  .mapping-media-picker .config-fieldset { grid-template-columns: minmax(0, 1fr); }
+}

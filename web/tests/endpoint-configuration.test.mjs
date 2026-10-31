@@ -313,3 +313,22 @@ test('rTorrent real controls preserve protocol across creation, editing and expl
     assert.equal(writes(h).length, 2);
   } finally { await h.close(); }
 });
+
+
+test('download capability hints follow selection without probing or submitting', async () => {
+  const h = await hookHost();
+  try {
+    await h.ready([]);
+    const panel = await load('EndpointConfigurationPanel.tsx', { React, useEndpointConfiguration: () => h.out });
+    for (const [type, expected] of [['qbittorrent', '整季包和电影升级均有对应入口'], ['transmission', '整季包获取与显式整理'], ['rtorrent', '暂不支持自动追剧'], ['unknown', '当前类型的业务能力尚未确认']]) {
+      h.out.change('type', type); await h.flush();
+      const html = renderToStaticMarkup(React.createElement(panel.EndpointConfigurationPanel, { family: 'download_client' }));
+      assert(html.includes(expected), type);
+      if (type === 'rtorrent') assert(html.includes('暂停/恢复'), 'rTorrent ordinary task controls must be discoverable');
+      assert(html.includes('aria-describedby="endpoint-download_client-capabilities"'));
+      assert(html.includes('硬链接要求源与目标位于同一文件系统'));
+    }
+    assert.equal(writes(h).length, 0);
+    assert.equal(h.calls.filter(c => c.path.endsWith('/test')).length, 0);
+  } finally { await h.close(); }
+});

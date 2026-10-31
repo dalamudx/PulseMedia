@@ -64,7 +64,7 @@ func TestSourceCancellationRetainsPhysicalBudgetUntilReturn(t *testing.T) {
 	done := make(chan error, 2)
 	ops := []uuid.UUID{uuid.New(), uuid.New()}
 	for _, op := range ops {
-		go func() { _, err := mgr.SubmitDownload(owner, op, id, candidate, "/configured/downloads"); done <- err }()
+		go func() { _, err := submitDownload(mgr, owner, op, id, candidate, "/configured/downloads"); done <- err }()
 	}
 	var once sync.Once
 	drain := func() {
@@ -183,9 +183,9 @@ func TestDownloaderCancelledAdmissionNeverMutatesTask(t *testing.T) {
 			case "test":
 				_, _, e = mgr.TestClient(wait, id)
 			case "submit":
-				_, e = mgr.SubmitDownload(wait, op, id, candidate, "/configured/downloads")
+				_, e = submitDownload(mgr, wait, op, id, candidate, "/configured/downloads")
 			case "authorized_submit":
-				_, e = mgr.SubmitDownload(wait, op, id, candidate, "/configured/downloads", ports.JobLease{ID: uuid.New(), Owner: "owner", Token: 1})
+				_, e = submitDownload(mgr, wait, op, id, candidate, "/configured/downloads", ports.JobLease{ID: uuid.New(), Owner: "owner", Token: 1})
 			case "reconcile":
 				_, e = mgr.ReconcileTask(wait, unknownOp)
 			case "observe":
@@ -222,11 +222,11 @@ func TestDownloaderCancelledAdmissionNeverMutatesTask(t *testing.T) {
 		t.Fatalf("capacity did not recover: %v", e)
 	}
 	op := uuid.New()
-	task, e := mgr.SubmitDownload(ctx, op, id, candidate, "/configured/downloads")
+	task, e := submitDownload(mgr, ctx, op, id, candidate, "/configured/downloads")
 	if e != nil || task == nil || task.State != "tracking" {
 		t.Fatalf("admitted submission did not recover: %v", e)
 	}
-	if replay, e := mgr.SubmitDownload(ctx, op, id, candidate, "/configured/downloads"); e != nil || replay == nil || replay.ID != task.ID {
+	if replay, e := submitDownload(mgr, ctx, op, id, candidate, "/configured/downloads"); e != nil || replay == nil || replay.ID != task.ID {
 		t.Fatalf("receipt reuse after admission: %v", e)
 	}
 }

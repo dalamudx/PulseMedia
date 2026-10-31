@@ -5,6 +5,25 @@ vars:
   BINARY_NAME: pulsemedia
 
 tasks:
+  test-controlled-mixed-load:
+    desc: Run 30-minute owned PG18 App mixed load with reconstruction, local rate-limited delivery and connection pressure
+    cmds:
+      - PULSE_MIXED_LOAD_DURATION=30m timeout 2100s bash scripts/with_podman_test_postgres.sh go test -race ./internal/app -run '^TestAppControlledMixedLoadPG$' -count=1 -timeout=33m -v
+  test-metrics-rules:
+    desc: Validate Prometheus alert syntax, firing, recovery and unavailable-scrape behavior
+    requires:
+      vars: [PULSE_METRICS_PROMETHEUS_IMAGE]
+    cmds:
+      - >-
+        podman run --rm --network none --read-only --cap-drop=ALL --security-opt=no-new-privileges
+        --tmpfs /data/temp:rw,nosuid,nodev,noexec,size=16m -e TMPDIR=/data/temp
+        -v "{{.ROOT_DIR}}/docs/prometheus:/rules:ro" --entrypoint /bin/promtool
+        "{{.PULSE_METRICS_PROMETHEUS_IMAGE}}" check rules /rules/pulsemedia.rules.yml
+      - >-
+        podman run --rm --network none --read-only --cap-drop=ALL --security-opt=no-new-privileges
+        --tmpfs /data/temp:rw,nosuid,nodev,noexec,size=16m -e TMPDIR=/data/temp
+        -v "{{.ROOT_DIR}}/docs/prometheus:/rules:ro" --entrypoint /bin/promtool
+        "{{.PULSE_METRICS_PROMETHEUS_IMAGE}}" test rules /rules/pulsemedia.rules.test.yml
   default:
     desc: Run tests and verify build
     cmds:
@@ -463,6 +482,16 @@ tasks:
     cmds:
       - bash scripts/verify_library_reuse_browser.sh
 
+  test-core-media:
+    desc: Verify core media workflows with PostgreSQL, race detection and zero skipped tests
+    cmds:
+      - bash scripts/verify_core_media.sh backend
+
+  test-core-media-ui:
+    desc: Verify core media workflow controls and recovery in isolated Chrome
+    cmds:
+      - bash scripts/verify_core_media.sh browser
+
   test-web:
     desc: Typecheck React frontend application
     cmds:
@@ -532,6 +561,16 @@ tasks:
     cmds:
       - bash scripts/verify_m9_configuration_editors.sh {{.CLI_ARGS}}
 
+  test-subscription-pages-browser:
+    desc: Verify bounded subscription pages, calendar ranges, stale reads and account isolation in Chrome
+    cmds:
+      - |
+        work="$(mktemp -d /data/temp/pulse-subscription-pages.XXXXXX)"
+        trap 'rm -rf -- "$work"' EXIT
+        export TMPDIR="$work" TMP="$work" TEMP="$work"
+        export XDG_CONFIG_HOME="$work/config" XDG_CACHE_HOME="$work/cache"
+        timeout 180s mise exec -- node web/tests/subscription-pagination-browser.mjs
+
   test-m11-advanced-settings:
     desc: Verify Fanart settings, audit and person-follow public contracts with PG18
     cmds:
@@ -558,7 +597,7 @@ tasks:
       - bash scripts/verify_m11_web_push_browser.sh
 
   test-m11-rtorrent:
-    desc: Verify bounded native XML-RPC, encrypted rTorrent configuration and single-send App recovery with PG18
+    desc: Verify bounded native XML-RPC, encrypted configuration, persistent pause/resume and single-send App recovery with PG18
     cmds:
       - bash scripts/verify_m11_rtorrent.sh {{.CLI_ARGS}}
 

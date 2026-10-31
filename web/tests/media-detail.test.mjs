@@ -41,6 +41,8 @@ async function harness(initialMedia = media, component = false) {
   }
   const hookModule = await module(readFileSync(new URL('useMediaDetail.ts', root), 'utf8'));
   host.useMediaDetail = hookModule.useMediaDetail;
+  const classificationModule = await module(readFileSync(new URL('useClassificationTarget.ts', root), 'utf8'));
+  host.useClassificationTarget = classificationModule.useClassificationTarget;
   const modalModule = component ? await module(readFileSync(new URL('../src/components/dialog/MediaDetailModal.tsx', import.meta.url), 'utf8')) : null;
   let componentKey;
   const props = () => ({ media: input, subscribing: disabled, onClose: () => closes.push(true), onSubscribe: (...args) => creations.push(args), onSearchReleases: m => resources.push(m) });
@@ -285,7 +287,7 @@ test('actual modal renders real sparse names/dates, native season select and exi
     assert(h.focus.length); assert.equal(h.button('保存剧集订阅').props.disabled, true);
     const root = h.nodes().find(n => n.type === 'RootSelector'), policy = h.nodes().find(n => n.type === 'PolicySelector'), endpoints = h.nodes().find(n => n.type === 'EndpointBindingFields');
     root.props.onChange('root-a'); root.props.onReady(true); policy.props.onChange('policy-a'); policy.props.onReady(true); endpoints.props.onIndexers(['idx-a']); endpoints.props.onDownloader('dl-a'); endpoints.props.onReady(true); h.render();
-    assert.equal(h.button('保存剧集订阅').props.disabled, false); h.button('保存剧集订阅').props.onClick(); assert.deepEqual(h.creations, [[media, 'all', [], [], false, 'dl-a', ['idx-a'], 'policy-a', 'root-a']]);
+    assert.equal(h.button('保存剧集订阅').props.disabled, false); h.button('保存剧集订阅').props.onClick(); assert.deepEqual(h.creations, [[media, 'all', [], [], false, 'dl-a', ['idx-a'], 'policy-a', 'root-a', undefined, undefined, undefined]]);
     h.button('检索资源').props.onClick(); assert.deepEqual(h.resources, [media]); h.button('关闭影视详情').props.onClick(); assert.equal(h.closes.length, 1);
     h.lock(); assert.equal(h.button('检索资源').props.disabled, true); assert(h.nodes().filter(n => ['RootSelector', 'PolicySelector', 'EndpointBindingFields'].includes(n.type)).every(n => n.props.disabled)); assert(h.nodes().filter(n => n.type === 'fieldset').every(n => n.props.disabled));
   } finally { await h.dispose(); }
@@ -316,7 +318,7 @@ test('actual modal submits sparse multi-season selected keys with original root/
     h.nodes().find(n => n.type === 'select').props.onChange({ target: { value: '3' } }); h.render(); await h.flush(); await loaded(h, 3, [4, 9]);
     h.button('从 S03E09 向后选').props.onClick(); h.render(); readyBindings(h);
     const retained = h.button('保存选集订阅').props.onClick;
-    retained(); assert.deepEqual(h.creations[0], [media, 'selected', [1, 3], ['S01E01', 'S01E03', 'S03E09'], false, 'dl-a', ['idx-a'], 'policy-a', 'root-a']);
+    retained(); assert.deepEqual(h.creations[0], [media, 'selected', [1, 3], ['S01E01', 'S01E03', 'S03E09'], false, 'dl-a', ['idx-a'], 'policy-a', 'root-a', undefined, undefined, undefined]);
     h.lock(); retained(); assert.equal(h.creations.length, 1, 'retained submit is fenced while parent creates');
     h.lock(false); h.auth({ ...user, id: 'actor-b' }); retained(); assert.equal(h.creations.length, 1, 'retained submit is fenced after account remount');
   } finally { await h.dispose(); }
@@ -326,7 +328,7 @@ test('actual movie modal retains subscribe/resource actions and actual actor ima
   const m = { ...media, media_type: 'movie' }, h = await harness(m, true); try {
     h.reply(0, { ...movie(), backdrop_url: 'https://image.tmdb.org/t/p/w1280/art.jpg' });
     h.reply(1, cast(42, 'movie', [{ tmdb_id: 1, name: 'Known', character: 'Role', profile_url: 'https://image.tmdb.org/t/p/w185/person.jpg' }, { tmdb_id: 2, name: 'Missing' }, { tmdb_id: 3, name: 'Unsafe', profile_url: 'https://evil.test/x.jpg' }])); await h.flush();
-    readyBindings(h); h.button('保存电影订阅').props.onClick(); assert.deepEqual(h.creations[0], [m, 'all', [], [], false, 'dl-a', ['idx-a'], 'policy-a', 'root-a']);
+    readyBindings(h); h.button('保存电影订阅').props.onClick(); assert.deepEqual(h.creations[0], [m, 'all', [], [], false, 'dl-a', ['idx-a'], 'policy-a', 'root-a', undefined, undefined, undefined]);
     h.button('检索资源').props.onClick(); assert.deepEqual(h.resources, [m]);
     const imageNodes = h.nodes().filter(n => typeof n.type === 'function' && n.props.className === 'media-detail-portrait');
     assert.equal(imageNodes.length, 3);

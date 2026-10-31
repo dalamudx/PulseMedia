@@ -169,7 +169,7 @@ func TestDownloadSubmissionLostResponseAndReconciliation(t *testing.T) {
 	savePath := "/downloads/movies"
 
 	// 1. Initial SubmitDownload fails due to network timeout
-	task, err := mgr.SubmitDownload(ctx, opID, clientID, candID, savePath)
+	task, err := submitDownload(mgr, ctx, opID, clientID, candID, savePath)
 	if err == nil {
 		t.Fatal("expected submit error on simulated timeout")
 	}
@@ -197,7 +197,7 @@ func TestDownloadSubmissionLostResponseAndReconciliation(t *testing.T) {
 	}
 
 	// 4. Repeated submission with same opID reuses existing task without altering path
-	reused, err := mgr.SubmitDownload(ctx, opID, clientID, candID, "/different/path")
+	reused, err := submitDownload(mgr, ctx, opID, clientID, candID, "/different/path")
 	if err != nil {
 		t.Fatalf("reusing task failed: %v", err)
 	}

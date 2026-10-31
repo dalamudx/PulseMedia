@@ -42,7 +42,7 @@ func organizationPublicRouter(f *completeOrganizationFixture, configured bool) h
 }
 func newOrganizationPublicWorker(a *app.App) *transfer.Service {
 	gen := idgen.New()
-	return transfer.NewService(transferstore.NewRepository(a.DBPool(), gen, outbox.New(a.DBPool(), gen, clock.New()), rootfs.NewFilesystem()))
+	return transfer.NewService(transferstore.NewRepository(a.DBPool(), gen, outbox.New(a.DBPool(), gen, clock.New()), rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 }
 func organizationPublicBody(f *completeOrganizationFixture) string {
 	raw, _ := json.Marshal(map[string]any{"operation_id": f.command.OperationID, "tracking_job_id": f.command.TrackingJobID})
@@ -359,7 +359,7 @@ func TestCompleteTVOrganizationPublicPGRollbackAndSafeUnavailable(t *testing.T) 
 		}
 		pool.Close()
 		gen := idgen.New()
-		svc := transfer.NewService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem()))
+		svc := transfer.NewService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 		authSvc := auth.NewService(postgres.NewAuthenticationStore(a.DBPool()), crypto.AuthenticationSecrets{}, a.Clock(), a.IDGen())
 		handler := httpapi.NewServerHandler(a, authSvc, nil, nil, svc, nil, nil, nil, nil, nil, nil, nil, nil)
 		router := httpapi.NewRouter(a, handler, authSvc, nil)

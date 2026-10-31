@@ -5,6 +5,9 @@ import { byteFact, decimalFact } from "./useDashboardFacts";
 
 export type GlobalRateSnapshot = components["schemas"]["DownloadGlobalRatesOverview"];
 type Client = GlobalRateSnapshot["clients"][number];
+export const downloadClientLabels: Record<Client["client_type"], string> = {
+  qbittorrent: "qBittorrent", transmission: "Transmission", rtorrent: "rTorrent",
+};
 type Direction = "download" | "upload";
 const validTime = (v: unknown): v is string => typeof v === "string" && Number.isFinite(Date.parse(v));
 const object = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -18,7 +21,7 @@ export function validGlobalRateSnapshot(value: unknown): value is GlobalRateSnap
   if (!known(value.download_known_clients) || !known(value.upload_known_clients)) return false;
   const ids = new Set<string>();
   if (!value.clients.every(client => {
-    if (!object(client) || typeof client.id !== "string" || ids.has(client.id) || typeof client.name !== "string" || !["qbittorrent", "transmission"].includes(String(client.client_type)) || !states.has(String(client.state)) || !failures.has(String(client.failure_code)) || !(client.observed_at === null || validTime(client.observed_at)) || !validRates(client)) return false;
+    if (!object(client) || typeof client.id !== "string" || ids.has(client.id) || typeof client.name !== "string" || !Object.hasOwn(downloadClientLabels, String(client.client_type)) || !states.has(String(client.state)) || !failures.has(String(client.failure_code)) || !(client.observed_at === null || validTime(client.observed_at)) || !validRates(client)) return false;
     ids.add(client.id);
     return client.last_good === undefined || (object(client.last_good) && validTime(client.last_good.observed_at) && validRates(client.last_good));
   })) return false;

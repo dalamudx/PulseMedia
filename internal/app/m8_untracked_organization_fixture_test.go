@@ -417,7 +417,11 @@ func (f *m8UntrackedOrganizationFixture) expect(t *testing.T, method, path, body
 	t.Helper()
 	code, raw, err := f.call(t, method, path, body, key, f.cookie, "")
 	if err != nil || code != want {
-		t.Fatalf("organization HTTP method=%s status=%d want=%d", method, code, want)
+		var problem struct {
+			Code string `json:"code"`
+		}
+		_ = json.Unmarshal(raw, &problem)
+		t.Fatalf("organization HTTP method=%s path=%s status=%d want=%d code=%s", method, strings.Split(path, "?")[0], code, want, problem.Code)
 	}
 	return raw
 }

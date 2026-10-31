@@ -1,7 +1,9 @@
 -- name: ListDueDoubanWishConfigs :many
-SELECT c.id,c.owner_id FROM douban_sync_config c
+SELECT c.id,c.owner_id,c.version FROM douban_sync_config c
 JOIN app_user u ON u.id=c.owner_id
 WHERE c.enabled AND u.is_active AND u.role IN ('admin','member')
+AND (sqlc.arg(after_id)::uuid='00000000-0000-0000-0000-000000000000'::uuid
+ OR (c.owner_id,c.id)>(sqlc.arg(after_owner_id)::uuid,sqlc.arg(after_id)::uuid))
 AND NOT EXISTS(SELECT 1 FROM douban_wish_sync_run r WHERE r.config_id=c.id AND r.status IN ('queued','running','review_required'))
 AND NOT EXISTS(SELECT 1 FROM douban_wish_sync_run r WHERE r.config_id=c.id AND r.config_version=c.version AND r.finished_at>clock_timestamp()-interval '24 hours')
 ORDER BY c.owner_id,c.id LIMIT 64;

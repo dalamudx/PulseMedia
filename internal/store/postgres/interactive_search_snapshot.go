@@ -20,6 +20,15 @@ func (s *InteractiveSearchStore) ReadInteractiveSearch(ctx context.Context, a *p
 		return nil, e
 	}
 	defer managementRollback(ctx, tx)
+	if e = interactiveActor(ctx, tx, a, false); e != nil {
+		return nil, e
+	}
+	if e = AuthorizeMovieDiscoverySearch(ctx, db.New(tx), id); e != nil {
+		return nil, e
+	}
+	if e = AuthorizeTVEpisodeDiscoverySearch(ctx, db.New(tx), id); e != nil {
+		return nil, e
+	}
 	h, e := interactiveOwned(ctx, tx, a, id, false)
 	if e != nil {
 		return nil, e

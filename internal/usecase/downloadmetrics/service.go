@@ -43,7 +43,7 @@ func (s *Service) Execute(ctx context.Context, lease ports.JobLease) error {
 	defer permit.Close()
 	source := permit.Snapshot()
 	digest, e := hex.DecodeString(source.ConfigStamp)
-	if source.ClientID == uuid.Nil || e != nil || len(digest) != 32 || source.ConfigStamp != strings.ToLower(source.ConfigStamp) || strings.TrimSpace(source.URL) == "" || (source.ClientType != "qbittorrent" && source.ClientType != "transmission") {
+	if source.ClientID == uuid.Nil || e != nil || len(digest) != 32 || source.ConfigStamp != strings.ToLower(source.ConfigStamp) || strings.TrimSpace(source.URL) == "" || (source.ClientType != "qbittorrent" && source.ClientType != "transmission" && source.ClientType != "rtorrent") {
 		return ports.ErrRejected
 	}
 	if err = permit.Check(ctx); err != nil {

@@ -1,0 +1,16 @@
+.account-security { padding-block: 1.5rem; border-top: 1px solid var(--border); }
+:root .account-tokens.account-security .btn { min-width: 44px; min-height: 44px; }
+.account-security h3 { margin-block: .75rem; }
+.account-security p { line-height: 1.6; max-width: 72ch; }
+.account-security select { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: .65rem; min-height: 44px; max-width: 100%; }
+.account-security .account-security-check { display: flex; align-items: center; gap: .75rem; min-height: 44px; }
+.account-security .account-security-check input { width: 1.25rem; height: 1.25rem; min-height: 0; margin: 0; flex-shrink: 0; }
+.account-security-recovery-codes { font-family: monospace; overflow-wrap: anywhere; padding-inline-start: 1.5rem; line-height: 1.8; }
+.account-security [role="alert"] { color: var(--danger); }
+.account-security .account-token-heading h2 { margin: 0; }
+
+:root .account-tokens.account-security { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+:root .account-tokens.account-security > .account-token-form { grid-column: auto; }
+@media (max-width: 760px) {
+  :root .account-tokens.account-security { grid-template-columns: minmax(0, 1fr); }
+}

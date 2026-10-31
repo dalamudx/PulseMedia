@@ -375,21 +375,29 @@ func (q *Queries) ListDoubanWishPageItems(ctx context.Context, pageJobID uuid.UU
 }
 
 const listDueDoubanWishConfigs = `-- name: ListDueDoubanWishConfigs :many
-SELECT c.id,c.owner_id FROM douban_sync_config c
+SELECT c.id,c.owner_id,c.version FROM douban_sync_config c
 JOIN app_user u ON u.id=c.owner_id
 WHERE c.enabled AND u.is_active AND u.role IN ('admin','member')
+AND ($1::uuid='00000000-0000-0000-0000-000000000000'::uuid
+ OR (c.owner_id,c.id)>($2::uuid,$1::uuid))
 AND NOT EXISTS(SELECT 1 FROM douban_wish_sync_run r WHERE r.config_id=c.id AND r.status IN ('queued','running','review_required'))
 AND NOT EXISTS(SELECT 1 FROM douban_wish_sync_run r WHERE r.config_id=c.id AND r.config_version=c.version AND r.finished_at>clock_timestamp()-interval '24 hours')
 ORDER BY c.owner_id,c.id LIMIT 64
 `
 
+type ListDueDoubanWishConfigsParams struct {
+	AfterID      uuid.UUID
+	AfterOwnerID uuid.UUID
+}
+
 type ListDueDoubanWishConfigsRow struct {
 	ID      uuid.UUID
 	OwnerID uuid.UUID
+	Version int64
 }
 
-func (q *Queries) ListDueDoubanWishConfigs(ctx context.Context) ([]ListDueDoubanWishConfigsRow, error) {
-	rows, err := q.db.Query(ctx, listDueDoubanWishConfigs)
+func (q *Queries) ListDueDoubanWishConfigs(ctx context.Context, arg ListDueDoubanWishConfigsParams) ([]ListDueDoubanWishConfigsRow, error) {
+	rows, err := q.db.Query(ctx, listDueDoubanWishConfigs, arg.AfterID, arg.AfterOwnerID)
 	if err != nil {
 		return nil, err
 	}
@@ -397,7 +405,7 @@ func (q *Queries) ListDueDoubanWishConfigs(ctx context.Context) ([]ListDueDouban
 	var items []ListDueDoubanWishConfigsRow
 	for rows.Next() {
 		var i ListDueDoubanWishConfigsRow
-		if err := rows.Scan(&i.ID, &i.OwnerID); err != nil {
+		if err := rows.Scan(&i.ID, &i.OwnerID, &i.Version); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

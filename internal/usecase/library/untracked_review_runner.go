@@ -175,11 +175,11 @@ func (r *UntrackedReviewRunner) identify(ctx context.Context, s ports.UntrackedR
 		e.Reason = "unknown_year"
 		return e, nil
 	}
-	if string(parsed.MediaType) != in.MediaType {
+	if in.CanonicalUnitID == "" && string(parsed.MediaType) != in.MediaType {
 		e.Reason = "media_type_conflict"
 		return e, nil
 	}
-	if !untrackedReviewCoverage(parsed, in.MediaType) {
+	if in.CanonicalUnitID == "" && !untrackedReviewCoverage(parsed, in.MediaType) {
 		return e, nil
 	}
 	if in.TMDBID == 0 {
@@ -277,12 +277,19 @@ func (r *UntrackedReviewRunner) identify(ctx context.Context, s ports.UntrackedR
 	if in.MediaType == "movie" {
 		candidate.Units = []ports.UntrackedReviewUnit{{UnitKey: "movie"}}
 	} else {
+		if in.CanonicalUnitID != "" {
+			parsed.Season, parsed.Episodes = in.Season, []int{in.Episode}
+		}
 		units, reason, err := r.tvUnits(ctx, id, tv, parsed)
 		if err != nil {
 			return e, err
 		}
 		if reason != "" {
 			e.Reason = reason
+			return e, nil
+		}
+		if in.CanonicalUnitID != "" && (len(units) != 1 || units[0].TMDBEpisodeID != in.TMDBEpisodeID) {
+			e.Reason = "episode_unresolved"
 			return e, nil
 		}
 		candidate.Units = units

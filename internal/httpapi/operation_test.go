@@ -159,7 +159,7 @@ func setupOperationHTTP(t *testing.T, configure ...func(*httpapi.ServerHandler, 
 
 	ob := outbox.New(a.DBPool(), gen, mockClock)
 	acqSvc := acquisition.NewService(postgres.NewAcquisitionStore(a.DBPool(), gen, mockClock, acquisition.SelectMovieRound))
-	transferSvc := transfer.NewService(transferstore.NewRepository(a.DBPool(), gen, ob, rootfs.NewFilesystem()))
+	transferSvc := transfer.NewService(transferstore.NewRepository(a.DBPool(), gen, ob, rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 	settingsSvc := settings.NewService(postgres.NewSettingsStore(a.DBPool(), gen))
 	metaProvider := &mockMetaProvider{}
 

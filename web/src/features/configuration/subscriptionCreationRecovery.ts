@@ -7,7 +7,7 @@ export type SubscriptionStorage = Pick<Storage, "getItem" | "setItem" | "removeI
 export type SubscriptionReply = { status: number; data?: SubscriptionResult };
 export type CreationPhase = "idle" | "creating" | "recovering" | "unknown" | "missing" | "conflict" | "rejected" | "auth" | "blocked" | "succeeded";
 
-const fields = new Set(["media_id", "tmdb_id", "media_type", "root_id", "quality_policy_id", "indexer_ids", "downloader_id", "scope_type", "seasons", "episodes", "selected_unit_ids", "include_specials", "expected_intent_version"]);
+const fields = new Set(["media_id", "tmdb_id", "media_type", "root_id", "classification_version", "classification_preview_stamp", "classification_preview_root_id", "quality_policy_id", "indexer_ids", "downloader_id", "scope_type", "seasons", "episodes", "selected_unit_ids", "include_specials", "expected_intent_version"]);
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 export const subscriptionUUID = (v: unknown): v is string => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) && !/^0{8}-0{4}-0{4}-0{4}-0{12}$/.test(v);
 const positive = (v: unknown): v is number => typeof v === "number" && Number.isSafeInteger(v) && v > 0;
@@ -21,6 +21,8 @@ function parseIntent(v: unknown): SubscriptionIntent {
       (v.tmdb_id !== undefined && !positive(v.tmdb_id)) || (!v.media_id && !v.tmdb_id) ||
       (v.media_type !== undefined && v.media_type !== "movie" && v.media_type !== "tv") ||
       (v.root_id !== undefined && !subscriptionUUID(v.root_id)) ||
+      (v.classification_version !== undefined && (!positive(v.classification_version) || v.root_id !== undefined || v.expected_intent_version !== undefined || !subscriptionUUID(v.classification_preview_root_id) || typeof v.classification_preview_stamp!=="string" || !/^[0-9a-f]{64}$/.test(v.classification_preview_stamp))) ||
+      (v.classification_version===undefined&&(v.classification_preview_root_id!==undefined||v.classification_preview_stamp!==undefined)) ||
       (v.downloader_id !== undefined && !subscriptionUUID(v.downloader_id)) ||
       typeof v.quality_policy_id !== "string" || !/^[a-zA-Z0-9_-]{1,160}$/.test(v.quality_policy_id) ||
       (v.scope_type !== "all" && v.scope_type !== "selected") || typeof v.include_specials !== "boolean" ||
@@ -36,6 +38,7 @@ function parseIntent(v: unknown): SubscriptionIntent {
     ...(positive(v.tmdb_id) ? { tmdb_id: v.tmdb_id } : {}),
     ...(v.media_type === "movie" || v.media_type === "tv" ? { media_type: v.media_type } : {}),
     ...(subscriptionUUID(v.root_id) ? { root_id: v.root_id } : {}),
+    ...(positive(v.classification_version) ? { classification_version: v.classification_version,classification_preview_stamp:v.classification_preview_stamp as string,classification_preview_root_id:v.classification_preview_root_id as string } : {}),
     ...(subscriptionUUID(v.downloader_id) ? { downloader_id: v.downloader_id } : {}),
     ...(uuidList(v.indexer_ids) ? { indexer_ids: [...v.indexer_ids] } : {}),
     ...(uuidList(v.selected_unit_ids) ? { selected_unit_ids: [...v.selected_unit_ids] } : {}),

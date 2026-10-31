@@ -18,7 +18,8 @@ type CompleteTVTrackingObservation struct {
 	ClientStamp   string
 	Before, After []*TorrentInfo
 	Files         []TorrentFile
-	// Sealed read-only export binds the complete file set to the original infohash.
+	// Sealed native export for protocols that support it. Transmission instead
+	// uses the full manifest from the original immutable submission preparation.
 	Metainfo *CompleteTVMetainfoProof
 }
 
@@ -35,10 +36,17 @@ type CompleteTVTrackingRepository interface {
 	CommitCompleteTVTracking(context.Context, CompleteTVTrackingSnapshot, CompleteTVTrackingObservation) (*CompleteTVTrackingReceipt, error)
 }
 
-// Explicit native read-only capability: both lookups and inventory are bounded,
-// complete successful responses; nil is unavailable, empty is proven no-result.
-type CompleteTVTrackingClient interface {
+// CompleteTVManifestTrackingClient exposes complete bounded native identity and
+// inventory reads. It makes no claim that the native protocol can export metainfo.
+// nil is unavailable; an allocated empty list is a complete no-result response.
+type CompleteTVManifestTrackingClient interface {
 	ListTorrents(context.Context, string) ([]*TorrentInfo, error)
 	GetTorrentFiles(context.Context, string) ([]TorrentFile, error)
+}
+
+// CompleteTVTrackingClient additionally exports the native original info bytes.
+// Protocols without export must use original persisted preparation evidence.
+type CompleteTVTrackingClient interface {
+	CompleteTVManifestTrackingClient
 	GetTorrentMetainfo(context.Context, string) ([]byte, error)
 }

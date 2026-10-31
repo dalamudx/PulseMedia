@@ -59,7 +59,7 @@ func (t *subscriptionListTrace) TraceQueryEnd(ctx context.Context, _ *pgx.Conn, 
 	sql, _ := ctx.Value(subscriptionListTraceKey{}).(string)
 	t.mu.Lock()
 	hook := t.afterEntries
-	if strings.HasPrefix(sql, "-- name: ReadSubscriptionListEntries") {
+	if strings.HasPrefix(sql, "-- name: CountSubscriptionList") {
 		t.afterEntries = nil
 	} else {
 		hook = nil
@@ -163,6 +163,8 @@ func TestSubscriptionListBulkHTTPAndLegacyEquivalence(t *testing.T) {
 	tvID, tvRoot, client, indexer1, indexer2 := uuid.New(), uuid.New(), uuid.New(), uuid.New(), uuid.New()
 	exec("INSERT INTO media(id,title,media_type) VALUES($1,'List Series','tv')", tvID)
 	exec("INSERT INTO media_identity(id,media_id,namespace,external_id) VALUES($1,$2,'tmdb.tv','1399')", uuid.New(), tvID)
+	exec("INSERT INTO media_artwork(media_id,provider,namespace,external_id,metadata_version,poster_path) SELECT id,'tmdb','tmdb.movie','550',metadata_version,'/SafeMovie.jpg' FROM media WHERE id=$1", movieID)
+	exec("INSERT INTO media_artwork(media_id,provider,namespace,external_id,metadata_version,poster_path) SELECT id,'tmdb','tmdb.tv','1399',metadata_version,'/SafeTV.jpg' FROM media WHERE id=$1", tvID)
 	exec("INSERT INTO library_root(id,path,media_type,name,baseline_completed) VALUES($1,$2,'tv','List TV',true)", tvRoot, t.TempDir())
 	sealed, err := crypto.Encrypt(make([]byte, 32), []byte("owned-loopback-fixture"))
 	if err != nil {
@@ -281,7 +283,7 @@ func TestSubscriptionListBulkHTTPAndLegacyEquivalence(t *testing.T) {
 			t.Fatal("list scope", body.Items)
 		}
 		for i, item := range body.Items {
-			if item.Id != ids[i] || item.WantedItems == nil || item.TotalEpisodes == nil || item.SatisfiedEpisodes == nil {
+			if item.Id != ids[i] || item.WantedItems != nil || item.TotalEpisodes == nil || item.SatisfiedEpisodes == nil {
 				t.Fatal("order/fields", item)
 			}
 			legacy, err := q.GetSubscriptionByID(ctx, item.Id)
@@ -308,33 +310,20 @@ func TestSubscriptionListBulkHTTPAndLegacyEquivalence(t *testing.T) {
 			if item.IndexerIds == nil || !reflect.DeepEqual(*item.IndexerIds, []uuid.UUID{indexer2, indexer1}) || item.DownloaderId == nil || *item.DownloaderId != client {
 				t.Fatal("bindings changed", item)
 			}
-			oldWanted, err := q.ListWantedItemsWithUnitDetails(ctx, item.Id)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if len(*item.WantedItems) != len(oldWanted) {
-				t.Fatal("wanted list truncated")
-			}
-			for j, w := range *item.WantedItems {
-				old := oldWanted[j]
-				if w.Id != old.ID || w.UnitId != old.UnitID || w.UnitKey == nil || *w.UnitKey != old.UnitKey || w.IsSkipped != old.IsSkipped || w.IsSatisfied != old.IsSatisfied || (w.CurrentFactStage != nil) != (old.CurrentFactStage != "") || (w.CurrentFactStage != nil && *w.CurrentFactStage != old.CurrentFactStage) {
-					t.Fatal("wanted equivalence", w, old)
-				}
-			}
 			total, satisfied, poster := 0, 0, ""
 			switch item.Id {
 			case movieSub:
-				total, satisfied, poster = 1, 1, "/fixtures/movie:550.jpg"
+				total, satisfied, poster = 1, 1, "https://image.tmdb.org/t/p/w342/SafeMovie.jpg"
 			case tvSub:
-				total, satisfied, poster = 3, 1, "/fixtures/tv:1399.jpg"
+				total, satisfied, poster = 3, 1, "https://image.tmdb.org/t/p/w342/SafeTV.jpg"
 			case adminSub:
-				total, poster = 1, "/fixtures/movie:550.jpg"
+				total, poster = 0, "https://image.tmdb.org/t/p/w342/SafeMovie.jpg"
 			}
 			if *item.TotalEpisodes != total || *item.SatisfiedEpisodes != satisfied || (item.PosterUrl != nil) != (poster != "") || (item.PosterUrl != nil && *item.PosterUrl != poster) {
 				t.Fatal("progress/poster", item)
 			}
 		}
-		if !reflect.DeepEqual(metadata.calls, map[string]int{"movie:550": 1, "tv:1399": 1}) {
+		if len(metadata.calls) != 0 {
 			t.Fatal("metadata identity/memoization", metadata.calls)
 		}
 		if wrapped.readerCalls != 1 {
@@ -350,9 +339,22 @@ func TestSubscriptionListBulkHTTPAndLegacyEquivalence(t *testing.T) {
 	}
 	metadata.fail = true
 	for _, item := range read(memberSession).Items {
-		if item.PosterUrl != nil {
+		if (item.Id == movieSub || item.Id == tvSub) && item.PosterUrl == nil {
 			t.Fatal("metadata failure changed optional poster behavior")
 		}
+	}
+	// Stale or foreign artwork must not be attached to a current subscription.
+	for _, change := range []string{"metadata_version=metadata_version+1", "external_id='999'", "namespace='tmdb.movie'"} {
+		exec("UPDATE media_artwork SET "+change+" WHERE media_id=$1", tvID)
+		for _, item := range read(memberSession).Items {
+			if item.Id == tvSub && item.PosterUrl != nil {
+				t.Fatal("untrusted/stale artwork returned", change)
+			}
+		}
+		exec("UPDATE media_artwork a SET metadata_version=m.metadata_version,namespace='tmdb.tv',external_id='1399',poster_path='/SafeTV.jpg' FROM media m WHERE a.media_id=m.id AND m.id=$1", tvID)
+	}
+	if _, err := pool.Exec(ctx, "UPDATE media_artwork SET poster_path='https://untrusted.example/poster.jpg' WHERE media_id=$1", tvID); err == nil {
+		t.Fatal("database accepted foreign poster URL")
 	}
 }
 
@@ -367,7 +369,7 @@ func TestSubscriptionListCurrentAccountLock(t *testing.T) {
 	actor := &ports.Actor{Type: ports.ActorTypeUser, ID: session.UserID.String(), Role: ports.RoleAdmin}
 	reader := postgres.NewSubscriptionListStore(a.DBPool())
 	for _, invalid := range []*ports.Actor{nil, {Type: ports.ActorTypeSystem, ID: actor.ID, Role: ports.RoleAdmin}, {Type: ports.ActorTypeUser, ID: actor.ID, Role: ports.RoleMember}, {Type: ports.ActorTypeUser, ID: uuid.NewString(), Role: ports.RoleAdmin}, {Type: ports.ActorTypeUser, ID: actor.ID, Role: ports.RoleAdmin, Scopes: []string{"admin"}}} {
-		if rows, err := reader.ReadSubscriptionList(ctx, invalid); rows != nil || (!errors.Is(err, ports.ErrForbidden) && !errors.Is(err, ports.ErrUnauthorized)) {
+		if rows, err := reader.ReadSubscriptionList(ctx, invalid, ports.SubscriptionListQuery{Limit: 100}); rows != nil || (!errors.Is(err, ports.ErrForbidden) && !errors.Is(err, ports.ErrUnauthorized)) {
 			t.Fatal("invalid current account accepted", rows, err)
 		}
 	}
@@ -384,11 +386,14 @@ func TestSubscriptionListCurrentAccountLock(t *testing.T) {
 			t.Fatal(err)
 		}
 		type result struct {
-			rows []ports.SubscriptionListEntry
+			rows *ports.SubscriptionListPage
 			err  error
 		}
 		done := make(chan result, 1)
-		go func() { rows, err := reader.ReadSubscriptionList(ctx, actor); done <- result{rows, err} }()
+		go func() {
+			rows, err := reader.ReadSubscriptionList(ctx, actor, ports.SubscriptionListQuery{Limit: 100})
+			done <- result{rows, err}
+		}()
 		// Always unblock and join the owned reader, even when a lock assertion fails.
 		func() {
 			defer func() {
@@ -420,7 +425,7 @@ func TestSubscriptionListCurrentAccountLock(t *testing.T) {
 				t.Fatal(err)
 			}
 		}()
-		if rows, err := reader.ReadSubscriptionList(ctx, actor); rows != nil || !errors.Is(err, ports.ErrForbidden) {
+		if rows, err := reader.ReadSubscriptionList(ctx, actor, ports.SubscriptionListQuery{Limit: 100}); rows != nil || !errors.Is(err, ports.ErrForbidden) {
 			t.Fatal("stale authority survived", rows, err)
 		}
 	}
@@ -462,8 +467,8 @@ func TestSubscriptionListBoundedSnapshotAndFailure(t *testing.T) {
 			t.Error(err)
 		}
 	}
-	rows, err := reader.ReadSubscriptionList(ctx, actor)
-	if err != nil || len(rows) != 1 || len(rows[0].WantedItems) != 1 || rows[0].WantedItems[0].IsSkipped {
+	rows, err := reader.ReadSubscriptionList(ctx, actor, ports.SubscriptionListQuery{Limit: 100})
+	if err != nil || len(rows.Items) != 1 || rows.Items[0].TotalEpisodes != 1 || len(rows.Items[0].WantedItems) != 0 {
 		t.Fatal("mixed database snapshots", rows, err)
 	}
 	first := trace.recorded()
@@ -478,15 +483,15 @@ func TestSubscriptionListBoundedSnapshotAndFailure(t *testing.T) {
 		create(member.UserID, m, u)
 	}
 	trace.reset()
-	rows, err = reader.ReadSubscriptionList(ctx, actor)
-	if err != nil || len(rows) != 16 {
-		t.Fatal("full list", len(rows), err)
+	rows, err = reader.ReadSubscriptionList(ctx, actor, ports.SubscriptionListQuery{Limit: 100})
+	if err != nil || len(rows.Items) != 16 || rows.Total != 16 {
+		t.Fatal("page totals", rows, err)
 	}
 	second := trace.recorded()
 	if len(first) != 6 || len(second) != 6 {
 		t.Fatal("query count grew with list", len(first), len(second), second)
 	}
-	for _, name := range []string{"LockSubscriptionListAccount", "SetSubscriptionListReadOnly", "ReadSubscriptionListEntries", "ReadSubscriptionListWanted"} {
+	for _, name := range []string{"LockSubscriptionListAccount", "SetSubscriptionListReadOnly", "ReadSubscriptionListEntries", "CountSubscriptionList"} {
 		count := 0
 		for _, sql := range second {
 			if strings.HasPrefix(sql, "-- name: "+name) {
@@ -497,8 +502,8 @@ func TestSubscriptionListBoundedSnapshotAndFailure(t *testing.T) {
 			t.Fatal("bulk query count", name, count)
 		}
 	}
-	for _, row := range rows {
-		if row.ID == sub && !row.WantedItems[0].IsSkipped {
+	for _, row := range rows.Items {
+		if row.ID == sub && row.TotalEpisodes != 0 {
 			t.Fatal("next request reused stale snapshot")
 		}
 	}
@@ -506,14 +511,14 @@ func TestSubscriptionListBoundedSnapshotAndFailure(t *testing.T) {
 	if _, err = a.DBPool().Exec(ctx, "ALTER VIEW wanted_projection_validity RENAME TO owned_list_unavailable"); err != nil {
 		t.Fatal(err)
 	}
-	if rows, err = reader.ReadSubscriptionList(ctx, actor); rows != nil || !errors.Is(err, ports.ErrUnavailable) {
+	if rows, err = reader.ReadSubscriptionList(ctx, actor, ports.SubscriptionListQuery{Limit: 100}); rows != nil || !errors.Is(err, ports.ErrUnavailable) {
 		t.Fatal("database failure returned partial list", rows, err)
 	}
 	if _, err = a.DBPool().Exec(ctx, "ALTER VIEW owned_list_unavailable RENAME TO wanted_projection_validity"); err != nil {
 		t.Fatal(err)
 	}
 	readPool.Close()
-	if rows, err = reader.ReadSubscriptionList(ctx, actor); rows != nil || !errors.Is(err, ports.ErrUnavailable) {
+	if rows, err = reader.ReadSubscriptionList(ctx, actor, ports.SubscriptionListQuery{Limit: 100}); rows != nil || !errors.Is(err, ports.ErrUnavailable) {
 		t.Fatal("closed database succeeded", rows, err)
 	}
 }

@@ -2,9 +2,9 @@ package httpapi
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -18,6 +18,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/dalamudx/PulseMedia/internal/usecase/acquisition"
 	"github.com/dalamudx/PulseMedia/internal/usecase/auth"
+	"github.com/dalamudx/PulseMedia/internal/usecase/classification"
 	"github.com/dalamudx/PulseMedia/internal/usecase/download"
 	"github.com/dalamudx/PulseMedia/internal/usecase/downloadmetrics"
 	mediausecase "github.com/dalamudx/PulseMedia/internal/usecase/media"
@@ -64,10 +65,19 @@ type ServerHandler struct {
 	submissionRetrySvc        *operation.SubmissionRetryService
 	activityHub               *SSEHub
 	logHub                    *SSEHub
+	metrics                   *requestMetrics
 	auditTimelineSvc          auditTimelineApplication
 	mediaScrapeSvc            *mediascrape.Service
 	tokenManagementSvc        *auth.TokenManagementService
 	authSvc                   *auth.Service
+	accountManagementSvc      *auth.AccountManagementService
+	mfaSvc                    *auth.MFAService
+	subExecutionSvc           *subscription.ExecutionService
+	classificationSvc         *classification.Service
+	downloadControlSvc        *download.ControlService
+	seedingInspectionSvc      *download.SeedingInspectionService
+	seerrSvc                  seerrApplication
+	subtitleCandidatesSvc     subtitleCandidatesApplication
 	settingsSvc               *settings.Service
 	endpointConfigurationSvc  *settings.EndpointConfigurationService
 	upgradePreviewSvc         *acquisition.UpgradePreviewService
@@ -103,6 +113,7 @@ type ServerHandler struct {
 	subCreationSvc            subscriptionCreationApplication
 	mediaRequestSvc           mediaRequestApplication
 	subscriptionListSvc       *subscription.ListService
+	subscriptionDetailsReader ports.SubscriptionDetailsReader
 	controlSvc                *subscription.ControlService
 	tvRefreshSvc              *subscription.TVRefreshService
 	episodeSourceSvc          *subscription.EpisodeSourceService
@@ -115,6 +126,14 @@ type ServerHandler struct {
 	polSvc                    *policy.Service
 	searchSvc                 *usecaseSearch.Service
 	interactiveSearchSvc      *usecaseSearch.InteractiveSearchService
+	movieDiscoverySvc         *usecaseSearch.MovieDiscoveryService
+	tvEpisodeDiscoverySvc     *usecaseSearch.TVEpisodeDiscoveryService
+	metadataDiagnosticsSvc    metadataDiagnosticsApplication
+	tvEpisodeUpgradeSvc       TVEpisodeUpgradeApplication
+	managedSidecarUpdateSvc   ManagedSidecarUpdateApplication
+	externalBatchSvc          ExternalBatchApplication
+	libraryMaintenanceSvc     LibraryMaintenanceApplication
+	untrackedCompanionsSvc    untrackedCompanionApplication
 	indexerManagementSvc      *usecaseSearch.IndexerManagementService
 	indexerReceiptSvc         *usecaseSearch.IndexerManagementReceiptService
 	candidateSvc              *usecaseSearch.CandidateExplanationService
@@ -201,7 +220,13 @@ func NewServerHandler(
 	if provider, ok := a.(interface {
 		SubscriptionListReader() ports.SubscriptionListReader
 	}); ok {
-		subscriptionListSvc = subscription.NewListService(provider.SubscriptionListReader(), metaProvider)
+		subscriptionListSvc = subscription.NewListService(provider.SubscriptionListReader())
+	}
+	var subscriptionDetailsReader ports.SubscriptionDetailsReader
+	if provider, ok := a.(interface {
+		SubscriptionDetailsReader() ports.SubscriptionDetailsReader
+	}); ok {
+		subscriptionDetailsReader = provider.SubscriptionDetailsReader()
 	}
 	var localMediaReader ports.LocalMediaSearchReader
 	if provider, ok := a.(interface {
@@ -224,29 +249,30 @@ func NewServerHandler(
 		endpointConfigurationSvc = provider.EndpointConfigurationService(masterKey, downloadTester, mediaTester)
 	}
 	return &ServerHandler{
-		subscriptionListSvc:      subscriptionListSvc,
-		libraryCatalogSvc:        libraryCatalogSvc,
-		libraryOverviewSvc:       libraryOverviewSvc,
-		globalRatesSvc:           globalRatesSvc,
-		dashboardActivitySvc:     dashboardActivitySvc,
-		submissionRetrySvc:       submissionRetrySvc,
-		operationSvc:             operationSvc,
-		operationTimelineSvc:     operationTimelineSvc,
-		app:                      a,
-		authSvc:                  authSvc,
-		settingsSvc:              settingsSvc,
-		endpointConfigurationSvc: endpointConfigurationSvc,
-		acqSvc:                   acqSvc,
-		transferSvc:              transferSvc,
-		metaProvider:             metaProvider,
-		localMediaReader:         localMediaReader,
-		subSvc:                   subSvc,
-		polSvc:                   polSvc,
-		searchSvc:                searchSvc,
-		scheduler:                scheduler,
-		dlMgr:                    dlMgr,
-		syncSvc:                  syncSvc,
-		masterKey:                masterKey,
+		subscriptionListSvc:       subscriptionListSvc,
+		subscriptionDetailsReader: subscriptionDetailsReader,
+		libraryCatalogSvc:         libraryCatalogSvc,
+		libraryOverviewSvc:        libraryOverviewSvc,
+		globalRatesSvc:            globalRatesSvc,
+		dashboardActivitySvc:      dashboardActivitySvc,
+		submissionRetrySvc:        submissionRetrySvc,
+		operationSvc:              operationSvc,
+		operationTimelineSvc:      operationTimelineSvc,
+		app:                       a,
+		authSvc:                   authSvc,
+		settingsSvc:               settingsSvc,
+		endpointConfigurationSvc:  endpointConfigurationSvc,
+		acqSvc:                    acqSvc,
+		transferSvc:               transferSvc,
+		metaProvider:              metaProvider,
+		localMediaReader:          localMediaReader,
+		subSvc:                    subSvc,
+		polSvc:                    polSvc,
+		searchSvc:                 searchSvc,
+		scheduler:                 scheduler,
+		dlMgr:                     dlMgr,
+		syncSvc:                   syncSvc,
+		masterKey:                 masterKey,
 	}
 }
 
@@ -388,11 +414,18 @@ func (s *ServerHandler) Login(ctx context.Context, request LoginRequestObject) (
 		}, nil
 	}
 
-	user, token, err := s.authSvc.Login(ctx, request.Body.Username, request.Body.Password)
+	proof := ports.MFAProof{}
+	if request.Body.Otp != nil {
+		proof.OTP = *request.Body.Otp
+	}
+	if request.Body.RecoveryCode != nil {
+		proof.RecoveryCode = *request.Body.RecoveryCode
+	}
+	user, token, err := s.authSvc.Login(ctx, request.Body.Username, request.Body.Password, proof)
 	if err != nil {
 		return Login401JSONResponse{
 			Code:      "UNAUTHORIZED",
-			Message:   "invalid username or password",
+			Message:   "invalid credentials or second factor",
 			RequestId: reqID,
 		}, nil
 	}
@@ -749,13 +782,70 @@ func (s *ServerHandler) ListSubscriptions(ctx context.Context, request ListSubsc
 	if actor == nil {
 		return ListSubscriptions401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: GetRequestID(ctx)}, nil
 	}
-	if s.subscriptionListSvc == nil {
-		return nil, ports.ErrUnavailable
+	in := ports.SubscriptionListQuery{Limit: 50}
+	p := request.Params
+	if p.Limit != nil {
+		in.Limit = *p.Limit
 	}
-	rows, err := s.subscriptionListSvc.List(ctx, actor)
+	if p.Offset != nil {
+		in.Offset = *p.Offset
+	}
+	if p.Search != nil {
+		in.Search = *p.Search
+	}
+	if p.MediaType != nil {
+		in.MediaType = string(*p.MediaType)
+	}
+	if p.OwnOnly != nil {
+		in.OwnOnly = *p.OwnOnly
+	}
+	if p.UnknownDates != nil {
+		in.UnknownDates = *p.UnknownDates
+	}
+	if p.Start != nil {
+		in.Start = p.Start.Time
+	}
+	if p.End != nil {
+		in.End = p.End.Time
+	}
+	if p.View != nil {
+		in.Calendar = string(*p.View) == "calendar"
+	}
+	invalid := p.View != nil && string(*p.View) != "summary" && string(*p.View) != "calendar"
+	if p.TmdbId != nil {
+		invalid = invalid || *p.TmdbId < 1 || *p.TmdbId > 9007199254740991
+		in.TMDBID = strconv.FormatInt(*p.TmdbId, 10)
+	}
+	var page *ports.SubscriptionListPage
+	var err error
+	switch {
+	case invalid || in.Limit < 1:
+		err = ports.ErrInvalidSubscriptionQuery
+	case s.subscriptionListSvc == nil:
+		err = ports.ErrUnavailable
+	default:
+		page, err = s.subscriptionListSvc.List(ctx, actor, in)
+	}
 	if err != nil {
-		return nil, err
+		problem := ErrorResponse{Code: "UNAVAILABLE", Message: "subscription list unavailable", RequestId: GetRequestID(ctx)}
+		switch {
+		case errors.Is(err, ports.ErrUnauthorized):
+			problem.Code = "UNAUTHORIZED"
+			problem.Message = "authentication required"
+			return ListSubscriptions401JSONResponse(problem), nil
+		case errors.Is(err, ports.ErrForbidden):
+			problem.Code = "FORBIDDEN"
+			problem.Message = "subscription access denied"
+			return ListSubscriptions403JSONResponse(problem), nil
+		case errors.Is(err, ports.ErrInvalidSubscriptionQuery):
+			problem.Code = "INVALID_QUERY"
+			problem.Message = "invalid subscription query"
+			return ListSubscriptions400JSONResponse(problem), nil
+		default:
+			return ListSubscriptions503JSONResponse(problem), nil
+		}
 	}
+	rows := page.Items
 	items := make([]SubscriptionDetails, len(rows))
 	for i, row := range rows {
 		wanted := make([]WantedItemDetails, len(row.WantedItems))
@@ -784,8 +874,11 @@ func (s *ServerHandler) ListSubscriptions(ctx context.Context, request ListSubsc
 			TotalEpisodes: &row.TotalEpisodes, SatisfiedEpisodes: &row.SatisfiedEpisodes, WantedItems: &wanted,
 			TmdbId: subscriptionListTMDBID(row.MediaType, row.TMDBExternalID),
 		}
+		if !in.Calendar {
+			items[i].WantedItems = nil
+		}
 	}
-	return ListSubscriptions200JSONResponse{Items: items}, nil
+	return ListSubscriptions200JSONResponse{Items: items, Total: page.Total, MovieCount: page.Movies, TvCount: page.TV}, nil
 }
 
 // GetSubscription handles GET /api/v1/subscriptions/{id}
@@ -796,98 +889,57 @@ func (s *ServerHandler) GetSubscription(ctx context.Context, request GetSubscrip
 		return GetSubscription401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
 	}
 
-	sub, err := s.app.Queries().GetSubscriptionByID(ctx, request.Id)
+	if s.subscriptionDetailsReader == nil {
+		return GetSubscription503JSONResponse{PolicyUnavailableJSONResponse{Code: "UNAVAILABLE", Message: "subscription details unavailable", RequestId: reqID}}, nil
+	}
+	detail, err := s.subscriptionDetailsReader.ReadSubscriptionDetails(ctx, actor, request.Id)
 	if err != nil {
-		return GetSubscription404JSONResponse{Code: "NOT_FOUND", Message: "subscription not found", RequestId: reqID}, nil
+		body := ErrorResponse{RequestId: reqID}
+		switch {
+		case errors.Is(err, ports.ErrUnauthorized):
+			body.Code = "UNAUTHORIZED"
+			body.Message = "authentication required"
+			return GetSubscription401JSONResponse(body), nil
+		case errors.Is(err, ports.ErrForbidden):
+			body.Code = "FORBIDDEN"
+			body.Message = "access to subscription denied"
+			return GetSubscription403JSONResponse(body), nil
+		case errors.Is(err, ports.ErrNotFound):
+			body.Code = "NOT_FOUND"
+			body.Message = "subscription not found"
+			return GetSubscription404JSONResponse(body), nil
+		default:
+			body.Code = "UNAVAILABLE"
+			body.Message = "subscription details unavailable"
+			return GetSubscription503JSONResponse{PolicyUnavailableJSONResponse(body)}, nil
+		}
 	}
-
-	if !actor.IsAdmin() && sub.UserID.String() != actor.ID {
-		return GetSubscription403JSONResponse{Code: "FORBIDDEN", Message: "access to subscription denied", RequestId: reqID}, nil
+	if detail == nil {
+		return GetSubscription503JSONResponse{PolicyUnavailableJSONResponse{Code: "UNAVAILABLE", Message: "subscription details unavailable", RequestId: reqID}}, nil
 	}
-
-	media, err := s.app.Queries().GetMediaByID(ctx, sub.MediaID)
-	if err != nil {
-		return nil, ports.ErrUnavailable
-	}
-	root, err := s.app.Queries().GetLibraryRootByID(ctx, sub.RootID)
-	if err != nil {
-		return nil, ports.ErrUnavailable
-	}
-	wantedList, err := s.app.Queries().ListWantedItemsWithUnitDetails(ctx, sub.ID)
-	if err != nil {
-		return nil, ports.ErrUnavailable
-	}
-	wantedDetails := make([]WantedItemDetails, len(wantedList))
+	wanted := make([]WantedItemDetails, len(detail.WantedItems))
 	active, satisfied := 0, 0
-	for i, wi := range wantedList {
-		if !wi.IsSkipped {
+	for i, w := range detail.WantedItems {
+		if !w.IsSkipped {
 			active++
-			if wi.IsSatisfied {
+			if w.IsSatisfied {
 				satisfied++
 			}
 		}
 		var stage *string
-		if wi.CurrentFactStage != "" {
-			value := wi.CurrentFactStage
-			stage = &value
+		if w.CurrentFactStage != "" {
+			v := w.CurrentFactStage
+			stage = &v
 		}
 		var air *openapi_types.Date
-		var absolute *int
-		if wi.AirDate.Valid {
-			v := openapi_types.Date{Time: wi.AirDate.Time}
-			air = &v
+		if w.AirDate != nil {
+			air = &openapi_types.Date{Time: *w.AirDate}
 		}
-		if wi.AbsoluteNumber.Valid {
-			v := int(wi.AbsoluteNumber.Int32)
-			absolute = &v
-		}
-		wantedDetails[i] = WantedItemDetails{Id: wi.ID, UnitId: wi.UnitID, UnitKey: &wi.UnitKey, IsSkipped: wi.IsSkipped, IsSatisfied: wi.IsSatisfied, CurrentFactStage: stage, UserSkipped: &wi.UserSkipped, ScopeExcluded: &wi.ScopeExcluded, AirDate: air, AbsoluteNumber: absolute, Retired: &wi.Retired, MetadataVersion: &wi.MetadataVersion}
+		wanted[i] = WantedItemDetails{Id: w.ID, UnitId: w.UnitID, UnitKey: &w.UnitKey, IsSkipped: w.IsSkipped, IsSatisfied: w.IsSatisfied, CurrentFactStage: stage, UserSkipped: &w.UserSkipped, ScopeExcluded: &w.ScopeExcluded, AirDate: air, AbsoluteNumber: w.AbsoluteNumber, Retired: &w.Retired, MetadataVersion: &w.MetadataVersion}
 	}
-	var year *int
-	if media.Year.Valid {
-		value := int(media.Year.Int32)
-		year = &value
-	}
-
-	boundIndexers, boundDownloader := subscriptionBindings(sub)
-	var selectedIDs []uuid.UUID
-	var scopeSeasons []int
-	if json.Unmarshal(sub.SelectedUnitIds, &selectedIDs) != nil || json.Unmarshal(sub.Seasons, &scopeSeasons) != nil {
-		return nil, ports.ErrUnavailable
-	}
-	return GetSubscription200JSONResponse{SelectedUnitIds: &selectedIDs, Seasons: &scopeSeasons, IncludeSpecials: &sub.IncludeSpecials,
-		Title: &media.Title, MediaType: &media.MediaType, Year: year, RootName: &root.Name, RootPath: subscriptionRootPath(actor, root.Path), TotalEpisodes: &active, SatisfiedEpisodes: &satisfied,
-		IndexerIds: boundIndexers, DownloaderId: boundDownloader,
-		Id:                    sub.ID,
-		UserId:                sub.UserID,
-		MediaId:               sub.MediaID,
-		RootId:                sub.RootID,
-		State:                 sub.State,
-		IntentVersion:         int(sub.IntentVersion),
-		ScopeType:             sub.ScopeType,
-		QualityPolicyId:       sub.QualityPolicyID,
-		QualityPolicyRevision: int(sub.QualityPolicyRevision),
-		WantedItems:           &wantedDetails,
-	}, nil
-}
-
-// Configuration identities are safe; endpoint credentials never leave their adapters.
-func subscriptionBindings(sub db.Subscription) (*[]uuid.UUID, *uuid.UUID) {
-	ids := []uuid.UUID{}
-	_ = json.Unmarshal(sub.IndexerIds, &ids)
-	var downloader *uuid.UUID
-	if sub.DownloaderID.Valid {
-		v := uuid.UUID(sub.DownloaderID.Bytes)
-		downloader = &v
-	}
-	return &ids, downloader
-}
-
-func subscriptionRootPath(actor *ports.Actor, path string) *string {
-	if actor == nil || !actor.IsAdmin() {
-		return nil
-	}
-	return &path
+	return GetSubscription200JSONResponse{SelectedUnitIds: &detail.SelectedUnitIDs, Seasons: &detail.Seasons, IncludeSpecials: &detail.IncludeSpecials,
+		Title: &detail.Title, MediaType: &detail.MediaType, Year: detail.Year, RootName: &detail.RootName, RootPath: detail.RootPath, TotalEpisodes: &active, SatisfiedEpisodes: &satisfied,
+		IndexerIds: &detail.IndexerIDs, DownloaderId: detail.DownloaderID, Id: detail.ID, UserId: detail.UserID, MediaId: detail.MediaID, RootId: detail.RootID, State: detail.State, IntentVersion: int(detail.IntentVersion), ScopeType: detail.ScopeType, QualityPolicyId: detail.QualityPolicyID, QualityPolicyRevision: int(detail.QualityPolicyRevision), WantedItems: &wanted}, nil
 }
 
 // Legacy versionless writes never override a newer intent or delete history.
@@ -1236,19 +1288,7 @@ func (s *ServerHandler) CheckinIndexer(ctx context.Context, request CheckinIndex
 		return CheckinIndexer401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
 	}
 
-	idx, err := s.app.Queries().GetIndexerByID(ctx, request.Id)
-	if err != nil {
-		return CheckinIndexer404JSONResponse{Code: "NOT_FOUND", Message: "indexer not found", RequestId: reqID}, nil
-	}
-
-	_ = idx // Configured site cookies and per-site sign-in contracts are not wired yet.
-	succ := false
-	msg := "站点签到尚未配置认证和结果确认；未向站点发送请求"
-
-	return CheckinIndexer200JSONResponse{
-		Success: &succ,
-		Message: &msg,
-	}, nil
+	return CheckinIndexer410JSONResponse{Code: "ENDPOINT_RETIRED", Message: "legacy check-in endpoint retired; configure persistent sign-in at /api/v1/indexers/{indexer_id}/checkin/config", RequestId: reqID}, nil
 }
 
 // ScanDirectoryReorganize handles POST /api/v1/transfer/scan
@@ -1259,8 +1299,5 @@ func (s *ServerHandler) ScanDirectoryReorganize(ctx context.Context, request Sca
 		return ScanDirectoryReorganize401JSONResponse{Code: "UNAUTHORIZED", Message: "authentication required", RequestId: reqID}, nil
 	}
 
-	// No configured, symlink-safe source root or preview/commit contract exists.
-	// Return no fabricated paths or confidence scores for arbitrary client paths.
-	items := []ScanReorganizeItem{}
-	return ScanDirectoryReorganize200JSONResponse{Items: &items}, nil
+	return ScanDirectoryReorganize410JSONResponse{Code: "ENDPOINT_RETIRED", Message: "legacy scan endpoint retired; use /api/v1/library/untracked-scopes for observed files and explicit recognition", RequestId: reqID}, nil
 }

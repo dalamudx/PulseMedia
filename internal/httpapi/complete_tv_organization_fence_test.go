@@ -42,7 +42,7 @@ func TestCompleteTVOrganizationPGExpiredLeaseRetainsPhysicalSlot(t *testing.T) {
 	pool := f.n.f.a.DBPool()
 	gen := idgen.New()
 	gate := &completeBlockingFS{TransferFilesystem: rootfs.NewFilesystem(), entered: make(chan struct{}), release: make(chan struct{})}
-	old := transfer.NewService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), gate))
+	old := transfer.NewService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), gate, transfer.ExecutePreparedPlan))
 	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
 	defer cancel()
 	oldCtx, cancelOld := context.WithCancel(ctx)
@@ -67,7 +67,7 @@ func TestCompleteTVOrganizationPGExpiredLeaseRetainsPhysicalSlot(t *testing.T) {
 	}
 	cancelOld()
 	f.n.exec(t, `UPDATE job SET lease_owner='new-full',lease_token=78,lease_until=clock_timestamp()+interval '1 minute' WHERE id=$1`, r.JobID)
-	next := transfer.NewService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), gate))
+	next := transfer.NewService(transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), gate, transfer.ExecutePreparedPlan))
 	doneNext := make(chan error, 1)
 	go func() {
 		doneNext <- next.OrganizeDownload(ctx, ports.JobLease{ID: r.JobID, Owner: "new-full", Token: 78})

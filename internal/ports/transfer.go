@@ -3,6 +3,7 @@ package ports
 import (
 	"context"
 	"errors"
+
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/google/uuid"
 )
@@ -30,6 +31,24 @@ type PreparedMovieTransfer struct {
 	Plan TransferPlan
 	Step TransferStep
 }
+
+// PreparedTransfer holds physical ownership until the coordinator has finished.
+// Callbacks retain frozen evidence, never a context or database transaction.
+type PreparedTransfer struct {
+	Completed, ReviewRequired bool
+	Steps                     []TransferExecutionStep
+	Review, Complete          func(context.Context) error
+	Release                   func()
+}
+type TransferExecutionStep struct {
+	State    string
+	Eligible bool
+	Execute  func(context.Context) error
+}
+type TransferExecutionPreparer interface {
+	PrepareTransferExecution(context.Context, uuid.UUID, ...JobLease) (*PreparedTransfer, error)
+}
+type TransferExecutionCoordinator func(context.Context, TransferExecutionPreparer, uuid.UUID, ...JobLease) error
 
 // The implementation owns short transactions and filesystem capabilities. No transaction leaks through this boundary.
 type TransferRepository interface {

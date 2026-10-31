@@ -61,7 +61,9 @@ printf '%s' "$owned" > "$repo/web/dist/.account-ui-owned"
 swapped=1
 cp -a "$owned/built-web/." "$repo/web/dist/"
 if [ "$mode" = "auth" ] || [ "$mode" = "auth-full" ];then
- PULSE_UI_FIXTURE=1 mise exec -- go test -race ./internal/httpapi -run "^Test(AuthLifecycleBrowser|AuthStatusDatabaseFailure)HTTPPG$" -count=1 -v >"$owned/browser.log" 2>&1 || { tail -n 55 "$owned/browser.log";exit 1; }
+ PULSE_UI_FIXTURE=1 mise exec -- go test -race ./internal/httpapi -run "^(Test(AuthLifecycleBrowser|AuthStatusDatabaseFailure|AccountSecurityActualChrome)HTTPPG|TestMemberPasswordResetActualRouterPG|TestMFARecoveryRegenerationActualRouterPG|TestRevokeOtherSessionsActualRouterPG)$" -count=1 -v >"$owned/browser.log" 2>&1 || { grep -n -B12 -A3 -E -- '--- FAIL:|Error:|panic:' "$owned/browser.log" || true; tail -n 40 "$owned/browser.log"; exit 1; }
+ test "$(grep -c '^--- PASS:' "$owned/browser.log")" = 6 || { echo AUTH_ACCEPTANCE_PARENT_COUNT_MISMATCH; exit 1; }
+ if grep -q -- '--- SKIP:' "$owned/browser.log"; then echo AUTH_ACCEPTANCE_SKIPPED; exit 1; fi
  sed -n "/passed.*realPG/p;/--- PASS/p" "$owned/browser.log"
  echo AUTH_LIFECYCLE_UI_PG_BROWSER_PASS
 elif [ "$mode" = "settings" ];then

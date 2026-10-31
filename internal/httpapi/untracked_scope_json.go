@@ -40,7 +40,19 @@ func strictUntrackedScopeJSON(next http.Handler) http.Handler {
 		fail := func() {
 			WriteJSONError(w, http.StatusBadRequest, "INVALID_REQUEST", "invalid untracked scope request", GetRequestID(r.Context()))
 		}
+		if r.URL.Path == untrackedScopePrefix {
+			if !validUntrackedReviewScopesTransport(r) {
+				fail()
+				return
+			}
+			next.ServeHTTP(w, r)
+			return
+		}
 		parts := strings.Split(strings.TrimPrefix(r.URL.Path, untrackedScopePrefix+"/"), "/")
+		if len(parts) >= 2 && (parts[1] == "external-batches" || parts[1] == "external-batch-commands") {
+			next.ServeHTTP(w, r)
+			return
+		}
 		if untrackedOrganizationPath(parts) {
 			if !validUntrackedOrganizationTransport(w, r, parts) {
 				fail()

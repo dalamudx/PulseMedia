@@ -194,7 +194,7 @@ func (s *SiteAccountStatsStore) RecoverExpired(ctx context.Context) error {
 
 type siteAccountStatsPermit struct {
 	store                                *SiteAccountStatsStore
-	conn                                 *pgxpool.Conn
+	conn                                 *PhysicalConnection
 	lease                                ports.JobLease
 	snapshot                             ports.SiteAccountStatsExecution
 	binding                              string
@@ -218,7 +218,7 @@ func (s *SiteAccountStatsStore) Acquire(ctx context.Context, lease ports.JobLeas
 	if e != nil {
 		return nil, ports.ErrUnavailable
 	}
-	conn, e := s.pool.Acquire(ctx)
+	conn, e := AcquirePhysicalConnection(ctx, s.pool)
 	if e != nil {
 		return nil, e
 	}

@@ -52,7 +52,7 @@ func untrackedReviewActor(ctx context.Context, actor *ports.Actor, scopeID, file
 
 func untrackedReviewVersion(v int64) bool { return v > 0 && v < math.MaxInt64 }
 func untrackedReviewInputValid(in ports.UntrackedReviewInput) bool {
-	return untrackedReviewVersion(in.ScopeVersion) && untrackedReviewVersion(in.FileRevision) && (in.MediaType == "movie" || in.MediaType == "tv") && in.TMDBID >= 0
+	return untrackedReviewVersion(in.ScopeVersion) && untrackedReviewVersion(in.FileRevision) && (in.MediaType == "movie" || in.MediaType == "tv") && in.TMDBID >= 0 && in.CanonicalSelectionValid()
 }
 func untrackedReviewTime(t time.Time) bool { return !t.IsZero() && t.Year() >= 1 && t.Year() <= 9999 }
 func untrackedReviewRelative(p string) bool {
@@ -179,7 +179,7 @@ func untrackedReviewEvidenceValid(e *ports.UntrackedReviewEvidence, in ports.Unt
 	if !e.Complete {
 		return e.Candidate == nil && untrackedReviewReason(e.Reason) && e.Reason != "ready"
 	}
-	if e.Reason != "ready" || !untrackedReviewCandidateValid(e.Candidate, in.MediaType) {
+	if e.Reason != "ready" || !untrackedReviewCandidateValid(e.Candidate, in.MediaType) || !in.CanonicalCandidateMatches(e.Candidate) {
 		return false
 	}
 	if in.TMDBID > 0 {

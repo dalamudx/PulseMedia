@@ -26,7 +26,8 @@ type UntrackedOrganizationExecutor struct{ service *Service }
 var _ ports.UntrackedOrganizationExecutionRepository = (*UntrackedOrganizationExecutor)(nil)
 
 func NewUntrackedOrganizationExecutor(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem) *UntrackedOrganizationExecutor {
-	return &UntrackedOrganizationExecutor{service: NewService(pool, ids, events, files)}
+	// This executor uses its own permanent permit and never executes generic plans.
+	return &UntrackedOrganizationExecutor{service: NewService(pool, ids, events, files, nil)}
 }
 
 func NewUntrackedOrganizationExecutorWithMinimumMediaBytes(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem, minimum int64) *UntrackedOrganizationExecutor {

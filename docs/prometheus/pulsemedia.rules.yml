@@ -1,0 +1,51 @@
+groups:
+  - name: pulsemedia
+    rules:
+      - alert: PulseMediaSchedulingFailures
+        expr: (increase(pulse_work_stage_failures_total{job="pulsemedia",stage=~".*_schedule"}[5m]) > 0) and on(job, instance) (up{job="pulsemedia"} == 1)
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: PulseMedia periodic scheduling keeps failing
+          description: Check configuration, current permissions and database availability. This counter counts failed cycles, not objects; do not bypass execution authorization.
+      - alert: PulseMediaScrapeUnavailable
+        expr: up{job="pulsemedia"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: PulseMedia metrics collection is unavailable
+          description: Check reachability, administrator token permissions, and database availability. Missing observations are not zero backlog.
+      - alert: PulseMediaPoolPressure
+        expr: (pulse_db_pool_acquired_connections{job="pulsemedia"} / pulse_db_pool_max_connections{job="pulsemedia"} > 0.9) and on(job, instance) (up{job="pulsemedia"} == 1)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: PulseMedia database pool remains near capacity
+          description: Inspect pool wait rates and long transactions before changing connection limits.
+      - alert: PulseMediaQueueDelayed
+        expr: (max by(job, instance) (pulse_queue_ready_age_seconds{job="pulsemedia"}) > 300) and on(job, instance) (up{job="pulsemedia"} == 1)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: PulseMedia runnable work remains delayed
+          description: Check workers, dependency ordering, and endpoint availability. Do not bypass task authorization or leases.
+      - alert: PulseMediaLockWait
+        expr: (pulse_db_lock_wait_age_seconds{job="pulsemedia"} > 5) and (pulse_db_lock_waiters{job="pulsemedia"} > 0) and on(job, instance) (up{job="pulsemedia"} == 1)
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: PulseMedia database lock waiting persists
+          description: Inspect transactions belonging to the application login role in this database. The sample excludes other roles and does not authorize terminating sessions.
+      - alert: PulseMediaExpiredLeases
+        expr: (sum by(job, instance) (pulse_queue_expired_leases{job="pulsemedia"}) > 0) and on(job, instance) (up{job="pulsemedia"} == 1)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: PulseMedia has expired logical task leases
+          description: Inspect original task and physical execution evidence. Lease expiry never authorizes releasing reservations or resending external actions.

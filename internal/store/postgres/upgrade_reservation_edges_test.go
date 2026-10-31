@@ -72,7 +72,7 @@ func TestFrozenUpgradeGenericEntryGuardsPG(t *testing.T) {
 			m := download.NewManager(f.p, idgen.New(), make([]byte, 32))
 			probe := &frozenNoCalls{}
 			m.RegisterClient(f.client, probe)
-			if _, e = m.SubmitDownload(ctx, r.OperationID, f.client, f.candidate, "/never-open"); !errors.Is(e, ports.ErrUpgradeNotExecutable) {
+			if _, e = m.PrepareDownload(ctx, r.OperationID, f.client, f.candidate, "/never-open"); !errors.Is(e, ports.ErrUpgradeNotExecutable) {
 				t.Errorf("Submit bypassed upgrade guard: %v", e)
 			}
 			if _, e = m.ReconcileTask(ctx, r.OperationID); !errors.Is(e, ports.ErrUpgradeNotExecutable) {

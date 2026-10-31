@@ -29,6 +29,7 @@ function TVReviewPicker({ tmdbId, candidateId, searchId, disabled, onPending, on
   const [open, setOpen] = useState(false), [busy, setBusy] = useState(false);
   const [rows, setRows] = useState<DiscoveryReviewSubscription[]>([]), [selected, setSelected] = useState("");
   const [message, setMessage] = useState("");
+  const [offset,setOffset]=useState(0),[total,setTotal]=useState(0);
   const owner = useRef<AbortController | null>(null), mounted = useRef(true);
   const opened = useRef(false);
   const callbacks = useRef({ onPending, onNavigate });
@@ -62,18 +63,19 @@ function TVReviewPicker({ tmdbId, candidateId, searchId, disabled, onPending, on
       }
     }
   }
-  async function load() {
+  async function load(nextOffset=0) {
     if (!valid || !isCurrent() || owner.current || !mounted.current) return;
     opened.current = true;
     setOpen(true); setRows([]); setSelected("");
     await run(async (controller, current) => {
-      const { data, error } = await api.GET("/api/v1/subscriptions", { signal: controller.signal, cache: "no-store" });
+      const { data, error } = await api.GET("/api/v1/subscriptions", { signal: controller.signal, cache: "no-store", params:{query:{limit:50,offset:nextOffset,media_type:"tv",tmdb_id:tmdbId,own_only:true}} });
       if (!current()) return;
       if (error || !data || !Array.isArray(data.items)) { setMessage("订阅列表读取失败，请重试。"); return; }
       const matches = data.items.filter(row => matchesDiscoveryTV(row, userId, tmdbId));
       setRows(matches);
       if (matches.length === 1) setSelected(matches[0].id);
-      if (!matches.length) setMessage("没有当前账户下与本剧 TMDB 身份一致的订阅。请先订阅本剧，再重新选择资源进入审核。");
+      setOffset(nextOffset);setTotal(data.total);
+      if (!matches.length) setMessage(data.total>0?"本页没有可用订阅，请选择其它页或重新读取。":"没有当前账户下与本剧 TMDB 身份一致的订阅。请先订阅本剧，再重新选择资源进入审核。");
     });
   }
   async function proceed() {
@@ -108,6 +110,8 @@ function TVReviewPicker({ tmdbId, candidateId, searchId, disabled, onPending, on
       </label> : null}
       {message ? <p role="status" className="config-description">{message}</p> : null}
       <div className="config-actions">
+        <button type="button" className="btn-secondary" disabled={busy||offset===0} onClick={()=>void load(Math.max(0,offset-50))}>上一页目标</button>
+        <button type="button" className="btn-secondary" disabled={busy||offset+50>=total} onClick={()=>void load(offset+50)}>下一页目标</button>
         <button type="button" className="btn-secondary" disabled={busy || !valid} onClick={() => void load()}>重新读取订阅</button>
         <button type="button" className="btn-primary" disabled={busy || !valid || !selected} onClick={() => void proceed()}>{busy ? "正在读取订阅条件…" : "进入原订阅审核"}</button>
         <button type="button" className="btn-secondary" onClick={close}>取消选择</button>

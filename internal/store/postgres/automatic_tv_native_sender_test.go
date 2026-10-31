@@ -481,7 +481,7 @@ func (h *automaticTVSenderHarness) genericIsolation(t *testing.T, m *download.Ma
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err = m.SubmitDownload(t.Context(), h.request.OperationID, h.fixture.client, task.CandidateID, h.save, h.request.Lease); !errors.Is(err, ports.ErrAutomaticTVNeedsObservation) {
+	if _, err = m.PrepareDownload(t.Context(), h.request.OperationID, h.fixture.client, task.CandidateID, h.save, h.request.Lease); !errors.Is(err, ports.ErrAutomaticTVNeedsObservation) {
 		t.Fatalf("generic SubmitDownload escaped isolation: %v", err)
 	}
 	if _, err = m.ReconcileTask(t.Context(), h.request.OperationID); !errors.Is(err, ports.ErrAutomaticTVNeedsObservation) {

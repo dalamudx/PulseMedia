@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search, Loader2, Sparkles, Film, Tv, Trophy, Rss, RefreshCw } from "lucide-react";
+import { Search, Loader2, Sparkles, Film, Tv, Trophy, RefreshCw } from "lucide-react";
 import { useAuth } from "@/features/auth/AuthContext";
 import { useDiscoveryCatalog } from "@/features/configuration/useDiscoveryCatalog";
 import { matchesDiscoveryGenre, isDoubanCategory, type DiscoveryCategory } from "@/features/configuration/discoveryCatalog";
@@ -72,7 +72,6 @@ export const DiscoverView: React.FC = () => {
 
   const currentDisplayList = useMemo(() => (searched ? movies : feedItems)
     .filter(media => matchesDiscoveryGenre(media, selectedGenre)), [searched, movies, feedItems, selectedGenre]);
-  const spotlightItem = feedItems[0];
   const handleSearch = (queryText = searchQuery, type = searchType, year = searchYear) =>
     searchCatalog(queryText, type, year);
 
@@ -98,7 +97,10 @@ export const DiscoverView: React.FC = () => {
     downloaderId?: string,
     indexerIds?: string[],
     policyId = "default",
-    rootId?: string
+    rootId?: string,
+    classificationVersion?: number,
+    classificationPreviewStamp?: string,
+    classificationPreviewRootID?: string
   ) => {
     if (m.media_type !== undefined && m.media_type !== "movie" && m.media_type !== "tv") {
       toast.error("订阅失败", "媒体类型无效，请重新读取影视详情。");
@@ -107,7 +109,7 @@ export const DiscoverView: React.FC = () => {
     void subscriptionCreation.start({
       tmdb_id: m.tmdb_id, media_type: m.media_type,
       ...subscriptionScope(scope, seasons, episodes),
-      quality_policy_id: policyId, root_id: rootId,
+      quality_policy_id: policyId, ...(classificationVersion!==undefined?{classification_version:classificationVersion,classification_preview_stamp:classificationPreviewStamp,classification_preview_root_id:classificationPreviewRootID}:{root_id:rootId}),
       include_specials: includeSpecials, downloader_id: downloaderId, indexer_ids: indexerIds,
     });
     setShowDetailModal(false);
@@ -133,9 +135,9 @@ export const DiscoverView: React.FC = () => {
       {/* Top Header */}
       <div className="page-header">
         <div>
-          <h2>影视探索与选季订阅</h2>
+          <h1>探索发现</h1>
           <p className="subtitle">
-            聚合 TMDB 官方实时推荐与海量榜单，支持电影与电视剧全类型检索、选季订阅与种子下载
+            发现值得收藏的电影与剧集，按喜好订阅。
           </p>
         </div>
         <div className="header-actions">
@@ -154,43 +156,10 @@ export const DiscoverView: React.FC = () => {
         </div>
       </div>
 
-      {/* Featured Spotlight Banner (MoviePilot Style) */}
-      {!searched && spotlightItem && (
-        <div
-          className="spotlight-banner"
-          style={{
-            backgroundImage: spotlightItem.backdrop_url
-              ? `linear-gradient(to right, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.8) 40%, rgba(9, 13, 22, 0.3) 100%), url(${spotlightItem.backdrop_url})`
-              : undefined,
-          }}
-        >
-          <div className="spotlight-content">
-            <span className="spotlight-pill">
-              🔥 今日热门焦点 · {spotlightItem.media_type === "tv" ? "电视剧" : "电影"}
-            </span>
-            <h1 className="spotlight-title">{spotlightItem.title}</h1>
-            <p className="spotlight-desc">{spotlightItem.overview}</p>
-            <div className="spotlight-actions">
-              <button
-                className="btn-primary"
-                onClick={() => openMediaDetail(spotlightItem)}
-              >
-                <Rss size={16} />
-                <span>🌟 立即追更订阅</span>
-              </button>
-              <button
-                className="btn-secondary"
-                onClick={() => openReleaseSearch(spotlightItem)}
-              >
-                <Search size={16} />
-                <span>🔍 检索站点种子</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Modern Search Form */}
+      {/* One control panel: search, data source, ranking and genre stay in a single surface. */}
+      <section className="discover-controls" aria-label="探索发现筛选">
       <div className="search-box">
         <form
           onSubmit={(e) => {
@@ -432,10 +401,13 @@ export const DiscoverView: React.FC = () => {
           )}
         </div>
       </div>
+      </>}
 
+      </section>
       {!searched && feedError && <div role="alert" className="config-error">{feedError} <button className="btn-sm btn-secondary" onClick={() => refreshDiscoverData(false)}>重新加载推荐</button></div>}
       {searched && searchError && <div role="alert" className="config-error">{searchError} <button type="button" className="btn-sm btn-secondary" disabled={searching} onClick={() => void handleSearch()}>重试当前搜索</button></div>}
 
+      {!(activeCategory === "bangumi" && !searched) && <>
       {/* Search State / Loading State / Display Grid */}
       {searching || (!searched && loadingFeed && feedItems.length === 0) ? (
         <div className="loading-state">

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { RefreshCw } from "lucide-react";
 import { factTime } from "./useDashboardFacts";
-import { currentClientRate, currentGlobalRate, globalRateCurve, globalRateText, useDownloadGlobalRates, type GlobalRateSnapshot } from "./useDownloadGlobalRates";
+import { downloadClientLabels, currentClientRate, currentGlobalRate, globalRateCurve, globalRateText, useDownloadGlobalRates, type GlobalRateSnapshot } from "./useDownloadGlobalRates";
 import "./dashboard-facts.css";
 import "./download-global-rates.css";
 
@@ -39,7 +39,7 @@ export function DownloadGlobalRatesPanel({ userId, role }: { userId: string | un
       <p className="facts-note">读取时间：{factTime(data.observed_at)} · 观测超过{data.freshness_seconds}秒后显示未知</p>
       <details className="global-rate-details"><summary>下载器观测（{data.clients.length}）</summary><ul className="global-rate-clients">{data.clients.map(client => {
         const down = currentClientRate(data, client, "download", view.elapsedMs), up = currentClientRate(data, client, "upload", view.elapsedMs), expired = client.state === "observed" && down === null && up === null;
-        return <li key={client.id}><strong>{client.name}</strong><p className="facts-note">{client.client_type === "qbittorrent" ? "qBittorrent" : "Transmission"} · {expired ? "当前速率未知" : stateLabels[client.state]}{client.failure_code ? ` · ${failures[client.failure_code]}` : ""}</p>
+        return <li key={client.id}><strong>{client.name}</strong><p className="facts-note">{downloadClientLabels[client.client_type]} · {expired ? "当前速率未知" : stateLabels[client.state]}{client.failure_code ? ` · ${failures[client.failure_code]}` : ""}</p>
           <p>下载 {globalRateText(down)} · 上传 {globalRateText(up)}</p><p className="facts-note">观测时间：{factTime(client.observed_at)}</p>
           {client.last_good ? <p className="facts-note">最后成功：{factTime(client.last_good.observed_at)} · 下载 {globalRateText(client.last_good.download_bytes_per_second)} · 上传 {globalRateText(client.last_good.upload_bytes_per_second)}</p> : null}</li>;
       })}</ul></details>

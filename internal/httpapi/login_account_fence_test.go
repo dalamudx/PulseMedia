@@ -53,7 +53,7 @@ func TestLoginRevalidatesLockedCurrentAccount(t *testing.T) {
 			defer ticker.Stop()
 			for {
 				var waiting bool
-				err = a.DBPool().QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE '-- name: LockUserForLogin%')`).Scan(&waiting)
+				err = a.DBPool().QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE '-- name: LockAccountForSecurity%')`).Scan(&waiting)
 				if err != nil {
 					t.Fatal(err)
 				}

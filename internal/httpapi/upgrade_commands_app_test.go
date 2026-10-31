@@ -36,6 +36,9 @@ func publicUpgradeAppStarter(t *testing.T, f *publicUpgradeFixture) func() func(
 	}
 	f.exec(t, "INSERT INTO library_scan_schedule(root_id,next_run_at) SELECT id,clock_timestamp()+interval '1 hour' FROM library_root ON CONFLICT(root_id) DO UPDATE SET next_run_at=excluded.next_run_at")
 	f.exec(t, "UPDATE indexer SET health_next_check_at=clock_timestamp()+interval '1 hour'")
+	// These tests exercise explicit reservation/preparation after an existing search.
+	// Automatic discovery has separate App acceptance and must not race that evidence.
+	f.exec(t, "INSERT INTO subscription_movie_discovery(subscription_id,next_discovery_at) VALUES($1,clock_timestamp()+interval '1 hour') ON CONFLICT(subscription_id) DO UPDATE SET next_discovery_at=excluded.next_discovery_at", f.request.SubscriptionID)
 	start := func() func() {
 		listener, e := net.Listen("tcp", "127.0.0.1:0")
 		if e != nil {

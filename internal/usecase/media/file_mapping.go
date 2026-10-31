@@ -15,14 +15,17 @@ type FileMappingService struct{ repo ports.FileMappingRepository }
 func NewFileMappingService(repo ports.FileMappingRepository) *FileMappingService {
 	return &FileMappingService{repo}
 }
-func (s *FileMappingService) Options(ctx context.Context, a *ports.Actor) (*ports.FileMappingOptions, error) {
+func (s *FileMappingService) Options(ctx context.Context, a *ports.Actor, query ports.FileMappingOptionsQuery) (*ports.FileMappingOptions, error) {
 	if a == nil {
 		return nil, ports.ErrUnauthorized
 	}
 	if a.Type != ports.ActorTypeUser || a.Scopes != nil || !a.IsAdmin() {
 		return nil, ports.ErrForbidden
 	}
-	return s.repo.ReadFileMappingOptions(ctx, a)
+	if !query.Valid() {
+		return nil, ports.ErrInvalidFileMapping
+	}
+	return s.repo.ReadFileMappingOptions(ctx, a, query)
 }
 func (s *FileMappingService) Preview(ctx context.Context, a *ports.Actor, file, media uuid.UUID) (*ports.FileMappingPreview, error) {
 	if a == nil {

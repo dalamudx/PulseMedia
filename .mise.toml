@@ -57,4 +57,6 @@ PULSE_M8_MPV_BASE_IMAGE = "docker.io/library/node@sha256:291be77873bc04731968cac
 PULSE_M8_MPV_PACKAGE_VERSION = "0.40.0-3+deb13u1"
 # 应用运行镜像包含同版本 PG18 客户端；由 build-container 只接收构建产物。
 PULSE_CONTAINER_BASE_IMAGE = "{{env.PULSE_M4_POSTGRES_IMAGE}}"
+# Prometheus 3.5.0：仅告警规则验收，官方不可变镜像，不进入应用运行时。
+PULSE_METRICS_PROMETHEUS_IMAGE = "docker.io/prom/prometheus@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996"
 # 注意：不要在此全局设置 CGO_ENABLED=0，`go test -race` 需要 CGO；发布构建在 task build 中单独设置。

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/dalamudx/PulseMedia/internal/ports"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -45,7 +46,7 @@ func TestLibraryReuseReceiptAppearsDuringPreflightPG(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(pool.Close)
-	pending := &Repository{execution: NewService(pool, f.svc.idgen, f.svc.outbox, f.svc.files)}
+	pending := &Repository{execution: NewService(pool, f.svc.idgen, f.svc.outbox, f.svc.files, transfercase.ExecutePreparedPlan)}
 	release := sync.OnceFunc(func() { close(gate.release) })
 	defer release()
 	type result struct {

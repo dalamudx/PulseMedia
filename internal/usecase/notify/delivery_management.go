@@ -16,14 +16,14 @@ type DeliveryManagementService struct {
 func NewDeliveryManagementService(repo ports.DeliveryManagementRepository) *DeliveryManagementService {
 	return &DeliveryManagementService{repo}
 }
-func (s *DeliveryManagementService) List(ctx context.Context, a *ports.Actor) ([]ports.DeliverySummary, error) {
+func (s *DeliveryManagementService) List(ctx context.Context, a *ports.Actor, query ports.DeliveryListQuery) (*ports.DeliveryListPage, error) {
 	if a == nil {
 		return nil, ports.ErrUnauthorized
 	}
 	if !a.IsAdmin() {
 		return nil, ports.ErrForbidden
 	}
-	return s.repo.ListIntegrationDeliveries(ctx, a)
+	return s.repo.ListIntegrationDeliveries(ctx, a, query)
 }
 func (s *DeliveryManagementService) Replay(ctx context.Context, a *ports.Actor, id uuid.UUID, c ports.DeliveryReplayCommand, key string) (*ports.DeliveryReplayReceipt, error) {
 	if a == nil {

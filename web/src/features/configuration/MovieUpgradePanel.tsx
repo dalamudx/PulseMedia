@@ -5,6 +5,7 @@ import { useAuth } from "@/features/auth/AuthContext";
 import { useActivityInvalidation } from "./useActivityInvalidation";
 import { journalKey, readJournal, persistJournal, runEntry, kinds as stages, type Bodies, type Entry, type Journal, type Kind, type Mode } from "./movieUpgradeJournal";
 import { MovieUpgradeOrganizationPanel } from "./MovieUpgradeOrganizationPanel";
+import { MovieDiscoveryPanel } from "./MovieDiscoveryPanel";
 
 type Subscription = paths["/api/v1/subscriptions/{id}"]["get"]["responses"]["200"]["content"]["application/json"];
 type Files = paths["/api/v1/library/mapping-options"]["get"]["responses"]["200"]["content"]["application/json"];
@@ -41,7 +42,7 @@ function UpgradePanel({subscription,wantedId,onUpdated,userId}:{subscription:Sub
   const [mode,setMode]=useState<Mode|"">(""),[ack,setAck]=useState<Kind|null>(null),[verified,setVerified]=useState<Set<string>>(()=>new Set());
   const activity=useActivityInvalidation();
   const searcher=useInteractiveReleaseSearch({scope:`upgrade:${subscription.id}`,subscriptionId:subscription.id});
-  const visibleCandidates=searcher.recovery?searcher.results:candidates;
+  const visibleCandidates = [...new Map([...(searcher.recovery ? searcher.results : candidates), ...candidates].map(candidate => [candidate.id, candidate])).values()];
   const searchUnsafe=!!searcher.recovery&&!searcher.canAcquire;
   useEffect(()=>{if(searcher.phase==="stale"||searcher.phase==="auth"){setPreview(null);setAck(null)}},[searcher.phase]);
   function adopt(value:Journal){memory.current=value;setJournal({...value});}
@@ -117,6 +118,7 @@ function UpgradePanel({subscription,wantedId,onUpdated,userId}:{subscription:Sub
     <div className="config-heading"><h3>电影品质升级</h3><button type="button" className="btn-secondary" aria-expanded={open} onClick={()=>{setOpen(!open);if(!open)void readResources();}}>{open?"收起升级":"管理品质升级"}</button></div>
     {open&&<>
       <p className="config-description">比较候选品质后，预留、取源准备和发送分别确认；原文件在受控回收完成前保留。</p>
+      {current && enabled && !pending && !locked && <MovieDiscoveryPanel subscriptionId={subscription.id} intentVersion={current.intent_version} policyRevision={current.quality_policy_revision} onSelect={({ candidate, currentFileId }) => { setCandidates(old => [...new Map([...old, candidate].map(item => [item.id, item])).values()]); setFileId(currentFileId); setCandidateId(candidate.id); setPreview(null); setAck(null); }} />}
       <button type="button" className="btn-secondary" disabled={busy||loading} onClick={()=>void readResources()}>刷新升级资源</button>
       {loading&&<p role="status">正在读取升级资源…</p>}
       {!current&&!loading&&<p role="status">状态已变化或连接已恢复，请刷新升级资源后重新确认。</p>}

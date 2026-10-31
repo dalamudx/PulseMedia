@@ -45,10 +45,26 @@ type FileMappingReceipt struct {
 	MappingRevision int64       `json:"mapping_revision"`
 	UnitIDs         []uuid.UUID `json:"unit_ids"`
 }
+type FileMappingOptionsQuery struct {
+	RootID      uuid.UUID
+	Cursor      string
+	MediaQuery  string
+	MediaType   string
+	TMDBID      int64
+	MediaCursor string
+	MediaID     uuid.UUID
+}
+
 type FileMappingOptions struct {
 	Files []FileMappingOption      `json:"files"`
 	Media []FileMappingMediaOption `json:"media"`
 	Limit int                      `json:"limit"`
+
+	FilesNextCursor string                  `json:"files_next_cursor"`
+	FilesHasMore    bool                    `json:"files_has_more"`
+	MediaNextCursor string                  `json:"media_next_cursor"`
+	MediaHasMore    bool                    `json:"media_has_more"`
+	SelectedMedia   *FileMappingMediaOption `json:"selected_media,omitempty"`
 }
 type FileMappingOption struct {
 	ID       uuid.UUID `json:"id"`
@@ -62,7 +78,7 @@ type FileMappingMediaOption struct {
 	MediaType string    `json:"media_type"`
 }
 type FileMappingRepository interface {
-	ReadFileMappingOptions(context.Context, *Actor) (*FileMappingOptions, error)
+	ReadFileMappingOptions(context.Context, *Actor, FileMappingOptionsQuery) (*FileMappingOptions, error)
 	ReadFileMappingPreview(context.Context, *Actor, uuid.UUID, uuid.UUID) (*FileMappingPreview, error)
 	CorrectFileMapping(context.Context, *Actor, uuid.UUID, FileMappingCommand, string, string) (*FileMappingReceipt, error)
 }

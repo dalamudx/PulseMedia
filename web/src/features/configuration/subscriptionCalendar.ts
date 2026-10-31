@@ -16,6 +16,10 @@ type CalendarMode = "week" | "month";
 
 export function subscriptionProgress(sub: CalendarSubscription): {mediaType: "movie" | "tv" | "unknown"; total: number; satisfied: number; percent: number | null} {
   const mediaType = sub.media_type === "movie" || sub.media_type === "tv" ? sub.media_type : "unknown";
+  if(sub.wanted_items===undefined){
+    const total=sub.total_episodes??0,satisfied=sub.satisfied_episodes??0;
+    return {mediaType,total,satisfied,percent:total?Math.round(satisfied*100/total):null};
+  }
   const items = (sub.wanted_items ?? []).filter(item => !item.is_skipped && !item.scope_excluded && !item.retired);
   // is_satisfied is the API projection, not a claim of actual file ownership.
   const satisfied = items.filter(item => item.is_satisfied).length;

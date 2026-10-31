@@ -17,7 +17,7 @@ import (
 // Each child has an owner and a bounded context; shutdown cancels and joins all
 // physical endpoint I/O. Separate finalize capacity prevents a slow indexer from
 // delaying decisions past the persisted deadline.
-func (a *App) runSearchWorkers(ctx context.Context, queue *jobs.Queue, sched *scheduler.AutoFulfillScheduler, search *usecaseSearch.Service, feed *usecaseSearch.FeedService, health *usecaseSearch.HealthService) {
+func (a *App) runSearchWorkers(ctx context.Context, queue *jobs.Queue, sched *scheduler.AutoFulfillScheduler, search *usecaseSearch.Service, feed *usecaseSearch.FeedService, health *usecaseSearch.HealthService, discovery *usecaseSearch.MovieDiscoveryService) {
 	var group sync.WaitGroup
 	for i := 0; i < 5; i++ {
 		group.Add(1)
@@ -30,9 +30,20 @@ func (a *App) runSearchWorkers(ctx context.Context, queue *jobs.Queue, sched *sc
 	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 	q := db.New(a.dbPool)
+	nextDiscovery := time.Time{}
 	for {
 		if ctx.Err() != nil {
 			return
+		}
+		if discovery != nil && !a.clock.Now().Before(nextDiscovery) {
+			bounded, cancel := context.WithTimeout(ctx, 5*time.Second)
+			_, err := discovery.RunBatch(bounded, 20)
+			cancel()
+			if err != nil && ctx.Err() == nil {
+				a.logger.Error("movie upgrade discovery scheduling deferred")
+			}
+			a.runTVEpisodeDiscoveryBatch(ctx)
+			nextDiscovery = a.clock.Now().Add(30 * time.Second)
 		}
 		if _, err := q.RecoverSearchJobs(ctx); err != nil {
 			a.logger.Error("search recovery failed")

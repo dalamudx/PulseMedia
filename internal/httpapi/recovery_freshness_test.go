@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"sync"
+	"testing"
+
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
 	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
@@ -11,9 +14,8 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	storetransfer "github.com/dalamudx/PulseMedia/internal/store/transfer"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"sync"
-	"testing"
 )
 
 type recoveryClockFilesystem struct {
@@ -77,14 +79,14 @@ func assertOriginalRecoveryFreshness(t *testing.T, pool *pgxpool.Pool, actor *po
 		_, e := pool.Exec(ctx, "UPDATE recovery_clock_probe SET advanced=true")
 		return e
 	}}
-	repo := storetransfer.NewRepository(clockPool, idgen.New(), outbox.New(pool, idgen.New(), clock.New()), fs)
+	repo := storetransfer.NewRepository(clockPool, idgen.New(), outbox.New(pool, idgen.New(), clock.New()), fs, transfercase.ExecutePreparedPlan)
 	preview, err := repo.PreviewOriginalTransferRecovery(ctx, actor, command.PlanID)
 	if err != nil || preview == nil || preview.Recoverable || preview.Reason != "file_observation_expired" {
 		t.Fatal("old file inspection accepted", preview, err)
 	}
 	exec("UPDATE recovery_clock_probe SET advanced=false")
 	exec("CREATE FUNCTION advance_recovery_receipt_clock() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN UPDATE recovery_clock_probe SET advanced=true;RETURN NEW;END$$;CREATE TRIGGER advance_recovery_receipt_clock BEFORE INSERT ON idempotency_record FOR EACH ROW WHEN(NEW.idempotency_key='transfer.recovery:expired-observation') EXECUTE FUNCTION advance_recovery_receipt_clock()")
-	repo = storetransfer.NewRepository(clockPool, idgen.New(), outbox.New(pool, idgen.New(), clock.New()), rootfs.NewFilesystem())
+	repo = storetransfer.NewRepository(clockPool, idgen.New(), outbox.New(pool, idgen.New(), clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	_, err = repo.CommitOriginalTransferRecovery(ctx, actor, command, "expired-observation")
 	exec("DROP TRIGGER advance_recovery_receipt_clock ON idempotency_record;DROP FUNCTION advance_recovery_receipt_clock()")
 	if !errors.Is(err, ports.ErrTransferReviewRequired) {

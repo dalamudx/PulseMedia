@@ -10,6 +10,12 @@ const unit = (id, patch = {}) => ({ id: `wanted-${id}`, unit_id: id, unit_key: i
 const sub = (patch = {}) => ({ id: 'sub-a', user_id: 'user', media_id: 'media', root_id: 'root', state: 'active', intent_version: 1, scope_type: 'all', quality_policy_id: 'default', quality_policy_revision: 1, media_type: 'tv', title: 'Series', ...patch });
 
 // Real sparse unit identities must survive; aggregate counts and array positions are not episodes.
+test('summary progress uses server counts without fabricating calendar episodes',()=>{
+  const summary=sub({total_episodes:100,satisfied_episodes:25});
+  assert.deepEqual(subscriptionProgress(summary),{mediaType:'tv',total:100,satisfied:25,percent:25});
+  assert.deepEqual(subscriptionCalendarItems([summary]),{dated:[],unknown:[]});
+});
+
 test('progress counts only eligible Wanted projections, with rounded percentages', () => {
   const wanted_items = [unit('S01E03', { is_satisfied: true }), unit('S02E07'), unit('S03E20'),
     unit('skip', { is_skipped: true, is_satisfied: true }), unit('retired', { retired: true, is_satisfied: true }),
@@ -27,7 +33,7 @@ test('media type is strict and empty or excluded denominators stay unknown', () 
       assert.deepEqual(subscriptionCalendarItems([sub({ media_type, wanted_items })]), { dated: [], unknown: [] });
     }
   }
-  for (const wanted_items of [undefined, [], [unit('a', { is_skipped: true }), unit('b', { scope_excluded: true }), unit('c', { retired: true })]]) {
+  for (const wanted_items of [[], [unit('a', { is_skipped: true }), unit('b', { scope_excluded: true }), unit('c', { retired: true })]]) {
     assert.deepEqual(subscriptionProgress(sub({ wanted_items, total_episodes: 100, satisfied_episodes: 100 })), { mediaType: 'tv', total: 0, satisfied: 0, percent: null });
   }
 });

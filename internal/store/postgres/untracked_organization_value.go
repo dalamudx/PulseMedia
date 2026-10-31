@@ -181,6 +181,10 @@ func organizationCurrent(ctx context.Context, tx pgx.Tx, m ports.UntrackedOrgani
 	if !reviewJSONSame(reviewJSON(original), reviewJSON(m.Confirmation)) {
 		return ports.ErrUntrackedOrganizationStale
 	}
+	// Explicit canonical selection must retain the versions confirmed by the user.
+	if err = reviewCanonicalSelection(ctx, tx, c.Review.Request.Input, true); err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -58,15 +58,28 @@ func (s *ServerHandler) ListIntegrationDeliveries(ctx context.Context, r ListInt
 	if s.deliveryManagementSvc == nil {
 		return deliveryFailure(ctx, ports.ErrUnavailable), nil
 	}
-	rows, e := s.deliveryManagementSvc.List(ctx, GetActor(ctx))
+	query := ports.DeliveryListQuery{Limit: 100}
+	if r.Params.Limit != nil {
+		query.Limit = *r.Params.Limit
+	}
+	if r.Params.State != nil {
+		query.State = string(*r.Params.State)
+	}
+	if r.Params.Cursor != nil {
+		query.Cursor = *r.Params.Cursor
+	}
+	if r.Params.EventId != nil {
+		query.EventID = *r.Params.EventId
+	}
+	page, e := s.deliveryManagementSvc.List(ctx, GetActor(ctx), query)
 	if e != nil {
 		return deliveryFailure(ctx, e), nil
 	}
 	items := []DeliverySummary{}
-	for _, d := range rows {
+	for _, d := range page.Items {
 		items = append(items, DeliverySummary{Id: d.ID, EventId: d.EventID, Consumer: d.Consumer, AggregateType: d.AggregateType, AggregateId: d.AggregateID, Sequence: d.Sequence, State: DeliverySummaryState(d.State), Attempts: d.Attempts, LeaseToken: d.LeaseToken, UpdatedAt: d.UpdatedAt, NotBefore: d.NotBefore, RecipientName: d.RecipientName, DuplicateRisk: d.DuplicateRisk})
 	}
-	return deliveryListSuccess{ListIntegrationDeliveries200JSONResponse{Items: items, Limit: 100}}, nil
+	return deliveryListSuccess{ListIntegrationDeliveries200JSONResponse{Items: items, Limit: page.Limit, NextCursor: page.NextCursor}}, nil
 }
 func (s *ServerHandler) ReplayIntegrationDelivery(ctx context.Context, r ReplayIntegrationDeliveryRequestObject) (ReplayIntegrationDeliveryResponseObject, error) {
 	if s.deliveryManagementSvc == nil {

@@ -139,7 +139,7 @@ func (s *SiteCheckinStore) enqueue(ctx context.Context, id uuid.UUID) error {
 type siteCheckinPermit struct {
 	mu               sync.Mutex
 	store            *SiteCheckinStore
-	conn             *pgxpool.Conn
+	conn             *PhysicalConnection
 	lease            ports.JobLease
 	snapshot         ports.SiteCheckinExecution
 	day              db.SiteCheckinDay
@@ -161,7 +161,7 @@ func (s *SiteCheckinStore) Acquire(caller context.Context, lease ports.JobLease)
 	if e != nil {
 		return nil, ports.ErrUnavailable
 	}
-	conn, e := s.pool.Acquire(caller)
+	conn, e := AcquirePhysicalConnection(caller, s.pool)
 	if e != nil {
 		return nil, e
 	}

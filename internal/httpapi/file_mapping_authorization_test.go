@@ -88,7 +88,7 @@ func exerciseFileMappingAuthority(t *testing.T, a *app.App, file uuid.UUID, comm
 			defer func() {
 				_, _ = p.Exec(context.WithoutCancel(ctx), "UPDATE app_user SET role='admin',is_active=true WHERE id=$1", user)
 			}()
-			if _, e := svc.Options(ctx, actor); !errors.Is(e, ports.ErrForbidden) {
+			if _, e := svc.Options(ctx, actor, ports.FileMappingOptionsQuery{}); !errors.Is(e, ports.ErrForbidden) {
 				t.Fatal("options leaked", e)
 			}
 			if _, e := svc.Preview(ctx, actor, file, command.MediaID); !errors.Is(e, ports.ErrForbidden) {
@@ -107,7 +107,7 @@ func exerciseFileMappingAuthority(t *testing.T, a *app.App, file uuid.UUID, comm
 		{Type: ports.ActorTypeSystem, ID: user.String(), Role: ports.RoleAdmin},
 		{Type: ports.ActorTypeUser, ID: uuid.NewString(), Role: ports.RoleAdmin},
 	} {
-		if _, e := svc.Options(ctx, bad); !errors.Is(e, ports.ErrForbidden) {
+		if _, e := svc.Options(ctx, bad, ports.FileMappingOptionsQuery{}); !errors.Is(e, ports.ErrForbidden) {
 			t.Fatal("invalid options identity", e)
 		}
 		if _, e := svc.Preview(ctx, bad, file, command.MediaID); !errors.Is(e, ports.ErrForbidden) {

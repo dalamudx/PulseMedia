@@ -98,7 +98,7 @@ func reviewActor(a *ports.Actor) (*ports.Actor, error) {
 }
 
 func reviewInputValid(in ports.UntrackedReviewInput) bool {
-	return in.ScopeVersion > 0 && in.FileRevision > 0 && (in.MediaType == "movie" || in.MediaType == "tv") && in.TMDBID >= 0
+	return in.ScopeVersion > 0 && in.FileRevision > 0 && (in.MediaType == "movie" || in.MediaType == "tv") && in.TMDBID >= 0 && in.CanonicalSelectionValid()
 }
 
 func reviewHashValid(s string) bool {
@@ -129,7 +129,7 @@ func reviewEvidenceValid(in ports.UntrackedReviewInput, e ports.UntrackedReviewE
 	if !e.Complete {
 		return e.Candidate == nil && doubanSyncASCII(e.Reason, 128, false)
 	}
-	if e.Reason != "ready" || e.Candidate == nil {
+	if e.Reason != "ready" || e.Candidate == nil || !in.CanonicalCandidateMatches(e.Candidate) {
 		return false
 	}
 	c := e.Candidate

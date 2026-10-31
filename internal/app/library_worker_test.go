@@ -8,6 +8,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
 	"github.com/dalamudx/PulseMedia/internal/platform/logging"
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
+	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
@@ -92,6 +93,10 @@ func TestAppRunOwnsLibraryScanAndMissingAfterRestart(t *testing.T) {
 				}
 				if e := a.Close(); e != nil {
 					t.Error(e)
+				}
+				s := a.stages.snapshot()[ports.StageLibraryScan]
+				if s.InFlight != 0 || s.Returned == 0 || s.Seconds <= 0 {
+					t.Errorf("scan calls not drained/observed: %+v", s)
 				}
 			})
 		}

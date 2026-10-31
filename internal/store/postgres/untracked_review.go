@@ -177,6 +177,9 @@ func reviewCurrent(ctx context.Context, tx pgx.Tx, r untrackedReviewRow, lock bo
 	if !untrackedSame(*c, r.Scope) || !reviewFileSame(*f, r.File) {
 		return ports.ErrUntrackedReviewStale
 	}
+	if err = reviewCanonicalSelection(ctx, tx, r.Request.Input, lock); err != nil {
+		return err
+	}
 	if _, err = discoveryMaterial(ctx, db.New(tx), *c); err != nil {
 		return err
 	}
@@ -277,6 +280,9 @@ func (s *UntrackedReviewStore) RequestUntrackedReview(ctx context.Context, actor
 	}
 	if c.Version != in.ScopeVersion || f.ScopeVersion != c.Version || f.Revision != in.FileRevision {
 		return nil, ports.ErrUntrackedReviewStale
+	}
+	if err = reviewCanonicalSelection(ctx, tx, in, true); err != nil {
+		return nil, err
 	}
 	if in.MediaType != c.TargetMediaType {
 		return nil, ports.ErrRejected
@@ -443,6 +449,12 @@ func (s *UntrackedReviewStore) ReadUntrackedReview(ctx context.Context, actor *p
 		return nil, err
 	}
 	out.Stale = !untrackedSame(*c, r.Scope) || !reviewFileSame(*f, r.File)
+	if e := reviewCanonicalSelection(ctx, tx, r.Request.Input, false); e != nil {
+		if !errors.Is(e, ports.ErrUntrackedReviewStale) {
+			return nil, e
+		}
+		out.Stale = true
+	}
 	if !out.Stale {
 		_, e := discoveryMaterial(ctx, db.New(tx), *c)
 		if e != nil {

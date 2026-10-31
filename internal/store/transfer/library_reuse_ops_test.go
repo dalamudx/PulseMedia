@@ -12,6 +12,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -27,7 +28,7 @@ func TestLibraryReuseDMLBackupAndMigrationPG(t *testing.T) {
 	}
 	t.Cleanup(pool.Close)
 	gen := idgen.New()
-	r = NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem())
+	r = NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	business := *f
 	business.pool, business.q = pool, postgres.Queries(pool)
 	receipt, err := r.ConfirmLibraryReuse(ctx, actor, command, "reuse-dml-original")
@@ -69,7 +70,7 @@ func TestLibraryReuseDMLBackupAndMigrationPG(t *testing.T) {
 	}
 	t.Cleanup(restoredPool.Close)
 	restoredGen := idgen.New()
-	recovered := NewRepository(restoredPool, restoredGen, outbox.New(restoredPool, restoredGen, clock.New()), rootfs.NewFilesystem())
+	recovered := NewRepository(restoredPool, restoredGen, outbox.New(restoredPool, restoredGen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	after, err := postgres.Queries(restoredPool).GetLibraryReuseContent(ctx, receipt.PlanID)
 	if err != nil || !bytes.Equal(before, after) {
 		t.Fatal("restored content differs", err)

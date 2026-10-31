@@ -1,5 +1,7 @@
 package ports
 
+import "github.com/dalamudx/PulseMedia/internal/domain/classification"
+
 // PreparedSubscriptionCreationMetadata contains provider observations fetched
 // outside a subscription transaction. Units describe actual episodes, never a
 // synthetic 1..count sequence. Seasons is the complete evidence for just the
@@ -9,9 +11,10 @@ package ports
 // This material grants no permission by itself: publication must revalidate the
 // current actor, media version, affected subscriptions, roots and command key.
 type PreparedSubscriptionCreationMetadata struct {
-	TMDBID     int64
-	PosterPath string `json:"poster_path,omitempty"`
-	Media      SubscriptionMediaInput
-	Units      []SubscriptionMediaUnitSpec
-	Seasons    []TVSeasonMetadata
+	TMDBID              int64
+	ClassificationFacts *classification.Facts `json:"classification_facts,omitempty"`
+	PosterPath          string                `json:"poster_path,omitempty"`
+	Media               SubscriptionMediaInput
+	Units               []SubscriptionMediaUnitSpec
+	Seasons             []TVSeasonMetadata
 }

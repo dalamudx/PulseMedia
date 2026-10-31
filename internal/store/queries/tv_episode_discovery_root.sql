@@ -1,0 +1,6 @@
+-- name: ReadTVEpisodeDiscoveryRootIdentity :one
+SELECT COALESCE((SELECT jsonb_build_object('device',sf.root_device,'inode',sf.root_inode,'path',sf.expected_path,'media_type',sf.expected_media_type,'marker',sf.expected_marker_filename)
+FROM library_root r JOIN scan_run sr ON sr.root_id=r.id AND sr.generation=r.generation
+JOIN scan_finalization sf ON sf.scan_run_id=sr.id AND sf.root_id=r.id
+WHERE r.id=$1 AND sr.state='succeeded' AND sf.completed_at IS NOT NULL
+ORDER BY sr.created_at,sr.id LIMIT 1),'{}'::jsonb)::jsonb AS body;

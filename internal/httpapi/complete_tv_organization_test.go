@@ -58,7 +58,7 @@ func newCompleteOrganizationFixture(t *testing.T) *completeOrganizationFixture {
 	}
 	pool := n.f.a.DBPool()
 	gen := idgen.New()
-	repo := transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem())
+	repo := transferstore.NewRepository(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem(), transfer.ExecutePreparedPlan)
 	return &completeOrganizationFixture{n: n, service: transfer.NewCompleteTVOrganizationService(repo), worker: transfer.NewService(repo), command: ports.CompleteTVOrganizationCommand{TaskID: n.request.TaskID, OperationID: n.request.OperationID, TrackingJobID: n.request.Lease.ID, ExpectedEvidenceStamp: receipt.EvidenceStamp, Confirmed: true}, source: source, target: target}
 }
 func (f *completeOrganizationFixture) confirm(key string) (*ports.CompleteTVOrganizationReceipt, error) {

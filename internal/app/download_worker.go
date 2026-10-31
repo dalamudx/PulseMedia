@@ -50,7 +50,9 @@ func (a *App) runDownloadWorker(ctx context.Context, queue *jobs.Queue, mgr *dow
 				// Every download request uses a bounded context; shutdown waits for
 				// physical I/O to return before closing the database.
 				workCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
+				finish := a.stages.begin(ports.StageDownloadSubmission)
 				result, err := handleDownloadJob(workCtx, q, mgr, job, clients[0].ID)
+				finish()
 				cancel()
 				if ctx.Err() != nil {
 					return
@@ -77,7 +79,9 @@ func (a *App) runDownloadWorker(ctx context.Context, queue *jobs.Queue, mgr *dow
 					if observeCtx.Err() != nil {
 						break
 					}
+					finish := a.stages.begin(ports.StageDownloadReconcile)
 					_, _ = mgr.ReconcileTask(observeCtx, task.OperationID)
+					finish()
 				}
 			}
 			cancel()
@@ -87,7 +91,9 @@ func (a *App) runDownloadWorker(ctx context.Context, queue *jobs.Queue, mgr *dow
 					if progressCtx.Err() != nil {
 						break
 					}
+					finish := a.stages.begin(ports.StageDownloadObserve)
 					_, _ = mgr.ObserveTask(progressCtx, task.OperationID)
+					finish()
 				}
 			}
 			cancelProgress()

@@ -53,13 +53,18 @@ func integrationRecipient(ctx context.Context, q *db.Queries, consumer string) (
 	}
 	return "", false, "", ports.ErrDeliveryCommandConflict
 }
-func (s *DeliveryManagementStore) ListIntegrationDeliveries(ctx context.Context, a *ports.Actor) ([]ports.DeliverySummary, error) {
+func (s *DeliveryManagementStore) ListIntegrationDeliveries(ctx context.Context, a *ports.Actor, query ports.DeliveryListQuery) (*ports.DeliveryListPage, error) {
 	if a == nil {
 		return nil, ports.ErrUnauthorized
 	}
 	if !a.IsAdmin() {
 		return nil, ports.ErrForbidden
 	}
+	cursor, e := decodeDeliveryListCursor(query)
+	if e != nil {
+		return nil, e
+	}
+
 	tx, e := s.pool.Begin(ctx)
 	if e != nil {
 		return nil, ports.ErrUnavailable
@@ -69,9 +74,13 @@ func (s *DeliveryManagementStore) ListIntegrationDeliveries(ctx context.Context,
 	if e = lockAcquisitionUser(ctx, q, a); e != nil {
 		return nil, e
 	}
-	rows, e := q.ListManagedIntegrationDeliveries(ctx)
+	rows, e := q.ListManagedIntegrationDeliveries(ctx, db.ListManagedIntegrationDeliveriesParams{State: query.State, HasEventID: query.EventID != uuid.Nil, EventID: query.EventID, HasCursor: query.Cursor != "", AfterUpdatedAt: pgtype.Timestamptz{Time: cursor.UpdatedAt, Valid: true}, AfterID: cursor.ID, PageLimit: int32(query.Limit + 1)})
 	if e != nil {
 		return nil, ports.ErrUnavailable
+	}
+	more := len(rows) > query.Limit
+	if more {
+		rows = rows[:query.Limit]
 	}
 	out := []ports.DeliverySummary{}
 	for _, r := range rows {
@@ -91,7 +100,12 @@ func (s *DeliveryManagementStore) ListIntegrationDeliveries(ctx context.Context,
 		}
 		out = append(out, ports.DeliverySummary{ID: r.ID, EventID: r.EventID, Consumer: r.Consumer, AggregateType: r.AggregateType, AggregateID: r.AggregateID, Sequence: r.Seq, State: r.State, Attempts: int(r.Attempts), LeaseToken: r.LeaseToken, UpdatedAt: r.UpdatedAt.Time, NotBefore: r.NotBefore.Time, RecipientName: name, DuplicateRisk: risk})
 	}
-	return out, nil
+	page := &ports.DeliveryListPage{Items: out, Limit: query.Limit}
+	if more {
+		last := rows[len(rows)-1]
+		page.NextCursor = encodeDeliveryListCursor(last.UpdatedAt.Time, last.ID, query)
+	}
+	return page, nil
 }
 func (s *DeliveryManagementStore) ReplayIntegrationDelivery(ctx context.Context, a *ports.Actor, id uuid.UUID, c ports.DeliveryReplayCommand, key, hash string) (out *ports.DeliveryReplayReceipt, err error) {
 	if a == nil {

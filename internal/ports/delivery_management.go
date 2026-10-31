@@ -37,7 +37,18 @@ type DeliveryReplayReceipt struct {
 	State      string    `json:"state"`
 	LeaseToken int64     `json:"lease_token"`
 }
+type DeliveryListQuery struct {
+	Cursor  string
+	State   string
+	EventID uuid.UUID
+	Limit   int
+}
+type DeliveryListPage struct {
+	Items      []DeliverySummary
+	Limit      int
+	NextCursor string
+}
 type DeliveryManagementRepository interface {
-	ListIntegrationDeliveries(context.Context, *Actor) ([]DeliverySummary, error)
+	ListIntegrationDeliveries(context.Context, *Actor, DeliveryListQuery) (*DeliveryListPage, error)
 	ReplayIntegrationDelivery(context.Context, *Actor, uuid.UUID, DeliveryReplayCommand, string, string) (*DeliveryReplayReceipt, error)
 }

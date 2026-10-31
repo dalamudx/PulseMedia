@@ -251,7 +251,7 @@ func TestDoubanSyncBindingsExecutionSnapshot(t *testing.T) {
 		cancel()
 		select {
 		case e := <-done:
-			requireDoubanError(t, e, ports.ErrUnavailable)
+			requireDoubanError(t, e, context.Canceled)
 		case <-time.After(5 * time.Second):
 			t.Fatal("canceled enqueue blocked")
 		}

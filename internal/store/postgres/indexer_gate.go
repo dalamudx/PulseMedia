@@ -12,7 +12,7 @@ import (
 // AcquireIndexerPermit retains physical endpoint exclusion until Release,
 // regardless of the caller's logical lease/context. No network I/O is in a tx.
 func AcquireIndexerPermit(ctx context.Context, pool *pgxpool.Pool, id uuid.UUID) (func(), error) {
-	conn, err := pool.Acquire(ctx)
+	conn, err := AcquirePhysicalConnection(ctx, pool)
 	if err != nil {
 		return nil, err
 	}

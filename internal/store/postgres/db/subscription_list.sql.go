@@ -12,6 +12,44 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countSubscriptionList = `-- name: CountSubscriptionList :one
+SELECT count(*)::bigint AS total,
+ count(*) FILTER (WHERE m.media_type='movie')::bigint AS movies,
+ count(*) FILTER (WHERE m.media_type='tv')::bigint AS tv
+FROM subscription s JOIN media m ON m.id=s.media_id JOIN library_root r ON r.id=s.root_id
+WHERE ($1::boolean OR s.user_id=$2::uuid)
+ AND (NOT $3::boolean OR s.user_id=$2::uuid)
+ AND ($4::text='' OR strpos(lower(m.title),lower($4))>0 OR strpos(s.id::text,lower($4))>0 OR ($1::boolean AND strpos(lower(r.path),lower($4))>0))
+ AND ($5::text='' OR (SELECT CASE WHEN count(*)=1 THEN min(external_id) ELSE '' END FROM media_identity WHERE media_id=m.id AND namespace='tmdb.'||m.media_type)=$5)
+`
+
+type CountSubscriptionListParams struct {
+	IsAdmin bool
+	UserID  uuid.UUID
+	OwnOnly bool
+	Search  string
+	TmdbID  string
+}
+
+type CountSubscriptionListRow struct {
+	Total  int64
+	Movies int64
+	Tv     int64
+}
+
+func (q *Queries) CountSubscriptionList(ctx context.Context, arg CountSubscriptionListParams) (CountSubscriptionListRow, error) {
+	row := q.db.QueryRow(ctx, countSubscriptionList,
+		arg.IsAdmin,
+		arg.UserID,
+		arg.OwnOnly,
+		arg.Search,
+		arg.TmdbID,
+	)
+	var i CountSubscriptionListRow
+	err := row.Scan(&i.Total, &i.Movies, &i.Tv)
+	return i, err
+}
+
 const lockSubscriptionListAccount = `-- name: LockSubscriptionListAccount :one
 SELECT id, is_active, role FROM app_user WHERE id = $1 FOR SHARE
 `
@@ -29,28 +67,100 @@ func (q *Queries) LockSubscriptionListAccount(ctx context.Context, id uuid.UUID)
 	return i, err
 }
 
+const readSubscriptionCalendarPage = `-- name: ReadSubscriptionCalendarPage :one
+WITH matched AS MATERIALIZED (
+ SELECT w.id, w.subscription_id, u.air_date, u.unit_key
+ FROM wanted_item w JOIN media_unit u ON u.id=w.unit_id
+ JOIN subscription s ON s.id=w.subscription_id JOIN media m ON m.id=s.media_id
+ WHERE ($1::boolean OR s.user_id=$2::uuid)
+ AND m.media_type='tv' AND s.state IN ('active','paused') AND NOT u.retired AND NOT w.scope_excluded
+ AND (CASE WHEN $3::boolean THEN u.air_date IS NULL ELSE u.air_date BETWEEN $4::date AND $5::date END)
+), page AS (
+ SELECT id, subscription_id, air_date, unit_key FROM matched ORDER BY air_date NULLS LAST, subscription_id, unit_key, id
+ LIMIT $7::integer OFFSET $6::integer
+)
+SELECT ARRAY(SELECT id FROM page)::uuid[] AS wanted_ids,
+ ARRAY(SELECT DISTINCT subscription_id FROM page)::uuid[] AS subscription_ids,
+ (SELECT count(*) FROM matched)::bigint AS total
+`
+
+type ReadSubscriptionCalendarPageParams struct {
+	IsAdmin      bool
+	UserID       uuid.UUID
+	UnknownDates bool
+	StartDate    pgtype.Date
+	EndDate      pgtype.Date
+	PageOffset   int32
+	PageLimit    int32
+}
+
+type ReadSubscriptionCalendarPageRow struct {
+	WantedIds       []uuid.UUID
+	SubscriptionIds []uuid.UUID
+	Total           int64
+}
+
+func (q *Queries) ReadSubscriptionCalendarPage(ctx context.Context, arg ReadSubscriptionCalendarPageParams) (ReadSubscriptionCalendarPageRow, error) {
+	row := q.db.QueryRow(ctx, readSubscriptionCalendarPage,
+		arg.IsAdmin,
+		arg.UserID,
+		arg.UnknownDates,
+		arg.StartDate,
+		arg.EndDate,
+		arg.PageOffset,
+		arg.PageLimit,
+	)
+	var i ReadSubscriptionCalendarPageRow
+	err := row.Scan(&i.WantedIds, &i.SubscriptionIds, &i.Total)
+	return i, err
+}
+
 const readSubscriptionListEntries = `-- name: ReadSubscriptionListEntries :many
-SELECT s.id, s.user_id, s.media_id, s.root_id, s.quality_policy_id, s.quality_policy_revision,
-       s.state, s.intent_version, s.scope_type, s.indexer_ids, s.downloader_id,
-       m.title AS media_title, m.year AS media_year, m.media_type,
-       r.name AS root_name, r.path AS root_path,
-       COALESCE(identity.external_id, '')::text AS tmdb_external_id
-FROM subscription s
-JOIN media m ON m.id = s.media_id
-JOIN library_root r ON r.id = s.root_id
+WITH page AS MATERIALIZED (
+ SELECT s.id
+ FROM subscription s JOIN media m ON m.id=s.media_id JOIN library_root r ON r.id=s.root_id
+ LEFT JOIN LATERAL (
+  SELECT CASE WHEN count(*)=1 THEN min(external_id) ELSE '' END AS external_id
+  FROM media_identity WHERE media_id=m.id AND namespace='tmdb.'||m.media_type
+ ) identity ON true
+ WHERE ($1::boolean OR s.user_id=$2::uuid)
+ AND (NOT $3::boolean OR s.user_id=$2::uuid)
+ AND ($4::text='' OR strpos(lower(m.title),lower($4))>0 OR strpos(s.id::text,lower($4))>0 OR ($1::boolean AND strpos(lower(r.path),lower($4))>0))
+ AND ($5::text='' OR identity.external_id=$5)
+ AND ($6::text='' OR m.media_type=$6)
+ AND (NOT $7::boolean OR s.id=ANY($8::uuid[]))
+ ORDER BY s.created_at DESC,s.id DESC
+ LIMIT $10::integer OFFSET $9::integer
+)
+SELECT s.id,s.user_id,s.media_id,s.root_id,s.quality_policy_id,s.quality_policy_revision,
+ s.state,s.intent_version,s.scope_type,s.indexer_ids,s.downloader_id,
+ m.title AS media_title,m.year AS media_year,m.media_type,r.name AS root_name,r.path AS root_path,
+ COALESCE(identity.external_id,'')::text AS tmdb_external_id,
+ CASE WHEN artwork.provider='tmdb' AND artwork.namespace='tmdb.'||m.media_type
+ AND artwork.metadata_version=m.metadata_version AND artwork.external_id=identity.external_id
+ THEN artwork.poster_path ELSE '' END::text AS poster_path,
+ (SELECT count(*) FROM wanted_item w JOIN media_unit u ON u.id=w.unit_id WHERE w.subscription_id=s.id AND NOT w.is_skipped AND NOT w.scope_excluded AND NOT u.retired)::bigint AS total_episodes,
+ (SELECT count(*) FROM wanted_item w JOIN media_unit u ON u.id=w.unit_id JOIN wanted_projection_validity p ON p.id=w.id WHERE w.subscription_id=s.id AND NOT w.is_skipped AND NOT w.scope_excluded AND NOT u.retired AND w.is_satisfied AND p.inputs_current AND w.next_evaluate_at>transaction_timestamp() AND (w.projection_valid_until IS NULL OR w.projection_valid_until>transaction_timestamp()))::bigint AS satisfied_episodes
+FROM page JOIN subscription s ON s.id=page.id JOIN media m ON m.id=s.media_id JOIN library_root r ON r.id=s.root_id
+LEFT JOIN media_artwork artwork ON artwork.media_id=m.id
 LEFT JOIN LATERAL (
-    SELECT CASE WHEN count(*) = 1 THEN min(external_id) ELSE '' END AS external_id
-    FROM media_identity
-    WHERE media_id = m.id
-      AND namespace = CASE m.media_type WHEN 'movie' THEN 'tmdb.movie' WHEN 'tv' THEN 'tmdb.tv' END
+ SELECT CASE WHEN count(*)=1 THEN min(external_id) ELSE '' END AS external_id
+ FROM media_identity WHERE media_id=m.id AND namespace='tmdb.'||m.media_type
 ) identity ON true
-WHERE $1::boolean OR s.user_id = $2::uuid
-ORDER BY s.created_at DESC
+ORDER BY s.created_at DESC,s.id DESC
 `
 
 type ReadSubscriptionListEntriesParams struct {
-	IsAdmin bool
-	UserID  uuid.UUID
+	IsAdmin         bool
+	UserID          uuid.UUID
+	OwnOnly         bool
+	Search          string
+	TmdbID          string
+	MediaType       string
+	Calendar        bool
+	SubscriptionIds []uuid.UUID
+	PageOffset      int32
+	PageLimit       int32
 }
 
 type ReadSubscriptionListEntriesRow struct {
@@ -71,11 +181,24 @@ type ReadSubscriptionListEntriesRow struct {
 	RootName              string
 	RootPath              string
 	TmdbExternalID        string
+	PosterPath            string
+	TotalEpisodes         int64
+	SatisfiedEpisodes     int64
 }
 
-// Keep list order; expose only one identity in the actual media type's native namespace.
 func (q *Queries) ReadSubscriptionListEntries(ctx context.Context, arg ReadSubscriptionListEntriesParams) ([]ReadSubscriptionListEntriesRow, error) {
-	rows, err := q.db.Query(ctx, readSubscriptionListEntries, arg.IsAdmin, arg.UserID)
+	rows, err := q.db.Query(ctx, readSubscriptionListEntries,
+		arg.IsAdmin,
+		arg.UserID,
+		arg.OwnOnly,
+		arg.Search,
+		arg.TmdbID,
+		arg.MediaType,
+		arg.Calendar,
+		arg.SubscriptionIds,
+		arg.PageOffset,
+		arg.PageLimit,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +224,9 @@ func (q *Queries) ReadSubscriptionListEntries(ctx context.Context, arg ReadSubsc
 			&i.RootName,
 			&i.RootPath,
 			&i.TmdbExternalID,
+			&i.PosterPath,
+			&i.TotalEpisodes,
+			&i.SatisfiedEpisodes,
 		); err != nil {
 			return nil, err
 		}
@@ -113,20 +239,13 @@ func (q *Queries) ReadSubscriptionListEntries(ctx context.Context, arg ReadSubsc
 }
 
 const readSubscriptionListWanted = `-- name: ReadSubscriptionListWanted :many
-SELECT w.id, w.subscription_id, w.unit_id, w.is_skipped,
-       CASE WHEN p.inputs_current AND w.next_evaluate_at > clock_timestamp()
-            AND (w.projection_valid_until IS NULL OR w.projection_valid_until > clock_timestamp())
-            THEN w.is_satisfied ELSE false END AS is_satisfied,
-       CASE WHEN p.inputs_current AND w.next_evaluate_at > clock_timestamp()
-            AND (w.projection_valid_until IS NULL OR w.projection_valid_until > clock_timestamp())
-            THEN COALESCE(w.current_fact_stage, '') ELSE '' END AS current_fact_stage,
-       u.unit_key, u.air_date, u.absolute_number, u.retired, u.metadata_version,
-       w.user_skipped, w.scope_excluded
-FROM wanted_item w
-JOIN media_unit u ON u.id = w.unit_id
-JOIN wanted_projection_validity p ON p.id = w.id
-WHERE w.subscription_id = ANY($1::uuid[])
-ORDER BY w.subscription_id, u.unit_key ASC
+SELECT w.id,w.subscription_id,w.unit_id,w.is_skipped,
+ CASE WHEN p.inputs_current AND w.next_evaluate_at>transaction_timestamp() AND (w.projection_valid_until IS NULL OR w.projection_valid_until>transaction_timestamp()) THEN w.is_satisfied ELSE false END AS is_satisfied,
+ CASE WHEN p.inputs_current AND w.next_evaluate_at>transaction_timestamp() AND (w.projection_valid_until IS NULL OR w.projection_valid_until>transaction_timestamp()) THEN COALESCE(w.current_fact_stage,'') ELSE '' END AS current_fact_stage,
+ u.unit_key,u.air_date,u.absolute_number,u.retired,u.metadata_version,w.user_skipped,w.scope_excluded
+FROM wanted_item w JOIN media_unit u ON u.id=w.unit_id JOIN wanted_projection_validity p ON p.id=w.id
+WHERE w.id=ANY($1::uuid[])
+ORDER BY w.subscription_id,u.unit_key,w.id
 `
 
 type ReadSubscriptionListWantedRow struct {
@@ -145,9 +264,8 @@ type ReadSubscriptionListWantedRow struct {
 	ScopeExcluded    bool
 }
 
-// Apply exactly the same validity and expiry rules as ListWantedItemsWithUnitDetails.
-func (q *Queries) ReadSubscriptionListWanted(ctx context.Context, subscriptionIds []uuid.UUID) ([]ReadSubscriptionListWantedRow, error) {
-	rows, err := q.db.Query(ctx, readSubscriptionListWanted, subscriptionIds)
+func (q *Queries) ReadSubscriptionListWanted(ctx context.Context, wantedIds []uuid.UUID) ([]ReadSubscriptionListWantedRow, error) {
+	rows, err := q.db.Query(ctx, readSubscriptionListWanted, wantedIds)
 	if err != nil {
 		return nil, err
 	}
@@ -184,8 +302,6 @@ const setSubscriptionListReadOnly = `-- name: SetSubscriptionListReadOnly :exec
 SET TRANSACTION READ ONLY
 `
 
-// PostgreSQL permits making this transaction read-only after the account lock.
-// The lock stays held through the REPEATABLE READ business snapshot.
 func (q *Queries) SetSubscriptionListReadOnly(ctx context.Context) error {
 	_, err := q.db.Exec(ctx, setSubscriptionListReadOnly)
 	return err

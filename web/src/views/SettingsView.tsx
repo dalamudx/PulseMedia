@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Key, Radio, Download, Tv, Terminal } from "lucide-react";
 import { api } from "@/api/client";
-import { DeliveryPanel } from "@/features/configuration/DeliveryPanel";
-import { WebPushPanel } from "@/features/configuration/WebPushPanel";
-import { EndpointConfigurationPanel } from "@/features/configuration/EndpointConfigurationPanel";
-import {LibraryRootsPanel} from "@/features/configuration/LibraryRootsPanel";
-import { TMDBSettingsPanel } from "@/features/configuration/TMDBSettingsPanel";
-import { PolicyPanel } from "@/features/configuration/PolicyPanel";
-import { NamingTemplatesPanel } from "@/features/configuration/NamingTemplatesPanel";
-import { LiveLogPanel } from "@/features/configuration/LiveLogPanel";
-import { DoubanSyncSettingsPanel } from "@/features/configuration/DoubanSyncSettingsPanel";
-import { CheckinSettingsPanel } from "@/features/configuration/CheckinSettingsPanel";
-import { CookieCloudSettingsPanel } from "@/features/configuration/CookieCloudSettingsPanel";
-import { SeedingSettingsPanel } from "@/features/configuration/SeedingSettingsPanel";
-import {FanartSettingsPanel} from "@/features/configuration/FanartSettingsPanel";
-import {AuditTimelinePanel} from "@/features/configuration/AuditTimelinePanel";
+import { LazyContent } from "@/components/common/LazyContent";
+const DeliveryPanel = React.lazy(() => import("@/features/configuration/DeliveryPanel").then(module => ({ default: module.DeliveryPanel })));
+const WebPushPanel = React.lazy(() => import("@/features/configuration/WebPushPanel").then(module => ({ default: module.WebPushPanel })));
+const EndpointConfigurationPanel = React.lazy(() => import("@/features/configuration/EndpointConfigurationPanel").then(module => ({ default: module.EndpointConfigurationPanel })));
+const LibraryRootsPanel = React.lazy(() => import("@/features/configuration/LibraryRootsPanel").then(module => ({ default: module.LibraryRootsPanel })));
+const TMDBSettingsPanel = React.lazy(() => import("@/features/configuration/TMDBSettingsPanel").then(module => ({ default: module.TMDBSettingsPanel })));
+const MetadataDiagnosticsPanel = React.lazy(() => import("@/features/configuration/MetadataDiagnosticsPanel").then(module => ({ default: module.MetadataDiagnosticsPanel })));
+const PolicyPanel = React.lazy(() => import("@/features/configuration/PolicyPanel").then(module => ({ default: module.PolicyPanel })));
+const NamingTemplatesPanel = React.lazy(() => import("@/features/configuration/NamingTemplatesPanel").then(module => ({ default: module.NamingTemplatesPanel })));
+const LiveLogPanel = React.lazy(() => import("@/features/configuration/LiveLogPanel").then(module => ({ default: module.LiveLogPanel })));
+const DoubanSyncSettingsPanel = React.lazy(() => import("@/features/configuration/DoubanSyncSettingsPanel").then(module => ({ default: module.DoubanSyncSettingsPanel })));
+const CheckinSettingsPanel = React.lazy(() => import("@/features/configuration/CheckinSettingsPanel").then(module => ({ default: module.CheckinSettingsPanel })));
+const CookieCloudSettingsPanel = React.lazy(() => import("@/features/configuration/CookieCloudSettingsPanel").then(module => ({ default: module.CookieCloudSettingsPanel })));
+const SeedingSettingsPanel = React.lazy(() => import("@/features/configuration/SeedingSettingsPanel").then(module => ({ default: module.SeedingSettingsPanel })));
+const FanartSettingsPanel = React.lazy(() => import("@/features/configuration/FanartSettingsPanel").then(module => ({ default: module.FanartSettingsPanel })));
+const AuditTimelinePanel = React.lazy(() => import("@/features/configuration/AuditTimelinePanel").then(module => ({ default: module.AuditTimelinePanel })));
+const ClassificationSettingsPanel = React.lazy(() => import("@/features/configuration/ClassificationSettingsPanel").then(module => ({ default: module.ClassificationSettingsPanel })));
+const SeerrSettingsPanel = React.lazy(() => import("@/features/configuration/SeerrSettingsPanel").then(module => ({ default: module.SeerrSettingsPanel })));
 import { useAuth } from "@/features/auth/AuthContext";
 import type { paths } from "@/api/client";
 
@@ -23,7 +27,7 @@ type SystemStatus = paths["/api/v1/system/status"]["get"]["responses"]["200"]["c
 export const SettingsView: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<
-    "fanart" | "audit" | "webpush" | "cookiecloud" | "seeding" | "roots" | "tmdb" | "douban" | "checkin" | "downloader" | "mediaserver" | "system" | "logs" | "policy" | "deliveries"
+    "classification" | "seerr" | "fanart" | "audit" | "webpush" | "cookiecloud" | "seeding" | "roots" | "tmdb" | "douban" | "checkin" | "downloader" | "mediaserver" | "system" | "logs" | "policy" | "deliveries"
   >("tmdb");
 
 
@@ -57,6 +61,7 @@ export const SettingsView: React.FC = () => {
       <div className="settings-layout">
         {/* Left Category Tabs */}
         <aside className="settings-nav">
+          <div className="settings-nav-group">元数据来源</div>
           <button className={`nav-tab-btn ${activeTab === "tmdb" ? "active" : ""}`} onClick={() => setActiveTab("tmdb")}>
             <Key size={16} />
             <span>TMDB 元数据</span>
@@ -67,9 +72,11 @@ export const SettingsView: React.FC = () => {
           </button>
           {user?.role === "admin" && <button className={`nav-tab-btn ${activeTab === "fanart" ? "active" : ""}`} onClick={() => setActiveTab("fanart")}><Key size={16}/><span>Fanart艺术画报</span></button>}
           {user?.role === "admin" && <button className={`nav-tab-btn ${activeTab === "audit" ? "active" : ""}`} onClick={() => setActiveTab("audit")}><Terminal size={16}/><span>系统操作审计</span></button>}
+          <div className="settings-nav-group">站点自动化</div>
           {user?.role === "admin" && <button className={`nav-tab-btn ${activeTab === "checkin" ? "active" : ""}`} onClick={() => setActiveTab("checkin")}><Radio size={16} /><span>站点定时签到</span></button>}
           {user?.role === "admin" && <button className={`nav-tab-btn ${activeTab === "cookiecloud" ? "active" : ""}`} onClick={() => setActiveTab("cookiecloud")}><Key size={16}/><span>CookieCloud同步</span></button>}
           {user?.role === "admin" && <button className={`nav-tab-btn ${activeTab === "seeding" ? "active" : ""}`} onClick={() => setActiveTab("seeding")}><Download size={16}/><span>做种策略</span></button>}
+          <div className="settings-nav-group">下载与整理</div>
           <button className={`nav-tab-btn ${activeTab === "downloader" ? "active" : ""}`} onClick={() => setActiveTab("downloader")}>
             <Download size={16} />
             <span>下载器配置</span>
@@ -79,9 +86,12 @@ export const SettingsView: React.FC = () => {
             <span>媒体服务器</span>
           </button>
           <button className={`nav-tab-btn ${activeTab === "policy" ? "active" : ""}`} onClick={() => setActiveTab("policy")}><Terminal size={16} /><span>质量与过滤策略</span></button>
+          <div className="settings-nav-group">通知</div>
           <button className={`nav-tab-btn ${activeTab === "webpush" ? "active" : ""}`} onClick={() => setActiveTab("webpush")}><Radio size={16}/><span>浏览器通知</span></button>
           {user?.role==="admin"&&<button className={`nav-tab-btn ${activeTab==="deliveries"?"active":""}`} onClick={()=>setActiveTab("deliveries")}><Radio size={16}/><span>通知与投递</span></button>}
           <button className={`nav-tab-btn ${activeTab === "roots" ? "active" : ""}`} onClick={()=>setActiveTab("roots")}><Tv size={16}/><span>媒体根与基线</span></button>
+{user?.role === "admin" && <><button className={`nav-tab-btn ${activeTab === "classification" ? "active" : ""}`} onClick={()=>setActiveTab("classification")}>媒体自动分类</button><button className={`nav-tab-btn ${activeTab === "seerr" ? "active" : ""}`} onClick={()=>setActiveTab("seerr")}>外部求片接入</button></>}
+          <div className="settings-nav-group">系统</div>
         <button className={`nav-tab-btn ${activeTab === "system" ? "active" : ""}`} onClick={() => setActiveTab("system")}>
             <Terminal size={16} />
             <span>系统运行参数</span>
@@ -95,6 +105,9 @@ export const SettingsView: React.FC = () => {
 
         {/* Right Main Content Panel */}
         <main className="settings-content">
+          <LazyContent key={`${user?.id}:${user?.role}:${activeTab}`}>
+{activeTab === "classification" && user?.role === "admin" && <ClassificationSettingsPanel />}
+{activeTab === "seerr" && user?.role === "admin" && <SeerrSettingsPanel />}
           {activeTab === "fanart" && user?.role === "admin" && <FanartSettingsPanel />}
           {activeTab === "audit" && user?.role === "admin" && <AuditTimelinePanel />}
           {activeTab === "roots" && <LibraryRootsPanel />}
@@ -102,7 +115,7 @@ export const SettingsView: React.FC = () => {
           {activeTab === "webpush" && <WebPushPanel /> }
         {activeTab==="deliveries"&&user?.role==="admin"&&<DeliveryPanel/>}
           {/* 1. TMDB */}
-          {activeTab === "tmdb" && <TMDBSettingsPanel />}
+          {activeTab === "tmdb" && <><TMDBSettingsPanel /><MetadataDiagnosticsPanel /></>}
 
           {/* 2. Douban */}
           {activeTab === "douban" && <DoubanSyncSettingsPanel />}
@@ -137,6 +150,7 @@ export const SettingsView: React.FC = () => {
           {activeTab === "logs" && <LiveLogPanel userID={user?.id ?? ""} role={user?.role ?? ""} />}
 
 
+          </LazyContent>
         </main>
       </div>
     </div>

@@ -22,7 +22,7 @@ import (
 )
 
 func previewRepo(f *completeOrganizationFixture) *transferstore.Repository {
-	return transferstore.NewRepository(f.n.f.a.DBPool(), idgen.New(), nil, nil)
+	return transferstore.NewRepository(f.n.f.a.DBPool(), idgen.New(), nil, nil, transfer.ExecutePreparedPlan)
 }
 func organizationPreviewRouter(f *completeOrganizationFixture) http.Handler {
 	a := f.n.f.a

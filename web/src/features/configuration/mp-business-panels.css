@@ -1,0 +1,45 @@
+.seerr-settings-panel .form {
+  display: grid;
+  gap: 1rem;
+}
+.seerr-settings-panel .form-group {
+  margin: 0;
+}
+.seerr-settings-panel .seerr-enabled,
+.subtitle-candidates-panel .subtitle-candidate-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.seerr-settings-panel .seerr-enabled input,
+.subtitle-candidates-panel .subtitle-candidate-option input {
+  width: auto;
+  flex: 0 0 auto;
+  margin-top: 0.25rem;
+}
+.seerr-settings-panel button[type="submit"],
+.subtitle-candidates-panel fieldset button {
+  justify-self: start;
+}
+.subtitle-candidates-panel fieldset {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+.subtitle-candidates-panel legend {
+  margin-bottom: 0.5rem;
+}
+.subtitle-candidates-panel .subtitle-candidate-option {
+  margin: 0;
+}
+.subtitle-candidates-panel .subtitle-candidate-title,
+.subtitle-candidates-panel .subtitle-candidate-summary {
+  display: block;
+}
+.subtitle-candidates-panel .subtitle-timestamp {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}

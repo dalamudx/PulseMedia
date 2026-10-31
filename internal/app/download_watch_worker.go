@@ -117,6 +117,10 @@ func (a *App) runDownloadWatch(ctx context.Context, repo ports.DownloadWatchRepo
 					}
 					callCtx, cancel := context.WithTimeout(sourceContext(work.source), o.observationTimeout)
 					defer cancel()
+					if a != nil && work.target.Kind == "ordinary" {
+						finish := a.stages.begin(ports.StageDownloadObserve)
+						defer finish()
+					}
 					result, err := observer.ObserveDownloadWatchTarget(callCtx, work.target)
 					if errors.Is(err, ports.ErrDownloadWatchStale) {
 						work.source.cancel()

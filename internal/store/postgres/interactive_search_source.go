@@ -38,6 +38,12 @@ func authorizeInteractiveSource(ctx context.Context, q *db.Queries, l ports.Inte
 	if !u.IsActive || u.Role != h.ActorRole {
 		return ports.ErrForbidden
 	}
+	if e := AuthorizeMovieDiscoverySearch(ctx, q, h.ID); e != nil {
+		return e
+	}
+	if e := AuthorizeTVEpisodeDiscoverySearch(ctx, q, h.ID); e != nil {
+		return e
+	}
 	if h.SubscriptionID != nil {
 		v, e := q.InteractiveSearchLockSubscription(ctx, *h.SubscriptionID)
 		if e != nil {

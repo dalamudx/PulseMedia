@@ -16,6 +16,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/pgtest"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -55,7 +56,7 @@ func TestVerifiedActionDMLBackupAndMigrationPG(t *testing.T) {
 	}
 	t.Cleanup(pool.Close)
 	gen := idgen.New()
-	f.svc = NewService(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem())
+	f.svc = NewService(pool, gen, outbox.New(pool, gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	if err = f.svc.ExecutePlan(ctx, plan.ID); err != nil {
 		t.Fatal("DML execution", err)
 	}
@@ -84,7 +85,7 @@ func TestVerifiedActionDMLBackupAndMigrationPG(t *testing.T) {
 	}
 	t.Cleanup(restoredPool.Close)
 	restoredGen := idgen.New()
-	restoredService := NewService(restoredPool, restoredGen, outbox.New(restoredPool, restoredGen, clock.New()), rootfs.NewFilesystem())
+	restoredService := NewService(restoredPool, restoredGen, outbox.New(restoredPool, restoredGen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	after, err := postgres.Queries(restoredPool).GetVerifiedTransferContent(ctx, step.ID)
 	if err != nil || !bytes.Equal(before, after) {
 		t.Fatal("restored content evidence changed", err)

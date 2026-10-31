@@ -1,5 +1,12 @@
 -- name: ListFileMappingOptions :many
-SELECT f.id,f.root_id,f.rel_path,r.name AS root_name FROM library_file f JOIN library_root r ON r.id=f.root_id WHERE f.retired_at IS NULL ORDER BY f.created_at DESC,f.id LIMIT 100;
+SELECT f.id,f.root_id,f.rel_path,r.name AS root_name,f.created_at
+FROM library_file f JOIN library_root r ON r.id=f.root_id
+WHERE f.retired_at IS NULL
+  AND (sqlc.narg(root_id)::uuid IS NULL OR f.root_id=sqlc.narg(root_id)::uuid)
+  AND (sqlc.narg(before_created_at)::timestamptz IS NULL
+    OR f.created_at<sqlc.narg(before_created_at)::timestamptz
+    OR (f.created_at=sqlc.narg(before_created_at)::timestamptz AND f.id>sqlc.arg(before_id)::uuid))
+ORDER BY f.created_at DESC,f.id LIMIT 101;
 -- name: ListFileMappingMediaOptions :many
 SELECT id,title,media_type FROM media ORDER BY updated_at DESC,id LIMIT 100;
 

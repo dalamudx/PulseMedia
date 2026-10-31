@@ -27,7 +27,10 @@ func NewAuthenticationStore(pool *pgxpool.Pool) *AuthenticationStore {
 var _ ports.AuthenticationRepository = (*AuthenticationStore)(nil)
 
 type authenticationSetup struct{ queries *db.Queries }
-type authenticationSessions struct{ queries *db.Queries }
+type authenticationSessions struct {
+	queries *db.Queries
+	*mfaTransaction
+}
 
 func authenticationError(err error) error {
 	if err == nil {
@@ -97,11 +100,11 @@ func (s *AuthenticationStore) WithLoginAccount(ctx context.Context, id uuid.UUID
 	}
 	defer func() { _ = tx.Rollback(context.WithoutCancel(ctx)) }()
 	q := db.New(tx)
-	u, err := q.LockUserForLogin(ctx, id)
+	u, err := q.LockAccountForSecurity(ctx, id)
 	if err != nil {
 		return authenticationError(err)
 	}
-	if err := fn(ports.AuthenticationAccount{User: authenticationUser(u), PasswordHash: u.PasswordHash}, &authenticationSessions{queries: q}); err != nil {
+	if err := fn(ports.AuthenticationAccount{User: authenticationUser(u), PasswordHash: u.PasswordHash}, &authenticationSessions{queries: q, mfaTransaction: &mfaTransaction{tx: tx, user: id}}); err != nil {
 		return err
 	}
 	return authenticationError(tx.Commit(ctx))

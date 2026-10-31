@@ -96,7 +96,7 @@ func TestParseLogLevelFallsBackToInfo(t *testing.T) {
 func readLogStream(t *testing.T, ctx context.Context, hub *SSEHub, minimum slog.Level, want func([]string) bool) []string {
 	t.Helper()
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hub.ServeLogs(w, r, minimum)
+		hub.ServeLogs(w, r, minimum, func(context.Context) bool { return true })
 	}))
 	defer server.Close()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL+"/api/v1/system/logs", nil)

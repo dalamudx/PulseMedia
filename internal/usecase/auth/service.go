@@ -17,10 +17,11 @@ const (
 )
 
 type Service struct {
-	repo    ports.AuthenticationRepository
-	secrets ports.AuthenticationSecrets
-	clock   ports.Clock
-	idgen   ports.IDGen
+	repo      ports.AuthenticationRepository
+	secrets   ports.AuthenticationSecrets
+	clock     ports.Clock
+	idgen     ports.IDGen
+	mfaCipher ports.SettingsCipher
 }
 
 func NewService(repo ports.AuthenticationRepository, secrets ports.AuthenticationSecrets, clock ports.Clock, idgen ports.IDGen) *Service {
@@ -77,7 +78,17 @@ func (s *Service) SetupAdmin(ctx context.Context, username, password string) (*p
 
 // Login checks the password outside the transaction, then revalidates the locked
 // account before issuing a session. The current role is returned to the caller.
-func (s *Service) Login(ctx context.Context, username, password string) (*ports.User, string, error) {
+func (s *Service) Login(ctx context.Context, username, password string, factors ...ports.MFAProof) (*ports.User, string, error) {
+	if len(username) > 80 || len(password) > 1024 || len(factors) > 1 {
+		return nil, "", ports.ErrInvalidCredentials
+	}
+	proof := ports.MFAProof{}
+	if len(factors) == 1 {
+		proof = factors[0]
+	}
+	if !validProof(proof) {
+		return nil, "", ports.ErrInvalidCredentials
+	}
 	account, err := s.repo.FindAccount(ctx, strings.TrimSpace(username))
 	if errors.Is(err, ports.ErrAuthenticationNotFound) {
 		return nil, "", ports.ErrInvalidCredentials
@@ -99,6 +110,11 @@ func (s *Service) Login(ctx context.Context, username, password string) (*ports.
 		}
 		if current.PasswordHash != account.PasswordHash {
 			return ports.ErrInvalidCredentials
+		}
+		if mfa, ok := tx.(ports.MFATransaction); ok {
+			if e := verifyMFA(ctx, mfa, s.mfaCipher, s.secrets, s.clock.Now(), proof); e != nil {
+				return e
+			}
 		}
 		user = current.User
 		var err error

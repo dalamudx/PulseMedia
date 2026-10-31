@@ -29,6 +29,9 @@ func NewDownloadSubmissionStore(pool *pgxpool.Pool, ids ports.IDGen) *DownloadSu
 var _ ports.DownloadSubmissionRepository = (*DownloadSubmissionStore)(nil)
 
 func (s *DownloadSubmissionStore) AttachRequirement(ctx context.Context, a *ports.Actor, op, unit, root uuid.UUID) error {
+	if err := RejectTVEpisodeUpgradeOperation(ctx, s.pool, op); err != nil {
+		return err
+	}
 	if a == nil {
 		return ports.ErrUnauthorized
 	}
@@ -115,6 +118,9 @@ func (s *DownloadSubmissionStore) ReleaseRequirement(ctx context.Context, a *por
 	return s.releaseRequirement(ctx, a, op, unit, root, nil)
 }
 func (s *DownloadSubmissionStore) releaseRequirement(ctx context.Context, a *ports.Actor, op, unit, root uuid.UUID, c *ports.RequirementWithdrawalCommand) (bool, error) {
+	if err := RejectTVEpisodeUpgradeOperation(ctx, s.pool, op); err != nil {
+		return false, err
+	}
 	if e := acquisitionCommandActor(a); e != nil {
 		return false, e
 	}
@@ -274,6 +280,9 @@ func (s *DownloadSubmissionStore) CompleteSubmission(ctx context.Context, lease 
 	if e != nil {
 		return nil, ports.ErrUnavailable
 	}
+	if e = RejectTVEpisodeUpgradeOperation(ctx, tx, hint.OperationID); e != nil {
+		return nil, e
+	}
 	if _, e = q.LockDownloadTaskUnits(ctx, taskID); e != nil {
 		return nil, ports.ErrUnavailable
 	}
@@ -349,6 +358,9 @@ func sortedUUIDKeys[V any](values map[uuid.UUID]V) []uuid.UUID {
 	return ids
 }
 func (s *DownloadSubmissionStore) PrepareSubmission(ctx context.Context, c ports.DownloadSubmissionCommand) (receipt *ports.DownloadSubmissionReceipt, err error) {
+	if err := RejectTVEpisodeUpgradeOperation(ctx, s.pool, c.OperationID); err != nil {
+		return nil, err
+	}
 	defer func() {
 		if err != nil && ctx.Err() != nil {
 			err = ctx.Err()

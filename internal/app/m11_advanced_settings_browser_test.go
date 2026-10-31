@@ -107,7 +107,7 @@ func TestM11AdvancedSettingsChromePG(t *testing.T) {
 	files := http.FileServer(http.Dir(assets))
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.HasPrefix(r.URL.Path, "/api/") {
-			if strings.HasPrefix(r.URL.Path, "/assets/") {
+			if strings.HasPrefix(r.URL.Path, "/assets/") || r.URL.Path == "/theme.js" || r.URL.Path == "/pulse-push-sw.js" {
 				files.ServeHTTP(w, r)
 			} else {
 				http.ServeFile(w, r, filepath.Join(assets, "index.html"))

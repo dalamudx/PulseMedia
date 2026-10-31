@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/classification"
 	"github.com/dalamudx/PulseMedia/internal/domain/media"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 )
@@ -70,6 +71,11 @@ func PrepareSubscriptionCreationMetadata(ctx context.Context, provider ports.Met
 			return nil, err
 		}
 		out.PosterPath = media.TMDBPosterPath(details.PosterURL)
+		facts, factsErr := classification.MetadataFacts(mediaType, details.Genres, details.OriginalLanguage, details.Countries)
+		if factsErr != nil {
+			return nil, ports.ErrBadResponse
+		}
+		out.ClassificationFacts = &facts
 		out.Units = append(out.Units, ports.SubscriptionMediaUnitSpec{UnitKey: media.FormatMovieUnitKey()})
 	} else {
 		details, err := provider.GetTVDetails(network, tmdbID, "zh-CN")
@@ -87,6 +93,11 @@ func PrepareSubscriptionCreationMetadata(ctx context.Context, provider ports.Met
 			return nil, err
 		}
 		out.PosterPath = media.TMDBPosterPath(details.PosterURL)
+		facts, factsErr := classification.MetadataFacts(mediaType, details.Genres, details.OriginalLanguage, details.Countries)
+		if factsErr != nil {
+			return nil, ports.ErrBadResponse
+		}
+		out.ClassificationFacts = &facts
 		out.Media.Seasons, err = creationMetadataSelectSeasons(details, requested, includeSpecials)
 		if err != nil {
 			return nil, err

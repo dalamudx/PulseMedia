@@ -105,7 +105,14 @@ func (s *CompleteTVTrackingStore) CommitCompleteTVTracking(ctx context.Context, 
 	if beforeOK && afterOK {
 		state, reason = "tracking", ""
 		if trackingCompleted(remote.Before[0]) && trackingCompleted(remote.After[0]) {
-			if remote.Files == nil || !remote.Metainfo.ValidateBinding() {
+			if remote.Files == nil {
+				return nil, ports.ErrUnavailable
+			}
+			client, e := db.New(tx).GetDownloadClientByID(ctx, current.ClientID)
+			if e != nil {
+				return nil, e
+			}
+			if client.ClientType != "transmission" && !remote.Metainfo.ValidateBinding() {
 				return nil, ports.ErrUnavailable
 			}
 			prepared, e := db.New(tx).GetCompleteTVPreparation(ctx, snapshot.Request.OperationID)
@@ -116,7 +123,15 @@ func (s *CompleteTVTrackingStore) CommitCompleteTVTracking(ctx context.Context, 
 			if json.Unmarshal(prepared.Proof, &proof) != nil {
 				return nil, ports.ErrCompleteTVObservationStale
 			}
-			if trackingFiles(proof, remote.Metainfo, remote.Files) {
+			valid := false
+			if client.ClientType == "transmission" {
+				// Only the original immutable preparation may supply the full manifest.
+				// Adapter claims and exported/synthesized replacements are not authority.
+				valid = trackingOriginalFiles(proof, remote.Files)
+			} else {
+				valid = trackingFiles(proof, remote.Metainfo, remote.Files)
+			}
+			if valid {
 				state = "completed"
 			} else {
 				state, reason = "unknown", "complete TV file set requires manual review"
@@ -519,7 +534,10 @@ func trackingFiles(p completeTVPreparedProof, metainfo *ports.CompleteTVMetainfo
 	if !metainfo.ValidateBinding() || metainfo.InfoHash() != p.InfoHash || metainfo.TotalBytes() != p.TotalBytes {
 		return false
 	}
-	full := metainfo.Files()
+	return trackingManifestFiles(p, metainfo.Files(), files)
+}
+
+func trackingManifestFiles(p completeTVPreparedProof, full []media.TVTorrentFile, files []ports.TorrentFile) bool {
 	if len(files) != len(full) || len(files) < 2 {
 		return false
 	}

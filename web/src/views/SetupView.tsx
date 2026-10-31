@@ -9,6 +9,7 @@ export const SetupView: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [deploymentToken, setDeploymentToken] = useState("");
 
   const passwordMismatch = Boolean(
     password && confirmPassword && password !== confirmPassword
@@ -17,8 +18,9 @@ export const SetupView: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordMismatch) return;
-    const ok = await setup(username, password);
+    const ok = await setup(username, password, deploymentToken);
     if (ok) {
+      setDeploymentToken("");
       navigate("/");
     }
   };
@@ -80,6 +82,22 @@ export const SetupView: React.FC = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="setup-deployment-token">部署令牌（本地直连可留空）</label>
+            <div className="input-wrap">
+              <input
+                id="setup-deployment-token"
+                type="password"
+                autoComplete="off"
+                spellCheck={false}
+                value={deploymentToken}
+                onChange={(e) => setDeploymentToken(e.target.value)}
+                aria-describedby="setup-token-help"
+              />
+            </div>
+            <small id="setup-token-help">通过局域网或容器映射端口初始化时，请填写部署者提供的令牌。</small>
           </div>
 
           {passwordMismatch && (

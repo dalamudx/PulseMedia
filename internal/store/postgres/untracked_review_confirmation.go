@@ -163,6 +163,9 @@ func (s *UntrackedReviewStore) confirmationCurrent(ctx context.Context, tx pgx.T
 	if err != nil {
 		return r, err
 	}
+	if err = reviewCanonicalSelection(ctx, tx, r.Request.Input, true); err != nil {
+		return r, err
+	}
 	if !reviewConfirmationMatches(r, v, m.Input) || !reviewJSONSame(reviewJSON(v), reviewJSON(m.Review)) {
 		return r, ports.ErrUntrackedReviewStale
 	}

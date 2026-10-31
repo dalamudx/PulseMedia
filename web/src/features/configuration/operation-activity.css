@@ -39,7 +39,7 @@
 .operation-inbox .operation-inbox-progress { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; min-width: 0; }
 .operation-inbox .operation-inbox-progress progress { flex: 1 1 12rem; max-width: 100%; height: .75rem; accent-color: var(--primary); }
 .operation-inbox .operation-live-meta { color: var(--text-secondary); font-size: .875rem; font-variant-numeric: tabular-nums; }
-.operation-activity button, .operation-inbox button, .operation-activity input { min-height: 44px; }
+:root .operation-activity button, :root .operation-inbox button, :root .operation-activity input { min-height: 44px; }
 .operation-inbox button { min-width: 44px; }
 @media (max-width: 400px) {
   .operation-inbox .config-actions { flex-wrap: wrap; }

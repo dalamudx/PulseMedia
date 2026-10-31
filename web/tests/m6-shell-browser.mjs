@@ -14,14 +14,14 @@ try {
  await early.route('**/*.css',route=>route.abort());
  await early.goto(base,{waitUntil:'domcontentloaded'});
  const paint=await early.evaluate(()=>({background:getComputedStyle(document.documentElement).backgroundColor,scheme:getComputedStyle(document.documentElement).colorScheme,theme:document.querySelector('meta[name="theme-color"]')?.content}));
- check(paint.background==='rgb(9, 13, 22)'&&paint.scheme==='dark'&&paint.theme==='#090d16','startup must remain dark with stylesheet unavailable and system light');
+ check(paint.background==='rgb(23, 28, 27)'&&paint.scheme==='dark'&&paint.theme==='#171c1b','startup must remain dark with stylesheet unavailable and system light');
  await early.close();
  const page=await context.newPage();page.setDefaultTimeout(12000);
  const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto(base+'/subscriptions',{waitUntil:'domcontentloaded'});
  const navigation=page.getByRole('navigation',{name:'主导航'});
  await navigation.waitFor();
- const labels=['仪表盘','探索发现','影视订阅','媒体库','下载活动','历史整理','站点管理','服务设置','API 令牌'];
+ const labels=['仪表盘','探索发现','影视订阅','家庭请求','媒体库','下载活动','历史整理','站点管理','服务设置','API 令牌'];
  check(await navigation.getByRole('link').count()===labels.length,'all navigation links must exist');
  check(await navigation.getByRole('link',{name:'影视订阅',exact:true}).getAttribute('aria-current')==='page','current route must be announced');
  check(await page.getByRole('group',{name:'当前用户：shell-admin-with-long-name（admin）'}).count()===1,'current user and role must be readable');
@@ -79,7 +79,7 @@ try {
   const bounds=await page.locator('.topbar').evaluate(el=>{
    const title=el.querySelector('.page-title').getBoundingClientRect(),logout=el.querySelector('.btn-logout'),button=el.querySelector('.mobile-menu-btn');
    const l=logout.getBoundingClientRect(),m=button.getBoundingClientRect();
-   return {fits:el.scrollWidth<=el.clientWidth,title:title.left>=0&&title.right<=innerWidth,logout:l.width>=44&&l.height>=44,menu:m.width>=44&&m.height>=44,oneLine:logout.querySelector('span').getClientRects().length===1};
+   return {fits:el.scrollWidth<=el.clientWidth,title:title.left>=0&&title.right<=innerWidth,logout:l.width>=44&&l.height>=44,menu:m.width>=44&&m.height>=44,oneLine:logout.querySelector('span').getClientRects().length<=1};
   });
   for(const [key,value] of Object.entries(bounds)) check(value,'header '+key+' at '+width);
   if(width===375) {

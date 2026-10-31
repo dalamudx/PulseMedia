@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dalamudx/PulseMedia/internal/ports"
@@ -14,12 +15,15 @@ import (
 )
 
 type PersonFollowSyncStore struct {
-	pool *pgxpool.Pool
-	ids  ports.IDGen
+	pool           *pgxpool.Pool
+	ids            ports.IDGen
+	scheduleMu     sync.Mutex
+	scheduleCursor db.ListDuePersonFollowConfigsParams
+	scheduleLimits *ScheduleLimits
 }
 
-func NewPersonFollowSyncStore(pool *pgxpool.Pool, ids ports.IDGen) *PersonFollowSyncStore {
-	return &PersonFollowSyncStore{pool, ids}
+func NewPersonFollowSyncStore(pool *pgxpool.Pool, ids ports.IDGen, limits ...*ScheduleLimits) *PersonFollowSyncStore {
+	return &PersonFollowSyncStore{pool: pool, ids: ids, scheduleLimits: optionalScheduleLimits(limits)}
 }
 
 type personFollowPayload struct {
@@ -36,20 +40,46 @@ func personFollowPayloadJSON(run uuid.UUID, start int) []byte {
 // One transaction per configuration keeps failures independent and freezes the
 // same verified configuration history used by later pages and subscription creation.
 func (s *PersonFollowSyncStore) EnqueueDue(ctx context.Context) (err error) {
-	defer func() { err = personFollowError(ctx, err) }()
+	defer func(parent context.Context) { err = personFollowError(parent, err) }(ctx)
 	if s == nil || s.pool == nil || s.ids == nil {
 		return ports.ErrUnavailable
 	}
-	candidates, err := db.New(s.pool).ListDuePersonFollowConfigs(ctx)
+	// Overlapping ticks share one scan cursor; an active scan already owns the work.
+	if !s.scheduleMu.TryLock() {
+		return nil
+	}
+	defer s.scheduleMu.Unlock()
+	ctx, cancel := s.scheduleLimits.bound(ctx)
+	defer cancel()
+	q := db.New(s.pool)
+	candidates, err := q.ListDuePersonFollowConfigs(ctx, s.scheduleCursor)
 	if err != nil {
 		return err
 	}
-	for _, candidate := range candidates {
-		if err = s.enqueue(ctx, candidate.ID, candidate.OwnerID); err != nil {
+	if len(candidates) == 0 && s.scheduleCursor.AfterID != uuid.Nil {
+		s.scheduleCursor = db.ListDuePersonFollowConfigsParams{}
+		candidates, err = q.ListDuePersonFollowConfigs(ctx, s.scheduleCursor)
+		if err != nil {
 			return err
 		}
 	}
-	return nil
+	var firstErr error
+	for _, candidate := range candidates {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		if candidateErr := s.scheduleLimits.run(ctx, candidate.ID, candidate.Version, func() error { return s.enqueue(ctx, candidate.ID, candidate.OwnerID) }); candidateErr != nil && firstErr == nil {
+			firstErr = candidateErr
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		s.scheduleCursor = db.ListDuePersonFollowConfigsParams{AfterOwnerID: candidate.OwnerID, AfterID: candidate.ID}
+	}
+	if len(candidates) < 64 {
+		s.scheduleCursor = db.ListDuePersonFollowConfigsParams{}
+	}
+	return firstErr
 }
 func (s *PersonFollowSyncStore) enqueue(ctx context.Context, id, owner uuid.UUID) error {
 	bounded, cancel := context.WithTimeout(ctx, 15*time.Second)

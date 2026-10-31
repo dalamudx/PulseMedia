@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useId } from "react";
+import {SubscriptionExecutionPanel} from "@/features/configuration/SubscriptionExecutionPanel";
 import { useDialogFocus } from "@/features/configuration/useDialogFocus";
 import {
   X,
@@ -27,6 +28,7 @@ import { EpisodeMappingPanel } from "@/features/configuration/EpisodeMappingPane
 import { SubscriptionScopeEditor } from "@/features/configuration/SubscriptionScopeEditor";
 import { CandidateReasonsPanel } from "@/features/configuration/CandidateReasonsPanel";
 import { MovieUpgradePanel } from "@/features/configuration/MovieUpgradePanel";
+import { TVEpisodeUpgradeWorkspace } from "@/features/configuration/TVEpisodeUpgradeWorkspace";
 import { LibraryReusePanel } from "@/features/configuration/LibraryReusePanel";
 
 import type {DiscoveryReviewCandidateRef} from "@/features/configuration/DiscoveryReviewHandoff";
@@ -267,9 +269,11 @@ export const SubscriptionDetailModal: React.FC<SubscriptionDetailModalProps> = (
               {status.report.endpoint_retry_at && <p className="config-description">记录的端点最早预算时间：{new Date(status.report.endpoint_retry_at).toLocaleString()}（不是承诺执行时间）。</p>}
             </>}
           </section>
+<SubscriptionExecutionPanel key={`execution:${subscription.id}`} subscriptionID={subscription.id}/>
           <LibraryReusePanel key={`reuse-${subscription.id}-${subscription.intent_version}-${subscription.quality_policy_revision}`} subscription={observedSubscription} onUpdated={()=>void status.refresh()}/>
           {!isTV&&explanationWanted&&<CandidateReasonsPanel key={"candidates-"+subscription.id} subscriptionId={subscription.id} wantedId={explanationWanted.id} intentVersion={subscription.intent_version} onChanged={()=>void status.refresh()}/> }
           {!isTV&&<MovieUpgradePanel subscription={subscription} wantedId={explanationWanted?.id??""} onUpdated={()=>void status.refresh()}/>}
+          {isTV&&<TVEpisodeUpgradeWorkspace subscription={subscription} wantedId={explanationWanted?.id??""} onUpdated={()=>void status.refresh()}/>}
           {isTV&&<TVMetadataRefreshPanel subscription={subscription} onUpdated={onUpdated} disabled={episodeLocked}/>}
 {isTV&&<EpisodeMappingPanel subscription={subscription} onUpdated={onUpdated} disabled={episodeLocked} discoveryCandidate={discoveryCandidate}/>}
           <SubscriptionScopeEditor subscriptionId={subscription.id} onUpdated={onUpdated} disabled={episodeLocked}/>

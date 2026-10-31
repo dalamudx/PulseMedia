@@ -3,6 +3,12 @@ package app
 import (
 	"context"
 	"encoding/json"
+	"os"
+	"path/filepath"
+	"reflect"
+	"strings"
+	"testing"
+
 	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
@@ -13,11 +19,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	transferstore "github.com/dalamudx/PulseMedia/internal/store/transfer"
 	"github.com/dalamudx/PulseMedia/internal/usecase/auth"
-	"os"
-	"path/filepath"
-	"reflect"
-	"strings"
-	"testing"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 )
 
 func reviseFrozenMovieDirectory(t *testing.T, ctx context.Context, f *organizationFixture) {
@@ -92,7 +94,7 @@ func reviseFrozenMovieDirectory(t *testing.T, ctx context.Context, f *organizati
 	if e != nil {
 		t.Fatal(e)
 	}
-	repo := transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem())
+	repo := transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	actor := &ports.Actor{Type: ports.ActorTypeUser, ID: who.ID.String(), Role: ports.RoleAdmin}
 	next := "Edited/Directory movie.mkv"
 	p, e := repo.PreviewTransferRevision(ctx, actor, old.ID, next)

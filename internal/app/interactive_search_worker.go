@@ -13,9 +13,9 @@ import (
 	usecaseSearch "github.com/dalamudx/PulseMedia/internal/usecase/search"
 )
 
-func (a *App) runAllSearchWorkers(ctx context.Context, queue *jobs.Queue, sched *scheduler.AutoFulfillScheduler, search *usecaseSearch.Service, feed *usecaseSearch.FeedService, health *usecaseSearch.HealthService, repo ports.InteractiveSearchRepository, automaticTVRounds ports.AutomaticTVRoundRepository, automaticTVFinalizer ports.AutomaticTVAcquisitionRepository) {
+func (a *App) runAllSearchWorkers(ctx context.Context, queue *jobs.Queue, sched *scheduler.AutoFulfillScheduler, search *usecaseSearch.Service, feed *usecaseSearch.FeedService, health *usecaseSearch.HealthService, repo ports.InteractiveSearchRepository, automaticTVRounds ports.AutomaticTVRoundRepository, automaticTVFinalizer ports.AutomaticTVAcquisitionRepository, discovery *usecaseSearch.MovieDiscoveryService) {
 	var group sync.WaitGroup
-	group.Go(func() { a.runSearchWorkers(ctx, queue, sched, search, feed, health) })
+	group.Go(func() { a.runSearchWorkers(ctx, queue, sched, search, feed, health, discovery) })
 	group.Go(func() { a.runInteractiveSearchWorkers(ctx, queue, repo, search) })
 	group.Go(func() { a.runAutomaticTVSearchWorkers(ctx, queue, automaticTVRounds, automaticTVFinalizer, search) })
 	group.Wait()

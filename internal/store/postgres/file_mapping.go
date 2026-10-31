@@ -29,7 +29,7 @@ func NewFileMappingStore(pool *pgxpool.Pool, ids ports.IDGen) *FileMappingStore 
 	return &FileMappingStore{pool, ids}
 }
 
-func (s *FileMappingStore) ReadFileMappingOptions(ctx context.Context, a *ports.Actor) (*ports.FileMappingOptions, error) {
+func (s *FileMappingStore) ReadFileMappingOptions(ctx context.Context, a *ports.Actor, query ports.FileMappingOptionsQuery) (*ports.FileMappingOptions, error) {
 	if a == nil {
 		return nil, ports.ErrUnauthorized
 	}
@@ -45,20 +45,26 @@ func (s *FileMappingStore) ReadFileMappingOptions(ctx context.Context, a *ports.
 	if e = lockAcquisitionUser(ctx, q, a); e != nil {
 		return nil, e
 	}
-	files, e := q.ListFileMappingOptions(ctx)
+	before, beforeID, e := decodeFileMappingCursor(query)
 	if e != nil {
-		return nil, ports.ErrUnavailable
+		return nil, e
 	}
-	media, e := q.ListFileMappingMediaOptions(ctx)
+	files, e := q.ListFileMappingOptions(ctx, db.ListFileMappingOptionsParams{RootID: pgtype.UUID{Bytes: query.RootID, Valid: query.RootID != uuid.Nil}, BeforeCreatedAt: pgtype.Timestamptz{Time: before, Valid: !before.IsZero()}, BeforeID: beforeID})
 	if e != nil {
 		return nil, ports.ErrUnavailable
 	}
 	out := &ports.FileMappingOptions{Files: []ports.FileMappingOption{}, Media: []ports.FileMappingMediaOption{}, Limit: 100}
+	if len(files) > out.Limit {
+		out.FilesHasMore = true
+		files = files[:out.Limit]
+		last := files[len(files)-1]
+		out.FilesNextCursor = encodeFileMappingCursor(query.RootID, last.ID, last.CreatedAt.Time)
+	}
 	for _, f := range files {
 		out.Files = append(out.Files, ports.FileMappingOption{ID: f.ID, RootID: f.RootID, RelPath: f.RelPath, RootName: f.RootName})
 	}
-	for _, m := range media {
-		out.Media = append(out.Media, ports.FileMappingMediaOption{ID: m.ID, Title: m.Title, MediaType: m.MediaType})
+	if e = readMappingMediaOptions(ctx, q, query, out); e != nil {
+		return nil, e
 	}
 	if e = tx.Commit(ctx); e != nil {
 		return nil, ports.ErrUnavailable

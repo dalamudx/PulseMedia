@@ -64,8 +64,10 @@ type MediaSidecarSnapshot struct {
 // name: movie.nfo/tvshow.nfo, poster.jpg, logo.png, clearart.png, banner.jpg,
 // or movie-only disc.png. Preserved regular entries never imply job ownership.
 type MediaSidecarArtifactResult struct {
-	Name   string        `json:"name"`
-	Result SidecarResult `json:"result"`
+	Name      string        `json:"name"`
+	Result    SidecarResult `json:"result"`
+	Content   []byte        `json:"-"`
+	Directory string        `json:"-"`
 }
 
 type MediaSidecarCompletion struct {

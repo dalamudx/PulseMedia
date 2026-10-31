@@ -107,6 +107,17 @@ try{
  if(mode==='states'){
   for(const f of families){
    await select(f);await layout(f,375);await layout(f,1280);
+   if(f.family==='download_client'){
+    const before=requests.filter(r=>r.method!=='GET').length;
+    for(const [type,message] of [['transmission','暂不支持手工单集、整季包和电影升级'],['rtorrent','暂不支持自动追剧'],['qbittorrent','整季包和电影升级均有对应入口']]){
+     await field(f,'type').selectOption(type);
+     const notice=page.locator('#endpoint-download_client-capabilities');
+     check((await notice.innerText()).includes(message),'selected download capability: '+type);
+     equal(await field(f,'type').getAttribute('aria-describedby'),'endpoint-download_client-capabilities','capability accessible association');
+     await layout(f,375);await layout(f,1280);
+    }
+    equal(requests.filter(r=>r.method!=='GET').length,before,'capability selection sends no command');
+   }
    // Legacy safe URL projection and encrypted bytes survive an empty-secret edit.
    const legacy=f.family==='download_client'?'m5-hidden':'m5-legacy';
    await row(f,legacy).getByRole('button',{name:'编辑',exact:true}).click();

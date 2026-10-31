@@ -1,7 +1,9 @@
 -- name: ListDuePersonFollowConfigs :many
-SELECT c.id,c.owner_id FROM person_follow_config c JOIN app_user u ON u.id=c.owner_id
+SELECT c.id,c.owner_id,c.version FROM person_follow_config c JOIN app_user u ON u.id=c.owner_id
 JOIN policy p ON p.id=c.quality_policy_id AND p.current_revision=c.quality_policy_revision
 WHERE c.enabled AND u.is_active AND u.role IN ('admin','member')
+AND (sqlc.arg(after_id)::uuid='00000000-0000-0000-0000-000000000000'::uuid
+ OR (c.owner_id,c.id)>(sqlc.arg(after_owner_id)::uuid,sqlc.arg(after_id)::uuid))
 AND (c.movie_root_id IS NULL OR EXISTS(SELECT 1 FROM library_root WHERE id=c.movie_root_id AND media_type='movie' AND health='online'))
 AND (c.tv_root_id IS NULL OR EXISTS(SELECT 1 FROM library_root WHERE id=c.tv_root_id AND media_type='tv' AND health='online'))
 AND NOT EXISTS(SELECT 1 FROM person_follow_indexer b LEFT JOIN indexer_lifecycle l ON l.indexer_id=b.indexer_id WHERE b.config_id=c.id AND (NOT coalesce(l.enabled,true) OR l.deleted_at IS NOT NULL))

@@ -9,6 +9,7 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/platform/idgen"
 	"github.com/dalamudx/PulseMedia/internal/platform/outbox"
 	"github.com/dalamudx/PulseMedia/internal/platform/rootfs"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 )
 
 func TestMediaMinimumRechecksPendingPlanBeforeNativeWritePG(t *testing.T) {
@@ -16,7 +17,7 @@ func TestMediaMinimumRechecksPendingPlanBeforeNativeWritePG(t *testing.T) {
 	plan, step := f.plan(t)
 	ids := idgen.New()
 	// A new process can load a plan prepared under a lower deployment minimum.
-	repository := NewRepositoryWithMinimumMediaBytes(f.pool, ids, outbox.New(f.pool, ids, clock.New()), rootfs.NewFilesystem(), step.SourceSize+1)
+	repository := NewRepositoryWithMinimumMediaBytes(f.pool, ids, outbox.New(f.pool, ids, clock.New()), rootfs.NewFilesystem(), step.SourceSize+1, transfercase.ExecutePreparedPlan)
 	if err := repository.ExecuteTransfer(t.Context(), plan.ID); !errors.Is(err, ErrReviewRequired) {
 		t.Fatal("pending plan bypassed new minimum", err)
 	}

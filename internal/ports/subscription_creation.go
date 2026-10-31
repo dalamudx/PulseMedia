@@ -17,20 +17,23 @@ var (
 // Nil ExpectedIntentVersion can ensure an equivalent existing intent, but cannot
 // authorize a reconfiguration of that intent. MediaID and TMDBID are exclusive.
 type SubscriptionCreationInput struct {
-	UserID                *uuid.UUID  `json:"user_id,omitempty"`
-	MediaID               *uuid.UUID  `json:"media_id,omitempty"`
-	TMDBID                *int64      `json:"tmdb_id,omitempty"`
-	MediaType             string      `json:"media_type,omitempty"`
-	RootID                *uuid.UUID  `json:"root_id,omitempty"`
-	QualityPolicyID       string      `json:"quality_policy_id"`
-	IndexerIDs            []uuid.UUID `json:"indexer_ids"`
-	DownloaderID          *uuid.UUID  `json:"downloader_id,omitempty"`
-	ScopeType             string      `json:"scope_type"`
-	Seasons               []int       `json:"seasons"`
-	IncludeSpecials       bool        `json:"include_specials"`
-	EpisodeKeys           []string    `json:"episodes"`
-	SelectedUnitIDs       []uuid.UUID `json:"selected_unit_ids"`
-	ExpectedIntentVersion *int64      `json:"expected_intent_version,omitempty"`
+	UserID                      *uuid.UUID  `json:"user_id,omitempty"`
+	MediaID                     *uuid.UUID  `json:"media_id,omitempty"`
+	TMDBID                      *int64      `json:"tmdb_id,omitempty"`
+	MediaType                   string      `json:"media_type,omitempty"`
+	RootID                      *uuid.UUID  `json:"root_id,omitempty"`
+	ClassificationVersion       *int64      `json:"classification_version,omitempty"`
+	ClassificationPreviewStamp  string      `json:"classification_preview_stamp,omitempty"`
+	ClassificationPreviewRootID *uuid.UUID  `json:"classification_preview_root_id,omitempty"`
+	QualityPolicyID             string      `json:"quality_policy_id"`
+	IndexerIDs                  []uuid.UUID `json:"indexer_ids"`
+	DownloaderID                *uuid.UUID  `json:"downloader_id,omitempty"`
+	ScopeType                   string      `json:"scope_type"`
+	Seasons                     []int       `json:"seasons"`
+	IncludeSpecials             bool        `json:"include_specials"`
+	EpisodeKeys                 []string    `json:"episodes"`
+	SelectedUnitIDs             []uuid.UUID `json:"selected_unit_ids"`
+	ExpectedIntentVersion       *int64      `json:"expected_intent_version,omitempty"`
 }
 
 // A single typed value prevents swapping key and fingerprint at the boundary.

@@ -32,8 +32,25 @@ type DownloadRuntimeConfiguration interface {
 	RegisterClient(uuid.UUID, DownloadClient)
 	SetClientFactory(DownloadClientFactory)
 }
+
+// PreparedDownload owns the physical client budget until Release. Complete uses
+// the same frozen task and lease; no transaction or context crosses this boundary.
+// A replay has Task but no Client and must never issue another Add.
+type PreparedDownload struct {
+	Task     *DownloadExecutionTask
+	Client   DownloadClient
+	Params   AddTorrentParam
+	Complete func(context.Context, error) (*DownloadExecutionTask, error)
+	Release  func()
+}
+
+type DownloadSubmissionPreparer interface {
+	PrepareDownload(context.Context, uuid.UUID, uuid.UUID, uuid.UUID, string, ...JobLease) (*PreparedDownload, error)
+}
+
 type DownloadExecutionRepository interface {
-	DownloadTaskExecution
+	DownloadSubmissionPreparer
+	DownloadObservationPreparer
 	DownloadClientAdministration
 	DownloadRuntimeConfiguration
 }

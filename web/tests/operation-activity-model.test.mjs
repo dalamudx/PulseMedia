@@ -97,3 +97,27 @@ test('actual transfer plan lifecycle states have explicit labels', () => {
   for (const [state, label] of Object.entries({ created: '已创建', approved: '已批准', executing: '执行中', completed: '计划步骤完成', failed: '执行失败', review_required: '需要人工复核' })) assert.equal(model.planStateLabel(state), label);
   assert.equal(model.planStateLabel('future-state'), '计划状态未知');
 });
+
+
+test('recovery guidance prioritizes freshness and uncertainty over apparent completion', () => {
+  const detail = { operation_id: 'op', status: 'completed', download_status: 'unknown' };
+  assert.match(model.recoveryGuidance(detail, true).title, /先更新/);
+  assert.match(model.recoveryGuidance(detail, false).title, /避免重复下载/);
+  for (const state of ['unknown', 'submitting']) assert.match(model.recoveryGuidance({ ...detail, status: state, download_status: state }, false).steps.join(' '), /不要换资源重下/);
+  for (const state of ['review_required', 'conflict', 'failed', 'dead', 'unknown']) {
+    const guidance = model.recoveryGuidance({ operation_id: 'op', status: 'organizing', plan_id: 'plan', plan_status: state }, false);
+    assert.match(guidance.title, /阻塞步骤/); assert.match(guidance.steps.join(' '), /不要自行覆盖/);
+  }
+  assert.match(model.recoveryGuidance({ operation_id: 'op', status: 'waiting_organization', download_status: 'completed' }, false).steps.join(' '), /保留.*源文件/);
+  assert.match(model.recoveryGuidance({ operation_id: 'op', status: 'completed' }, false).title, /操作已完成/);
+  assert(!JSON.stringify(model.recoveryGuidance({ operation_id: 'op', status: 'PRIVATE-STATE' }, false)).includes('PRIVATE-STATE'));
+});
+
+test('recovery guide links the original plan, explains member escalation, and offers no mutation controls', async () => {
+  const { OperationRecoveryGuide } = await panel('OperationRecoveryGuide.tsx');
+  const tree = OperationRecoveryGuide({ operation: { operation_id: 'op', status: 'review_required', plan_id: 'original-plan' }, stale: false, isAdmin: false });
+  assert.match(text(tree), /original-plan/); assert.match(text(tree), /操作 ID 提供给管理员/);
+  assert.equal(nodes(tree).filter(n => ['button', 'form', 'input'].includes(n.type)).length, 0);
+  const stale = OperationRecoveryGuide({ operation: { operation_id: 'op', status: 'completed' }, stale: true, isAdmin: true });
+  assert.match(text(stale), /先更新/); assert(!text(stale).includes('操作已完成'));
+});

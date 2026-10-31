@@ -316,6 +316,18 @@ func (s *MediaRequestStore) SubmitMediaRequest(ctx context.Context, a *ports.Act
 		return nil, err
 	}
 	defer creationRollback(ctx, tx)
+	out, err = s.submitInTransaction(ctx, q, actor, in, key)
+	if err != nil {
+		return nil, err
+	}
+	if err = tx.Commit(ctx); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Seerr shares the pending-request rules, original receipt and audit in its ingress UoW.
+func (s *MediaRequestStore) submitInTransaction(ctx context.Context, q *db.Queries, actor *ports.Actor, in mediarequest.Intent, key string) (out *ports.MediaRequestReceipt, err error) {
 	in, err = mediarequest.CanonicalIntent(in)
 	if err != nil || !mediaRequestKey(key) {
 		return nil, ports.ErrRejected
@@ -371,9 +383,6 @@ func (s *MediaRequestStore) SubmitMediaRequest(ctx context.Context, a *ports.Act
 		return nil, err
 	}
 	if err = s.save(ctx, q, actor, out, hash, 201, "media.request.submitted"); err != nil {
-		return nil, err
-	}
-	if err = tx.Commit(ctx); err != nil {
 		return nil, err
 	}
 	return out, nil

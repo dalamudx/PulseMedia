@@ -162,7 +162,7 @@ func TestSubscriptionBindingsPersistAndReconfigureAtomically(t *testing.T) {
 	if _, err := pool.Exec(ctx, "ALTER TABLE media_unit RENAME COLUMN unit_key TO broken_for_read_probe"); err != nil {
 		t.Fatal(err)
 	}
-	for _, path := range []string{"/api/v1/subscriptions", "/api/v1/subscriptions/" + first.Id.String()} {
+	for _, path := range []string{"/api/v1/subscriptions/" + first.Id.String()} {
 		r := httptest.NewRequest(http.MethodGet, path, nil)
 		r.Header.Set("Authorization", "Bearer "+memberToken)
 		out := httptest.NewRecorder()
@@ -170,5 +170,12 @@ func TestSubscriptionBindingsPersistAndReconfigureAtomically(t *testing.T) {
 		if out.Code < 500 || bytes.Contains(out.Body.Bytes(), []byte("unit_key")) {
 			t.Fatal("read failure became empty success or leaked SQL", path, out.Code)
 		}
+	}
+	r := httptest.NewRequest(http.MethodGet, "/api/v1/subscriptions", nil)
+	r.Header.Set("Authorization", "Bearer "+memberToken)
+	out := httptest.NewRecorder()
+	router.ServeHTTP(out, r)
+	if out.Code != http.StatusOK || bytes.Contains(out.Body.Bytes(), []byte("unit_key")) {
+		t.Fatal("summary unexpectedly depends on per-unit detail", out.Code)
 	}
 }

@@ -77,8 +77,8 @@ func (c *Client) Send(ctx context.Context, n ports.Notification) error {
 	decodeErr := json.Unmarshal(body, &result)
 	if resp.StatusCode == http.StatusTooManyRequests {
 		retry := 10 * time.Second
-		if readErr == nil && len(body) <= maxResponse && decodeErr == nil && result.Parameters.RetryAfter > 0 && result.Parameters.RetryAfter <= 86400 {
-			retry = time.Duration(result.Parameters.RetryAfter) * time.Second
+		if readErr == nil && len(body) <= maxResponse && decodeErr == nil {
+			retry = transport.RetryAfterSeconds(result.Parameters.RetryAfter, retry)
 		}
 		return ports.NewRateLimitError(retry, "Telegram bot rate limit reached")
 	}

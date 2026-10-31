@@ -20,7 +20,7 @@ func NewWebPushDeliveryStore(pool *pgxpool.Pool) *WebPushDeliveryStore {
 }
 
 type webPushExecution struct {
-	connection *pgxpool.Conn
+	connection *PhysicalConnection
 	device     uuid.UUID
 }
 
@@ -28,7 +28,7 @@ func (s *WebPushDeliveryStore) OpenWebPushExecution(ctx context.Context, device 
 	if s == nil || s.pool == nil {
 		return nil, ports.ErrUnavailable
 	}
-	conn, err := s.pool.Acquire(ctx)
+	conn, err := AcquirePhysicalConnection(ctx, s.pool)
 	if err != nil {
 		return nil, webPushError(ctx, err)
 	}

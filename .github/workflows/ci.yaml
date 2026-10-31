@@ -75,6 +75,12 @@ jobs:
           mise exec -- pnpm --dir web exec playwright-core install --with-deps chromium
           chrome=$(mise exec -- pnpm --dir web exec node -e 'console.log(require("playwright-core").chromium.executablePath())')
           PULSE_TEST_BROWSER_EXECUTABLE="$chrome" mise exec -- task test-auth-ui
+          PULSE_TEST_BROWSER_EXECUTABLE="$chrome" mise exec -- task test-core-media-ui
+
+      - name: Verify core media workflows with real PostgreSQL and race detection
+        run: |
+          chrome=$(mise exec -- pnpm --dir web exec node -e 'console.log(require("playwright-core").chromium.executablePath())')
+          PULSE_TEST_BROWSER_EXECUTABLE="$chrome" mise exec -- task test-core-media
 
       - name: Build binary with embedded frontend
         run: mise exec -- task build BIN_DIR="$CI_OWNED_TEMP/bin"
@@ -199,6 +205,9 @@ jobs:
             sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           fi
           unshare --user --map-root-user --mount --propagation private true
+      - name: Verify Prometheus alert rules
+        if: matrix.shard == 'base'
+        run: mise exec -- task test-metrics-rules
       - name: Run current-source regression partition
         env:
           REGRESSION_SHARD: ${{ matrix.shard }}

@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/usecase/auth"
 	"github.com/dalamudx/PulseMedia/web"
 )
@@ -18,9 +19,21 @@ import (
 // NewRouter constructs the complete HTTP handler hierarchy with middlewares, OpenAPI endpoints, SSE, and embedded SPA.
 func NewRouter(a AppContext, server StrictServerInterface, authSvc *auth.Service, sseHub *SSEHub) http.Handler {
 	mux := http.NewServeMux()
+	var reader ports.RuntimeMetricsReader
+	if provider, ok := a.(interface {
+		RuntimeMetricsReader() ports.RuntimeMetricsReader
+	}); ok {
+		reader = provider.RuntimeMetricsReader()
+	}
+	metrics := newRequestMetrics(reader)
 	if target, ok := server.(*ServerHandler); ok {
 		target.activityHub = sseHub
 		target.logHub = sseHub
+		target.metrics = metrics
+		RegisterTVEpisodeUpgradeRoutes(mux, target.tvEpisodeUpgradeSvc)
+		RegisterManagedSidecarUpdateRoutes(mux, target.managedSidecarUpdateSvc)
+		RegisterExternalBatchRoutes(mux, target.externalBatchSvc)
+		RegisterLibraryMaintenanceRoutes(mux, target.libraryMaintenanceSvc)
 	}
 
 	// Never use the generated default callbacks: both strict handler errors and
@@ -150,19 +163,39 @@ func NewRouter(a AppContext, server StrictServerInterface, authSvc *auth.Service
 
 	notificationIngress := strictNotificationJSON(activityChanges(sseHub, spaHandler))
 	notificationIngress = strictAuditTimelineQuery(notificationIngress)
+	notificationIngress = strictDeliveryListQuery(notificationIngress)
 	notificationIngress = strictWebPushJSON(notificationIngress)
 	notificationIngress = strictPersonFollowJSON(notificationIngress)
-	// Global middleware chain: RequestID -> Recovery -> Logging -> Idempotency -> Auth
+	notificationIngress = StrictMPBusinessJSON(notificationIngress)
+	notificationIngress = StrictMetadataDiagnosticJSON(notificationIngress)
+	notificationIngress = StrictAccountManagementJSON(notificationIngress)
+	notificationIngress = StrictDownloadControlJSON(notificationIngress)
+	notificationIngress = AccountSecurityAdmission(a.Clock())(notificationIngress)
+	notificationIngress = StrictClassificationJSON(notificationIngress)
+	notificationIngress = StrictSeedingInspectionRequests(notificationIngress)
+	notificationIngress = strictFileMappingOptions(notificationIngress)
+	authorize := AuthMiddleware(authSvc)
+	if target, ok := server.(*ServerHandler); ok {
+		baseAuthorize := authorize
+		authorize = func(next http.Handler) http.Handler { return target.SeerrIngress(baseAuthorize(next)) }
+	}
+	// Logging wraps recovery so recovered failures are recorded with their final status.
 	chain := RequestIDMiddleware(a.IDGen())(
-		ProblemResponseMiddleware()(RecoveryMiddleware(a.Logger())(
-			LoggingMiddleware(a.Logger())(
-				IdempotencyMiddleware()(
-					authAdmissionMiddleware(a.Clock())(AuthMiddleware(authSvc)(strictSeedingConfigJSON(strictBangumiCalendarQuery(strictCookieCloudConfigJSON(StrictMediaRequestJSON(strictUntrackedScopeJSON(APITokenScopeMiddleware()(CSRFMiddleware()(strictTokenManagementJSON(notificationIngress)))))))))),
-				),
+		ProblemResponseMiddleware()(requestDiagnostics(a.Logger(), metrics, func(r *http.Request) string {
+			_, pattern := mux.Handler(r)
+			return pattern
+		})(RecoveryMiddleware(a.Logger())(
+			IdempotencyMiddleware()(
+				authAdmissionMiddleware(a.Clock())(StrictLoginSecurityJSON(authorize(strictSeedingConfigJSON(strictBangumiCalendarQuery(strictCookieCloudConfigJSON(StrictMediaRequestJSON(strictUntrackedCompanionJSON(strictUntrackedScopeJSON(APITokenScopeMiddleware()(CSRFMiddleware()(strictTokenManagementJSON(notificationIngress)))))))))))),
 			),
-		)),
+		))),
 	)
 
+	chain = untrackedCompanionNoStore(AccountManagementNoStore(reviewBusinessNoStore(subscriptionListQuery(chain))))
+	chain = tvEpisodeUpgradeNoStore(chain)
+	chain = fileMappingOptionsNoStore(chain)
+	chain = MetadataDiagnosticNoStore(chain)
+	chain = metricsNoStore(chain)
 	chain = auditTimelineNoStore(chain)
 	chain = webPushNoStore(chain)
 	chain = personFollowNoStore(chain)

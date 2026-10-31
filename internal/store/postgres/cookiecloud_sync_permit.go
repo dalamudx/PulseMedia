@@ -14,7 +14,6 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var _ ports.CookieCloudSyncRepository = (*CookieCloudSyncStore)(nil)
@@ -29,7 +28,7 @@ func (cookieCloudSource) String() string { return "CookieCloudSource{redacted}" 
 
 type cookieCloudSyncPermit struct {
 	store                                *CookieCloudSyncStore
-	conn                                 *pgxpool.Conn
+	conn                                 *PhysicalConnection
 	lease                                ports.JobLease
 	snapshot                             ports.CookieCloudExecution
 	sources                              []cookieCloudSource
@@ -115,7 +114,7 @@ func (s *CookieCloudSyncStore) Acquire(ctx context.Context, lease ports.JobLease
 	if err != nil {
 		return nil, ports.ErrCookieCloudSyncLeaseLost
 	}
-	conn, err := s.pool.Acquire(ctx)
+	conn, err := AcquirePhysicalConnection(ctx, s.pool)
 	if err != nil {
 		return nil, err
 	}

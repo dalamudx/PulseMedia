@@ -76,7 +76,10 @@ func TestNotificationManagementCurrentAccountAndReceiptProtection(t *testing.T) 
 	}{
 		{"channels", func(a *ports.Actor) error { _, e := n.ListChannels(ctx, a); return e }},
 		{"batches", func(a *ports.Actor) error { _, e := batches.List(ctx, a); return e }},
-		{"deliveries", func(a *ports.Actor) error { _, e := delivery.List(ctx, a); return e }},
+		{"deliveries", func(a *ports.Actor) error {
+			_, e := delivery.List(ctx, a, ports.DeliveryListQuery{Limit: 100})
+			return e
+		}},
 		{"create replay", func(a *ports.Actor) error {
 			_, e := n.CreateChannel(ctx, a, "Original", "webhook", cfg, "created")
 			return e

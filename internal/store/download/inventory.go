@@ -25,7 +25,7 @@ func inventoryClientStamp(c db.DownloadClient) string {
 	h := sha256.Sum256(raw)
 	return hex.EncodeToString(h[:])
 }
-func (m *Manager) observeEpisodeInventory(ctx context.Context, task db.DownloadTask, client ports.DownloadClient, info *ports.TorrentInfo) (*episodeInventoryObservation, error) {
+func (m *Manager) completeEpisodeInventory(ctx context.Context, task db.DownloadTask, info *ports.TorrentInfo, files []ports.TorrentFile, second *ports.TorrentInfo) (*episodeInventoryObservation, error) {
 	record, e := m.queries.GetEpisodeExecutionAuthority(ctx, task.OperationID)
 	if errors.Is(e, pgx.ErrNoRows) {
 		return nil, nil
@@ -37,19 +37,7 @@ func (m *Manager) observeEpisodeInventory(ctx context.Context, task db.DownloadT
 	if json.Unmarshal(record.Snapshot, &frozen) != nil || !frozen.ValidNumberingShape() || frozen.ClientID != task.ClientID || frozen.CandidateID != task.CandidateID {
 		return nil, ErrReconcilePending
 	}
-	provider, ok := client.(ports.DownloadFileInventoryClient)
-	if !ok {
-		return nil, ErrReconcilePending
-	}
-	files, e := provider.GetTorrentFiles(ctx, task.InfoHash)
-	if e != nil {
-		return nil, e
-	}
 	if e = validateInventory(files, info.TotalBytes); e != nil {
-		return nil, e
-	}
-	second, e := client.GetTorrent(ctx, task.InfoHash)
-	if e != nil {
 		return nil, e
 	}
 	if second == nil || !completedObservation(second) || !strings.EqualFold(second.InfoHash, info.InfoHash) || second.SavePath != info.SavePath || second.ContentPath != info.ContentPath || second.TotalBytes != info.TotalBytes {

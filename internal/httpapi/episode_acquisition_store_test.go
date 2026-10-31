@@ -6,6 +6,13 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+	"testing"
+	"time"
+
 	"github.com/dalamudx/PulseMedia/internal/domain/naming"
 	"github.com/dalamudx/PulseMedia/internal/domain/quality"
 	"github.com/dalamudx/PulseMedia/internal/platform/clock"
@@ -17,13 +24,8 @@ import (
 	"github.com/dalamudx/PulseMedia/internal/store/postgres"
 	storetransfer "github.com/dalamudx/PulseMedia/internal/store/transfer"
 	"github.com/dalamudx/PulseMedia/internal/usecase/subscription"
+	transfercase "github.com/dalamudx/PulseMedia/internal/usecase/transfer"
 	"github.com/google/uuid"
-	"os"
-	"path/filepath"
-	"strings"
-	"sync"
-	"testing"
-	"time"
 )
 
 func TestReviewedEpisodeAcquisitionAtomicReplay(t *testing.T) {
@@ -431,7 +433,7 @@ func reviewedEpisodeAcquisitionProbe(t *testing.T, stale bool, otherUnit bool, m
 	if e = p.QueryRow(ctx, "UPDATE job SET state='running',lease_owner='tv-organizer',lease_token=lease_token+1,lease_until=clock_timestamp()+interval '5 minutes' WHERE kind='download_organization' AND payload->>'task_id'=$1 RETURNING id,lease_token", submit.TaskID.String()).Scan(&organizationID, &organizationToken); e != nil {
 		t.Fatal(e)
 	}
-	svc := storetransfer.NewService(p, idgen.New(), outbox.New(p, idgen.New(), clock.New()), rootfs.NewFilesystem())
+	svc := storetransfer.NewService(p, idgen.New(), outbox.New(p, idgen.New(), clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	if absolute {
 		exec("CREATE FUNCTION public.clock_timestamp() RETURNS timestamptz LANGUAGE sql AS $$SELECT pg_catalog.clock_timestamp()+COALESCE(NULLIF(current_setting('pulse.fixture_clock_shift',true),''),'0 seconds')::interval$$")
 		exec("CREATE FUNCTION fail_tv_import_audit() RETURNS trigger LANGUAGE plpgsql AS $$BEGIN IF NEW.action='transfer.imported' THEN UPDATE job SET lease_until=pg_catalog.clock_timestamp()+interval '1 day' WHERE kind='download_organization' AND state='running';UPDATE transfer_plan SET lease_until=pg_catalog.clock_timestamp()+interval '1 day' WHERE id=(SELECT plan_id FROM transfer_step WHERE id=NEW.target_id::uuid);PERFORM set_config('search_path','public,pg_catalog',true);PERFORM set_config('pulse.fixture_clock_shift','7 hours',true);END IF;RETURN NEW;END$$")
@@ -465,7 +467,7 @@ func reviewedEpisodeAcquisitionProbe(t *testing.T, stale bool, otherUnit bool, m
 	if absolute {
 		exec("DROP FUNCTION public.clock_timestamp()")
 	}
-	recoveryRepo := storetransfer.NewRepository(p, idgen.New(), outbox.New(p, idgen.New(), clock.New()), rootfs.NewFilesystem())
+	recoveryRepo := storetransfer.NewRepository(p, idgen.New(), outbox.New(p, idgen.New(), clock.New()), rootfs.NewFilesystem(), transfercase.ExecutePreparedPlan)
 	if preview, e := recoveryRepo.PreviewOriginalTransferRecovery(ctx, actor, originalPlan); e != nil || preview.Recoverable {
 		t.Fatal("inflight lease/job recovery authorized", preview, e)
 	}

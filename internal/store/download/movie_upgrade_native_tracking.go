@@ -102,24 +102,19 @@ func (d *movieUpgradeTrackingDriver) OpenMovieUpgradeNativeTracking(ctx context.
 	if err != nil || client == nil {
 		return nil, ports.ErrUnavailable
 	}
-	capable, ok := client.(interface {
-		CompleteTVTrackingObserver() ports.CompleteTVTrackingClient
-	})
-	if !ok {
-		return nil, ports.ErrMovieUpgradeTrackingReview
-	}
-	native := capable.CompleteTVTrackingObserver()
-	if native == nil {
-		return nil, ports.ErrUnavailable
+	native, exporter, err := dedicatedTrackingClient(client, config.ClientType)
+	if err != nil {
+		return nil, err
 	}
 	keep = true
-	return &movieUpgradeTrackingAttempt{driver: d, descriptor: expected, client: native, release: release}, nil
+	return &movieUpgradeTrackingAttempt{driver: d, descriptor: expected, client: native, exporter: exporter, release: release}, nil
 }
 
 type movieUpgradeTrackingAttempt struct {
 	driver                     *movieUpgradeTrackingDriver
 	descriptor                 ports.MovieUpgradeTrackingDescriptor
-	client                     ports.CompleteTVTrackingClient
+	client                     ports.CompleteTVManifestTrackingClient
+	exporter                   ports.CompleteTVTrackingClient
 	release                    func()
 	mu                         sync.Mutex
 	attempted, running, closed bool
@@ -241,20 +236,25 @@ func (a *movieUpgradeTrackingAttempt) observe(ctx context.Context, telemetry *po
 	complete := movieTrackingComplete(before)
 	var files []ports.TorrentFile
 	if complete {
-		raw, e := a.client.GetTorrentMetainfo(ctx, i.InfoHash)
-		if e != nil {
-			return manual("metainfo_unavailable")
+		if a.exporter != nil {
+			raw, e := a.exporter.GetTorrentMetainfo(ctx, i.InfoHash)
+			if e != nil {
+				return manual("metainfo_unavailable")
+			}
+			proof, e := a.driver.inspector.InspectMovieUpgradeTrackingMetainfo(ctx, raw, a.descriptor.Target)
+			if e != nil || proof == nil {
+				return manual("metainfo_mismatch")
+			}
+			if e = a.driver.inspector.VerifyMovieUpgradeMetainfo(ctx, proof, a.descriptor.Target); e != nil {
+				return manual("metainfo_mismatch")
+			}
+			if proof.InfoHash() != i.InfoHash || proof.TotalBytes() != i.TotalBytes || !slices.Equal(proof.Files(), a.descriptor.Files) {
+				return manual("metainfo_mismatch")
+			}
 		}
-		proof, e := a.driver.inspector.InspectMovieUpgradeTrackingMetainfo(ctx, raw, a.descriptor.Target)
-		if e != nil || proof == nil {
-			return manual("metainfo_mismatch")
-		}
-		if e = a.driver.inspector.VerifyMovieUpgradeMetainfo(ctx, proof, a.descriptor.Target); e != nil {
-			return manual("metainfo_mismatch")
-		}
-		if proof.InfoHash() != i.InfoHash || proof.TotalBytes() != i.TotalBytes || !slices.Equal(proof.Files(), a.descriptor.Files) {
-			return manual("metainfo_mismatch")
-		}
+		// Without native export, only the original persisted complete preparation
+		// descriptor, revalidated by the consumed private query permit, is authority.
+		var e error
 		files, e = a.client.GetTorrentFiles(ctx, i.InfoHash)
 		if e != nil {
 			return manual("inventory_unavailable")

@@ -78,8 +78,9 @@ function RecentImports({ recent }: { recent: LibraryOverview["recent"] }) {
   </>;
 }
 
-export function DashboardFactsPanel({ facts }: { facts: DashboardFacts }) {
-  const { overview, activity, overviewStatus, activityStatus: status, errors } = facts;
+/** Library counts and storage roots share one card so the numbers and their roots read together. */
+export function DashboardLibraryPanel({ facts }: { facts: DashboardFacts }) {
+  const { overview, overviewStatus, errors } = facts;
   return <div className="dashboard-facts">
     {errors.length > 0 ? <div className="facts-errors" role="alert">{errors.map((error, index) => <p key={index}>{error}</p>)}</div> : null}
     <section className="facts-section" aria-label="共享媒体库当前入库统计" aria-busy={overviewStatus === "loading"}>
@@ -90,36 +91,56 @@ export function DashboardFactsPanel({ facts }: { facts: DashboardFacts }) {
         {countCards.map(([key, label]) => <div className="facts-count" key={key}><dt>{label}</dt><dd>{overview ? countFact(overview.counts[key]) : "—"}</dd></div>)}
       </dl>
       {overview ? <p className="facts-note">概览读取时间：{factTime(overview.observed_at)}</p> : null}
-    </section>
-    <div className="facts-columns">
-      <section className="facts-section" aria-label="存储根容量">
-        <div className="facts-heading"><h2>存储根</h2></div>
+      <div className="facts-subsection" aria-label="存储根容量">
+        <div className="facts-heading"><h3>存储根</h3></div>
         <ReadState status={overviewStatus} retained={overview !== null} />
         {overview ? (overview.roots.length ? <ul className="facts-roots">{overview.roots.map(root => <RootCapacity key={root.root_id} root={root} />)}</ul> : <p className="facts-note">暂无存储根。</p>) : null}
-      </section>
-      <section className="facts-section" aria-label="活动记录" aria-busy={status === "loading"}>
-        <div className="facts-heading"><h2>活动记录</h2><Link to="/activity">全部活动</Link></div>
-        <ReadState status={status} retained={activity !== null} />
-        {activity ? <>
-          {activity.items.length ? <ul className="facts-activities">{activity.items.map(item => {
-            const percent = activityProgress(item);
-            return <li className="facts-activity" key={item.operation_id}>
-              <div className="facts-row"><strong>{item.title}</strong><span>{activityStatus(item.status)}</span></div>
-              {percent === null ? <p className="facts-note">进度未知</p> : <>
-                <div className="facts-row"><span className="facts-note">{item.progress_source === "verified_bytes" ? "TV 观测" : "任务记录"}</span><span>{percent}%</span></div>
-                <progress className="facts-progress" max={100} value={percent} aria-label={`${item.title}记录进度`} />
-              </>}
-              <p className="facts-note">记录更新时间：{factTime(item.updated_at)}</p>
-            </li>;
-          })}</ul> : <p className="facts-note">暂无活动记录。</p>}
-          {activity.more ? <p className="facts-note">还有更多记录，<Link to="/activity">前往活动页</Link>。</p> : null}
-          <p className="facts-note">列表读取时间：{factTime(activity.observed_at)}</p>
-        </> : null}
-      </section>
-    </div>
+      </div>
+    </section>
+  </div>;
+}
+
+/** In-flight work: what the downloader reports, never a projection of missing files. */
+export function DashboardActivityPanel({ facts }: { facts: DashboardFacts }) {
+  const { activity, activityStatus: status } = facts;
+  return <div className="dashboard-facts">
+    <section className="facts-section" aria-label="活动记录" aria-busy={status === "loading"}>
+      <div className="facts-heading"><h2>进行中的活动</h2><Link to="/activity">全部活动</Link></div>
+      <ReadState status={status} retained={activity !== null} />
+      {activity ? <>
+        {activity.items.length ? <ul className="facts-activities">{activity.items.map(item => {
+          const percent = activityProgress(item);
+          return <li className="facts-activity" key={item.operation_id}>
+            <div className="facts-row"><strong>{item.title}</strong><span>{activityStatus(item.status)}</span></div>
+            {percent === null ? <p className="facts-note">进度未知</p> : <>
+              <div className="facts-row"><span className="facts-note">{item.progress_source === "verified_bytes" ? "TV 观测" : "任务记录"}</span><span>{percent}%</span></div>
+              <progress className="facts-progress" max={100} value={percent} aria-label={`${item.title}记录进度`} />
+            </>}
+            <p className="facts-note">记录更新时间：{factTime(item.updated_at)}</p>
+          </li>;
+        })}</ul> : <p className="facts-note">暂无活动记录。</p>}
+        {activity.more ? <p className="facts-note">还有更多记录，<Link to="/activity">前往活动页</Link>。</p> : null}
+        <p className="facts-note">列表读取时间：{factTime(activity.observed_at)}</p>
+      </> : null}
+    </section>
+  </div>;
+}
+
+/** Persisted import history, separate from trending recommendations. */
+export function DashboardRecentPanel({ facts }: { facts: DashboardFacts }) {
+  const { overview, overviewStatus } = facts;
+  return <div className="dashboard-facts">
     <section className="facts-section" aria-label="近期真实入库">
       <ReadState status={overviewStatus} retained={overview !== null} />
       {overview ? <RecentImports recent={overview.recent} /> : <h2>近期入库</h2>}
     </section>
+  </div>;
+}
+
+export function DashboardFactsPanel({ facts }: { facts: DashboardFacts }) {
+  return <div className="dashboard-facts-stack">
+    <DashboardLibraryPanel facts={facts} />
+    <DashboardActivityPanel facts={facts} />
+    <DashboardRecentPanel facts={facts} />
   </div>;
 }

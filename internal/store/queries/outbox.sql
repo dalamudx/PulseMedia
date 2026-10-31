@@ -48,11 +48,11 @@ WITH candidate AS (
 )
 UPDATE outbox_delivery AS d
 SET state = 'delivering', lease_owner = $2::text,
-    lease_until = statement_timestamp() + ($3::integer * interval '1 millisecond'),
+    lease_until = clock_timestamp() + ($3::integer * interval '1 millisecond'),
     lease_token = d.lease_token + 1, attempts = d.attempts + 1,
-    updated_at = statement_timestamp()
+    updated_at = clock_timestamp()
 FROM candidate AS c
-WHERE d.id = c.id AND d.state = 'pending'
+WHERE d.id = c.id AND d.state = 'pending' AND $3::integer > 0
 RETURNING d.*;
 
 -- name: FinishOutboxDelivery :one
@@ -68,12 +68,12 @@ RETURNING *;
 UPDATE outbox_delivery
 SET state = CASE WHEN attempts >= max_attempts THEN 'dead' ELSE 'pending' END,
     error = $4::text,
-    not_before = statement_timestamp() + ($5::integer * interval '1 millisecond'),
+    not_before = clock_timestamp() + ($5::integer * interval '1 millisecond'),
     lease_owner = NULL, lease_until = NULL,
     updated_at = statement_timestamp()
 WHERE id = $1::uuid AND state = 'delivering'
   AND lease_owner = $2::text AND lease_token = $3::bigint
-  AND lease_until > clock_timestamp()
+  AND lease_until > clock_timestamp() AND $5::integer > 0
 RETURNING *;
 
 -- name: GetOutboxDeliveryByID :one

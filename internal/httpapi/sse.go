@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -128,9 +129,28 @@ func (h *SSEHub) Broadcast(event, data string) {
 	}
 }
 
-// ServeLogs streams live process logs. The caller has already authorized the
-// request; this function performs no permission decision of its own.
-func (h *SSEHub) ServeLogs(w http.ResponseWriter, r *http.Request, minimum slog.Level) {
+// ServeLogs rechecks authority before replay, on each one-second tick and before stale writes.
+func (h *SSEHub) ServeLogs(w http.ResponseWriter, r *http.Request, minimum slog.Level, authorized func(context.Context) bool) {
+	var checked time.Time
+	check := func(force bool) bool {
+		if r.Context().Err() != nil || authorized == nil {
+			return false
+		}
+		if !force && time.Since(checked) < time.Second {
+			return true
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), time.Second)
+		defer cancel()
+		ok := authorized(ctx)
+		if !ok || ctx.Err() != nil {
+			return false
+		}
+		checked = time.Now()
+		return true
+	}
+	if !check(true) {
+		return
+	}
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		WriteJSONError(w, http.StatusInternalServerError, "UNAVAILABLE", "log stream unavailable", GetRequestID(r.Context()))
@@ -151,6 +171,9 @@ func (h *SSEHub) ServeLogs(w http.ResponseWriter, r *http.Request, minimum slog.
 	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("X-Accel-Buffering", "no")
 	write := func(record LogRecord) bool {
+		if !check(false) {
+			return false
+		}
 		if ParseLogLevel(record.Level) < minimum {
 			return true
 		}
@@ -176,6 +199,8 @@ func (h *SSEHub) ServeLogs(w http.ResponseWriter, r *http.Request, minimum slog.
 		}
 	}
 
+	authorityTick := time.NewTicker(time.Second)
+	defer authorityTick.Stop()
 	keepAlive := time.NewTicker(15 * time.Second)
 	defer keepAlive.Stop()
 	for {
@@ -186,6 +211,10 @@ func (h *SSEHub) ServeLogs(w http.ResponseWriter, r *http.Request, minimum slog.
 			return
 		case record := <-sub.ch:
 			if !write(record) {
+				return
+			}
+		case <-authorityTick.C:
+			if !check(true) {
 				return
 			}
 		case <-keepAlive.C:

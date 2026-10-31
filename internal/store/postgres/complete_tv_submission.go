@@ -38,6 +38,9 @@ type completeTVPreparedProof struct {
 	TorrentSHA256 [32]byte                  `json:"torrent_sha256"`
 	TotalBytes    int64                     `json:"total_bytes"`
 	Files         []media.TVTorrentUnitFile `json:"files"`
+	// OriginalFiles is inspected from the exact original send bytes, including
+	// attachments. Only Transmission needs this persisted non-export proof.
+	OriginalFiles []media.TVTorrentFile `json:"original_files,omitempty"`
 }
 type completeTVPreparationPayload struct {
 	OperationID      uuid.UUID   `json:"operation_id"`
@@ -231,6 +234,9 @@ func (s *CompleteTVSubmissionStore) PrepareCompleteTVSubmission(ctx context.Cont
 		}
 		sort.Slice(files, func(i, j int) bool { return files[i].Unit.UnitID.String() < files[j].Unit.UnitID.String() })
 		proof = completeTVPreparedProof{Kind: "complete_tv_prepared_v2", MaterialStamp: frozen.MaterialStamp, SavePath: root.Path, InfoHash: c.Metainfo.InfoHash(), TorrentSHA256: c.Metainfo.SHA256(), TotalBytes: c.Metainfo.TotalBytes(), Files: files}
+		if client.ClientType == "transmission" {
+			proof.OriginalFiles = c.Metainfo.Files()
+		}
 		demands, e := q.ListRequirementsForOperation(ctx, c.OperationID)
 		if e != nil {
 			return e

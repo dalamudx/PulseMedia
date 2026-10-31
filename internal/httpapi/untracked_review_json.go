@@ -26,7 +26,7 @@ func validUntrackedReviewVersion(value int64) bool {
 
 func validUntrackedReviewInput(in ports.UntrackedReviewInput) bool {
 	return validUntrackedReviewVersion(in.ScopeVersion) && validUntrackedReviewVersion(in.FileRevision) &&
-		(in.MediaType == "movie" || in.MediaType == "tv") && in.TMDBID >= 0
+		(in.MediaType == "movie" || in.MediaType == "tv") && in.TMDBID >= 0 && in.CanonicalSelectionValid()
 }
 
 func validUntrackedReviewHash(value string) bool {
@@ -71,6 +71,9 @@ func validUntrackedConfirmationInput(in ports.UntrackedConfirmationInput) bool {
 
 // The parent guard authenticates before delegating nested discovery routes here.
 func validUntrackedReviewTransport(w http.ResponseWriter, r *http.Request, parts []string) bool {
+	if untrackedReviewEpisodeOptionsPath(parts) {
+		return validUntrackedReviewEpisodeOptionsTransport(r, parts)
+	}
 	if (len(parts) != 4 && len(parts) != 5) || parts[1] != "discoveries" ||
 		!canonicalUntrackedReviewID(parts[0]) || !canonicalUntrackedReviewID(parts[2]) ||
 		r.URL.RawQuery != "" || r.URL.ForceQuery {
@@ -102,7 +105,7 @@ func validUntrackedReviewTransport(w http.ResponseWriter, r *http.Request, parts
 	if err != nil {
 		return false
 	}
-	fields := map[string]bool{"scope_version": true, "file_revision": true, "media_type": true, "tmdb_id": true}
+	fields := map[string]bool{"scope_version": true, "file_revision": true, "media_type": true, "tmdb_id": true, "canonical_unit_id": false, "media_metadata_version": false, "unit_metadata_version": false, "season": false, "episode": false, "tmdb_episode_id": false}
 	if parts[3] == "confirmations" {
 		fields = map[string]bool{"review_id": true, "material_hash": true, "scope_version": true, "file_revision": true, "candidate_key": true, "action": true, "target_relative_path": true}
 	}

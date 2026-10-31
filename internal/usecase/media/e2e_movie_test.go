@@ -352,7 +352,7 @@ func TestFullMovieEndToEndLifecycle(t *testing.T) {
 		PathMapping:     []byte("{}"),
 	})
 	// 7. Transfer Plan, Hardlink Execution & Crash Observation Recovery
-	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem()))
+	transferSvc := transfer.NewService(transferstore.NewRepository(pool, gen, ob, rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 	q := quality.Profile{Resolution: quality.Res1080p, ResolutionParserVersion: quality.ResolutionTokenParserVersion, Source: quality.SourceBluray, SourceParserVersion: quality.SourceTokenParserVersion, Codec: quality.CodecH264, CodecParserVersion: quality.CodecTokenParserVersion}
 
 	plan, step, err := transferSvc.CreateMoviePlan(ctx, acqRes.OperationID, root.ID, unitID, downloadedFilePath, "Fight Club", 1999, q)

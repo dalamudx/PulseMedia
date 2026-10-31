@@ -31,7 +31,7 @@ var _ ports.SeedingExecutionRepository = (*SeedingExecutionStore)(nil)
 
 type seedingExecutionPermit struct {
 	store                          *SeedingExecutionStore
-	conn                           *pgxpool.Conn
+	conn                           *PhysicalConnection
 	lease                          ports.JobLease
 	dispatch                       db.SeedingRemovalDispatch
 	config                         db.SeedingConfiguration
@@ -75,7 +75,7 @@ func (s *SeedingExecutionStore) Acquire(ctx context.Context, l ports.JobLease) (
 	if err != nil {
 		return nil, err
 	}
-	conn, err := s.pool.Acquire(ctx)
+	conn, err := AcquirePhysicalConnection(ctx, s.pool)
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +117,9 @@ func (s *SeedingExecutionStore) Acquire(ctx context.Context, l ports.JobLease) (
 	p.task, err = q.GetSubmissionTask(ctx, d.TaskID)
 	if err != nil {
 		return nil, err
+	}
+	if e := RejectTVEpisodeUpgradeOperation(ctx, tx, p.task.OperationID); e != nil {
+		return nil, e
 	}
 	p.snapshot.TaskID = d.TaskID
 	p.snapshot.ClientID = d.ClientID
@@ -226,6 +229,9 @@ func (p *seedingExecutionPermit) Snapshot() ports.SeedingExecution {
 	return v
 }
 func (p *seedingExecutionPermit) validate(ctx context.Context, q *db.Queries) error {
+	if err := RejectTVEpisodeUpgradeOperation(ctx, p.conn, p.task.OperationID); err != nil {
+		return err
+	}
 	if p.closed || p.terminal || !p.held || p.conn.Conn().IsClosed() {
 		return ports.ErrSeedingLeaseLost
 	}

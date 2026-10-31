@@ -13,13 +13,13 @@ type Repository struct{ execution *Service }
 
 var _ ports.TransferRepository = (*Repository)(nil)
 
-func NewRepository(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem) *Repository {
-	return &Repository{NewService(pool, ids, events, files)}
+func NewRepository(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem, coordinator ports.TransferExecutionCoordinator) *Repository {
+	return &Repository{NewService(pool, ids, events, files, coordinator)}
 }
 
 // NewRepositoryWithMinimumMediaBytes applies deployment filtering to new physical attempts.
-func NewRepositoryWithMinimumMediaBytes(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem, minimum int64) *Repository {
-	r := NewRepository(pool, ids, events, files)
+func NewRepositoryWithMinimumMediaBytes(pool *pgxpool.Pool, ids ports.IDGen, events *outbox.Outbox, files ports.TransferFilesystem, minimum int64, coordinator ports.TransferExecutionCoordinator) *Repository {
+	r := NewRepository(pool, ids, events, files, coordinator)
 	r.execution.minimumMediaBytes = minimum
 	return r
 }

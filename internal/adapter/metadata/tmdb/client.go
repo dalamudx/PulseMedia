@@ -200,6 +200,7 @@ func cloneMovieMetadata(m *ports.MovieMetadata) *ports.MovieMetadata {
 	}
 	copy := *m
 	copy.Genres = append([]string(nil), m.Genres...)
+	copy.Countries = append([]string(nil), m.Countries...)
 	return &copy
 }
 
@@ -242,17 +243,21 @@ func (c *Client) getMovieLanguageDetails(ctx context.Context, tmdbID int64, lang
 		return cloneMovieMetadata(cached.data), nil
 	}
 	var d struct {
-		ID            int64   `json:"id"`
-		IMDbID        *string `json:"imdb_id"`
-		Title         string  `json:"title"`
-		OriginalTitle string  `json:"original_title"`
-		ReleaseDate   string  `json:"release_date"`
-		Overview      string  `json:"overview"`
-		PosterPath    *string `json:"poster_path"`
-		BackdropPath  *string `json:"backdrop_path"`
-		Runtime       int     `json:"runtime"`
-		VoteAverage   float64 `json:"vote_average"`
-		Genres        []struct {
+		ID                  int64   `json:"id"`
+		IMDbID              *string `json:"imdb_id"`
+		Title               string  `json:"title"`
+		OriginalTitle       string  `json:"original_title"`
+		ReleaseDate         string  `json:"release_date"`
+		Overview            string  `json:"overview"`
+		PosterPath          *string `json:"poster_path"`
+		BackdropPath        *string `json:"backdrop_path"`
+		Runtime             int     `json:"runtime"`
+		VoteAverage         float64 `json:"vote_average"`
+		OriginalLanguage    string  `json:"original_language"`
+		ProductionCountries []struct {
+			Code string `json:"iso_3166_1"`
+		} `json:"production_countries"`
+		Genres []struct {
 			Name string `json:"name"`
 		} `json:"genres"`
 	}
@@ -264,6 +269,14 @@ func (c *Client) getMovieLanguageDetails(ctx context.Context, tmdbID int64, lang
 		genres[i] = g.Name
 	}
 	m := &ports.MovieMetadata{MediaType: "movie", TMDBID: d.ID, Title: d.Title, OriginalTitle: d.OriginalTitle, Overview: d.Overview, Year: parseYearFromDate(d.ReleaseDate), Genres: genres, Runtime: d.Runtime, Rating: d.VoteAverage}
+	countries := make([]string, 0, len(d.ProductionCountries))
+	for _, country := range d.ProductionCountries {
+		countries = append(countries, country.Code)
+	}
+	if !validClassificationOrigin(d.OriginalLanguage, countries) {
+		return nil, ports.ErrBadResponse
+	}
+	m.OriginalLanguage, m.Countries = d.OriginalLanguage, countries
 	if d.IMDbID != nil {
 		m.IMDbID = *d.IMDbID
 	}

@@ -6,10 +6,12 @@ import (
 	"errors"
 	"time"
 
+	"github.com/dalamudx/PulseMedia/internal/domain/media"
 	"github.com/dalamudx/PulseMedia/internal/ports"
 	"github.com/dalamudx/PulseMedia/internal/store/postgres/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -21,7 +23,7 @@ func NewSubscriptionListStore(pool *pgxpool.Pool) *SubscriptionListStore {
 	return &SubscriptionListStore{pool: pool}
 }
 
-func (s *SubscriptionListStore) ReadSubscriptionList(ctx context.Context, actor *ports.Actor) ([]ports.SubscriptionListEntry, error) {
+func (s *SubscriptionListStore) ReadSubscriptionList(ctx context.Context, actor *ports.Actor, in ports.SubscriptionListQuery) (*ports.SubscriptionListPage, error) {
 	if actor == nil {
 		return nil, ports.ErrUnauthorized
 	}
@@ -63,12 +65,39 @@ func (s *SubscriptionListStore) ReadSubscriptionList(ctx context.Context, actor 
 	if err = q.SetSubscriptionListReadOnly(ctx); err != nil {
 		return nil, ports.ErrUnavailable
 	}
-	rows, err := q.ReadSubscriptionListEntries(ctx, db.ReadSubscriptionListEntriesParams{IsAdmin: account.Role == ports.RoleAdmin, UserID: id})
+	if in.Limit < 1 || in.Limit > 100 || in.Offset < 0 || in.Offset > 1000000 {
+		return nil, ports.ErrInvalidSubscriptionQuery
+	}
+	out := &ports.SubscriptionListPage{}
+	params := db.ReadSubscriptionListEntriesParams{IsAdmin: account.Role == ports.RoleAdmin, UserID: id, OwnOnly: in.OwnOnly, Search: in.Search, TmdbID: in.TMDBID, MediaType: in.MediaType, PageLimit: int32(in.Limit), PageOffset: int32(in.Offset), Calendar: in.Calendar, SubscriptionIds: []uuid.UUID{}}
+	var wantedIDs []uuid.UUID
+	if in.Calendar {
+		page, err := q.ReadSubscriptionCalendarPage(ctx, db.ReadSubscriptionCalendarPageParams{IsAdmin: params.IsAdmin, UserID: id, UnknownDates: in.UnknownDates, StartDate: pgtype.Date{Time: in.Start, Valid: true}, EndDate: pgtype.Date{Time: in.End, Valid: true}, PageLimit: int32(in.Limit), PageOffset: int32(in.Offset)})
+		if err != nil {
+			return nil, ports.ErrUnavailable
+		}
+		out.Total = page.Total
+		wantedIDs = page.WantedIds
+		params.SubscriptionIds = page.SubscriptionIds
+		params.PageOffset = 0
+	} else {
+		counts, err := q.CountSubscriptionList(ctx, db.CountSubscriptionListParams{IsAdmin: params.IsAdmin, UserID: id, OwnOnly: in.OwnOnly, Search: in.Search, TmdbID: in.TMDBID})
+		if err != nil {
+			return nil, ports.ErrUnavailable
+		}
+		out.Total, out.Movies, out.TV = counts.Total, counts.Movies, counts.Tv
+		if in.MediaType == "movie" {
+			out.Total = out.Movies
+		}
+		if in.MediaType == "tv" {
+			out.Total = out.TV
+		}
+	}
+	rows, err := q.ReadSubscriptionListEntries(ctx, params)
 	if err != nil {
 		return nil, ports.ErrUnavailable
 	}
 	items := make([]ports.SubscriptionListEntry, len(rows))
-	ids := make([]uuid.UUID, len(rows))
 	positions := make(map[uuid.UUID]int, len(rows))
 	for i, row := range rows {
 		item := ports.SubscriptionListEntry{
@@ -77,6 +106,10 @@ func (s *SubscriptionListStore) ReadSubscriptionList(ctx context.Context, actor 
 			State: row.State, IntentVersion: row.IntentVersion, ScopeType: row.ScopeType,
 			Title: row.MediaTitle, MediaType: row.MediaType, RootName: row.RootName,
 			TMDBExternalID: row.TmdbExternalID, IndexerIDs: []uuid.UUID{}, WantedItems: []ports.SubscriptionListWanted{},
+		}
+		item.TotalEpisodes, item.SatisfiedEpisodes = int(row.TotalEpisodes), int(row.SatisfiedEpisodes)
+		if poster := media.TMDBPosterURL(row.PosterPath); poster != "" {
+			item.PosterURL = &poster
 		}
 		if row.MediaYear.Valid {
 			year := int(row.MediaYear.Int32)
@@ -92,10 +125,10 @@ func (s *SubscriptionListStore) ReadSubscriptionList(ctx context.Context, actor 
 			value := uuid.UUID(row.DownloaderID.Bytes)
 			item.DownloaderID = &value
 		}
-		items[i], ids[i], positions[row.ID] = item, row.ID, i
+		items[i], positions[row.ID] = item, i
 	}
-	if len(ids) > 0 {
-		wanted, err := q.ReadSubscriptionListWanted(ctx, ids)
+	if len(wantedIDs) > 0 {
+		wanted, err := q.ReadSubscriptionListWanted(ctx, wantedIDs)
 		if err != nil {
 			return nil, ports.ErrUnavailable
 		}
@@ -125,5 +158,6 @@ func (s *SubscriptionListStore) ReadSubscriptionList(ctx context.Context, actor 
 	if err = tx.Commit(ctx); err != nil {
 		return nil, ports.ErrUnavailable
 	}
-	return items, nil
+	out.Items = items
+	return out, nil
 }

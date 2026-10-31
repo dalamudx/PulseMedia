@@ -60,7 +60,7 @@ func TestCompleteTVObservationLegacyAddIsolation(t *testing.T) {
 	client := &completeTVLegacyObserver{}
 	m.RegisterClient(clientID, client)
 	before := f.work(t)
-	task, e := m.SubmitDownload(context.Background(), f.c.OperationID, clientID, f.candidate, "/downloads")
+	task, e := m.PrepareDownload(context.Background(), f.c.OperationID, clientID, f.candidate, "/downloads")
 	if task != nil || !errors.Is(e, ports.ErrCompleteTVNeedsObservation) || f.work(t) != before {
 		t.Fatalf("generic Add accepted or changed authority: task=%v error=%v", task, e)
 	}

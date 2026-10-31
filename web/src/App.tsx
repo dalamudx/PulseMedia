@@ -3,18 +3,19 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/features/auth/AuthContext";
 import { Sidebar } from "@/components/common/Sidebar";
 import { Header } from "@/components/common/Header";
-import { DashboardView } from "@/views/DashboardView";
-import { DiscoverView } from "@/views/DiscoverView";
-import { SubscriptionsView } from "@/views/SubscriptionsView";
-import { RequestsView } from "@/views/RequestsView";
-import { ActivityView } from "@/views/ActivityView";
-import { MediaView } from "@/views/MediaView";
-import { SitesView } from "@/views/SitesView";
-import { ReorganizeView } from "@/views/ReorganizeView";
-import { SettingsView } from "@/views/SettingsView";
-import { AccountTokensView } from "@/views/AccountTokensView";
-import { LoginView } from "@/views/LoginView";
-import { SetupView } from "@/views/SetupView";
+import { LazyContent } from "@/components/common/LazyContent";
+const DashboardView = React.lazy(() => import("@/views/DashboardView").then(module => ({ default: module.DashboardView })));
+const DiscoverView = React.lazy(() => import("@/views/DiscoverView").then(module => ({ default: module.DiscoverView })));
+const SubscriptionsView = React.lazy(() => import("@/views/SubscriptionsView").then(module => ({ default: module.SubscriptionsView })));
+const RequestsView = React.lazy(() => import("@/views/RequestsView").then(module => ({ default: module.RequestsView })));
+const ActivityView = React.lazy(() => import("@/views/ActivityView").then(module => ({ default: module.ActivityView })));
+const MediaView = React.lazy(() => import("@/views/MediaView").then(module => ({ default: module.MediaView })));
+const SitesView = React.lazy(() => import("@/views/SitesView").then(module => ({ default: module.SitesView })));
+const ReorganizeView = React.lazy(() => import("@/views/ReorganizeView").then(module => ({ default: module.ReorganizeView })));
+const SettingsView = React.lazy(() => import("@/views/SettingsView").then(module => ({ default: module.SettingsView })));
+const AccountView = React.lazy(() => import("@/views/AccountView").then(module => ({ default: module.AccountView })));
+const LoginView = React.lazy(() => import("@/views/LoginView").then(module => ({ default: module.LoginView })));
+const SetupView = React.lazy(() => import("@/views/SetupView").then(module => ({ default: module.SetupView })));
 import {DiscoveryReviewHandoffProvider} from "@/features/configuration/DiscoveryReviewHandoff";
 import { useDialogFocus } from "@/features/configuration/useDialogFocus";
 
@@ -94,11 +95,13 @@ export const App: React.FC = () => {
   // Auth pages (Login & Setup without sidebar)
   if (!user) {
     return (
+      <LazyContent key="authentication">
       <Routes>
         <Route path="/login" element={<LoginView />} />
         <Route path="/setup" element={<SetupView />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      </LazyContent>
     );
   }
 
@@ -131,6 +134,7 @@ export const App: React.FC = () => {
       <div className="main-wrapper" inert={drawerOpen}>
         <Header menuButtonRef={menuButton} mobileDrawerOpen={drawerOpen} onToggleMobile={() => setMobileDrawerOpen(previous => !previous)} />
         <main id="main-content" tabIndex={-1} className="page-content">
+          <LazyContent key={`${user.id}:${user.role}:${location.pathname}`}>
           <Routes>
             <Route path="/" element={<DashboardView />} />
             <Route path="/discover" element={<DiscoverView />} />
@@ -141,9 +145,10 @@ export const App: React.FC = () => {
             <Route path="/sites" element={<SitesView />} />
             <Route path="/reorganize" element={<ReorganizeView />} />
             <Route path="/settings" element={<SettingsView />} />
-            <Route path="/account/tokens" element={<AccountTokensView />} />
+            <Route path="/account/tokens" element={<AccountView />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </LazyContent>
         </main>
       </div>
     </div>

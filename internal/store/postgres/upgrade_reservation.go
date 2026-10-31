@@ -244,7 +244,7 @@ func (s *UpgradeReservationStore) ReserveUpgrade(ctx context.Context, a *ports.A
 	if episodeClientStamp(client) != c.ExpectedClientDigest {
 		return nil, conflict
 	}
-	if client.ClientType != "qbittorrent" || strings.TrimSpace(client.Url) == "" || len(client.PasswordEncrypted) == 0 {
+	if (client.ClientType != "qbittorrent" && client.ClientType != "transmission") || strings.TrimSpace(client.Url) == "" || len(client.PasswordEncrypted) == 0 {
 		return nil, conflict
 	}
 	v, e := readUpgradePreview(ctx, q, a, ports.UpgradePreviewRequest{SubscriptionID: sub.ID, CurrentFileID: c.CurrentFileID, CandidateID: c.CandidateID}, s.indexerDecoder)

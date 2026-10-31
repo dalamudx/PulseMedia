@@ -114,7 +114,7 @@ func organizationSetup(t *testing.T) *organizationFixture {
 	return f
 }
 func (f *organizationFixture) newService() *transfer.Service {
-	return transfer.NewService(transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem()))
+	return transfer.NewService(transferstore.NewRepository(f.pool, f.gen, outbox.New(f.pool, f.gen, clock.New()), rootfs.NewFilesystem(), transfer.ExecutePreparedPlan))
 }
 func (f *organizationFixture) count(t *testing.T, table string) int {
 	t.Helper()

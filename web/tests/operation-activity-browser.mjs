@@ -72,6 +72,10 @@ try {
  // Select through the real read-only list button, using UUID text to identify its card.
  await inbox().locator('.operation-inbox-list > li').filter({hasText:current}).getByRole('button').click();
  await ready();check(writes.length===0,'list/selection emitted a command');
+ const guidance=()=>detail().getByRole('region',{name:'核对与恢复指引',exact:true});
+ await guidance().waitFor();
+ check(await guidance().locator('button,input,form').count()===0,'recovery guidance must remain read-only');
+ check((await guidance().innerText()).includes('原整理计划'),'original plan is visible in recovery guidance');
  await telemetry().getByText('25%',{exact:true}).waitFor();
  await telemetry().getByText('8388607.9 TiB/s',{exact:true}).waitFor();
  const actual=await context.request.get(base+'/api/v1/operations/'+current);assert.equal(actual.status(),200);

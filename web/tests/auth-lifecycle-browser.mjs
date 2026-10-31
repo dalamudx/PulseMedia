@@ -5,6 +5,7 @@ if(!base||process.env.PULSE_UI_FIXTURE!=='1')throw Error('Owned auth fixture req
 const browser=await chromium.launch({executablePath:process.env.PULSE_TEST_BROWSER_EXECUTABLE||'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--disable-background-networking']});
 try{
  const context=await browser.newContext();const page=await context.newPage();page.setDefaultTimeout(12000);
+ const authRequests=[];page.on('request',request=>{const path=new URL(request.url()).pathname;if(request.method()==='POST'&&(path==='/api/v1/auth/setup'||path==='/api/v1/auth/login'))authRequests.push({path,token:request.headers()['x-setup-token']});});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  const problem=(route,status)=>route.fulfill({status,contentType:'application/problem+json',body:JSON.stringify({code:'fixture',message:'fixture unavailable'})});
  await page.route('**/api/v1/auth/status',route=>problem(route,503));
@@ -17,7 +18,14 @@ try{
  await page.getByPlaceholder('admin',{exact:true}).fill('auth-ui-admin');
  await page.getByPlaceholder('输入安全密码...',{exact:true}).fill('AuthNativeBrowserFixture2026!');
  await page.getByPlaceholder('再次输入确认...',{exact:true}).fill('AuthNativeBrowserFixture2026!');
- await page.locator('form button[type=submit]').click();await page.locator('.app-shell').waitFor();
+ const deploymentToken=process.env.PULSE_AUTH_UI_SETUP_TOKEN;assert(deploymentToken,'owned deployment token fixture required');
+ const submitSetup=async()=>{const response=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/auth/setup'&&r.request().method()==='POST');await page.locator('form button[type=submit]').click();return (await response).status();};
+ assert.equal(await submitSetup(),403);await page.getByText('初始化需要部署令牌，请填写部署者提供的令牌后重试。',{exact:true}).waitFor();
+ assert.equal((await (await context.request.get(base+'/api/v1/auth/status')).json()).initialized,false);
+ await page.getByLabel('部署令牌（本地直连可留空）',{exact:true}).fill('wrong-owned-fixture-token');assert.equal(await submitSetup(),403);
+ assert.equal((await (await context.request.get(base+'/api/v1/auth/status')).json()).initialized,false);
+ await page.getByLabel('部署令牌（本地直连可留空）',{exact:true}).fill(deploymentToken);assert.equal(await submitSetup(),200);await page.locator('.app-shell').waitFor();
+ assert.equal(await page.evaluate(token=>[localStorage,sessionStorage].some(store=>Object.values(store).some(value=>value.includes(token))),deploymentToken),false,'setup token must not persist in browser storage');
  await page.goto(base+'/account/tokens');await page.getByRole('heading',{name:'API 令牌',exact:true}).waitFor();
  assert.equal((await context.request.post(base+'/owned-auth-fixture/expire')).status(),204);
  await page.getByRole('button',{name:'重新读取',exact:true}).click();
@@ -32,26 +40,27 @@ try{
  await page.getByRole('button',{name:'重新读取',exact:true}).click();await page.getByText('令牌列表读取失败，旧状态已清除。请重新读取。',{exact:true}).waitFor();
  assert.equal(await page.locator('.app-shell').count(),1);await page.unroute('**/api/v1/auth/tokens');
  await page.route('**/api/v1/auth/logout',route=>problem(route,503));
- await page.getByRole('button',{name:'退出',exact:true}).click();await page.getByRole('heading',{name:'无法确认认证状态',exact:true}).waitFor();
+ await page.getByRole('button',{name:'退出登录',exact:true}).click();await page.getByRole('heading',{name:'无法确认认证状态',exact:true}).waitFor();
  assert.equal(await page.locator('.app-shell').count(),0);assert.equal((await context.request.get(base+'/api/v1/auth/me')).status(),200);
  await page.unroute('**/api/v1/auth/logout');await page.getByRole('button',{name:'重试读取认证状态',exact:true}).click();await page.locator('.app-shell').waitFor();
  const logoutResponse=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/v1/auth/logout'&&r.request().method()==='POST');
- await page.getByRole('button',{name:'退出',exact:true}).click();assert.equal((await logoutResponse).status(),204);
+ await page.getByRole('button',{name:'退出登录',exact:true}).click();assert.equal((await logoutResponse).status(),204);
  await page.getByRole('heading',{name:'登录 PulseMedia',exact:true}).waitFor();assert.equal((await context.request.get(base+'/api/v1/auth/me')).status(),401);
  await login();
  let release;const held=new Promise(resolve=>release=resolve);let signal;const started=new Promise(resolve=>signal=resolve);
  let holdOld=true;let oldRequest;const pending=[];
  await page.route('**/api/v1/system/status',async route=>{if(!holdOld){await route.continue();return;}oldRequest=route.request();signal();let finish;pending.push(new Promise(resolve=>finish=resolve));await held;try{await route.fulfill({status:401,contentType:'application/problem+json',body:JSON.stringify({code:'unauthorized',message:'obsolete fixture request'})});}catch{}finally{finish();}});
  await page.reload();await page.locator('.app-shell').waitFor();await started;holdOld=false;const obsoleteResponse=oldRequest.response();
- await page.getByRole('button',{name:'退出',exact:true}).click();await page.getByRole('heading',{name:'登录 PulseMedia',exact:true}).waitFor();
+ await page.getByRole('button',{name:'退出登录',exact:true}).click();await page.getByRole('heading',{name:'登录 PulseMedia',exact:true}).waitFor();
  await login();release();await Promise.all(pending);const oldResponse=await obsoleteResponse;assert(oldResponse?.status()===401||(!oldResponse&&/ABORTED|CANCELLED/.test(oldRequest.failure()?.errorText??"")),"old session request must finish with 401 or explicit cancellation");
- await page.getByRole('link',{name:'API 令牌',exact:true}).click();await page.getByRole('heading',{name:'API 令牌',exact:true}).waitFor();
+ await page.getByRole('link',{name:'账号与安全',exact:true}).click();await page.getByRole('heading',{name:'API 令牌',exact:true}).waitFor();
  assert.equal(await page.locator('.app-shell').count(),1);assert.equal((await context.request.get(base+'/api/v1/auth/me')).status(),200);
  await page.unroute('**/api/v1/system/status');
  await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'打开导航菜单',exact:true}).click();
- await page.getByRole('link',{name:'API 令牌',exact:true}).waitFor();
+ await page.getByRole('link',{name:'账号与安全',exact:true}).waitFor();
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile shell must fit viewport');
  assert(await page.evaluate(()=>!Object.keys(localStorage).some(key=>/session|credential/i.test(key))),'session must remain cookie-only');
+ assert.equal(authRequests.filter(request=>request.path==='/api/v1/auth/setup').length,3);assert(authRequests.filter(request=>request.path==='/api/v1/auth/login').every(request=>request.token===undefined),'deployment token must not reach login requests');
  assert.deepEqual(errors,[]);
  console.log(JSON.stringify({passed:true,realPG:true,initialFailureBlocksSetup:true,nativeSetupLogin:true,nativeSessionExpiryClearsShell:true,forbiddenPreservesIdentity:true,logoutFailureIsUnknown:true,nativeCSRFLogout:true,obsolete401CannotClearNewLogin:true,mobileShell:true}));
 }finally{await browser.close();}
