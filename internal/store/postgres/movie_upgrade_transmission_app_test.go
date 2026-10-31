@@ -32,6 +32,11 @@ func (s *transmissionUpgradeStartup) Write(p []byte) (int, error) {
 func startTransmissionUpgradeApp(t *testing.T, f *organizationJobFixture) func() {
 	t.Helper()
 	cfg := config.NewDefault()
+	// This fixture freezes an upgrade; periodic discovery and scans have their own
+	// acceptance tests and must not mutate its basis while testing explicit execution.
+	f.exec(t, "INSERT INTO library_scan_schedule(root_id,next_run_at) SELECT id,clock_timestamp()+interval '1 hour' FROM library_root ON CONFLICT(root_id) DO UPDATE SET next_run_at=excluded.next_run_at")
+	f.exec(t, "UPDATE indexer SET health_next_check_at=clock_timestamp()+interval '1 hour'")
+	f.exec(t, "INSERT INTO subscription_movie_discovery(subscription_id,next_discovery_at) VALUES($1,clock_timestamp()+interval '1 hour') ON CONFLICT(subscription_id) DO UPDATE SET next_discovery_at=excluded.next_discovery_at", f.sub)
 	cfg.DataDir = t.TempDir()
 	cfg.SecretKey = hex.EncodeToString(bytes.Repeat([]byte{37}, 32))
 	cfg.Database.URL = f.dsn
