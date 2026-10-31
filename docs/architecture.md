@@ -1324,6 +1324,7 @@ web/src 按 api/app/features/ui/styles 分层；单组件建议不超过 400 行
 | web | Vitest/组件测试、Playwright 初始化到入库冒烟 |
 
 CI：mise install → 冻结前端依赖安装及 Go 模块下载/校验 → 前端 typecheck/build（先生成 Go embed 所需 web/dist）→ 生产依赖拒绝探针/lint → gen-check/生成器兼容 → 必过 govulncheck → 私有 PG unit/store/adapter/scenario/race → 原生认证 web → build/version。漏洞扫描不能因数据库不可达返回成功或静默跳过，非零阻止验收；报告区分代码可达、导入包及未调用模块级条目。PG 测试不得回退共享集群或因缺少 DSN 静默跳过；各入口只在 /data/temp 自有目录运行并验证资源清理，失败阻止验收。非 root 产物先支持 Linux amd64/arm64；固定 UID/GID 或容器 --user，不承诺 distroless 自动 PUID/PGID 切换。桌面平台与云盘另验证，不作为 V1 发布门槛。
+最终容器验收另由CI原生amd64/arm64任务执行，依赖源码构建/漏洞门禁成功；从干净提交构建镜像并校验架构及revision，显式启用实际启动/认证、离线安装与受保护升级、PG18卷替换测试，失败或取消均执行本任务资源清理。任务不推送镜像，不将源码回归中的容器门控跳过作为容器验收通过。
 
 <a id="operations"></a>
 ## 15. 运行、迁移与备份

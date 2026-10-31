@@ -229,3 +229,71 @@ jobs:
             esac
             test ! -e "$CI_OWNED_TEMP"
           fi
+
+  container:
+    name: Container ${{ matrix.arch }}
+    needs: build-and-test
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - {arch: amd64, runner: ubuntu-24.04}
+          - {arch: arm64, runner: ubuntu-24.04-arm}
+    env:
+      CONTAINER_ARCH: ${{ matrix.arch }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Prepare owned container acceptance paths
+        run: |
+          ci_tmp="/data/temp/pulse-ci-container-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${CONTAINER_ARCH}"
+          sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" /data/temp
+          sudo install -d -m 0700 -o "$(id -u)" -g "$(id -g)" "$ci_tmp"
+          for key in TMPDIR TMP TEMP CI_OWNED_TEMP; do echo "$key=$ci_tmp" >> "$GITHUB_ENV"; done
+          echo "PULSE_CONTAINER_TEST_IMAGE=localhost/pulsemedia:ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${CONTAINER_ARCH}" >> "$GITHUB_ENV"
+          echo "PULSE_BUILD_VERSION=ci-${GITHUB_SHA}" >> "$GITHUB_ENV"
+      - name: Install mise tools
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
+      - name: Prepare container engine and locked dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman uidmap
+          mise exec -- pnpm --dir web install --frozen-lockfile
+          mise exec -- go mod download
+          mise exec -- go mod verify
+      - name: Build final image from committed source
+        run: |
+          mise exec -- bash scripts/build_container.sh "$PULSE_CONTAINER_TEST_IMAGE" "$CONTAINER_ARCH"
+          test "$(podman image inspect --format '{{.Architecture}}' "$PULSE_CONTAINER_TEST_IMAGE")" = "$CONTAINER_ARCH"
+          test "$(podman image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$PULSE_CONTAINER_TEST_IMAGE")" = "$GITHUB_SHA"
+      - name: Verify runtime, offline install and protected upgrade
+        run: |
+          mise exec -- bash scripts/with_podman_test_postgres.sh go test -race ./internal/app \
+            -run '^TestContainer(RuntimeSmoke|InstallUpgrade|PG18VolumeLayout)$' -count=1 -timeout=10m -v
+      - name: Remove owned container acceptance artifacts
+        if: always()
+        run: |
+          set -euo pipefail
+          if [ -n "${PULSE_CONTAINER_TEST_IMAGE:-}" ]; then
+            case "$PULSE_CONTAINER_TEST_IMAGE" in
+              "localhost/pulsemedia:ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${CONTAINER_ARCH}")
+                if command -v podman >/dev/null && podman image exists "$PULSE_CONTAINER_TEST_IMAGE"; then
+                  podman image rm "$PULSE_CONTAINER_TEST_IMAGE"
+                  ! podman image exists "$PULSE_CONTAINER_TEST_IMAGE"
+                fi ;;
+              *) echo "Unexpected CI image tag" >&2; exit 1 ;;
+            esac
+          fi
+          if [ -n "${CI_OWNED_TEMP:-}" ]; then
+            case "$CI_OWNED_TEMP" in
+              "/data/temp/pulse-ci-container-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${CONTAINER_ARCH}") rm -rf -- "$CI_OWNED_TEMP" ;;
+              *) echo "Unexpected CI temporary path" >&2; exit 1 ;;
+            esac
+            test ! -e "$CI_OWNED_TEMP"
+          fi
