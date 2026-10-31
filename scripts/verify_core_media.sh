@@ -29,7 +29,7 @@ chrome=${PULSE_TEST_BROWSER_EXECUTABLE:-/usr/bin/google-chrome}
 test -x "$chrome"
 export PULSE_TEST_BROWSER_EXECUTABLE="$chrome" PULSE_CHROME_PATH="$chrome" PULSE_CHROME_BIN="$chrome" CHROME_BIN="$chrome"
 if [[ $mode == browser ]]; then
-  export PULSE_DIAGNOSTIC_EVIDENCE="$owned"
+  export PULSE_DIAGNOSTIC_EVIDENCE="$owned" PULSE_MAPPING_MEDIA_EVIDENCE="$owned"
   for probe in lazy-routes download-global-rates movie-discovery external-file-review tv-episode-upgrade tv-episode-upgrade-workspace metadata-diagnostics file-mapping-media-picker external-batch library-maintenance tv-episode-discovery-workspace delivery-history; do
     node "web/tests/${probe}-browser.mjs"
   done

@@ -1323,8 +1323,9 @@ web/src 按 api/app/features/ui/styles 分层；单组件建议不超过 400 行
 | scenario | 完整 app、独立 PG、临时根、fake 外部服务、重启与响应丢失 |
 | web | Vitest/组件测试、Playwright 初始化到入库冒烟 |
 
-CI：mise install → 冻结前端依赖安装及 Go 模块下载/校验 → 前端 typecheck/build（先生成 Go embed 所需 web/dist）→ 生产依赖拒绝探针/lint → gen-check/生成器兼容 → 必过 govulncheck → 私有 PG unit/store/adapter/scenario/race → 原生认证 web → build/version。漏洞扫描不能因数据库不可达返回成功或静默跳过，非零阻止验收；报告区分代码可达、导入包及未调用模块级条目。PG 测试不得回退共享集群或因缺少 DSN 静默跳过；各入口只在 /data/temp 自有目录运行并验证资源清理，失败阻止验收。非 root 产物先支持 Linux amd64/arm64；固定 UID/GID 或容器 --user，不承诺 distroless 自动 PUID/PGID 切换。桌面平台与云盘另验证，不作为 V1 发布门槛。
-最终容器验收另由CI原生amd64/arm64任务执行，依赖源码构建/漏洞门禁成功；从干净提交构建镜像并校验架构及revision，显式启用实际启动/认证、离线安装与受保护升级、PG18卷替换测试，失败或取消均执行本任务资源清理。任务不推送镜像，不将源码回归中的容器门控跳过作为容器验收通过。
+日常CI只运行一个20分钟有界任务：冻结依赖安装与模块校验、前端类型/行为测试、Go领域单元测试、构建及版本冒烟、lint/依赖边界、生成一致性/API兼容和govulncheck。main推送及PR触发，不再自动展开完整PG/race、浏览器或双架构容器矩阵；快速CI通过不代表这些专项验收已经执行。漏洞扫描非零仍阻止日常检查，报告区分可达、导入包及未调用模块级条目。
+
+数据库事务/恢复、浏览器和最终容器验收按改动范围或发布需要，通过现有Taskfile和scripts/verify_m11_regression.sh手动运行；记录实际执行、门控跳过和环境限制，不以历史成功或跳过替代通过。PG只使用独立测试库，不回退共享集群；临时资源位于/data/temp并校验清理。最终镜像仍从干净提交构建，校验架构/revision并验证启动认证、离线安装升级及PG18卷保持。Linux amd64/arm64为产物目标；ARM模拟功能验收与原生硬件证据分开记录。固定UID/GID或容器--user，不承诺自动PUID/PGID切换；桌面平台与云盘另验证。
 
 <a id="operations"></a>
 ## 15. 运行、迁移与备份
